@@ -1,0 +1,155 @@
+PROGRAM Diffusion;
+CONST width = 100;
+      leftaxis = 21;
+      rightaxis = 15;
+      topmargin = 20;
+      gap = 10;
+      concbottom = 80;
+      concwidth = 50;
+      colour1 = red;
+      colour2 = blue;
+      edgecol = black;
+      molcol = red;
+      conccol = seagreen;
+VAR xorval: integer;
+    bottom: integer;
+    boundary: integer;
+    x1, y1: integer;
+    x2, y2: integer;
+    temp: integer;
+    num1: array[0..width] of integer;
+
+  Procedure setup;
+  Begin
+    canvas(0, 0, width + leftaxis + rightaxis, width * 2 + topmargin + gap);
+    resolution(width + leftaxis + rightaxis, width * 2 + topmargin + gap);
+    bottom := width * 2 + topmargin + gap - 1;
+    boundary := divmult(width, 1000, 707);
+    xorval := colour1 xor colour2;
+    thickness(1);
+    colour(colour2);
+    setxy(boundary + leftaxis, bottom - boundary);
+    drawxy(0, boundary);
+    setxy(boundary + leftaxis, bottom - boundary - 10);
+    drawxy(0, 5);
+    setxy(boundary + leftaxis, topmargin);
+    drawxy(0, 5);
+    colour(colour1);
+    setxy(boundary + leftaxis - 1, bottom - boundary - 10);
+    drawxy(0, 5);
+    setxy(boundary + leftaxis - 1, topmargin);
+    drawxy(0, 5);
+    colour(edgecol);
+    setxy(leftaxis - 1, bottom);
+    drawxy(width + 1, -width - 1);
+    colour(edgecol);
+    drawxy(0, width + 1);
+    recolour(leftaxis + 2, bottom, colour1);
+    recolour(width + leftaxis - 4, bottom, colour2);
+    for x1 := 0 to boundary - 1 do
+      num1[x1] := x1 + 1;
+    for x1 := boundary to width - 1 do
+      num1[x1] := 0;
+    colour(black);
+    setxy(0, 0);
+    print('Diffusion in a Tapering Tube', 2, width / 10)
+  End;
+
+  Procedure drawaxes;
+  Var n: integer;
+  Begin
+    for n := -1 to concwidth do
+      pixset(leftaxis - 1, concbottom - n, black);
+    for n := 0 to width do
+      pixset(leftaxis + 100, topmargin + n, black);
+    for n := 0 to 100 do
+      begin
+        if (n < 31) or (n mod 5 = 0) then
+          pixset(leftaxis + n, concbottom + 1, black);
+        pixset(leftaxis + n, topmargin + 101, black)
+      end;
+    drawxy(0, -concwidth);
+    colour(conccol);
+    setxy(0, concbottom - concwidth - width / 15);
+    print('100%', 2, width / 15);
+    setxy(0, concbottom - width / 15);
+    print('  0%', 2, width / 15);
+    setxy(0, topmargin + width * 11 / 10);
+    print('Red concentration', 2, width / 12);
+    colour(molcol);
+    setxy(width + leftaxis + 2, topmargin + width - boundary + 1 - width / 15);
+    print(str(boundary - 1), 2, width / 15);
+    setxy(width + leftaxis + 2, topmargin + width - width / 15);
+    print('  0', 2, width / 15);
+    setxy(0, topmargin + width * 12 / 10);
+    print('Red molecule count', 2, width / 12);
+    colour(black);
+    setxy(0, topmargin + width * 13 / 10 + 5);
+    print('(at horizontal position', 2, width / 15);
+    setxy(0, topmargin + width * 14 / 10 + 5);
+    print('in tapering tube)', 2, width / 15);
+  End;
+
+  Procedure graphit(x: integer; show: boolean);
+  Begin
+    if show then
+      begin
+        pixset(x + leftaxis, topmargin + width - num1[x], molcol);
+        pixset(x + leftaxis, concbottom - divmult(num1[x], x + 1, concwidth), conccol)
+      end
+    else
+      begin
+        pixset(x + leftaxis, topmargin + width - num1[x], white);
+        pixset(x + leftaxis, concbottom - divmult(num1[x], x + 1, concwidth), white)
+      end
+  End;
+
+  Procedure showswap(x, origcol: integer);
+  Begin
+    graphit(x1, false);
+    graphit(x1 + 1, false);
+    if origcol = colour1 then
+      begin
+        dec(num1[x1]);
+        inc(num1[x1 + 1])
+      end
+    else
+      begin
+        inc(num1[x1]);
+        dec(num1[x1 + 1])
+      end;
+    graphit(x1, true);
+    graphit(x1 + 1, true)
+  End;
+
+BEGIN
+  setup;
+  drawaxes;
+  for x1 := 0 to width - 1 do
+    graphit(x1, true);
+  pause(2500);
+  repeat
+    x1 := random(width);
+    y1 := random(width);
+    if y1 <= x1 then
+      begin
+        y1 := bottom - y1;
+        x2 := x1;
+        y2 := y1;
+        if random(2) = 0 then
+          inc(x2)
+        else
+          dec(y2);
+        temp := pixcol(x1 + leftaxis, y1);
+        if (pixcol(x2 + leftaxis, y2) xor temp) = xorval then
+          begin
+            noupdate;
+            pixset(x1 + leftaxis, y1, pixcol(x2 + leftaxis, y2));
+            pixset(x2 + leftaxis, y2, temp);
+            if (x2 <> x1) then
+              showswap(x1, temp);
+            update
+          end
+      end
+  until 0 = 1
+END.

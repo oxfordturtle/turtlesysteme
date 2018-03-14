@@ -1,0 +1,35 @@
+@import 'constants';
+
+// base settings
+.tsx-help {
+  flex-direction: column;
+  padding: $padding;
+  h3 {
+    border-bottom: 2px solid $black;
+  }
+  h4 {
+    font-size: 1em;
+    margin-bottom: .75em;
+  }
+  pre {
+    background: lighten($gray, 5%);
+    border: 1px solid $gray;
+    padding: $padding ($padding * 2);
+    margin: 0 0 .75em;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: .75em;
+    td {
+      border: 1px solid $gray;
+      padding: $padding;
+    }
+  }
+}
+
+// modifications for the browser
+.tsx-browser .tsx-help {
+  height: auto;
+  max-width: 800px;
+}

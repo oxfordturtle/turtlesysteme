@@ -1,0 +1,69 @@
+PROGRAM MathFunctions;
+CONST decimals = 4;
+      denominator = 1000000;
+VAR count: integer;
+    a, b, c: integer;
+
+  Procedure show(s: string; n: integer);
+  Begin
+    writeln(s + '(' + str(a) + '/' + str(b) + ') = ' + qstr(n, denominator, decimals))
+  End;
+
+  Procedure selectab;
+  Begin
+    a := random(900) + 100;
+    b := random(900) + 100
+  End;
+
+BEGIN
+  output(true, white, true);
+  writeln('This program selects two random numbers a and b, in the');
+  writeln('range 100-999, and then outputs various mathematical');
+  writeln('functions of the fraction a/b. The results are expressed');
+  writeln('to ' + str(decimals) + ' decimal places, and a denominator of ' + str(denominator) + ' is');
+  writeln('used in the calculations to provide precision, even');
+  writeln('though the Turtle functions strictly operate only on');
+  writeln('integers and produce integer results.');
+  writeln('');
+  selectab;
+  writeln('a=' + str(a) + '; b=' + str(b));
+  writeln('a/b = ' + str(a) + '/'+str(b) + ' = ' + qstr(a, b, decimals));
+  writeln('');
+  show('square', power(a, b, 2, denominator));
+  show('square root', root(a, b, 2, denominator));
+  show('cube', power(a, b, 3, denominator));
+  show('cube root', root(a, b, 3, denominator));
+  writeln('');
+  show('hypot', hypot(a, b, denominator));
+  show('calculated hypot', sqrt(a * a + b * b, denominator));
+  writeln('');
+  show('sin', sin(a, b, denominator));
+  show('cos', cos(a, b, denominator));
+  show('tan', tan(a, b, denominator));
+  writeln('');
+  show('ln', ln(a, b, denominator));
+  if divmult(a, b, 1000) + ln(denominator, 1, 1000) > ln(maxint, 1, 1000) then
+    begin
+      writeln('EXP(' + str(a) + '/' + str(b) + ') would give numerical overflow, because');
+      writeln('the result*' + str(denominator) + ' would be greater than ' + str(maxint))
+    end
+  else
+    show('exp', exp(a, b, denominator));
+  show('log10', log10(a, b, denominator));
+  if divmult(a, b, 1000) + log10(denominator, 1, 1000) > log10(maxint, 1, 1000) then
+    begin
+      writeln('ANTILOG(' + str(a) + '/' + str(b) + ') would give numerical overflow, because');
+      writeln('the result*' + str(denominator) + ' would be greater than ' + str(maxint))
+    end
+  else
+    show('antilog', antilog(a, b, denominator));
+  writeln('');
+  if a > b then
+    writeln('ARCCOS and ARCSIN are not defined for ' + str(a) + '/' + str(b) + ' = ' + qstr(a, b, decimals))
+  else
+    begin
+      show('arccos', arccos(a, b, denominator));
+      show('arcsin', arcsin(a, b, denominator))
+    end;
+  show('arctan', arctan(a, b, denominator))
+END.

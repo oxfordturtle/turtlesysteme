@@ -1,0 +1,32 @@
+REM Sierpinski
+
+BLANK(CREAM)
+THICKNESS(1)
+PROCtriangle(400, 138, 843, 650, 179, 778)
+END
+
+DEF PROCtriangle(x1%, y1%, x2%, y2%, x3%, y3%)
+  LOCAL x12%, y12%, x23%, y23%, x31%, y31%
+  SETXY(x1%, y1%)
+  SETXY(x2%, y2%)
+  SETXY(x3%, y3%)
+  SETXY(x1%, y1%)
+  COLOUR(BLACK)
+  POLYLINE(4)
+  IF HYPOT(x2% - x1%, y2% - y1%, 1) > 3 THEN
+    x12% = (x1% + x2%) / 2
+    y12% = (y1% + y2%) / 2
+    x23% = (x2% + x3%) / 2
+    y23% = (y2% + y3%) / 2
+    x31% = (x3% + x1%) / 2
+    y31% = (y3% + y1%) / 2
+    SETXY(x12%, y12%)
+    SETXY(x23%, y23%)
+    SETXY(x31%, y31%)
+    COLOUR(WHITE)
+    POLYGON(3)
+    PROCtriangle(x1%, y1%, x12%, y12%, x31%, y31%)
+    PROCtriangle(x2%, y2%, x23%, y23%, x12%, y12%)
+    PROCtriangle(x3%, y3%, x31%, y31%, x23%, y23%)
+  ENDIF
+ENDPROC

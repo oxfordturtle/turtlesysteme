@@ -1,0 +1,45 @@
+@import 'constants';
+
+.tsx-popup {
+  display: none;
+  position: fixed;
+  z-index: 10;
+  background: rgba(0, 0, 0, .3);
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: .5em;
+  .tsx-modal {
+    margin: 0 auto;
+    margin-top: -10em;
+    max-width: 30em;
+    box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
+    transition: margin .5s;
+    .tsx-modal-head {
+      background: $green;
+      color: #fff;
+      h2 {
+        font-size: 1em;
+        margin: 0;
+        padding: .5em;
+      }
+    }
+    .tsx-modal-body {
+      background: #fff;
+      padding: .5em;
+      p {
+        margin: 0 0 1em;
+      }
+      .buttons {
+        text-align: right;
+      }
+    }
+  }
+  &.open {
+    display: block;
+    .tsx-modal {
+      margin-top: 4em;
+    }
+  }
+}

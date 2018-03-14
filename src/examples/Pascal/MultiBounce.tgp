@@ -1,0 +1,38 @@
+PROGRAM MultiBounce;
+VAR xpos1, xvel1: integer;
+    ypos1, yvel1: integer;
+    xpos2, xvel2: integer;
+    ypos2, yvel2: integer;
+
+  Procedure doball(size, col: integer; var xp, xv, yp, yv: integer);
+  Begin
+    setxy(xp, yp);
+    colour(white);
+    blot(size + 1);
+    xp := xp + xv;
+    yp := yp + yv;
+    setxy(xp, yp);
+    colour(col);
+    blot(size);
+    update;
+    noupdate;
+    if (xp < size) or (xp > 1000 - size) then
+      xv := -xv;
+    if (yp < size) or (yp > 1000 - size) then
+      yv := -yv
+  End;
+
+BEGIN
+  xpos1 := 20;
+  xvel1 := 2;
+  ypos1 := 200;
+  yvel1 := -3;
+  xpos2 := 400;
+  xvel2 := -4;
+  ypos2 := 800;
+  yvel2 := 1;
+  repeat
+    doball(20, blue, xpos1, xvel1, ypos1, yvel1);
+    doball(30, red, xpos2, xvel2, ypos2, yvel2)
+  until 1 = 0
+END.

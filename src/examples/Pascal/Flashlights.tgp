@@ -1,0 +1,27 @@
+PROGRAM Flashlights;
+
+  Procedure drawit(doblot: boolean);
+  Begin
+    if doblot then
+      begin
+        randcol(10);
+        blot(25)
+      end
+    else
+      begin
+        colour(black);
+        blot(30);
+        randcol(10);
+        circle(25)
+      end
+  End;
+
+BEGIN
+  blot(1000);
+  thickness(8);
+  repeat
+    setx((random(8) + 1) * 111);
+    sety((random(8) + 1) * 111);
+    drawit(random(2) = 1)
+  until false
+END.

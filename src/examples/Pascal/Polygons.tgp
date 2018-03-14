@@ -1,0 +1,33 @@
+PROGRAM Polygons;
+
+  Procedure poly(points, col: integer);
+  Var count: integer;
+  Begin
+    direction(90);
+    for count := 1 to points do
+      begin
+        forward(600 div points);
+        left(360 div points)
+      end;
+    colour(col);
+    polygon(points);
+    colour(black);
+    polyline(points + 1)
+  End;
+
+BEGIN
+  penup;
+  thickness(4);
+  setxy(100, 400);
+  poly(3, blue);
+  setxy(400, 400);
+  poly(4, red);
+  setxy(700, 400);
+  poly(5, yellow);
+  setxy(150, 750);
+  poly(6, pink);
+  setxy(440, 750);
+  poly(7, green);
+  setxy(740, 750);
+  poly(8, turquoise)
+END.

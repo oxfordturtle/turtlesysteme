@@ -1,0 +1,109 @@
+PROGRAM BrownianMotion;
+CONST polradius = 80; {pollen}
+      molradius = 10;
+      hitradius = 90; {polradius+molradius}
+      molecules = 400;
+      slowspeed = 30;
+      highspeed = 50;
+      speedratio = 10;
+      polcolour = blue;
+      molcolour = red;
+      halocolour = #FFFFFE;
+      delay = 50;
+VAR px, py: integer;
+    pxvel, pyvel: integer;
+    mx, my, ms, md: array[1..molecules] of integer;
+    n: integer;
+
+  Procedure setup;
+  Var n: integer;
+  Begin
+    penup;
+    px := 500;
+    py := 500;
+    pxvel := 0;
+    pyvel := 0;
+    setxy(px, py);
+    colour(halocolour);
+    blot(hitradius);
+    for n := 1 to molecules do
+      begin
+        repeat
+          mx[n] := random(1000 - 2 * molradius) + molradius;
+          my[n] := random(1000 - 2 * molradius) + molradius
+        until pixcol(mx[n], my[n]) = white;
+        ms[n] := random(highspeed - slowspeed + 1) + slowspeed;
+        md[n] := random(360);
+        setxy(mx[n], my[n]);
+        blot(2 * molradius)
+      end
+  End;
+
+  Procedure draw(positive: boolean);
+  Var n: integer;
+      radius: integer;
+  Begin
+    if positive then
+      begin
+        colour(molcolour);
+        radius := molradius
+      end
+    else
+      begin
+        colour(white);
+        radius := molradius + 1
+      end;
+    for n := 1 to molecules do
+      begin
+        setxy(mx[n], my[n]);
+        blot(radius)
+      end;
+    setxy(px, py);
+    if positive then
+      begin
+        colour(polcolour);
+        blot(polradius)
+      end
+    else
+      blot(polradius + 1)
+  End;
+
+  Procedure move(m: integer);
+  Var degturn: integer;
+      impact: integer;
+  Begin
+    setxy(mx[m], my[m]);
+    direction(md[m]);
+    forward(ms[m]);
+    if hypot(turtx - px, turty - py, 1) <= hitradius then
+      begin
+        while hypot(turtx - px, turty - py, 1) < hitradius do
+          back(1);
+        turnxy(px - turtx, py - turty);
+        degturn := turtd - md[m];
+        md[m] := (180 + (turtd + degturn)) mod 360;
+        impact := cos(degturn, 1, ms[m]);
+        pxvel := pxvel + sin(turtd, 1, impact);
+        pyvel := pyvel - cos(turtd, 1, impact)
+      end;
+    mx[m] := (turtx + 1000) mod 1000;
+    my[m] := (turty + 1000) mod 1000
+  End;
+
+BEGIN
+  noupdate;
+  setup;
+  blank(white);
+  draw(true);
+  repeat
+    noupdate;
+    draw(false);
+    for n := 1 to molecules do
+      move(n);
+    px := px + pxvel / speedratio;
+    py := py + pyvel / speedratio;
+    draw(true);
+    update;
+    pause(delay)
+  until (abs(px - 500) > 490) or (abs(py - 500) > 480)
+END.

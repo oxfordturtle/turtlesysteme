@@ -1,0 +1,48 @@
+Use arrays:
+-----------
+- Automata
+- BarnsleyColour
+- BarnsleyIFS
+- BrownianMotion
+- Cheetahs
+- Diffusion
+- DragonColour
+- DragonIFS
+- FiveTurtles
+- Flocking
+- Interference
+- IteratedPD
+- KnightsTour
+- MandelbrotMiniSpectrum
+- MandelbrotSpectrum
+- Nim
+- NoughtsAndCrosses
+- Quine
+- SexRatio
+- SierpinskiColour
+- SierpinskiDots
+- SierpinskiIFS
+- SolarSystem
+- TreeIFS
+- TwoSlits
+- WaveSuperposer
+
+Use reference parameters:
+-------------------------
+- MultiBounce (can be rewritten not to use them in Python?)
+- RefParams
+
+To do:
+------
+- AimCannon
+- AutoCannon
+- Disease
+- GameOfLife
+- IFSBackground
+- Launch
+- LifeStart
+- Logistic
+- LogisticSpider
+- Mandelbrot
+- MandelbrotMini
+- Sierpinski

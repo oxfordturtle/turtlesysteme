@@ -1,0 +1,11 @@
+REM ForLoop
+
+FOR count% = 1 TO 200
+  FORWARD(count% DIV 3)
+  RIGHT(5)
+  COLOUR(RED)
+  BLOT(200)
+  COLOUR(BLACK)
+  CIRCLE(200)
+NEXT
+END

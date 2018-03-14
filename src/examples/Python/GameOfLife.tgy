@@ -1,0 +1,24 @@
+# GameOfLife
+
+def main():
+  width = 32
+  height = 32
+  canvas(0, 0, width, height)
+  resolution(width, height)
+  for x in range(0, width, 1):
+    for y in range(0, height, 1):
+      if randint(0, 6) == 0:
+        pixset(x, y, black)
+  while ?key != \escape:
+    for x in range(0, width, 1):
+      for y in range(0, height, 1):
+        dn = 0
+        for i in range(-1, 2, 1):
+          for j in range(-1, 2, 1):
+            dn = dn + pixcol((x + i + width) % width, (y + j + height) % height) and 1
+        if ((pixcol(x, y) and 1 == 0) and ((dn < 5) or (dn > 6))) or ((pixcol(x, y) and 1 == 1) and (dn == 6)):
+          pixset(x, y, pixcol(x, y) xor 2)
+    for x in range(0, width + 1, 1):
+      for y in range(0, height + 1, 1):
+        if (pixcol(x, y) and 3) % 3 != 0:
+          pixset(x, y, pixcol(x, y) xor 0xFFFFFD)

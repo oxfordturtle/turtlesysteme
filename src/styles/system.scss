@@ -1,0 +1,54 @@
+@import 'constants';
+
+// basic settings (used by modal overlay as well as main system)
+.tsx {
+  box-sizing: border-box;
+  font-family: $font-family;
+  font-size: $font-size;
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  input, select, button {
+    font: inherit;
+    height: 2em;
+    padding: $padding;
+  }
+  input, select {
+    border: $border;
+  }
+  button {
+    background: $green;
+    border: 0;
+    padding: $padding ($padding * 2);
+    cursor: pointer;
+    color: #fff;
+    text-align: center;
+    transition: background .3s;
+    &:hover {
+      background: darken($green, 10%);
+    }
+  }
+}
+
+.tsx-system {
+  display: flex;
+  background: $black;
+  line-height: 1;
+}
+
+// custom additions for the browser
+.tsx-browser .tsx-system {
+  height: $system-height;
+  max-width: $system-width;
+  margin: 0 auto;
+}
+
+// custom additions for electron
+.tsx-electron, .tsx-electron body {
+  margin: 0;
+  height: 100%;
+}
+
+.tsx-electron .tsx-system {
+  height: 100%;
+}

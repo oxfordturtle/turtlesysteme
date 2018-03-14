@@ -1,0 +1,25 @@
+REM Stars
+
+PENUP
+FOR n% = 3 TO 12
+  PROCstar(n%, RGB(n% - 2))
+  PAUSE(500)
+NEXT
+END
+
+DEF PROCstar(points%, col%)
+  LOCAL count%
+  ANGLES(points% * 2)
+  FOR count% = 1 TO points%
+    FORWARD(450)
+    BACK(450)
+    FORGET(1)
+    RIGHT(1)
+    FORWARD(200)
+    BACK(200)
+    FORGET(1)
+    RIGHT(1)
+  NEXT
+  COLOUR(col%)
+  POLYGON(points% * 2)
+ENDPROC

@@ -1,0 +1,93 @@
+# AimCannon
+
+def graphaxes():
+  global distancecol, timecol
+  thickness(5)
+  setxy(9700, 600)
+  drawxy(0, 3900)
+  drawxy(-9000, 0) # x axis 700 to 9700
+  drawxy(0, -3900) # y axis 4500 to 600
+  for n in range(0, 91, 1):
+    if n mod 5 == 0:
+      setxy(650 + n * 100, 4600)
+      print(str(n), 2, 16)
+  for n in range(0, 10, 1):
+    setxy(100, 4350 - n * 400)
+    print(str(n * 1000), 2, 16)
+  for n in range(0, 10, 1):
+    setxy(9900, 4380 - n * 400)
+    print(str(n * 20), 2, 16)
+  setxy(4000, 4900)
+  print('Angle of elevation', 2, 24)
+  colour(distancecol)
+  setxy(0, 100)
+  print('Distance', 2, 24)
+  colour(timecol)
+  setxy(9600, 100)
+  print('Time', 2, 24)
+
+def plot(x, y, col):
+  setxy(700 + x * 100, 4500 - y * 2 / 5)
+  colour(col)
+  blot(40)
+
+def aim():
+  global gunlength
+  while (pixcol(?mousex, ?mousey) != red):
+    noupdate()
+    setxy(0, 10000)
+    colour(cream)
+    blot(1600)
+    colour(yellowgreen)
+    blot(1400)
+    colour(maroon)
+    setxy(250, 9750)
+    blot(250)
+    forward(gunlength)
+    setxy(250, 9750)
+    colour(red)
+    blot(100)
+    update()
+    while (?lmouse <= 0):
+      pass
+    if (pixcol(?mousex, ?mousey) == cream):
+      turnxy(?mousex - 250, ?mousey - 9750)
+
+def fire(xvel, yvel, gravity, floor):
+  global turtx, turty, steps
+  setxy(250, 9750)
+  steps = 0
+  while (turty != floor):
+    inc(steps)
+    if (pixcol(turtx, turty) == black):
+      colour(white)
+      blot(80)
+    movexy(xvel, yvel)
+    yvel = yvel + gravity
+    if (turty > floor):
+      turty = floor
+    if ((pixcol(turtx, turty) == white) or (turty == floor)):
+      colour(black)
+      blot(75)
+    update()
+    pause(10)
+    noupdate()
+
+def main():
+  global turtx, turty, turtd
+  gunlength = 1000
+  distancecol = green
+  timecol = red
+  steps = 0
+  canvas(0, 0, 10500, 10000)
+  graphaxes()
+  turtd = 45
+  thickness(20)
+  while (1 == 1):
+    aim()
+    write('Elevation: ' + str(90 - turtd))
+    fire(cos(90 - turtd, 1, 96), sin(90 - turtd, 1, -96), 1, 9950)
+    write('  Distance: ' + str(turtx))
+    writeline('  Time: ' + str(steps))
+    plot(90 - turtd, turtx, distancecol)
+    plot(90 - turtd, steps * 50, timecol)

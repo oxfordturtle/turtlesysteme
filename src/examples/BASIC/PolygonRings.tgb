@@ -1,0 +1,27 @@
+REM PolygonRings
+
+PENUP
+BLOT(500)
+RNDCOL(6)
+PROCannulus(410, 80, 2)
+PROCannulus(310, 80, 3)
+PROCannulus(210, 80, 5)
+PROCannulus(110, 80, 7)
+PROCannulus(10, 80, 1)
+END
+
+DEF PROCannulus(inner%, width%, angle%)
+  LOCAL count%
+  FOR count% = 0 TO 360 DIV angle%
+    FORWARD(inner% + width%)
+    BACK(width%)
+    BACK(inner%)
+    FORGET(1)
+    RIGHT(angle%)
+    FORWARD(inner%)
+    FORWARD(width%)
+    COLOUR(RGB(count% MOD 20 + 1))
+    POLYGON(4)
+    BACK(inner% + width%)
+  NEXT
+ENDPROC

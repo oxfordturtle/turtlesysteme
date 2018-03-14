@@ -1,0 +1,30 @@
+@import 'constants';
+
+//@font-face {
+//  font-family: FontAwesome;
+//  src: url('../../assets/fontawesome.woff');
+//}
+
+.tjs-icon:before {
+  font-family: FontAwesome;
+}
+
+.tjs-play:before {
+  content: $play-icon;
+}
+
+.tjs-pause:before {
+  content: $pause-icon;
+}
+
+.tjs-direction:before {
+  content: $direction-icon;
+}
+
+.tjs-thickness:before {
+  content: $thickness-icon;
+}
+
+.tjs-colour:before {
+  content: $colour-icon;
+}

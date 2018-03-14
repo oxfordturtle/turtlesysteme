@@ -1,0 +1,20 @@
+PROGRAM SierpinskiDots;
+VAR x: array[0..2] of integer;
+    y: array[0..2] of integer;
+    thisx, thisy, thisc: integer;
+BEGIN
+  x[0] := 400;
+  y[0] := 138;
+  x[1] := 843;
+  y[1] := 650;
+  x[2] := 179;
+  y[2] := 778;
+  thisx := random(200) + 400;
+  thisy := random(200) + 400;
+  repeat
+    thisc := random(3);
+    thisx := (thisx + x[thisc]) / 2;
+    thisy := (thisy + y[thisc]) / 2;
+    pixset(thisx, thisy, purple)
+  until 0 = 1
+END.

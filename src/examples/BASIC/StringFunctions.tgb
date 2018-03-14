@@ -1,0 +1,39 @@
+REM StringFunctions
+
+DELAY% = 500
+OUTPUT(TRUE, CREAM, TRUE)
+s1$ = "Turtle BASIC"
+s2$ = MID$(s1$, 1, 6)
+WRITELN(s2$ + " is the name of a small animal.")
+PAUSE(DELAY%)
+s3$ = MID$(s1$, 8, 5)
+WRITELN(s3$ + " was invented in the 1960s.")
+PAUSE(DELAY%)
+s4$ = INS$(s3$, 2, "BC B")
+WRITELN("\"" + s4$ + "\"" is the name of a 1980s variant.")
+PAUSE(DELAY%)
+WRITELN("'" + s1$ + "' has " + STR$(LEN(s1$)) + " characters.")
+PAUSE(DELAY%)
+WRITELN("In lower case it is '" + LCASE$(s1$) + "'.")
+WRITELN("In upper case it is '" + UCASE$(s1$) + "'.")
+PAUSE(DELAY%)
+posn% = INSTR(s1$, s3$)
+IF posn% > 0 THEN
+  WRITELN("'" + s3$ + "' occurs within '" + s1$ + "' at position " + STR$(posn%) + ".")
+ENDIF
+PAUSE(DELAY%)
+s5$ = "3.14159"
+WRITELN(s5$ + " times 100000 = " + STR$(QVAL(s5$, 100000, -1)) + ".")
+n% = QVAL(s5$, 100000, -1)
+PAUSE(DELAY%)
+WRITELN(STR$(n%) + " divided by 100000 = " + QSTR$(n%, 100000, 5) + ".")
+WRITELN("")
+PAUSE(DELAY% * 5)
+WRITELN("Now back to the Canvas and Console ...")
+OUTPUT(FALSE, PEACH, TRUE)
+PAUSE(DELAY% * 5)
+OUTPUT(FALSE, LIGHTRED, FALSE)
+PAUSE(DELAY% * 5)
+CONSOLE(TRUE, LIGHTBLUE)
+WRITELN("You will see this on a clear light blue Console")
+END

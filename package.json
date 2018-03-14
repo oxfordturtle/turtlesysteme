@@ -1,0 +1,40 @@
+{
+  "name": "turtlesystemx",
+  "productName": "Turtle System X",
+  "version": "1.0.0",
+  "description": "A cross platform version of the Oxford Turtle System",
+  "author": "Amyas Merivale",
+  "license": "MIT",
+  "main": "src/main.js",
+  "scripts": {
+    "build-browser": "webpack --config webpack.browser.js --mode production",
+    "build-electron": "webpack --config webpack.electron.js --mode production && electron-builder --windows",
+    "dev-browser": "webpack-dev-server --config webpack.browser.js --mode development --open",
+    "dev-electron": "concurrently --kill-others \"webpack-dev-server --config webpack.electron.js --mode development\" \"electron .\""
+  },
+  "devDependencies": {
+    "concurrently": "^3.5.1",
+    "css-loader": "^0.28.10",
+    "electron": "^1.8.3",
+    "json-loader": "^0.5.7",
+    "node-sass": "^4.7.2",
+    "raw-loader": "^0.5.1",
+    "sass-loader": "^6.0.7",
+    "style-loader": "^0.20.2",
+    "webpack": "^4.1.1",
+    "webpack-cli": "^2.0.10",
+    "webpack-dev-server": "^3.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/oxfordturtle/turtlesystemx"
+  },
+  "keywords": [
+    "turtle",
+    "programming",
+    "education"
+  ],
+  "dependencies": {
+    "npm": "^5.7.1"
+  }
+}

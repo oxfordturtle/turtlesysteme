@@ -1,0 +1,14 @@
+PROGRAM LifeStart;
+CONST width = 32;
+      height = 32;
+VAR x, y: integer;
+BEGIN
+  canvas(0, 0, width, height);
+  resolution(width, height);
+  for x := 0 to width - 1 do
+    for y := 0 to height - 1 do
+      if random(7) = 0 then
+        pixset(x, y, black)
+      else
+        pixset(x, y, white)
+END.

@@ -1,0 +1,10 @@
+@import 'constants';
+
+.tsx-console {
+  border: 1px solid silver;
+  margin: $padding 0 0;
+  padding: $padding;
+  font-family: $monospace;
+  flex: 1;
+  overflow: auto;
+}

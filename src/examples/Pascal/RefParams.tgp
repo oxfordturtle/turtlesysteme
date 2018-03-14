@@ -1,0 +1,34 @@
+PROGRAM RefParams;
+
+  Procedure lines(var style: integer; convert: boolean);
+  Var count: integer;
+  Begin
+    for count := 1 to 8 do
+      begin
+        if convert then
+          style := rgb(count)
+        else
+          style := count;
+        forward(50);
+        pause(100)
+      end
+  End;
+
+  Procedure dots(var coord: integer);
+  Var count: integer;
+  Begin
+    for count := 1 to 8 do
+      begin
+        coord := coord + 100;
+        blot(40);
+        pause(100)
+      end
+  End;
+
+BEGIN
+  setxy(100, 900);
+  lines(turtt, false);
+  lines(turtc, true);
+  dots(turtx);
+  dots(turty)
+END.

@@ -1,0 +1,142 @@
+@import 'constants';
+
+// base settings
+.tsx-tabs {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  &>.tsx-tab-list {
+    display: flex;
+    .tsx-tab {
+      display: block;
+      cursor: pointer;
+      &.active:hover {
+        cursor: default;
+      }
+    }
+  }
+  &>.tsx-tab-panes {
+    flex: 1;
+    display: flex;
+    padding: $padding;
+    .tsx-tab-pane {
+      display: none;
+      flex: 1;
+      flex-direction: column;
+      &.active {
+        display: flex;
+      }
+      &#Machine {
+        flex-basis: $canvas-width + ($padding * 2) + 2;
+        flex-grow: 0;
+      }
+    }
+  }
+}
+
+// styles for the system tabs and tab panes
+.tsx-system-tabs {
+  &>.tsx-tab-list {
+    .tsx-tab {
+      background: $gray;
+      color: $black;
+      padding: .625em .75em;
+      margin-right: .2em;
+      transform: translateY(.125em);
+      transition: transform linear .1s;
+      &:hover, &.active {
+        transform: translateY(0);
+      }
+      &.active {
+        background: #fff;
+      }
+    }
+  }
+  &>.tsx-tab-panes {
+    background: #fff;
+    z-index: 2;
+  }
+}
+
+// styles for the help tabs and tab panes
+.tsx-help-tabs {
+  flex-direction: row;
+  &>.tsx-tab-list {
+    flex-direction: column;
+    .tsx-tab {
+      color: #fff;
+      padding: .75em .5em;
+      min-width: 8em;
+      &:hover {
+        background: lighten($black, 20%);
+      }
+      &.active {
+        color: $black;
+        background: #fff;
+      }
+    }
+  }
+  &>.tsx-tab-panes {
+    background: #fff;
+    padding: ($padding * 2) ($padding * 4);
+    .tsx-tab-pane {
+      margin: 0 auto;
+      max-width: 600px;
+      line-height: 1.5;
+      h3 {
+        margin: 0 0 .75em;
+        font-size: 1em;
+      }
+      p {
+        margin: 0 0 .75em;
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}
+
+// base styles for the top tabs and tab panes
+.tsx-top-tabs {
+  &>.tsx-tab-list {
+    .tsx-tab {
+      flex: 1;
+      padding: 1em;
+      background: lighten($black, 20%);
+      color: #fff;
+      &:hover {
+        background: lighten($black, 10%);
+      }
+      &.active {
+        background: $black;
+      }
+    }
+  }
+  &>.tsx-tab-panes {
+    padding: $padding;
+  }
+}
+
+@media (min-width: 1024px) {
+  .tsx-top-tabs {
+    &>.tsx-tab-list {
+      display: none;
+    }
+    &>.tsx-tab-panes {
+      &>.tsx-tab-pane {
+        display: flex;
+        &:first-child {
+          margin-right: $padding;
+        }
+      }
+    }
+  }
+}
+
+// modifications for electron
+.tsx-electron .tsx-help-tabs {
+  &>.tsx-tab-panes {
+    overflow: auto;
+  }
+}

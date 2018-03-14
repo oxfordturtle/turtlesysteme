@@ -1,0 +1,268 @@
+PROGRAM Cheetahs;
+CONST maxanimals = 500;
+      mingazelles = 10;
+      startcheetahs = 50;
+      startgazelles = 50;
+      maxspeed = 1000;
+      startslow = 30;
+      startfast = 70;
+      randmarginc = 10;
+      randmarging = 10;
+      huntingtries = 100;
+      catchmargin = 5;
+      cfoodadd = 40;
+      cbreedfood = 10;
+      cmatingratio = 2;
+      gmatingratio = 1;
+      chuntingratio = 1;
+      slowage = 100; {speed starts declining}
+      agefactor = 0;
+      graphleft = 60;
+      graphwidth = 900;
+      graphheight = 400;
+      cgraphbase = 450;
+      ggraphbase = 950;
+      ymax = 20;
+VAR gen, cnum, gnum: integer;
+    cspeed, gspeed, cgenspeed, ggenspeed, cage, gage, cfood: array[1..maxanimals] of integer;
+    cspeednum, gspeednum: array[0..maxspeed] of integer;
+
+  Procedure setup;
+  Var n: integer;
+  Begin
+    for n := 0 to maxspeed do
+      begin
+        cspeednum[n] := 0;
+        gspeednum[n] := 0
+      end;
+    cnum := startcheetahs;
+    gnum := startgazelles;
+    for n := 1 to cnum do
+      begin
+        cgenspeed[n] := random(startfast + 1 - startslow) + startslow;
+        cspeed[n] := cgenspeed[n];
+        cage[n] := random(slowage);
+        cfood[n] := random(cfoodadd) + 1;
+        inc(cspeednum[cspeed[n]])
+      end;
+    for n := cnum + 1 to maxanimals do
+      cspeed[n] := 0; {i.e. not alive}
+    for n := 1 to gnum do
+      begin
+        ggenspeed[n] := random(startfast + 1 - startslow) + startslow;
+        gspeed[n] := ggenspeed[n];
+        gage[n] := random(slowage);
+        inc(gspeednum[gspeed[n]])
+      end;
+    for n := gnum + 1 to maxanimals do
+      gspeed[n] := 0 {i.e. not alive}
+  End;
+
+  Procedure axes(graphbase: integer);
+  Var n: integer;
+      scale: integer;
+  Begin
+    colour(black);
+    setxy(graphleft, graphbase - graphheight);
+    drawxy(0, graphheight);
+    drawxy(graphwidth, 0);
+    for n := 0 to 10 do
+      begin
+        setxy(20, graphbase - n * graphheight / 10 - 19);
+        print(str(n * ymax / 10), 0, 20)
+      end;
+    for n := 1 to 10 do
+      begin
+        setxy(graphleft + n * graphwidth / 10 - 20, graphbase);
+        print(str(n * maxspeed / 10), 0, 20)
+      end
+  End;
+
+  Procedure graph;
+  Var n, ctotal, gtotal: integer;
+  Begin
+    noupdate;
+    blank(white);
+    axes(450);
+    axes(950);
+    setxy(200, 20);
+    colour(red);
+    print('Speed Distribution of Cheetahs', 4, 25);
+    setxy(750, 20);
+    print(str(cnum), 4, 25);
+    ctotal := 0;
+    for n := 1 to maxspeed do
+      begin
+        setxy(graphleft + n * graphwidth / maxspeed, 450);
+        drawxy(0, -graphheight * cspeednum[n] / ymax);
+        ctotal := ctotal + n * cspeednum[n]
+      end;
+    setxy(200, 520);
+    colour(green);
+    print('Speed Distribution of Gazelles', 4, 25);
+    setxy(750, 520);
+    print(str(gnum), 4, 25);
+    gtotal := 0;
+    for n := 1 to maxspeed do
+      begin
+        setxy(graphleft + n * graphwidth / maxspeed, 950);
+        drawxy(0, -graphheight * gspeednum[n] / ymax);
+        gtotal := gtotal + n * gspeednum[n]
+      end;
+    setxy(850, 20);
+    if cnum < 1 then
+      begin
+        setxy(150, 200);
+        colour(magenta);
+        print('All Cheetahs Have Died', 4, 50);
+        halt
+      end;
+    print(qstr(ctotal, cnum, 2), 4, 25);
+    setxy(850, 520);
+    print(qstr(gtotal, gnum, 2), 4, 25);
+    update;
+    write(str(gen));
+    write(' - c=');
+    write(str(cnum));
+    write(' (av=');
+    write(qstr(ctotal, cnum, 2));
+    writeln(')');
+    update;
+    noupdate;
+    write('     g=');
+    write(str(gnum));
+    write(' (av=');
+    write(qstr(gtotal, gnum, 2));
+    writeln(')')
+  End;
+
+  Procedure deadcheetah(c: integer);
+  Begin
+    dec(cspeednum[cspeed[c]]);
+    cspeed[c] := 0;
+    dec(cnum)
+  End;
+
+  Procedure deadgazelle(g: integer);
+  Begin
+    dec(gspeednum[gspeed[g]]);
+    gspeed[g] := 0;
+    dec(gnum)
+  End;
+
+  Procedure babycheetah(speed: integer);
+  Var b: integer;
+  Begin
+    b := 0;
+    repeat
+      inc(b)
+    until (cspeed[b] = 0) or (b = maxanimals); {find empty space}
+    if cspeed[b] = 0 then
+      begin
+        inc(cnum);
+        cgenspeed[b] := speed + random(2 * randmarginc + 1) - randmarginc;
+        cgenspeed[b] := max(1, min(maxspeed, cgenspeed[b]));
+        cspeed[b] := cgenspeed[b];
+        cage[b] := 0;
+        cfood[b] := cfoodadd;
+        inc(cspeednum[cspeed[b]])
+      end
+  End;
+
+  Procedure babygazelle(speed: integer);
+  Var b: integer;
+  Begin
+    b := 0;
+    repeat
+      inc(b)
+    until (gspeed[b] = 0) or (b = maxanimals); {find empty space}
+    if gspeed[b] = 0 then
+      begin
+        inc(gnum);
+        ggenspeed[b] := speed + random(2 * randmarging + 1) - randmarging;
+        ggenspeed[b] := max(1, min(maxspeed, ggenspeed[b]));
+        gspeed[b] := ggenspeed[b];
+        gage[b] := 0;
+        inc(gspeednum[gspeed[b]])
+      end
+  End;
+
+  Procedure generation;
+  Var n: integer;
+      c, g, s, b: integer;
+      tries: integer;
+  Begin
+    for c := 1 to cnum / chuntingratio do {cheetahs hunt gazelles}
+      begin
+        c := random(maxanimals) + 1;
+        if (cspeed[c] > 0) and (gnum > mingazelles) then
+          begin
+            tries := 0;
+            repeat
+              inc(tries);
+              g := random(maxanimals) + 1
+            until (gspeed[g] > 0) or (tries = huntingtries);
+            if (gspeed[g] > 0) and (cspeed[c] >= gspeed[g] + catchmargin) then
+              begin
+                deadgazelle(g);
+                cfood[c] := cfood[c] + cfoodadd
+              end
+          end
+      end;
+    for n := 1 to cnum / cmatingratio do {cheetahs try mating}
+      begin
+        c := random(maxanimals) + 1;
+        if (cnum < maxanimals) and (cspeed[c] > 0) and (cfood[c] >= cbreedfood) then
+          begin
+            babycheetah(cgenspeed[c]);
+            cfood[c] := cfood[c] - cbreedfood
+          end
+      end;
+    for n := 1 to gnum / gmatingratio do {gazelles try mating}
+      begin
+        g := random(maxanimals) + 1;
+        if (gnum < maxanimals) and (gspeed[g] > 0) then
+          babygazelle(ggenspeed[g])
+      end;
+    for n := 1 to maxanimals do
+      begin
+        if cspeed[n] > 0 then {live cheetah}
+          begin
+            inc(cage[n]);
+            if cage[n] > slowage then
+              begin
+                dec(cspeednum[cspeed[n]]);
+                cspeed[n] := cspeed[n] * agefactor / 100;
+                inc(cspeednum[cspeed[n]]);
+                if cspeed[n] = 0 then
+                  deadcheetah(n)
+              end;
+            dec(cfood[n]);
+            if cfood[n] < 0 then
+              deadcheetah(n)
+          end;
+        if gspeed[n] > 0 then {live gazelle}
+          begin
+            inc(gage[n]);
+            if gage[n] > slowage then
+              begin
+               dec(gspeednum[gspeed[n]]);
+               gspeed[n] := gspeed[n] * agefactor / 100;
+               inc(gspeednum[gspeed[n]]);
+               if gspeed[n] = 0 then
+                 deadgazelle(n)
+              end
+          end
+      end
+  End;
+
+BEGIN
+  setup;
+  graph;
+  gen := 0;
+  repeat
+    inc(gen);
+    generation;
+    graph
+  until 0 = 1
+END.

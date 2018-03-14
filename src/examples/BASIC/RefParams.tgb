@@ -1,0 +1,30 @@
+REM RefParams
+
+SETXY(100, 900)
+PROClines(TURTT%, FALSE)
+PROClines(TURTC%, TRUE)
+PROCdots(TURTX%)
+PROCdots(TURTY%)
+END
+
+DEF PROClines(RETURN style%, convert%)
+  LOCAL count%
+  FOR count% = 1 TO 8
+    IF convert% THEN
+      style% = RGB(count%)
+    ELSE
+      style% = count%
+    ENDIF
+    FORWARD(50)
+    PAUSE(100)
+  NEXT
+ENDPROC
+
+DEF PROCdots(RETURN coord%)
+  LOCAL count%
+  FOR count% = 1 TO 8
+    coord% = coord% + 100
+    BLOT(40)
+    PAUSE(100)
+  NEXT
+ENDPROC
