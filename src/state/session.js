@@ -2,14 +2,12 @@
  * getters and setters for system-wide state variables (saved to the browser session for
  * consistency across different pages)
  */
-const { LANGUAGES } = require('./constants');
-const error = require('./error');
-const BASIC = require('../examples/basic');
-const Pascal = require('../examples/pascal');
-const Python = require('../examples/python');
+const { examples, languages } = require('data');
+const programs = require('programs');
 
-// record of examples
-const examples = { BASIC, Pascal, Python };
+// create error objects
+const error = (id, message) =>
+  ({ type: 'System', id, message });
 
 // type checker (used for validating input)
 const type = input =>
@@ -28,13 +26,13 @@ const language = {
   get: () => get('language'),
   set: (value) => {
     if (type(value) === 'String') {
-      if (LANGUAGES.indexOf(value) > -1) {
+      if (languages.indexOf(value) > -1) {
         set('language', value);
         return;
       }
-      throw error('System', 'set-lang-01', `'${value}' is not a valid language`);
+      throw error('set-lang-01', `'${value}' is not a valid language`);
     }
-    throw error('System', 'set-lang-02', `language must be a string; ${type(value)} received`);
+    throw error('set-lang-02', `language must be a string; ${type(value)} received`);
   }
 };
 
@@ -46,7 +44,7 @@ const name = {
       set(`name-${language}`, value);
       return;
     }
-    throw error('System', 'set-name-01', `file name must be a string; ${type(value)} received`);
+    throw error('set-name-01', `file name must be a string; ${type(value)} received`);
   }
 };
 
@@ -57,7 +55,7 @@ const compiled = {
       set(`compiled-${language}`, value);
       return;
     }
-    throw error('System', 'set-compiled-01', `compiled must be a boolean; ${type(value)} received`);
+    throw error('set-compiled-01', `compiled must be a boolean; ${type(value)} received`);
   }
 };
 
@@ -68,7 +66,7 @@ const code = {
       set(`code-${language}`, value);
       return;
     }
-    throw error('System', 'set-code-01', `program code must be a string; ${type(value)} received`);
+    throw error('set-code-01', `program code must be a string; ${type(value)} received`);
   }
 };
 
@@ -79,7 +77,7 @@ const usage = {
       set(`usage-${language}`, value);
       return;
     }
-    throw error('System', 'set-usage-01', `program usage must be an array; ${type(value)} received`);
+    throw error('set-usage-01', `program usage must be an array; ${type(value)} received`);
   }
 };
 
@@ -90,7 +88,7 @@ const pcode = {
       set(`pcode-${language}`, value);
       return;
     }
-    throw error('System', 'set-pcode-01', `program pcode must be an array; ${type(value)} received`);
+    throw error('set-pcode-01', `program pcode must be an array; ${type(value)} received`);
   }
 };
 
@@ -145,21 +143,20 @@ const file = {
             && usage.set(data.usage, data.language)
             && pcode.set(data.pcode, data.language);
         } catch (ignore) {
-          throw error('System', 'set-file-01', 'file content must be valid JSON');
+          throw error('set-file-01', 'file content must be valid JSON');
         }
       default:
-        throw error('System', 'set-file-02', 'incorrect file type');
-        return false;
+        throw error('set-file-02', 'incorrect file type');
     }
   }
 };
 
 const example = {
   set: (id) => {
-    LANGUAGES.forEach((language) => {
-      name.set(id, language);
+    languages.forEach((language) => {
+      name.set(examples.names[id], language);
       compiled.set(false, language);
-      code.set(examples[language][id].trim(), language);
+      code.set(programs[language][id].trim(), language);
       usage.set([], language);
       pcode.set([], language);
     });
@@ -277,12 +274,12 @@ const advanced = {
 
 // setup initial defaults if they haven't been initialised yet
 set('language', get('language') || 'Pascal');
-LANGUAGES.forEach((lang) => {
-  set(`name-${lang}`, get(`name-${lang}`) || '');
-  set(`compiled-${lang}`, get(`compiled-${lang}`) || false);
-  set(`code-${lang}`, get(`code-${lang}`) || '');
-  set(`usage-${lang}`, get(`usage-${lang}`) || []);
-  set(`pcode-${lang}`, get(`pcode-${lang}`) || []);
+languages.forEach((language) => {
+  set(`name-${language}`, get(`name-${language}`) || '');
+  set(`compiled-${language}`, get(`compiled-${language}`) || false);
+  set(`code-${language}`, get(`code-${language}`) || '');
+  set(`usage-${language}`, get(`usage-${language}`) || []);
+  set(`pcode-${language}`, get(`pcode-${language}`) || []);
 });
 set('assembler', get('assembler') || true);
 set('decimal', get('decimal') || true);

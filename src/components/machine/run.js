@@ -5,6 +5,14 @@ const console = require('./console');
 const output = require('./output');
 const memory = require('./memory');
 
+const updateTurtleDisplay = (address, value) => {
+  const turtleAddress = memory.main[0];
+  const property = address - turtleAddress;
+  if (property > 0 && property <= 5) {
+    // TODO: update turtle property display
+  }
+};
+
 // current machine status
 const status = {
   running: false,
@@ -597,8 +605,10 @@ const executeCode = (pcode, startLine, startCode, options) => {
         code += 2;
         break;
       case pc.stvg:
-        a = memory.pop();
-        memory.setAddress(pcode[line][code + 1], a);
+        a = pcode[line][code + 1];
+        b = memory.pop();
+        memory.setAddress(a, b);
+        updateTurtleDisplay(a, b);
         code += 1;
         break;
       case pc.stvv:
@@ -611,8 +621,10 @@ const executeCode = (pcode, startLine, startCode, options) => {
       case pc.stvr:
         a = pcode[line][code + 1];
         b = pcode[line][code + 2];
-        c = memory.pop();
-        memory.setAddress(memory.getPointer(a + 9, b), c);
+        c = memory.getPointer(a + 9, b);
+        d = memory.pop();
+        memory.setAddress(c, d);
+        updateTurtleDisplay(c, d);
         code += 2;
         break;
       case pc.star:
@@ -630,6 +642,7 @@ const executeCode = (pcode, startLine, startCode, options) => {
         a = pcode[line][code + 1];
         b = memory.pop();
         memory.setAddress(a + 9, b);
+        updateTurtleDisplay(a + 9, b);
         code += 1;
         break;
       // 0x7 - pointer handling
@@ -641,6 +654,7 @@ const executeCode = (pcode, startLine, startCode, options) => {
         b = memory.pop();
         a = memory.pop();
         memory.setAddress(b, a);
+        updateTurtleDisplay(b, a);
         break;
       case pc.cptr:
         c = memory.pop(); // length
@@ -715,6 +729,7 @@ const executeCode = (pcode, startLine, startCode, options) => {
         }
         memory.push(memory.getAddress(a + 9), 'memory');
         memory.setAddress(a + 9, c);
+        updateTurtleDisplay(a + 9, c);
         memory.push(c + b, 'memory');
         code += 2;
         break;
@@ -724,6 +739,7 @@ const executeCode = (pcode, startLine, startCode, options) => {
         b = memory.pop('memory');
         memory.push(memory.getAddress(a + 9), 'memory');
         memory.setAddress(a + 9, b);
+        updateTurtleDisplay(a + 9, b);
         code += 2;
         break;
       case pc.hfix:

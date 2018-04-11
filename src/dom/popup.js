@@ -1,8 +1,8 @@
 /**
  * create a modal popup for displaying error messages
  */
+require('styles/popup.scss');
 const create = require('./create');
-require ('../styles/popup.scss');
 
 const title = create('h2')
 
@@ -12,34 +12,43 @@ const button = create('button', {
   content: 'OK',
   on: [{ type: 'click', callback: () => {
     popup.classList.remove('open');
-  } }]
+  } }],
 });
 
-const buttons = create('div', { classes: ['buttons'], content: [button] });
+const buttons = create('div', {
+  classes: ['buttons'],
+  content: [button],
+});
 
 const modal = create('div', {
   classes: ['tsx-modal'],
   content: [
     create('div', {
       classes: ['tsx-modal-head'],
-      content: [title]
+      content: [title],
     }),
     create('div', {
       classes: ['tsx-modal-body'],
-      content: [message, buttons]
+      content: [message, buttons],
     }),
   ],
 });
 
-const popup = create('div', {
-  classes: ['tsx', 'tsx-popup'],
+const overlay = create('div', {
+  classes: ['tsx', 'tsx-modal-overlay'],
   content: [modal],
 });
 
 const show = (error) => {
   title.innerHTML = `${error.type} Error`;
   message.innerHTML = error.message;
-  popup.classList.add('open');
+  if (error.text && error.line) {
+    message.innerHTML += ` ('${error.text}', line ${error.line})`;
+  }
+  overlay.classList.add('open');
 };
 
-module.exports = { popup, show };
+module.exports = {
+  overlay,
+  show,
+};

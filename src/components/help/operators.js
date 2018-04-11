@@ -1,7 +1,6 @@
-const create = require('../../dom/create');
-const highlight = require('../../languages/highlight');
-const session = require('../../state/session');
-const signals = require('../../state/signals');
+const { create } = require('dom');
+const { highlight } = require('compiler');
+const state = require('state');
 
 const BASIC = [
   create('h3', { content: 'Arithmetical Operators' }),
@@ -171,9 +170,7 @@ const refresh = (language) => {
   text[language].forEach(x => operators.appendChild(x));
 };
 
-// load the text for the current language, and subscribe to keep it in sync
-refresh(session.language.get());
-signals.on('language-changed', refresh);
+refresh(state.getLanguage());
+state.on('language-changed', refresh);
 
-// export the div
 module.exports = operators;

@@ -1,10 +1,10 @@
-/* eslint no-bitwise: 0 */
-const create = require('../../dom/create');
-const hex = require('../../dom/hex');
-const cursors = require('./constants/cursors');
-const fonts = require('./constants/fonts');
+/**
+ * the virtual turtle machine canvas
+ */
+require('styles/canvas.scss');
+const { create, hex } = require('dom');
+const { cursors, fonts } = require('data');
 const memory = require('./memory');
-require('../../styles/canvas.scss');
 
 // the canvas and drawing context
 const canvas = create('canvas', { classes: ['tsx-canvas'], width: 500, height: 500 });
@@ -19,11 +19,6 @@ const vcanvas = {
   sizey: 1000,
   degrees: 360,
   doubled: false,
-};
-
-// show the canvas
-const show = () => {
-  canvas.click(); // nonsense; how am I going to do this?
 };
 
 // convert x to virtual canvas coordinate
@@ -434,7 +429,6 @@ const fill = (x, y, colour, boundaryColour) =>
 
 module.exports = {
   canvas,
-  show,
   addEventListeners,
   removeEventListeners,
   getDimensions,

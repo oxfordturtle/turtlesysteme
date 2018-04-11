@@ -1,11 +1,10 @@
 /**
  * the code editor component
  */
-const create = require('../../dom/create');
-const highlight = require('../../languages/highlight');
-const session = require('../../state/session');
-const signals = require('../../state/signals');
-require('../../styles/code.scss');
+require('styles/code.scss');
+const { create } = require('dom');
+const { highlight } = require('compiler');
+const state = require('state');
 
 // define the main HTML elements for this component
 const ol = create('ol'); // for line numbers
@@ -30,7 +29,7 @@ const textarea = create('textarea', { // for the plain text input by the user
           const right = e.currentTarget.value.slice(pos);
           e.preventDefault();
           e.currentTarget.value = [left, right].join('  ');
-          signals.send('set-code', e.currentTarget.value);
+          state.send('set-code', e.currentTarget.value);
           e.currentTarget.selectionStart = pos + 2;
           e.currentTarget.selectionEnd = pos + 2;
         }
@@ -38,7 +37,7 @@ const textarea = create('textarea', { // for the plain text input by the user
     },
     { // send 'set-code' signal on input
       type: 'input',
-      callback: (e) => { signals.send('set-code', e.currentTarget.value); }
+      callback: (e) => { state.send('set-code', e.currentTarget.value); }
     }
   ]
 });
@@ -51,7 +50,7 @@ const refreshTextarea = (text) => {
 };
 
 // function to synchronise the component with the application state
-const refresh = (text, language = session.language.get()) => {
+const refresh = (text, language = state.getLanguage()) => {
   const lines = text.split('\n');
   ol.innerHTML = lines.map((x, y) => `<li>${(y + 1).toString(10)}</li>`).join('');
   code.innerHTML = highlight(text, language);
@@ -59,12 +58,12 @@ const refresh = (text, language = session.language.get()) => {
 };
 
 // synchronise with the current state, and subscribe to 'code-changed' reply to keep it in sync
-refresh(session.code.get(), session.language.get());
-signals.on('code-changed', refresh);
+refresh(state.getCode(), state.getLanguage());
+state.on('code-changed', refresh);
 
 // the exposed div, wrapping up all the above elements
 const div = create('div', { classes: ['tsx-code'], content: [textarea, ol, pre] });
-signals.on('file-changed', () => { div.scrollTop = 0; div.scrollLeft = 0; });
+state.on('file-changed', () => { div.scrollTop = 0; div.scrollLeft = 0; });
 
 // expose the HTML element for this component
 module.exports = div;

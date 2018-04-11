@@ -1,7 +1,9 @@
-const create = require('../../dom/create');
-const hex = require('../../dom/hex');
+/**
+ * the machine console
+ */
+require('styles/console.scss');
+const { create, hex } = require('dom');
 const memory = require('./memory');
-require('../../styles/console.scss');
 
 const console = create('pre', { classes: ['tsx-console'] });
 

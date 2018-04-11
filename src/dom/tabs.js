@@ -1,9 +1,8 @@
 /**
  * create tabs with associated tab panes
  */
+require('styles/tabs.scss');
 const create = require('./create');
-const signals = require('../state/signals');
-require('../styles/tabs.scss');
 
 const activate = (node) => {
   const siblings = Array.prototype.slice.call(node.parentElement.children);
@@ -48,4 +47,7 @@ const show = (id) => {
   activate(document.getElementById(id));
 };
 
-module.exports = { create: tabs, show };
+module.exports = {
+  create: tabs,
+  show,
+};

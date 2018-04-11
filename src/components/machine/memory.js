@@ -1,5 +1,7 @@
-const create = require('../../dom/create');
-const signals = require('../../state/signals');
+/**
+ * the machine memory
+ */
+const { create } = require('dom');
 
 // the machine memory
 const memory = {
@@ -66,17 +68,12 @@ const getTurtle = () =>
   });
 
 const setAddress = (address, value) => {
-  const turtleAddress = memory.main[0];
   memory.main[address] = value;
-  // if it's a turtle property, send a signal that it's changed
-  const property = address - turtleAddress;
-  if (property > 0 && property <= 5) {
-    signals.send('turtle-changed', { property, value });
-  }
 };
 
-const setPointer = (address, offset, value) =>
+const setPointer = (address, offset, value) => {
   setAddress(memory.main[address] + offset, value);
+};
 
 // fill a chunk of main memory with zeros
 const zero = (start, length) => {
@@ -314,6 +311,7 @@ const heapDisplay = create('table');
 const dump = () => {
   const stack = memory.main.slice(0, memory.memoryStackMax + 1);
   const heap = memory.main.slice(memory.heapBase + 1, memory.heapMax + 1);
+  // TODO
   return {
     heapBase: memory.heapBase,
     stack,

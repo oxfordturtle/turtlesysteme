@@ -1,7 +1,7 @@
 /**
  * create a pre-filled html element
  */
-const create = (type, options = {}) => {
+module.exports = (type, options = {}) => {
   const element = document.createElement(type);
   Object.keys(options).forEach((key) => {
     switch (key) {
@@ -28,5 +28,3 @@ const create = (type, options = {}) => {
   });
   return element;
 };
-
-module.exports = create;

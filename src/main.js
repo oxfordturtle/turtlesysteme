@@ -3,7 +3,7 @@
  */
 const { app, BrowserWindow, dialog, Menu, ipcMain } = require('electron');
 const fs = require('fs');
-const examples = require('./examples/examples');
+const { examples } = require('./data');
 
 // set to false when building
 const development = true;
@@ -108,7 +108,7 @@ const showSettingsWindow = () => {
 };
 
 // menu templates
-const systemMenu = {
+const languageMenu = {
   label: 'LANGUAGE',
   submenu: [
     { type: 'radio', label: 'Turtle BASIC', click: sendToSystem.bind(null, 'set-language', 'BASIC') },
@@ -178,8 +178,8 @@ const debugMenu = {
 };
 
 const menu = development
-  ? Menu.buildFromTemplate([systemMenu, fileMenu, editMenu, optionsMenu, helpMenu, debugMenu])
-  : Menu.buildFromTemplate([systemMenu, fileMenu, editMenu, optionsMenu, helpMenu]);
+  ? Menu.buildFromTemplate([languageMenu, fileMenu, editMenu, optionsMenu, helpMenu, debugMenu])
+  : Menu.buildFromTemplate([languageMenu, fileMenu, editMenu, optionsMenu, helpMenu]);
 
 // Setup to quit when all windows are closed (except on a Mac)
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
@@ -195,11 +195,6 @@ Menu.setApplicationMenu(menu);
 ipcMain.on('language', (event, language) => {
   const index = { BASIC: 0, Pascal: 1, Python: 2 };
   menu.items[0].submenu.items[index[language]].checked = true;
-});
-
-ipcMain.on('version', (event, version) => {
-  const index = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4];
-  menu.items[0].submenu.items[index[version]].checked = true;
 });
 
 ipcMain.on('compile-first', (event, compileFirst) => {

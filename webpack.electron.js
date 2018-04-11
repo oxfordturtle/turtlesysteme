@@ -11,15 +11,18 @@ module.exports = {
     path: path.resolve(__dirname, 'dist/electron')
   },
   target: 'electron-renderer',
+  resolve: {
+    modules: [path.resolve(__dirname, 'src'), 'node_modules']
+  },
   module: {
     rules: [
       {
-        test: /\.tg[bpy]$/,
-        use: ['raw-loader']
-      },
-      {
         test: /\.scss$/,
         use: ['style-loader', 'css-loader', 'sass-loader']
+      },
+      {
+        test: /\.tg[bpy]$/,
+        use: ['raw-loader']
       }
     ]
   }

@@ -11,6 +11,9 @@ module.exports = {
     path: path.resolve(__dirname, 'dist/browser')
   },
   target: 'web',
+  resolve: {
+    modules: [path.resolve(__dirname, 'src'), 'node_modules']
+  },
   module: {
     rules: [
       {

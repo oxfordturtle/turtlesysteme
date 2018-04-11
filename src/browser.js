@@ -1,16 +1,11 @@
 /**
  * entry point for the browser version of the system
  */
-const tabs = require('./dom/tabs');
-const popup = require('./dom/popup');
-const system = require('./components/system');
-const program = require('./components/program');
-const controls = require('./components/controls');
-const machine = require('./components/machine');
-const help = require('./components/help');
-const signals = require('./state/signals');
-require('./styles/system.scss');
-require('./styles/help.scss');
+require('styles/system.scss');
+require('styles/help.scss');
+const { tabs, popup } = require('dom');
+const { help, machine, program, system } = require('components');
+const state = require('state');
 
 // add the global .tsx-browser class to the root element (for browser-specific stylyes)
 document.body.parentElement.classList.add('tsx-browser');
@@ -24,28 +19,28 @@ switch (tsx.getAttribute('data-page')) {
     tsx.classList.add('tsx');
     tsx.classList.add('tsx-system');
     tsx.classList.add('tsx-help');
-    tsx.appendChild(system(false, true));
+    tsx.appendChild(system('help'));
     tsx.appendChild(help.system);
     break;
   case 'help': // the help page
     tsx.classList.add('tsx');
     tsx.classList.add('tsx-system');
     tsx.classList.add('tsx-help');
-    tsx.appendChild(system(false, true));
+    tsx.appendChild(system('help'));
     tsx.appendChild(help.language);
     break;
   default: // the (main) system page
     tsx.classList.add('tsx');
     tsx.classList.add('tsx-system');
     tsx.appendChild(tabs.create('tsx-top-tabs', [
-      { label: 'Program', active: true, content: [system(true, true), program(true)] },
-      { label: 'Machine', active: false, content: [controls, machine(true)] },
+      { label: 'Program', active: true, content: [system('browser'), program('browser')] },
+      { label: 'Machine', active: false, content: [machine.controls, machine.tabs('browser')] },
     ]));
     break;
 }
 
 // add the modal dialog (invisible to start with)
-document.body.appendChild(popup.popup);
+document.body.appendChild(popup.overlay);
 
 // register to show errors on the modal dialog
-signals.on('error', popup.show);
+state.on('error', popup.show);

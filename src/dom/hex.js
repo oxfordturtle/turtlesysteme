@@ -4,7 +4,5 @@
 const pad = string =>
   ((string.length < 6) ? pad(`0${string}`) : string);
 
-const hex = colour =>
+module.exports = colour =>
   `#${pad(colour.toString(16))}`;
-
-module.exports = hex;

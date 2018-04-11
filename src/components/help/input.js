@@ -1,9 +1,6 @@
-const create = require('../../dom/create');
-// const highlight = require'../languages/highlight');
-const session = require('../../state/session');
-const signals = require('../../state/signals');
-
-const highlight = code => code;
+const { create } = require('dom');
+const { highlight } = require('compiler');
+const state = require('state');
 
 const BASIC = [
   create('div', { content: `    <h3>User Input</h3>
@@ -108,12 +105,9 @@ const input = create('div');
 const refresh = (language) => {
   input.innerHTML = '';
   text[language].forEach(x => input.appendChild(x));
-  Array.from(input.querySelectorAll('code')).forEach((x) => {
-    x.innerHTML = highlight(x.innerHTML, language); // eslint-disable-line
-  });
 };
 
-refresh(session.language.get());
-signals.on('language-changed', refresh);
+refresh(state.getLanguage());
+state.on('language-changed', refresh);
 
 module.exports = input;

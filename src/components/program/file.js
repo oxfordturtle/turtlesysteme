@@ -1,22 +1,22 @@
 /**
  * the file handling component
  */
-const create = require('../../dom/create');
-const signals = require('../../state/signals');
-const examples = require('../../examples/examples');
-require('../../styles/file.scss');
+require('styles/file.scss');
+const { create } = require('dom');
+const { examples } = require('data');
+const state = require('state');
 
 const openFile = (e) => {
   const file = e.currentTarget.files[0];
   const fr = new FileReader();
   fr.onload = () => {
-    signals.send('set-file', { filename: file.name, content: fr.result });
+    state.send('set-file', { filename: file.name, content: fr.result });
   };
   fr.readAsText(file);
 };
 
 const openExample = (e) => {
-  signals.send('set-example', e.currentTarget.value);
+  state.send('set-example', e.currentTarget.value);
 };
 
 const fileInput = create('input', {
@@ -25,7 +25,7 @@ const fileInput = create('input', {
 });
 
 const option = example =>
-  create('option', { value: example.id, content: example.name });
+  create('option', { value: example, content: examples.names[example] });
 
 const optgroup = exampleGroup =>
   create('optgroup', {

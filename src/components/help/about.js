@@ -1,4 +1,7 @@
-const create = require('../../dom/create');
+/**
+ * text for the about tab
+ */
+const { create } = require('dom');
 
 const aboutText = [
   create('h3', { content: 'The Online Turtle System' }),

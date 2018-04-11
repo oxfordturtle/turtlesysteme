@@ -1,5 +1,7 @@
-const create = require('../../dom/create');
-const hex = require('../../dom/hex');
+/**
+ * the machine output
+ */
+const { create, hex } = require('dom');
 
 const output = create('pre');
 
