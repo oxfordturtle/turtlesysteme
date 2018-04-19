@@ -11,13 +11,13 @@ const nameInput = create('input', {
   type: 'text',
   placeholder: 'filename',
   value: state.getName(),
-  on: [{ type: 'input', callback: (e) => { signals.send('set-name', e.currentTarget.value); } }]
+  on: [{ type: 'input', callback: (e) => { state.send('set-name', e.currentTarget.value); } }]
 });
 
 const languageSelect = create('select', {
   content: languages.map(language => create('option', { content: language, value: language })),
   value: state.getLanguage(),
-  on: [{ type: 'change', callback: (e) => { signals.send('set-language', e.currentTarget.value); } }]
+  on: [{ type: 'change', callback: (e) => { state.send('set-language', e.currentTarget.value); } }]
 });
 
 // subscribe to keep the elements in sync with the application state

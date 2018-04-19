@@ -1,24 +1,20 @@
-/* languages/parser/pascal
---------------------------------------------------------------------------------
-parser for Turtle Pascal - lexemes go in, array of routines comes out; the first
-element in the array is the main PROGRAM object
+/** parser for Turtle Pascal - lexemes go in, array of routines comes out; the first element in the
+ *  array is the main PROGRAM object
+ *
+ *  look at the factory module to see what the PROGRAM object (and its components) look like
+ *
+ *  this analyses the structure of the program, and builds up lists of all the constants, variables,
+ *  and subroutines (with their variables and parameters) - lexemes for the program (and any
+ *  subroutine) code themselves are just stored for subsequent handling by the pcoder
+ */
 
-look at the factory module to see what the PROGRAM object (and its components)
-look like
-
-this analyses the structure of the program, and builds up lists of all the
-constants, variables, and subroutines (with their variables and parameters) -
-lexemes for the program (and any subroutine) code themselves are just stored
-for subsequent handling by the pcoder
---------------------------------------------------------------------------------
-*/
-
-const { colours, inputs } = require('data');
+// local imports
 const factory = require('./factory');
 
-const messages = (messageId, lexeme) => {
+// generate an error message
+const message = (messageId, lexeme) => {
   switch (messageId) {
-    // program errors
+    // programAndNext errors
     case 'progBegin':
       return 'Program must start with keyword "PROGRAM".';
     case 'progName':
@@ -26,612 +22,458 @@ const messages = (messageId, lexeme) => {
     case 'progTurtle':
       return 'Program cannot be given the name of a Turtle attribute.';
     case 'progId':
-      return `"${lexeme.string}" is not a valid program name.`;
+      return `"${lexeme.content}" is not a valid program name.`;
     case 'progSemi':
       return 'Program name must be followed by a semicolon.';
-    case 'progAfter':
-      return 'No text found after program declaration.';
-    case 'progEnd':
-      return 'Program must finish with "END".';
-    case 'progWeird':
-      return 'Expected "BEGIN", constant/variable definitions, or subroutine definitions.';
-    case 'progDot':
-      return 'Program "END" must be followed by a full stop.';
-    case 'progOver':
-      return 'No text can appear after program "END".';
-    // constant errors
+    // stateAndNext errors
     case 'constVar':
       return 'Constants must be defined before any variables.';
     case 'constSub':
       return 'Constants must be defined before any subroutines.';
+    case 'varSub':
+      return 'Variables must be defined before any subroutines.';
+    case 'progWeird':
+      return 'Expected "BEGIN", constant/variable definitions, or subroutine definitions.';
+    // constant value errors
+    case 'constDef':
+      return 'Constant must be assigned a value.';
+    case 'constNegString':
+      return 'Strings cannot be negated.';
+    case 'constNegBoolean':
+      return 'Boolean values cannot be negated.';
+    case 'constSemi':
+      return 'Constant declaration must be followed by a semicolon.';
+    case 'constValue':
+      return `"${lexeme.content}" is not a valid constant value.`;
+    // constant declaration errors
     case 'constName':
       return 'No constant name found.';
     case 'constTurtle':
-      return `"${lexeme.string}" is the name of a predefined Turtle property, and cannot be used as a constant name.`;
+      return `"${lexeme.content}" is the name of a predefined Turtle property, and cannot be used as a constant name.`;
     case 'constId':
-      return `"${lexeme.string}" is not a valid constant name.`;
+      return `"${lexeme.content}" is not a valid constant name.`;
     case 'constProg':
-      return `Constant name "${lexeme.string}" is already the name of the program.`;
+      return `Constant name "${lexeme.content}" is already the name of the program.`;
     case 'constDupl':
-      retun `"${lexeme.string}" is already the name of a constant in the current scope.`;
-    case 'constDef':
-      return 'Constant must be assigned a value.';
-    case 'constSubt':
-      return '"-" must be followed by a value.';
-    case 'constValue':
-      return `"${lexeme.string}" is not a valid constant value.`;
-    case 'constSemi':
-      return 'Constant declaration must be followed by a semicolon.';
-    case 'constAfter':
-     return 'No program text found after constant declarations.';
-    // variable errors
-    case 'varSub':
-      return 'Variables must be defined before any subroutines.';
+      return `"${lexeme.content}" is already the name of a constant in the current scope.`;
+    // variable type errors
+    case 'varType':
+      return 'Variable name must be followed by a colon, then the variable type (array, boolean, char, integer, or string).';
+    case 'varBadType':
+      return `"${lexeme.content}" is not a valid variable type (expected "array", "boolean", "char", "integer", or "string").`;
+    case 'varStringNoSize':
+      return 'Opening bracket must be followed by an integer value.';
+    case 'varStringBadSize':
+      return 'String size must be an integer.'
+    case 'varStringRbkt':
+      return 'String size must be followed by a closing square bracket "]".'
+    case 'varArrayBadSize':
+      return 'Array declarations take the form "array[n..m]", where "n" and "m" are integer values specifying the start and end index of the array.';
+    case 'varArrayOf':
+      return 'Array declaration must be followed by "of", and then the type of the elements of the array.'
+    // variable definition errors
     case 'varName':
       return 'No variable name found.';
     case 'varTurtle':
-      return `"${lexeme.string}" is the name of a predefined Turtle property, and cannot be used as a variable name.`;
+      return `"${lexeme.content}" is the name of a predefined Turtle property, and cannot be used as a variable name.`;
     case 'varId':
-      return `"${lexeme.string}" is not a valid variable name.`;
+      return `"${lexeme.content}" is not a valid variable name.`;
     case 'varProg':
-      return `Variable name "${lexeme.string}" is already the name of the program.`;
+      return `Variable name "${lexeme.content}" is already the name of the program.`;
     case 'varDupl':
-      return `"${lexeme.string}" is already the name of a constant or variable in the current scope.`;
-    case 'varType':
-      return 'Variable name must be followed by a colon, then the variable type (integer, boolean, char, or string).';
-    case 'varBadType':
-      return `"${lexeme.string}" is not a valid variable type (expected "integer", "boolean", "char", or "string").`;
-    case 'varArray':
-      return 'The online compiler does not support array variables. Please compile your program in the downloadable system.';
+      return `"${lexeme.content}" is already the name of a constant or variable in the current scope.`;
     case 'varComma':
       return 'Comma missing between variable declarations.';
-    case 'varSemi':
-      return 'Variable declaration(s) must be followed by a semicolon.';
-    case 'varAfter':
-      return 'No text found after variable declarations.';
     // parameter errors
-    case 'parName':
-      return 'No parameter name found.';
-    case 'parTurtle':
-      return `"${lexeme.string}" is the name of a predefined Turtle property, and cannot be used as a parameter name.`;
-    case 'parId':
-      return `"${lexeme.string}" is not a valid parameter name.`;
-    case 'parProg':
-      return `Parameter name "${lexeme.string}" is already the name of the program.`;
-    case 'parDupl':
-      return `"${lexeme.string}" is already the name of a parameter for this subroutine.`;
-    case 'parType':
-      return 'Parameter name must be followed by a colon, then the parameter type (integer, boolean, char, or string).';
-    case 'parBadType':
-      return `"${lexeme.string}" is not a valid parameter type (expected "integer", "boolean", "char", or "string").`;
-    case 'parArray':
-      return 'The online compiler does not support array parameters. Please compile your program in the downloadable system.';
-    case 'parComma':
-      return 'Comma missing between parameters.';
-    case 'parAfter':
-      return 'No text found after parameter declarations.';
-    // subroutine errors
+    // ...
+    // routine errors
     case 'subName':
       return 'No subroutine name found.';
     case 'subTurtle':
-      return `"${lexeme.string}" is the name of a predefined Turtle property, and cannot be used as a subroutine name.`;
+      return `"${lexeme.content}" is the name of a predefined Turtle property, and cannot be used as a subroutine name.`;
     case 'subId':
-      return `"${lexeme.string}" is not a valid subroutine name.`;
+      return `"${lexeme.content}" is not a valid subroutine name.`;
     case 'subProg':
-      return `Subroutine name "${lexeme.string}" is already the name of the program.`;
+      return `Subroutine name "${lexeme.content}" is already the name of the program.`;
     case 'subDupl':
-      return `"${lexeme.string}" is already the name of a subroutine in the current scope.`;
+      return `"${lexeme.content}" is already the name of a subroutine in the current scope.`;
     case 'subSemi':
       return 'Subroutine declaration must be followed by a semicolon.';
-    case 'subAfter':
-      return 'No text found after subroutine declaration.';
-    case 'subBracket':
-      return 'Subroutine parameters must be followed by a closing bracket.';
-    case 'subEnd':
-      return 'Missing subroutine "END".';
-    case 'subEndSemi':
-      return 'Semicolon needed after subroutine "END".';
     case 'fnType':
       return 'Function must be followed by a colon, the the return type (integer, boolean, char, or string).';
     case 'fnBadType':
-      return `"${lexeme.string}" is not a valid return type (expected "integer", "boolean", "char", or "string").`;
-    case 'fnArray':
-      return 'Functions cannot return arrays.';
+      return `"${lexeme.content}" is not a valid return type (expected "integer", "boolean", "char", or "string").`;
+    case 'subEnd':
+      return 'Routine commands must finish with "END".';
+    // parser errors
+    case 'constAfter':
+      return 'No program text found after constant declarations.';
+    case 'varAfter':
+      return 'No text found after variable declarations.';
+    case 'varSemi':
+      return 'Variable declaration(s) must be followed by a semicolon.';
+    case 'progDot':
+      return 'Program "END" must be followed by a full stop.';
+    case 'progOver':
+      return 'No text can appear after program "END".';
+    default:
+      return messageId;
   }
 };
 
-const error = (errorId, messageId, lexeme) =>
+// create an error object
+const error = (messageId, lexeme) =>
   ({
-    id: errorId,
-    messageId,
+    type: 'Compiler',
     message: message(messageId, lexeme),
-    lexeme
+    lexeme,
   });
 
-const matches = (string, obj) =>
-  ((obj.name || obj.names.pascal) === string);
+// check if a string is already the name of a variable or constant in a routine
+const isDuplicate = (routine, name) =>
+  routine.variables.concat(routine.constants).some((x) => x.name === name);
 
-const exists = (routine, string) =>
-  routine.variables.some(matches.bind(null, string))
-    || routine.constants.some(matches.bind(null, string));
+// index of the next lexeme (after any semicolons)
+const next = (lexemes, lex, compulsory = false, messageId = null) => {
+  if (compulsory) {
+    if (!lexemes[lex]) throw error(messageId, lexemes[lex - 1]);
+    if (lexemes[lex].content !== ';') throw error(messageId, lexemes[lex]);
+  }
+  while (lexemes[lex] && lexemes[lex].content === ';') lex += 1;
+  return lex;
+};
 
-const colour = name =>
-  colours.find(matches.bind(null, name));
+// look for "PROGRAM identifier;"; return program object and next lexeme index
+const programAndNext = (lexemes, lex) => {
+  const [keyword, identifier] = lexemes.slice(lex, lex + 2);
+  if (!keyword || keyword.content !== 'program') throw error('progBegin', lexemes[lex]);
+  if (!identifier) throw error('progName', lexemes[lex]);
+  if (identifier.type === 'turtle') throw error('progTurtle', lexemes[lex + 1]);
+  if (identifier.type !== 'identifier') throw error('progId', lexemes[lex + 1]);
+  return {
+    lex: next(lexemes, lex + 2, true, 'progSemi'),
+    routine: factory.program(identifier.content, 'Pascal'),
+  };
+};
 
-const input = name =>
-  inputs.find(matches.bind(null, name));
-
-const fixVariableType = (type, variable) => {
-  if (variable.type === null) {
-    variable.type = type;
-    variable.length = (type === 'string') ? 34 : 0;
+// look for "CONST|VAR|PROCEDURE|FUNCTION|BEGIN(;)"; return next state and next lexeme index
+const stateAndNext = (lexemes, lex, routine) => {
+  const keyword = lexemes[lex];
+  if (!keyword) throw error('progWeird', lexemes[lex - 1]);
+  switch (keyword.content) {
+    case 'const':
+      if (routine.variables.length > 0) throw error('constVar', lexemes[lex]);
+      if (routine.subroutines.length > 0) throw error('constSub', lexemes[lex]);
+      return { lex: lex + 1, state: keyword.content };
+    case 'var':
+      if (routine.subroutines.length > 0) throw error('varSub', lexemes[lex]);
+      return { lex: lex + 1, state: keyword.content };
+      break;
+    case 'function': // fallthrough
+    case 'procedure':
+      return { lex: lex + 1, state: keyword.content };
+      break;
+    case 'begin':
+      return { lex: next(lexemes, lex + 1), state: keyword.content };
+    default:
+      throw error('progWeird', lexemes[lex]);
   }
 };
 
-const fixVariableTypes = (routine, type) => {
-  routine.variables.forEach(fixVariableType.bind(null, type));
+// look for integer literal followed by semicolon; return constant object and next lexeme index
+const negativeAndNext = (lexemes, lex, name) => {
+  const value = lexemes[lex];
+  if (!value) throw error('constDef', lexemes[lex - 1]);
+  switch (value.type) {
+    case 'string':
+      throw error('constNegString', lexemes[lex]);
+    case 'boolean':
+      throw error('constNegBoolean', lexemes[lex]);
+    case 'integer': // fallthrough
+    case 'colour':
+      return {
+        lex: next(lexemes, lex + 1, true, 'constSemi'),
+        constant: factory.constant(name, 'integer', -value.value),
+      };
+    default:
+      throw error('constValue', lexemes[lex]);
+  }
 };
 
+// look for any literal value followed by semicolon; return constant object and next lexeme index
+const nonnegativeAndNext = (lexemes, lex, name) => {
+  const value = lexemes[lex];
+  if (!value) throw error('constDef', lexemes[lex - 1]);
+  switch (value.type) {
+    case 'boolean': // fallthrough
+    case 'integer': // fallthrough
+    case 'string':
+      return {
+        lex: next(lexemes, lex + 1, true, 'constSemi'),
+        constant: factory.constant(name, value.type, value.value),
+      };
+    case 'colour':
+      return {
+        lex: next(lexemes, lex + 1, true, 'constSemi'),
+        constant: factory.constant(name, 'integer', value.value),
+      };
+    default:
+      throw error('constValue', lexemes[lex]);
+  }
+};
+
+// look for "identifier = value;"; return constant object and next lexeme index
+const constantAndNext = (lexemes, lex, routines, routine) => {
+  const [identifier, assignment, next1, next2] = lexemes.slice(lex, lex + 3);
+  if (!identifier) throw error('constName', lexemes[lex - 1]);
+  if (identifier.type === 'turtle') throw error('constTurtle', identifier);
+  if (identifier.type !== 'identifier') throw error('constId', identifier);
+  if (identifier.content === routines[0].name) throw error('constProg', identifier);
+  if (isDuplicate(routine, identifier.content)) throw error('constDupl', identifier);
+  if (!assignment) throw error('constDef', identifier);
+  if (assignment.content !== '=') throw error('constDef', assignment);
+  return (next && next.content === '-')
+    ? negativeAndNext(lexemes, lex + 3, identifier.content)
+    : nonnegativeAndNext(lexemes, lex + 2, identifier.content);
+};
+
+// look for "<fulltype>: boolean|integer|char|string[size]|array of <fulltype>"; return fulltype
+// object (a property of variables/parameters) and next lexeme index
+const fulltypeAndNext = (lexemes, lex) => {
+  let result;
+  if (!lexemes[lex]) throw error('varType', lexemes[lex - 1]);
+  if (lexemes[lex].type !== 'type') throw error('varBadType', lexemes[lex]);
+  switch (lexemes[lex].content) {
+    case 'boolean': // fallthrough
+    case 'integer': // fallthrough
+    case 'char':
+      return { lex: lex + 1, fulltype: factory.fulltype(lexemes[lex].content) };
+    case 'string':
+      if (lexemes[lex + 1] && lexemes[lex + 1].content === '[') {
+        const [size, rbkt] = lexemes.slice(lex + 2, lex + 4);
+        if (!size) throw error('varStringNoSize', lexemes[lex - 1]);
+        if (size.type !== 'integer') throw error('varStringBadSize', lexemes[lex]);
+        if (!rbkt) throw error('varStringRbkt', lexemes[lex - 1]);
+        if (rbkt.content !== ']') throw error('varStringRbkt', lexemes[lex]);
+        return { lex: lex + 4, fulltype: factory.fulltype('string', size.value) };
+      } else {
+        return { lex: lex + 1, fulltype: factory.fulltype('string') };
+      }
+    case 'array':
+      const [lbkt, start, dots, end, rbkt, keyof] = lexemes.slice(lex + 1, lex + 7);
+      if (!lbkt) throw error('varArrayBadSize', lexemes[lex - 1]);
+      if (lbkt.content !== '[') throw error('varArrayBadSize', lexemes[lex]);
+      if (!start) throw error('varArrayBadSize', lexemes[lex - 1]);
+      if (start.type !== 'integer') throw error('varArrayBadSize', lexemes[lex]);
+      if (!dots) throw error('varArrayBadSize', lexemes[lex - 1]);
+      if (dots.content !== '..') throw error('varArrayBadSize', lexemes[lex]);
+      if (!end) throw error('varArrayBadSize', lexemes[lex - 1]);
+      if (end.type !== 'integer') throw error('varArrayBadSize', lexemes[lex]);
+      if (!rbkt) throw error('varArrayBadSize', lexemes[lex - 1]);
+      if (rbkt.content !== ']') throw error('varArrayBadSize', lexemes[lex]);
+      if (!keyof) throw error('varArrayOf', lexemes[lex - 1]);
+      if (keyof.content !== 'of') throw error('varArrayOf', lexemes[lex]);
+      result = fulltypeAndNext(lexemes, lex + 7);
+      return {
+        lex: result.lex,
+        fulltype: factory.fulltype('array', end.value - start.value + 1, start.value, result.fulltype),
+      };
+  }
+};
+
+// array of typed variables (with index of the next lexeme)
+const variablesAndNext = (lexemes, lex, routines, routine, byref) => {
+  const variables = [];
+  let more = true;
+  // gather the variable names
+  while (more) {
+    if (!lexemes[lex]) throw error('varName', lexemes[lex - 1]);
+    if (lexemes[lex].type === 'turtle') throw error('varTurtle', lexemes[lex]);
+    if (lexemes[lex].type !== 'identifier') throw error('varId', lexemes[lex]);
+    if (lexemes[lex].content === routines[0].name) throw error('varProg', lexemes[lex]);
+    if (isDuplicate(routine, lexemes[lex].content)) throw error('varDupl', lexemes[lex]);
+    variables.push(factory.variable(lexemes[lex].content, routine, byref));
+    if (!lexemes[lex + 1]) throw error('varType', lexmes[lex]);
+    if (lexemes[lex + 1].type === 'identifier') throw error('varComma', lexemes[lex + 1]);
+    if (lexemes[lex + 1].type === 'type') throw error('varType', lexemes[lex + 1]);
+    switch (lexemes[lex + 1].content) {
+      case ',':
+        lex += 2;
+        break;
+      case ':':
+        lex += 2;
+        more = false;
+        break;
+      default:
+        throw error('varType', lexemes[lex + 1]);
+    }
+  }
+  // expecing type definition for the variables just gathered
+  ({ lex, fulltype } = fulltypeAndNext(lexemes, lex));
+  variables.forEach((x) => x.fulltype = fulltype);
+  return { lex, variables };
+};
+
+//
+const parametersAndNext = (lexemes, lex) => {};
+
+//
+const subroutineAndNext = (lexemes, lex, type, routines, parent) => {
+  const [identifier, after] = lexemes.slice(lex, lex + 2);
+  let routine, parameters, returnType;
+  if (!identifier) throw error('subName', lexemes[lex - 1]);
+  if (identifier.type === 'turtle') throw error('subTurtle', lexemes[lex]);
+  if (identifier.type !== 'identifier') throw error('subId', lexemes[lex]);
+  if (identifier.content === routines[0].name) throw error('subProg', lexemes[lex]);
+  if (routines.some((x) => x.name === identifier.content)) throw error('subDupl', lexemes[lex]);
+  routine = factory.subroutine(identifier.content, type, parent);
+  if (type === 'function') routine.variables.push(factory.variable('result', routine, false));
+  if (!after) throw error('subSemi', identifier);
+  switch (after.content) {
+    case ';':
+      return { routine, lex: next(lexemes, lex + 1, false) };
+    case '(':
+      ({ parameters, lex } = parametersAndNext(lexemes, lex + 1, routines));
+      routine.parameters = parameters;
+      routine.variables = routine.variables.concat(parameters);
+      if (type === 'function') {
+        if (!lexemes[lex]) throw error('fnType', lexemes[lex - 1]);
+        if (lexemes[lex].content !== ':') throw error('fnType', lexemes[lex]);
+        ({ returnType, lex } = typeAndNext(lexemes, lex + 1));
+        routine.variables[0].type = returnType;
+      } else {
+        lex = next(lexemes, lex, true, 'subSemi');
+      }
+    default:
+      throw error('subSemi', next);
+  }
+  return { lex, routine }
+};
+
+// grab everything up to "END"
+const contentAndNext = (lexemes, lex) => {
+  let content = [];
+  let begins = 1;
+  while (begins > 0 && lexemes[lex]) {
+    if (lexemes[lex].content === 'begin') begins += 1;
+    if (lexemes[lex].content === 'end') begins -= 1;
+    content.push(lexemes[lex]);
+    lex += 1;
+  }
+  if (begins > 0) throw error('subEnd', lexemes[lex]);
+  return { lex, content: content.slice(0, -1) };
+};
+
+// the parser function
 const parser = (lexemes) => {
   const routines = []; // array of routines (0 being the main program)
-  const routineStack = []; // stack of routine indexes
-  let routineCount = 0; // index of current routine
+  const routineStack = []; // stack of routines
+  let routineCount = 0; // index of the current routine
   let lex = 0; // index of current lexeme
-  let begins = 0;
-  let state = 'start';
-  let byref = false;
-  let constMult = 1;
+  let routine, parent, constant, variables, content; // object references
+  let state = 'program';
   while (lex < lexemes.length) {
     switch (state) {
-      case 'start':
-        if (lexemes[lex].content !== 'program') {
-          throw error('parser01', 'progBegin', lexemes[lex]);
-        }
-        if (!lexemes[lex + 1]) {
-          throw error('parser02', 'progName', lexemes[lex]);
-        }
-        lex += 1;
-        if (lexemes[lex].ttype === 'turtle') {
-          throw error('parser03', 'progTurtle', lexemes[lex]);
-        }
-        if (lexemes[lex].type !== 'identifier') {
-          throw error('parser04', 'progId', lexemes[lex]);
-        }
-        if (!lexemes[lex + 1]) {
-          throw error('parser05', 'progSemi', lexemes[lex]);
-        }
-        lex += 1;
-        if (lexemes[lex].type !== 'semicolon') {
-          throw error('parser06', 'progSemi', lexemes[lex]);
-        }
-        routine = factory.program(lexemes[lex - 1].content, 'Pascal');
+      case 'program':
+        // expecting "PROGRAM <identifier>;"
+        ({ lex, routine } = programAndNext(lexemes, lex));
         routines.push(routine);
         routineStack.push(routine);
-        while (lexemes[lex].content === ';') {
-          lex += 1;
-        }
-        if (!lexemes[lex]) {
-          throw error('parser07', 'progAfter', lexemes[lex]);
-        }
         state = 'crossroads';
         break;
       case 'crossroads':
-        switch (lexemes[lex].content) {
-          case 'const':
-            if (routine.variables.length > 0) {
-              throw error('parser08', 'constVar', lexemes[lex]);
-            }
-            if (routine.subroutines.length > 0) {
-              throw error('parser09', 'constSub', lexemes[lex]);
-            }
-            if (!lexemes[lex + 1]) {
-              throw error('parser10', 'constName', lexemes[lex]);
-            }
-            lex += 1;
-            state = 'constant';
-            break;
-          case 'var':
-            if (routine.subroutines.length > 0) {
-              throw error('parser11', 'varSub', lexemes[lex]);
-            }
-            if (!lexemes[lex + 1]) {
-              throw error('parser12', 'varName', lexemes[lex]);
-            }
-            lex += 1;
-            state = 'variable';
-            break;
-          case 'function': // fallthrough
-          case 'procedure':
-            state = 'subroutine';
-            break;
-          case 'begin':
-            if (!lexemes[lex + 1]) {
-              throw error('parser13', 'progEnd', lexemes[lex]);
-            }
-            lex += 1;
-            while (lexemes[lex].content === ';') {
-              lex += 1;
-            }
-            state = 'begin';
-            break;
-          default:
-            throw error('parser14', 'progWeird', lexemes[lex]);
-          }
-          break;
-        case 'constant':
-          if (lexemes[lex].ttype === 'turtle') {
-            throw error('parser15', 'constTurtle', lexemes[lex]);
-          }
-          if (lexemes[lex].type !== 'identifier') {
-            throw error('parser16', 'constId', lexemes[lex]);
-          }
-          if (lexemes[lex].content === routines[0].name) {
-            throw error('parser17', 'constProg', lexemes[lex]);
-          }
-          if (exists(routine, lexemes[lex].content)) {
-            throw error('parser18', 'constDupl', lexemes[lex]);
-          }
-          constant = factory.constant(lexemes[lex].content);
-          if (!lexemes[lex + 1]) {
-            throw error('parser19', 'constDef', lexemes[lex]);
-          }
-          lex += 1;
-          if (lexemes[lex].content !== '=') {
-            throw error('parser20', 'constDef', lexemes[lex]);
-          }
-          if (!lexemes[lex + 1]) {
-            throw error('parser21', 'constDef', lexemes[lex]);
-          }
-          lex += 1;
-          if (lexemes[lex].content === '-') {
-            constMult = -1;
-            if (!lexemes[lex + 1]) {
-              throw error('parser21', 'constSubt', lexemes[lex]);
-            }
-            lex += 1;
-          } else {
-            constMult = 1;
-          }
-          if (lexemes[lex].ttype === 'colour') {
-            predefined = colour(lexemes[lex].string);
-            constant.value = predefined.value * constMult;
-            constant.type = predefined.type;
-          } else {
-            if (lexemes[lex].value === undefined) {
-              throw error('parser22', 'constValue', lexemes[lex]);
-            }
-            constant.value = lexemes[lex].value * constMult;
-            constant.type = lexemes[lex].type;
-          }
-          if (!lexemes[lex + 1]) {
-            throw error('parser23', 'constSemi', lexemes[lex]);
-          }
-          lex += 1;
-          if (lexemes[lex].content !== ';') {
-            throw error('parser24', 'constSemi', lexemes[lex - 1]);
-          }
-          routine.constants.push(constant);
-          while (lexemes[lex].content === ';') {
-            lex += 1;
-          }
-          if (!lexemes[lex]) {
-            throw error('parser25', 'constAfter');
-          }
-          if (lexemes[lex].type === 'identifier') {
-            state = 'constant';
-          } else {
-            state = 'crossroads';
-          }
-          break;
-        case ss.variable:
-          if (lexemes[lex].ttype === 'turtle') {
-            throw error('parser26', 'varTurtle', lexemes[lex]);
-          }
-          if (lexemes[lex].type !== 'identifier') {
-            throw error('parser27', 'varId', lexemes[lex]);
-          }
-          if (lexemes[lex].content === routines[0].name) {
-            throw error('parser28', 'varProg', lexemes[lex]);
-          }
-          if (exists(routine, lexemes[lex].content)) {
-            throw error('parser29', 'varDupl', lexemes[lex]);
-          }
-          variable = factory.variable(lexemes[lex].content, routine, false);
-          routine.variables.push(variable);
-          if (!lexemes[lex + 1]) {
-            throw error('parser30', 'varType', lexemes[lex]);
-          }
-          lex += 1;
-          if (lexemes[lex].type === 'identifier') {
-            throw error('parser31', 'varComma', lexemes[lex]);
-          } else if (lexemes[lex].content === ',') {
-            if (!lexemes[lex + 1]) {
-              throw error('parser31', 'varName', lexemes[lex]);
-            }
-            lex += 1;
-            state = 'variable';
-          } else if (lexemes[lex].content === ':') {
-            if (!lexemes[lex + 1]) {
-              throw error('parser32', 'varType', lexemes[lex]);
-            }
-            lex += 1;
-            state = 'variableType';
-          } else {
-            throw error('parser34', 'varType', lexemes[lex]);
-          }
-          break;
-        case ss.variableType:
-            type = variableType(lexemes[lex].type);
-            if (!type) {
-                throw error("parser35", "varBadType", lexemes[lex]);
-            }
-            if (lexemes[lex].type === "array") {
-                throw error("parser36", "varArray", lexemes[lex]);
-            }
-            routine = fixVariableTypes(routine, type);
-            if (!lexemes[lex + 1]) {
-                throw error("parser37", "varSemi", lexemes[lex]);
-            }
-            lex += 1;
-            if (lexemes[lex].type !== "semicolon") {
-                throw error("parser38", "varSemi", lexemes[lex]);
-            }
-            while (lexemes[lex].type === "semicolon") {
-                lex += 1;
-            }
-            if (!lexemes[lex]) {
-                throw error("parser39", "varAfter", lexemes[lex - 1]);
-            }
-            if (lexemes[lex].type === "identifier") {
-                state = ss.variable;
-            } else {
-                state = ss.crossroads;
-            }
-            break;
-        case ss.subroutine:
-            if (!lexemes[lex + 1]) {
-                throw error("parser40", "subName", lexemes[lex]);
-            }
-            lex += 1;
-            if (lexemes[lex].type === "turtle") {
-                throw error("parser41", "subTurtle", lexemes[lex]);
-            }
-            if (lexemes[lex].type !== "identifier") {
-                throw error("parser42", "subId", lexemes[lex]);
-            }
-            if (lexemes[lex].string === routines[0].name) {
-                throw error("parser43", "subProg", lexemes[lex]);
-            }
-            if (routines.some(matches.bind(null, lexemes[lex].string))) {
-                throw error("parser44", "subDupl", lexemes[lex]);
-            }
-            parent = subStack[subStack.length - 1];
-            routine = {
-                name: lexemes[lex].string,
-                type: lexemes[lex - 1].type,
-                level: -1, // needed for usage data table
-                parent: parent,
-                constants: [],
-                parameters: [],
-                variables: [],
-                subroutines: [],
-                lexemes: []
-            };
-            if (routine.type === "function") {
-                routine.variables.push({
-                    name: "result",
-                    byref: false,
-                    routine: routine,
-                    index: 0
-                });
-            }
-            parent.subroutines.push(routine);
-            subStack.push(routine);
-            if (!lexemes[lex + 1]) {
-                throw error("parser45", "subSemi", lexemes[lex]);
-            }
-            lex += 1;
-            switch (lexemes[lex].type) {
-            case "semicolon":
-                while (lexemes[lex].type === "semicolon") {
-                    lex += 1;
-                }
-                if (!lexemes[lex]) {
-                    throw error("parser46", "subAfter", lexemes[lex]);
-                }
-                state = ss.crossroads;
-                break;
-            case "lbkt":
-                if (!lexemes[lex + 1]) {
-                    throw error("parser47", "parName", lexemes[lex]);
-                }
-                lex += 1;
-                state = ss.parameter;
-                break;
-            default:
-                throw error("parser48", "subSemi", lexemes[lex]);
-            }
-            break;
-        case ss.parameter:
-            if (lexemes[lex].type === "var") {
-                byref = true;
-                if (!lexemes[lex + 1]) {
-                    throw error("parser49", "parName", lexemes[lex]);
-                }
-                lex += 1;
-            }
-            if (lexemes[lex].type === "turtle") {
-                throw error("parser50", "parTurtle", lexemes[lex]);
-            }
-            if (lexemes[lex].type !== "identifier") {
-                throw error("parser51", "parId", lexemes[lex]);
-            }
-            if (lexemes[lex].string === routines[0].name) {
-                throw error("parser52", "parProg", lexemes[lex]);
-            }
-            if (exists(routine, lexemes[lex].string)) {
-                throw error("parser53", "parDupl", lexemes[lex]);
-            }
-            variable = {
-                name: lexemes[lex].string,
-                byref: byref,
-                routine: routine,
-                index: routine.variables.length
-            };
-            routine.parameters.push(variable);
-            routine.variables.push(variable);
-            if (!lexemes[lex + 1]) {
-                throw error("parser54", "parType", lexemes[lex]);
-            }
-            lex += 1;
-            switch (lexemes[lex].type) {
-            case "comma":
-                if (!lexemes[lex + 1]) {
-                    throw error("parser55", "parName", lexemes[lex]);
-                }
-                lex += 1;
-                state = ss.parameter;
-                break;
-            case "colon":
-                if (!lexemes[lex + 1]) {
-                    throw error("parser56", "parType", lexemes[lex]);
-                }
-                byref = false;
-                lex += 1;
-                state = ss.parameterType;
-                break;
-            case "identifier":
-                throw error("parser57", "parComma", lexemes[lex]);
-            default:
-                throw error("parser58", "parType", lexemes[lex]);
-            }
-            break;
-        case ss.parameterType:
-            type = variableType(lexemes[lex].type);
-            if (!type) {
-                throw error("parser59", "parBadType", lexemes[lex]);
-            }
-            if (lexemes[lex].type === "array") {
-                throw error("parser60", "parArray", lexemes[lex]);
-            }
-            routine = fixVariableTypes(routine, type);
-            if (!lexemes[lex + 1]) {
-                throw error("parser61", "subBracket", lexemes[lex]);
-            }
-            lex += 1;
-            switch (lexemes[lex].type) {
-            case "semicolon":
-                if (!lexemes[lex + 1]) {
-                    throw error("parser62", "parName", lexemes[lex]);
-                }
-                while (lexemes[lex].type === "semicolon") {
-                    lex += 1;
-                }
-                state = ss.parameter;
-                break;
-            case "rbkt":
-                if (routine.type === "function") {
-                    if (!lexemes[lex + 1]) {
-                        throw error("parser63", "fnType", lexemes[lex]);
-                    }
-                    lex += 1;
-                    if (lexemes[lex].type !== "colon") {
-                        throw error("parser64", "fnType", lexemes[lex]);
-                    }
-                    if (!lexemes[lex + 1]) {
-                        throw error("parser65", "fnType", lexemes[lex]);
-                    }
-                    lex += 1;
-                    type = variableType(lexemes[lex].type);
-                    if (!type) {
-                        throw error("parser66", "fnBadType", lexemes[lex]);
-                    }
-                    if (type === "array") {
-                        throw error("parser67", "fnArray", lexemes[lex]);
-                    }
-                    routine.returns = type;
-                    routine.variables[0].type = type;
-                }
-                if (!lexemes[lex + 1]) {
-                    throw error("parser68", "subSemi", lexemes[lex]);
-                }
-                lex += 1;
-                if (lexemes[lex].type !== "semicolon") {
-                    throw error("parser69", "subSemi", lexemes[lex]);
-                }
-                while (lexemes[lex].type === "semicolon") {
-                    lex += 1;
-                }
-                if (!lexemes[lex]) {
-                    throw error("parser70", "subAfter", lexemes[lex]);
-                }
-                state = ss.crossroads;
-                break;
-            default:
-                throw error("parser71", "subBracket", lexemes[lex]);
-            }
-            break;
-        case ss.begin:
-            switch (lexemes[lex].type) {
-            case "begin":
-                routine.lexemes.push(lexemes[lex]);
-                begins += 1;
-                break;
-            case "end":
-                if (begins > 0) {
-                    routine.lexemes.push(lexemes[lex]);
-                    begins -= 1;
-                } else {
-                    state = ss.end;
-                }
-                break;
-            default:
-                routine.lexemes.push(lexemes[lex]);
-            }
-            if (state !== ss.end) {
-                if (!lexemes[lex + 1]) {
-                    throw error("parser72", "subEnd", lexemes[lex]);
-                }
-                lex += 1;
-            }
-            break;
-        case ss.end:
-            if (routine.index === 0) { // main program
-                if (!lexemes[lex + 1]) {
-                    throw error("parser73", "progDot", lexemes[lex]);
-                }
-                lex += 1;
-                if (lexemes[lex].type !== "dot") {
-                    throw error("parser74", "progDot", lexemes[lex]);
-                }
-                lex += 1;
-                state = ss.finish;
-            } else { // subroutine
-                if (!lexemes[lex + 1]) {
-                    throw error("parser75", "subEndSemi", lexemes[lex]);
-                }
-                lex += 1;
-                if (lexemes[lex].type !== "semicolon") {
-                    throw error("parser76", "subEndSemi", lexemes[lex]);
-                }
-                while (lexemes[lex].type === "semicolon") {
-                    lex += 1;
-                }
-                if (!lexemes[lex]) {
-                    throw error("parser77", "subAfter", lexemes[lex]);
-                }
-                subCount += 1;
-                routine.index = subCount;
-                routines.push(subStack.pop());
-                routine = subStack[subStack.length - 1];
-                state = ss.crossroads;
-            }
-            break;
-        case ss.finish:
-            throw error("parser78", "progOver", lexemes[lex]);
+        // expecting "CONST", "VAR", "PROCEDURE|FUNCTION", or "BEGIN[;]"
+        ({ lex, state } = stateAndNext(lexemes, lex, routine));
+        break;
+      case 'const':
+        // expecting "<identifier> = <value>;"
+        ({ lex, constant } = constantAndNext(lexemes, lex, routines, routine));
+        routine.constants.push(constant);
+        if (!lexemes[lex]) throw error('constAfter', lexemes[lex - 1]);
+        if (lexemes[lex].type !== 'turtle' && lexemes[lex].type !== 'identifier') state = 'crossroads';
+        break;
+      case 'var':
+        // expecting "<identifier>[, <identifier2>, ...]: <type>;"
+        ({ lex, variables } = variablesAndNext(lexemes, lex, routines, routine));
+        routine.variables = routine.variables.concat(variables);
+        lex = next(lexemes, lex, true, 'varSemi');
+        if (!lexemes[lex]) throw error('varAfter', lexemes[lex - 1]);
+        if (lexemes[lex].type !== 'turtle' && lexemes[lex].type !== 'identifier') state = 'crossroads';
+        break;
+      case 'procedure': // fallthrough
+      case 'function':
+        // expecting "<identifier>[(<parameters>)];"
+        parent = routineStack[routineStack.length - 1];
+        ({ lex, routine } = subroutineAndNext(lexemes, lex, state, routines, parent));
+        parent.subroutines.push(routine);
+        routineStack.push(routine);
+        state = 'crossroads';
+        break;
+      case 'begin':
+        // expecting routine commands
+        ({ lex, content } = contentAndNext(lexemes, lex));
+        routine.lexemes = content;
+        state = 'end';
+        break;
+      case 'end':
+        // expecting "." at the end of the main program, or ";" at the end of a subroutine
+        if (routine.index === 0) {
+          if (!lexemes[lex]) throw error('progDot', lexemes[lex - 1]);
+          if (lexemes[lex].content !== '.') throw error('progDot', lexemes[lex]);
+          if (lexemes[lex + 1]) throw error('progOver', lexemes[lex + 1]);
+          lex += 1; // so we exit the loop
+        } else {
+          lex = next(lexemes, lex, true, 'subSemi');
+          routineCount += 1;
+          routine.index = routineCount;
+          routines.push(routineStack.pop());
+          routine = routineStack[routineStack.length - 1];
+          state = 'crossroads';
+        }
+        break;
+      default:
+        break;
     }
   }
   return routines;
 };
 
 module.exports = parser;
+
+/* old error messages
+case 'progEnd':
+  return 'Program must finish with "END".';
+// constant errors
+// variable errors
+// parameter errors
+case 'parName':
+  return 'No parameter name found.';
+case 'parTurtle':
+  return `"${lexeme.content}" is the name of a predefined Turtle property, and cannot be used as a parameter name.`;
+case 'parId':
+  return `"${lexeme.content}" is not a valid parameter name.`;
+case 'parProg':
+  return `Parameter name "${lexeme.content}" is already the name of the program.`;
+case 'parDupl':
+  return `"${lexeme.content}" is already the name of a parameter for this subroutine.`;
+case 'parType':
+  return 'Parameter name must be followed by a colon, then the parameter type (integer, boolean, char, or string).';
+case 'parBadType':
+  return `"${lexeme.content}" is not a valid parameter type (expected "integer", "boolean", "char", or "string").`;
+case 'parArray':
+  return 'The online compiler does not support array parameters. Please compile your program in the downloadable system.';
+case 'parComma':
+  return 'Comma missing between parameters.';
+case 'parAfter':
+  return 'No text found after parameter declarations.';
+// subroutine errors
+case 'subAfter':
+  return 'No text found after subroutine declaration.';
+case 'subBracket':
+  return 'Subroutine parameters must be followed by a closing bracket.';
+case 'subEndSemi':
+  return 'Semicolon needed after subroutine "END".';
+case 'fnArray':
+  return 'Functions cannot return arrays.';
+
+*/

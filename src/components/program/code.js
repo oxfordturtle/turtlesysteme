@@ -46,7 +46,7 @@ const textarea = create('textarea', { // for the plain text input by the user
 const refreshTextarea = (text) => {
   textarea.value = text;
   textarea.style.height = `${ol.scrollHeight.toString(10)}px`;
-  textarea.style.width = `${ol.scrollWidth.toString(10)}px`;
+  textarea.style.width = `${pre.scrollWidth.toString(10)}px`;
 };
 
 // function to synchronise the component with the application state

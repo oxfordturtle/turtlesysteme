@@ -15,7 +15,7 @@
     margin-top: -10em;
     max-width: 30em;
     box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
-    transition: margin .5s;
+    transition: all .5s;
     .tsx-modal-head {
       background: $green;
       color: #fff;
@@ -27,7 +27,7 @@
     }
     .tsx-modal-body {
       background: #fff;
-      padding: .5em;
+      padding: 1em;
       p {
         margin: 0 0 1em;
       }

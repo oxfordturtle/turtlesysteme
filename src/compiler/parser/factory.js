@@ -1,15 +1,9 @@
-/* languages/parser/factory
---------------------------------------------------------------------------------
-factory for the language-specific parsers - creates objects for routines,
-constants, and variables
+/** factory for the language-specific parsers - creates objects for routines, constants,
+ *  and variables; using this module in the language-specific parsers ensures the same basic
+ *  structure for the output of the different parsers
+ */
 
-using this module in the language-specific parsers ensures the same basic
-structure for the output of the different parsers
---------------------------------------------------------------------------------
-*/
-
-// pseudo-constructor for the main program
-// ----------
+// create main program object
 const program = (name, language) =>
   ({
     language,
@@ -24,15 +18,14 @@ const program = (name, language) =>
     memoryNeeded: null,  // fixed later by the main parser module
   });
 
-// psuedo-constructor for subroutines
-// ----------
+// create subroutine object
 const subroutine = (name, type, parent) =>
   ({
     name,
     type, // "procedure|function"
     level: -1, // needed for the usage data table
     index: null, // set after initial construction
-    indent: null, // set after initial construction
+    indent: null, // Python only; set after initial construction
     globals: [], // Python only
     nonlocals: [], // Python only
     constants: [], // Pascal only
@@ -44,30 +37,28 @@ const subroutine = (name, type, parent) =>
     memoryNeeded: null // fixed later by the main parser module
   });
 
-// pseudo-constructor for constants
-// ----------
-const constant = name =>
-  ({
-    name,
-    type: null, // set after initial construction
-    value: null // set after initial construction
-  });
+// create constant object
+const constant = (name, type, value) =>
+  ({ name, type, value });
 
-// pseudo-constructor for variables (and parameters)
-// ----------
+// create variable (and parameter) object
 const variable = (name, routine, byref) =>
   ({
     name,
     routine,
-    index: null,  // fixed later by the main parser module
-    type: null,   // set after initial construction
-    byref: byref, // true only for parameters (potentially)
-    length: 0,    // > 0 for strings (changed after initial construction)
+    byref: byref,   // true only for parameters (potentially)
+    index: null,    // fixed later by the main parser module
+    fulltype: null, // set after initial construction
   });
 
+const fulltype = (type, length = null, start = null, subtype = null) =>
+  ({ type, length, start, subtype });
+
+// expose the factory functions
 module.exports = {
   program,
   subroutine,
   constant,
   variable,
+  fulltype,
 };

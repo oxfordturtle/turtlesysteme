@@ -11,7 +11,7 @@ const message = create('p');
 const button = create('button', {
   content: 'OK',
   on: [{ type: 'click', callback: () => {
-    popup.classList.remove('open');
+    overlay.classList.remove('open');
   } }],
 });
 
@@ -40,10 +40,16 @@ const overlay = create('div', {
 });
 
 const show = (error) => {
-  title.innerHTML = `${error.type} Error`;
-  message.innerHTML = error.message;
-  if (error.text && error.line) {
-    message.innerHTML += ` ('${error.text}', line ${error.line})`;
+  if (error.type) { // custom error
+    title.innerHTML = `${error.type} Error`;
+    message.innerHTML = error.message;
+    if (error.lexeme) {
+      title.innerHTML += ` - "${error.lexeme.content}", line ${error.lexeme.line}`;
+    }
+  } else { // native error
+    console.error(error);
+    title.innerHTML = 'System Error';
+    message.innerHTML = 'An unexpected error has occured, suggesting there is a bug in the system. Please contact us with details of what you were doing when this message appeared, and we will do our best to locate and fix the bug.';
   }
   overlay.classList.add('open');
 };

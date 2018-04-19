@@ -2,7 +2,7 @@
  * the central hub for maintaining application state and communicating between different modules
  */
 const session = require('./session');
-const compile = require('compiler');
+const { compile } = require('compiler');
 
 // a record of outgoing signals, with arrays for registering callbacks
 const replies = {

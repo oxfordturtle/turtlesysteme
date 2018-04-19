@@ -1,4 +1,4 @@
-/*
+/**
  * input codes
  */
 const newInput = (name, value) =>

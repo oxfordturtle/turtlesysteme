@@ -1,8 +1,9 @@
 /**
- * tokenizer for Turtle Python - splits code into lexemes and whitespace
- * used by the code highlighting module and by the lexer
- * (the lexer removes the whitespace and comment tokens and adds line numbers and offsets)
+ * tokenizer for Turtle Python - splits code into lexemes and whitespace used by the code
+ * highlighting module and by the lexer
  */
+
+// whitespace
 const linebreak = (code) => {
   const test = (code[0] === '\n');
   return test ? { type: 'linebreak', content: '\n' } : false;
@@ -13,12 +14,26 @@ const spaces = (code) => {
   return test ? { type: 'spaces', content: test[0] } : false;
 };
 
+// comments
 const comment = (code) => {
   const start = code.match(/^#/);
   if (start) return { type: 'comment', content: code.split('\n')[0] };
   return false;
 };
 
+// operators
+const operator = (code) => {
+  const test = code.match(/^(\+|-|\*|\/|\/\/|%|==|!=|<=|>=|=|<|>|not\b|and\b|or\b|xor\b)/);
+  return test ? { type: 'operator', content: test[0] } : false;
+};
+
+// punctuation
+const punctuation = (code) => {
+  const test = code.match(/^(\(|\)|,|:)/);
+  return test ? { type: 'punctuation', content: test[0] } : false;
+};
+
+// string literals
 const string = (code) => {
   const start1 = code[0] === '\'';
   const start2 = code[0] === '"';
@@ -31,16 +46,13 @@ const string = (code) => {
   return false;
 };
 
-const operator = (code) => {
-  const test = code.match(/^(\+|-|\*|\/|\/\/|%|==|!=|<=|>=|=|<|>|not\b|and\b|or\b|xor\b)/);
-  return test ? { type: 'operator', content: test[0] } : false;
+// boolean literals
+const boolean = (code) => {
+  const test = code.match(/^(true|false)\b/);
+  return test ? { type: 'boolean', content: test[0] } : false;
 };
 
-const punctuation = (code) => {
-  const test = code.match(/^(\(|\)|,|:)/);
-  return test ? { type: 'punctuation', content: test[0] } : false;
-};
-
+// integer literals
 const binary = (code) => {
   const good = code.match(/^(0b[01]+)\b/);
   const bad = code.match(/^(%[01]+)\b/);
@@ -73,46 +85,51 @@ const decimal = (code) => {
   return false;
 };
 
+// keywords
 const keyword = (code) => {
   const test = code.match(/^(def|else|for|global|if|in|nonlocal|pass|range|return|while)\b/);
   return test ? { type: 'keyword', content: test[0] } : false;
 };
 
+// native turtle commands
 const command = (code) => {
   const test = code.match(/^(abs|acos|angles|antilog|asin|atan|back|blank|blot|boolint|box|canvas|chr|circle|colou?r|console|copy|cos|cursor|dec|detect|direction|divmult|drawxy|dump|ellblot|ellipse|exp|fill|find|forget|forward|heapreset|hex|home|hypot|inc|input|insert|int|intdef|keybuffer|keyecho|keystatus|left|len|ln|log10|lower|max|maxint|min|mixcols|movexy|newturtle|noupdate|oldturtle|ord|output|pause|pendown|penup|pi|pixcol|pixset|polygon|polyline|power|print|qstr|qval|randcol|randint|read|readline|recolour|remember|reset|resolution|rgb|right|root|setx|setxy|sety|sign|sin|sqrt|str|tan|thickness|time|timeset|trace|turnxy|update|upper|watch|write|writeline)\b/);
   return test ? { type: 'command', content: test[0] } : false;
 };
 
+// built-in turtle property variables
 const turtle = (code) => {
   const test = code.match(/^(turt[xydtc])\b/);
   return test ? { type: 'turtle', content: test[0] } : false;
 };
 
-const constant = (code) => {
-  const test = code.match(/^(true|false|green|darkgreen|lightgreen|seagreen|greengrey|greengray|red|darkred|lightred|maroon|redgrey|redgray|blue|darkblue|lightblue|royal|bluegrey|yellow|ochre|cream|gold|yellowgrey|yellowgray|violet|indigo|lilac|purple|darkgrey|darkgray|lime|olive|yellowgreen|emerald|midgrey|midgray|orange|orangered|peach|salmon|lightgrey|lightgray|skyblue|teal|cyan|turquoise|silver|brown|darkbrown|lightbrown|coffee|white|pink|magenta|lightpink|rose|black)\b/);
-  return test ? { type: 'constant', content: test[0] } : false;
+// native colour constants
+const colour = (code) => {
+  const test = code.match(/^(green|darkgreen|lightgreen|seagreen|greengrey|greengray|red|darkred|lightred|maroon|redgrey|redgray|blue|darkblue|lightblue|royal|bluegrey|yellow|ochre|cream|gold|yellowgrey|yellowgray|violet|indigo|lilac|purple|darkgrey|darkgray|lime|olive|yellowgreen|emerald|midgrey|midgray|orange|orangered|peach|salmon|lightgrey|lightgray|skyblue|teal|cyan|turquoise|silver|brown|darkbrown|lightbrown|coffee|white|pink|magenta|lightpink|rose|black)\b/);
+  return test ? { type: 'colour', content: test[0] } : false;
 };
 
+// native keycode constants
 const keycode = (code) => {
   const test = code.match(/^(\\[#a-z0-9]+)/i);
   return test ? { type: 'keycode', content: test[0] } : false;
 };
 
+// native query codes
 const query = (code) => {
   const test = code.match(/^(\?[a-z]+)\b/);
   return test ? { type: 'query', content: test[0] } : false;
 };
 
+// identifiers (i.e. variable, or subroutine names)
 const identifier = (code) => {
   const test = code.match(/^([_a-zA-Z][_a-zA-Z0-9]*)\b/);
   return test ? { type: 'identifier', content: test[0] } : false;
 };
 
-const error = (code) => {
-  const test = code.match(/^\d+/);
-  if (test) return { type: 'unterminated-integer', content: code };
-  return { type: 'illegal', content: code.split(/\b/)[0] };
-};
+// illegal (anything that isn't one of the above)
+const illegal = (code) =>
+  ({ type: 'illegal', content: code.split(/\b/)[0] });
 
 const tokenize = (code) => {
   var token;
@@ -121,9 +138,10 @@ const tokenize = (code) => {
     token = linebreak(code)
       || spaces(code)
       || comment(code)
-      || string(code)
       || operator(code)
       || punctuation(code)
+      || string(code)
+      || boolean(code)
       || binary(code)
       || octal(code)
       || hexadecimal(code)
@@ -131,11 +149,11 @@ const tokenize = (code) => {
       || keyword(code)
       || command(code)
       || turtle(code)
-      || constant(code)
+      || colour(code)
       || keycode(code)
       || query(code)
       || identifier(code)
-      || error(code);
+      || illegal(code);
     tokens.push(token);
     code = code.slice(token.content.length);
   }

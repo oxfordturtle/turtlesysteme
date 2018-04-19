@@ -23,9 +23,9 @@ which are easier to do after the first pass is complete - namely:
 --------------------------------------------------------------------------------
 */
 
-const BASIC = require("./parser/basic");
-const Pascal = require("./parser/pascal");
-const Python = require("./parser/python");
+const BASIC = require('./basic');
+const Pascal = require('./pascal');
+const Python = require('./python');
 
 const parsers = { BASIC, Pascal, Python };
 
