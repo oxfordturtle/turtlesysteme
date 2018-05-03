@@ -14,7 +14,7 @@ const factory = require('./factory');
 // generate an error message
 const message = (messageId, lexeme) => {
   switch (messageId) {
-    // programAndNext errors
+    // program declaration errors
     case 'progBegin':
       return 'Program must start with keyword "PROGRAM".';
     case 'progName':
@@ -25,7 +25,7 @@ const message = (messageId, lexeme) => {
       return `"${lexeme.content}" is not a valid program name.`;
     case 'progSemi':
       return 'Program name must be followed by a semicolon.';
-    // stateAndNext errors
+    // errors at the crossroads
     case 'constVar':
       return 'Constants must be defined before any variables.';
     case 'constSub':
@@ -69,6 +69,10 @@ const message = (messageId, lexeme) => {
       return 'String size must be followed by a closing square bracket "]".'
     case 'varArrayBadSize':
       return 'Array declarations take the form "array[n..m]", where "n" and "m" are integer values specifying the start and end index of the array.';
+    case 'varArrayNoConstant':
+      return `Constant "${lexeme.content}" has not been declared.`;
+    case 'varArrayBadConstant':
+      return `"${lexeme.content}" is not an integer constant.`;
     case 'varArrayOf':
       return 'Array declaration must be followed by "of", and then the type of the elements of the array.'
     // variable definition errors
@@ -84,9 +88,7 @@ const message = (messageId, lexeme) => {
       return `"${lexeme.content}" is already the name of a constant or variable in the current scope.`;
     case 'varComma':
       return 'Comma missing between variable declarations.';
-    // parameter errors
-    // ...
-    // routine errors
+    // routine declaration errors
     case 'subName':
       return 'No subroutine name found.';
     case 'subTurtle':
@@ -105,7 +107,7 @@ const message = (messageId, lexeme) => {
       return `"${lexeme.content}" is not a valid return type (expected "integer", "boolean", "char", or "string").`;
     case 'subEnd':
       return 'Routine commands must finish with "END".';
-    // parser errors
+    // general parser errors
     case 'constAfter':
       return 'No program text found after constant declarations.';
     case 'varAfter':
@@ -164,17 +166,17 @@ const stateAndNext = (lexemes, lex, routine) => {
     case 'const':
       if (routine.variables.length > 0) throw error('constVar', lexemes[lex]);
       if (routine.subroutines.length > 0) throw error('constSub', lexemes[lex]);
-      return { lex: lex + 1, state: keyword.content };
+      return { lex: lex + 1, state: 'const' };
     case 'var':
       if (routine.subroutines.length > 0) throw error('varSub', lexemes[lex]);
-      return { lex: lex + 1, state: keyword.content };
+      return { lex: lex + 1, state: 'var' };
       break;
     case 'function': // fallthrough
     case 'procedure':
       return { lex: lex + 1, state: keyword.content };
       break;
     case 'begin':
-      return { lex: next(lexemes, lex + 1), state: keyword.content };
+      return { lex: next(lexemes, lex + 1), state: 'begin' };
     default:
       throw error('progWeird', lexemes[lex]);
   }
@@ -239,7 +241,7 @@ const constantAndNext = (lexemes, lex, routines, routine) => {
 
 // look for "<fulltype>: boolean|integer|char|string[size]|array of <fulltype>"; return fulltype
 // object (a property of variables/parameters) and next lexeme index
-const fulltypeAndNext = (lexemes, lex) => {
+const fulltypeAndNext = (lexemes, lex, routines) => {
   let result;
   if (!lexemes[lex]) throw error('varType', lexemes[lex - 1]);
   if (lexemes[lex].type !== 'type') throw error('varBadType', lexemes[lex]);
@@ -251,32 +253,57 @@ const fulltypeAndNext = (lexemes, lex) => {
     case 'string':
       if (lexemes[lex + 1] && lexemes[lex + 1].content === '[') {
         const [size, rbkt] = lexemes.slice(lex + 2, lex + 4);
-        if (!size) throw error('varStringNoSize', lexemes[lex - 1]);
-        if (size.type !== 'integer') throw error('varStringBadSize', lexemes[lex]);
-        if (!rbkt) throw error('varStringRbkt', lexemes[lex - 1]);
-        if (rbkt.content !== ']') throw error('varStringRbkt', lexemes[lex]);
+        if (!size) throw error('varStringNoSize', lexemes[lex + 1]);
+        if (size.type !== 'integer') throw error('varStringBadSize', lexemes[lex + 2]);
+        if (!rbkt) throw error('varStringRbkt', lexemes[lex + 2]);
+        if (rbkt.content !== ']') throw error('varStringRbkt', lexemes[lex + 3]);
         return { lex: lex + 4, fulltype: factory.fulltype('string', size.value) };
       } else {
         return { lex: lex + 1, fulltype: factory.fulltype('string') };
       }
     case 'array':
       const [lbkt, start, dots, end, rbkt, keyof] = lexemes.slice(lex + 1, lex + 7);
-      if (!lbkt) throw error('varArrayBadSize', lexemes[lex - 1]);
-      if (lbkt.content !== '[') throw error('varArrayBadSize', lexemes[lex]);
-      if (!start) throw error('varArrayBadSize', lexemes[lex - 1]);
-      if (start.type !== 'integer') throw error('varArrayBadSize', lexemes[lex]);
-      if (!dots) throw error('varArrayBadSize', lexemes[lex - 1]);
-      if (dots.content !== '..') throw error('varArrayBadSize', lexemes[lex]);
-      if (!end) throw error('varArrayBadSize', lexemes[lex - 1]);
-      if (end.type !== 'integer') throw error('varArrayBadSize', lexemes[lex]);
-      if (!rbkt) throw error('varArrayBadSize', lexemes[lex - 1]);
-      if (rbkt.content !== ']') throw error('varArrayBadSize', lexemes[lex]);
-      if (!keyof) throw error('varArrayOf', lexemes[lex - 1]);
-      if (keyof.content !== 'of') throw error('varArrayOf', lexemes[lex]);
+      let constant, endValue, startValue;
+      if (!lbkt) throw error('varArrayBadSize', lexemes[lex]);
+      if (lbkt.content !== '[') throw error('varArrayBadSize', lexemes[lex + 1]);
+      if (!start) throw error('varArrayBadSize', lexemes[lex + 1]);
+      switch (start.type) {
+        case 'identifier':
+          constant = routines[0].constants.find(x => x.name === start.content);
+          if (!constant) throw error('varArrayNoConstant', lexemes[lex + 2]);
+          if (constant.type !== 'integer') throw error('varArrayBadConstant', lexemes[lex + 2]);
+          startValue = constant.value;
+          break;
+        case 'integer':
+          startValue = start.value;
+          break;
+        default:
+          throw error('varArrayBadSize', lexemes[lex + 2]);
+      }
+      if (!dots) throw error('varArrayBadSize', lexemes[lex + 2]);
+      if (dots.content !== '..') throw error('varArrayBadSize', lexemes[lex + 3]);
+      if (!end) throw error('varArrayBadSize', lexemes[lex + 3]);
+      switch (end.type) {
+        case 'identifier':
+          constant = routines[0].constants.find(x => x.name === end.content);
+          if (!constant) throw error('varArrayNoConstant', lexemes[lex + 4]);
+          if (constant.type !== 'integer') throw error('varArrayBadConstant', lexemes[lex + 4]);
+          endValue = constant.value;
+          break;
+        case 'integer':
+          endValue = end.value;
+          break;
+        default:
+          throw error('varArrayBadSize', lexemes[lex + 4]);
+      }
+      if (!rbkt) throw error('varArrayBadSize', lexemes[lex + 4]);
+      if (rbkt.content !== ']') throw error('varArrayBadSize', lexemes[lex + 5]);
+      if (!keyof) throw error('varArrayOf', lexemes[lex + 5]);
+      if (keyof.content !== 'of') throw error('varArrayOf', lexemes[lex + 6]);
       result = fulltypeAndNext(lexemes, lex + 7);
       return {
         lex: result.lex,
-        fulltype: factory.fulltype('array', end.value - start.value + 1, start.value, result.fulltype),
+        fulltype: factory.fulltype('array', endValue - startValue + 1, startValue, result.fulltype),
       };
   }
 };
@@ -309,15 +336,39 @@ const variablesAndNext = (lexemes, lex, routines, routine, byref) => {
     }
   }
   // expecing type definition for the variables just gathered
-  ({ lex, fulltype } = fulltypeAndNext(lexemes, lex));
+  ({ lex, fulltype } = fulltypeAndNext(lexemes, lex, routines));
   variables.forEach((x) => x.fulltype = fulltype);
   return { lex, variables };
 };
 
-//
-const parametersAndNext = (lexemes, lex) => {};
+// look for "[var] identifier1[, identifier2, ...]: <fulltype>"; return array of parameters and
+// index of the next lexeme
+const parametersAndNext = (lexemes, lex, routines, routine) => {
+  let parameters = [];
+  let variables = [];
+  let more = true;
+  while (more) {
+    ({ lex, variables } = (lexemes[lex] && lexemes[lex].content === 'var')
+      ? variablesAndNext(lexemes, lex + 1, routines, routine, true)
+      : variablesAndNext(lexemes, lex, routines, routine, false));
+    parameters = parameters.concat(variables);
+    if (!lexemes[lex]) throw error();
+    switch (lexemes[lex].content) {
+      case ';':
+        lex += 1;
+        break;
+      case ')':
+        lex += 1;
+        more = false;
+        break;
+      default:
+        throw error();
+    }
+  }
+  return { lex, parameters };
+};
 
-//
+// look for "identifier[(parameters)];"; return subroutine object and index of the next lexeme
 const subroutineAndNext = (lexemes, lex, type, routines, parent) => {
   const [identifier, after] = lexemes.slice(lex, lex + 2);
   let routine, parameters, returnType;
@@ -331,23 +382,23 @@ const subroutineAndNext = (lexemes, lex, type, routines, parent) => {
   if (!after) throw error('subSemi', identifier);
   switch (after.content) {
     case ';':
-      return { routine, lex: next(lexemes, lex + 1, false) };
+      return { lex: next(lexemes, lex + 2, false), routine };
     case '(':
-      ({ parameters, lex } = parametersAndNext(lexemes, lex + 1, routines));
+      ({ parameters, lex } = parametersAndNext(lexemes, lex + 2, routines, routine));
       routine.parameters = parameters;
       routine.variables = routine.variables.concat(parameters);
       if (type === 'function') {
         if (!lexemes[lex]) throw error('fnType', lexemes[lex - 1]);
         if (lexemes[lex].content !== ':') throw error('fnType', lexemes[lex]);
-        ({ returnType, lex } = typeAndNext(lexemes, lex + 1));
+        ({ returnType, lex } = fulltypeAndNext(lexemes, lex + 1));
         routine.variables[0].type = returnType;
       } else {
         lex = next(lexemes, lex, true, 'subSemi');
       }
+      return { lex, routine };
     default:
-      throw error('subSemi', next);
+      throw error('subSemi', after);
   }
-  return { lex, routine }
 };
 
 // grab everything up to "END"
@@ -439,41 +490,3 @@ const parser = (lexemes) => {
 };
 
 module.exports = parser;
-
-/* old error messages
-case 'progEnd':
-  return 'Program must finish with "END".';
-// constant errors
-// variable errors
-// parameter errors
-case 'parName':
-  return 'No parameter name found.';
-case 'parTurtle':
-  return `"${lexeme.content}" is the name of a predefined Turtle property, and cannot be used as a parameter name.`;
-case 'parId':
-  return `"${lexeme.content}" is not a valid parameter name.`;
-case 'parProg':
-  return `Parameter name "${lexeme.content}" is already the name of the program.`;
-case 'parDupl':
-  return `"${lexeme.content}" is already the name of a parameter for this subroutine.`;
-case 'parType':
-  return 'Parameter name must be followed by a colon, then the parameter type (integer, boolean, char, or string).';
-case 'parBadType':
-  return `"${lexeme.content}" is not a valid parameter type (expected "integer", "boolean", "char", or "string").`;
-case 'parArray':
-  return 'The online compiler does not support array parameters. Please compile your program in the downloadable system.';
-case 'parComma':
-  return 'Comma missing between parameters.';
-case 'parAfter':
-  return 'No text found after parameter declarations.';
-// subroutine errors
-case 'subAfter':
-  return 'No text found after subroutine declaration.';
-case 'subBracket':
-  return 'Subroutine parameters must be followed by a closing bracket.';
-case 'subEndSemi':
-  return 'Semicolon needed after subroutine "END".';
-case 'fnArray':
-  return 'Functions cannot return arrays.';
-
-*/

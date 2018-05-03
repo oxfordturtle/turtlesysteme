@@ -51,8 +51,8 @@ const variable = (name, routine, byref) =>
     fulltype: null, // set after initial construction
   });
 
-const fulltype = (type, length = null, start = null, subtype = null) =>
-  ({ type, length, start, subtype });
+const fulltype = (type, length = null, start = null, fulltype = null) =>
+  ({ type, length, start, fulltype });
 
 // expose the factory functions
 module.exports = {

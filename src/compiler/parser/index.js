@@ -37,7 +37,9 @@ const fixVariableMemory = (routine) => {
   routine.variables.forEach((variable) => {
     memoryNeeded += 1;
     variable.index = memoryNeeded;
-    memoryNeeded += variable.length;
+    if (variable.fulltype.length !== null) {
+      memoryNeeded += variable.fulltype.length;
+    }
   });
   routine.memoryNeeded = memoryNeeded;
 };
