@@ -1,4 +1,4 @@
-/* languages/parser
+/* compiler/parser
 --------------------------------------------------------------------------------
 lexemes go in, array of routines comes out; the first element of the array is
 the main PROGRAM, and any subsequent elements are its SUBROUTINES, in the order

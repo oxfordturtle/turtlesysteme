@@ -42,13 +42,14 @@ const constant = (name, type, value) =>
   ({ name, type, value });
 
 // create variable (and parameter) object
-const variable = (name, routine, byref) =>
+const variable = (name, routine, byref = false) =>
   ({
     name,
     routine,
     byref: byref,   // true only for parameters (potentially)
     index: null,    // fixed later by the main parser module
     fulltype: null, // set after initial construction
+    private: null, // routine for private variables (BASIC only)
   });
 
 const fulltype = (type, length = null, start = null, fulltype = null) =>
