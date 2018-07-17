@@ -1,30 +1,28 @@
-/* compiler/pcoder/miniparser
+/* compiler/parser2
 ----------------------------------------------------------------------------------------------------
-for Pascal, everything can be determined on the first pass; however:
+the first pass determines routines and a certain amount about variables, and the third pass
+generates the actual pcode; this second small pass just determines the remaining bit of information
+about variables, and then how much memory each routine needs
 
-- for BASIC, function return types can only be determined by evaluating the return expression
-- for Python, all variable and parameter types can only be determined by evaluating the first
-  assignment expression
+most of the analysis is language specific, handled by the basic/pascal/python
+modules; this just does a couple of language-independent things at the end,
+which are easier to do after the first pass is complete - namely:
 
-so this module works these things out, before running the main pcoder on the result
+ 1) fix the addresses of the variables, and the total memory needed by a
+    routine, which is much easier to do once we know what all the variables are
+ 2) fix the address of the global turtle variable (which depends on the number
+    of subroutines, and whether any of them is a function
 ----------------------------------------------------------------------------------------------------
 */
 
-// local imports
-// ----------
-const atoms = require('./atoms');
-const find = require('./find');
+const { atoms, find } = require('./tools');
 
 // try to determine return value type (for Python)
-// ----------
 const determineReturnType = (variable, routine, lex) => {
   // try to determine the type
   try {
     expression = atoms.expression(routine, lex, 'null', 'null', 'Python');
-    variable.type = expression.type;
-    if (expression.type === 'str') {
-      variable.length = 34;
-    }
+    variable.fulltype = factory.fulltype(expression.type);
   }
   // fail silently if we can't - any problems should be picked up later
   catch (ignore) {}
@@ -32,7 +30,6 @@ const determineReturnType = (variable, routine, lex) => {
 };
 
 // determine the types for the variables of a routine (for Python)
-// ----------
 const determineVariableTypes = (routines, index) => {
   var routine = routines[index];
   var lexemes = routine.lexemes;
@@ -42,24 +39,21 @@ const determineVariableTypes = (routines, index) => {
   // do what we can with the current routine
   while (lex < lexemes.length) {
     if (lexemes[lex].type === 'identifier') {
-      variable = find.variable(routine, lexemes[lex].string, 'Python');
-      if (variable && (variable.type === 'boolint')) {
+      variable = find.variable(routine, lexemes[lex].content, 'Python');
+      if (variable && (variable.fulltype === null)) {
         lex += 1;
         // expecting '=' or 'in' (as in 'for [variable] in range...'
-        if (lexemes[lex] && (lexemes[lex].type === 'in')) {
-          variable.type = 'int';
-          variable.length = 0;
+        if (lexemes[lex] && (lexemes[lex].content === 'in')) {
+          variable.fulltype = factory.fulltype('integer');
           lex += 1;
         } else if (lexemes[lex] && (lexemes[lex].content === '=')) {
           lex += 1;
           // expecting an expression whose type we can figure out
+          console.log(lexemes[lex]);
           if (lexemes[lex]) {
             try {
               expression = atoms.expression(routine, lex, 'null', 'null', 'Python');
-              variable.type = expression.type;
-              if (expression.type === 'str') {
-                variable.length = 34;
-              }
+              variable.fulltype = factory.fulltype(expression.type);
               lex = expression.lex;
             } catch (ignore) {
               // fail silently - doesn't matter for now
@@ -76,10 +70,7 @@ const determineVariableTypes = (routines, index) => {
       if (lexemes[lex]) {
         try {
           expression = atoms.expression(routine, lex, 'null', 'null', 'Python');
-          variable.type = expression.type;
-          if (expression.type === 'str') {
-            variable.length = 34;
-          }
+          variable.fulltype = factory.fulltype(expression.type);
           lex = expression.lex;
         }
         catch (ignore) {
@@ -110,8 +101,7 @@ const determineVariableTypes = (routines, index) => {
   }
 };
 
-// determine the types of the parameters of a routine
-// ----------
+// determine the types of the parameters of a routine (for Python)
 const determineParameterTypes = function (routines, index) {
   var routine = routines[index];
   var lexemes = routine.lexemes;
@@ -155,9 +145,35 @@ const determineParameterTypes = function (routines, index) {
   }
 };
 
-// the main miniparser function
-// ----------
-const miniparser = (routines, language) => {
+// set the address of the variables for a routine, and determine how much memory it needs
+const fixVariableMemory = (routine) => {
+  let memoryNeeded = 0;
+  routine.variables.forEach((variable) => {
+    memoryNeeded += 1;
+    variable.index = memoryNeeded;
+    if (variable.fulltype && variable.fulltype.length !== null) {
+      memoryNeeded += variable.fulltype.length;
+    }
+  });
+  routine.memoryNeeded = memoryNeeded;
+};
+
+// base number of pointers (turtle, keybuffer, plus 8 file slots)
+const basePointers = 10;
+
+// subroutine pointers needed (number of subroutines, plus 1 for the return value if there's at
+// least one function)
+const subroutinePointers = subroutines =>
+  subroutines.some(x => x.type === 'function') ? subroutines.length + 1 : subroutines.length;
+
+// get the address of the turtle global variable (offset by the pointers)
+const turtleAddress = subroutines =>
+  basePointers + subroutinePointers(subroutines);
+
+// the main parser2 function
+const parser2 = (routines, language) => {
+  const program = routines[0];
+  const subroutines = routines.slice(1);
   if (language === 'BASIC') {
     // determine function return types
     // TODO
@@ -168,8 +184,12 @@ const miniparser = (routines, language) => {
     // determine parameter types recursively (start at last subroutine, then work backwards)
     if (routines.length > 1) determineParameterTypes(routines, routines.length - 1);
   }
-  // return the routines, now fixed accordingly
+  // now do some final calculations
+  routines.forEach(fixVariableMemory);
+  program.turtleAddress = turtleAddress(subroutines);
+  // and return the array of routines
   return routines;
 };
 
-module.exports = miniparser;
+// expose the main function
+module.exports = parser2;

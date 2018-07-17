@@ -2,7 +2,7 @@
  * text for the basics help tab
  */
 const { create } = require('dom');
-const { highlight } = require('compiler');
+const { highlight } = require('lexer');
 const state = require('state');
 
 const BASIC = [

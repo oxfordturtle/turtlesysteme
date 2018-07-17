@@ -3,7 +3,7 @@
  */
 require('styles/code.scss');
 const { create } = require('dom');
-const { highlight } = require('compiler');
+const { highlight } = require('lexer');
 const state = require('state');
 
 // define the main HTML elements for this component

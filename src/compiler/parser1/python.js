@@ -10,9 +10,7 @@ subroutines (with their variables and parameters) - lexemes for the program (and
 code themselves are just stored for subsequent handling by the pcoder
 ----------------------------------------------------------------------------------------------------
 */
-
-const find = require('compiler/find');
-const factory = require('./factory');
+const { factory, find } = require('../tools');
 
 // generate an error message
 message = (messageId, lexeme) => {

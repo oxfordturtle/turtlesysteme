@@ -1,17 +1,17 @@
 /**
  * the machine control bars, with a RUN/HALT button, a PLAY/PAUSE button, and a display of the
  * current turtle properties; this depends on the machine module being appropriately configured to
- * respond to the signals, and send back signals itself
+ * respond to the state, and send back state itself
  */
 const { create, hex } = require('dom');
 const state = require('state');
 
-// functions for interacting with the machine (via signals)
-const run = signals.send.bind(null, 'machine-run');
+// functions for interacting with the machine (via state)
+const run = state.send.bind(null, 'machine-run');
 
-const halt = signals.send.bind(null, 'machine-halt');
+const halt = state.send.bind(null, 'machine-halt');
 
-const playPause = signals.send.bind(null, 'machine-play-pause');
+const playPause = state.send.bind(null, 'machine-play-pause');
 
 // buttons for interacting with the machine
 const runOrHaltButton = create('button', {

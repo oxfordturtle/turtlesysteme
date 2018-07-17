@@ -1,8 +1,9 @@
 /**
  * the central hub for maintaining application state and communicating between different modules
  */
+const compiler = require('compiler');
+const machine = require ('machine');
 const session = require('./session');
-const { compile } = require('compiler');
 
 // a record of outgoing signals, with arrays for registering callbacks
 const replies = {
@@ -131,7 +132,7 @@ const send = (signal, data) => {
         break;
       case 'compile-code':
         if (session.code.get().length > 0) {
-          result = compile(session.code.get(), session.language.get());
+          result = compiler(session.code.get(), session.language.get());
           session.usage.set(result.usage, session.language.get());
           session.pcode.set(result.pcode, session.language.get());
           session.compiled.set(true, session.language.get());
@@ -200,10 +201,11 @@ const send = (signal, data) => {
         break;
       case 'machine-run':
         if (!session.compiled.get()) {
+          console.log('RUN!');
           send('compile-code');
         }
         reply('machine-started');
-        run(session.pcode.get(), session.options.get());
+        machine.run(session.pcode.get(), session.machineOptions.get());
         break;
       case 'machine-halt':
         reply('machine-stopped');

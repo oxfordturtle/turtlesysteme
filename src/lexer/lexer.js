@@ -1,25 +1,23 @@
-/**
- * lexical analysis; program code (a string) goes in, an array of lexemes comes out
- * the lexer first uses the tokenizer to generate an array of tokens; then it checks for lexical
- * errors, strips whitespace and comments, and enriches the tokens with more information
- *
- * lexemes (enriched tokens) look like this: { type, content, value, line, offset }
- *
- * the types are the same as for token types, except that there are no whitespace or illegal
- * lexemes, and the "binary", "octal", "hexadecimal", and "decimal" token types are all just
- * "integer" lexical types
- *
- * the line and offset properties are generated using (and then discarding) the whitespace tokens
- *
- * the value property stores the result of evaluating literal value expressions, looking up the
- * corresponding integer for predefined colours, keycodes, and input queries, or the pcode
- * associated with an operator; it is null for all other lexical types
- */
+/* lexer/lexer
+----------------------------------------------------------------------------------------------------
+lexical analysis; program code (a string) goes in, an array of lexemes comes out
+the lexer first uses the tokenizer to generate an array of tokens; then it checks for lexical
+errors, strips whitespace and comments, and enriches the tokens with more information
 
-// global imports
+lexemes (enriched tokens) look like this: { type, content, value, line, offset }
+
+the types are the same as for token types, except that there are no whitespace or illegal
+lexemes, and the "binary", "octal", "hexadecimal", and "decimal" token types are all just
+"integer" lexical types
+
+the line and offset properties are generated using (and then discarding) the whitespace tokens
+
+the VALUE property stores the result of evaluating literal value expressions, looking up the
+corresponding integer for predefined colours, keycodes, and input queries, or the pcode
+associated with an operator; it is null for all other lexical types
+----------------------------------------------------------------------------------------------------
+*/
 const { colours, inputs, pc } = require('data');
-
-// local imports
 const tokenizer = require('./tokenizer');
 
 // record of error messages
@@ -49,59 +47,68 @@ const error = (id, messageId, lexeme) =>
   });
 
 // type of a lexeme
-const type = (type) =>
-  (['binary', 'octal', 'hexadecimal', 'decimal'].indexOf(type) > -1) ? 'integer' : type;
-
-// pcode of an operator
-const pcode = (operator) => {
-  switch (operator) {
-    case '+':
-      return pc.plus;
-    case '-':
-      return pc.subt;
-    case '*':
-      return pc.mult;
-    case '/':
-      return pc.divr;
-    case 'div': // fallthrough
-    case '//':
-      return pc.div;
-    case 'mod': // fallthrough
-    case '%':
-      return pc.mod;
-    case '=': // fallthrough (in BASIC, this could also be variable assignment)
-    case '==':
-      return pc.eqal;
-    case '<>': // fallthrough
-    case '!=':
-      return pc.noeq;
-    case '<=':
-      return pc.lseq;
-    case '>=':
-      return pc.mreq;
-    case '<':
-      return pc.less;
-    case '>':
-      return pc.more;
-    case 'not':
-      return pc.not;
-    case 'and':
-      return pc.and;
-    case 'or':
-      return pc.or;
-    case 'xor': // fallthrough
-    case 'eor':
-      return pc.xor;
+const type = (type, content) => {
+  switch (type) {
+    case 'operator':
+      switch (content.toLowerCase()) {
+        case '+':
+          return 'plus';
+        case '-':
+          return 'subt';
+        case '*':
+          return 'mult';
+        case '/':
+          return 'divr';
+        case 'div': // fallthrough
+        case '//':
+          return 'div';
+        case 'mod': // fallthrough
+        case '%':
+          return 'mod';
+        case '=': // fallthrough (in BASIC, this could also be variable assignment)
+        case '==':
+          return 'eqal';
+        case '<>': // fallthrough
+        case '!=':
+          return 'noeq';
+        case '<=':
+          return 'lseq';
+        case '>=':
+          return 'mreq';
+        case '<':
+          return 'less';
+        case '>':
+          return 'more';
+        case 'not':
+          return 'not';
+        case 'and':
+          return 'and';
+        case 'or':
+          return 'or';
+        case 'xor': // fallthrough
+        case 'eor':
+          return 'xor';
+        default:
+          return null;
+      }
+      break;
+    case 'punctuation':
+      return content;
+    case 'binary': // fallthrough
+    case 'octal': // fallthrough
+    case 'hexadecimal': // fallthrough
+    case 'decimal': // falthrough
+      return 'integer';
+    case 'keyword':
+      return content.toLowerCase();
     default:
-      return null;
+      return type;
   }
 };
 
 // value of a lexeme
 const value = (type, content) => {
   switch (type) {
-    case 'operator':
-      return pcode(content.toLowerCase());
     case 'string':
       return content.slice(1, -1).replace(/''/g, '\'').replace(/\\('|")/g, '$1');
     case 'boolean':
@@ -137,7 +144,7 @@ const value = (type, content) => {
 // create a lexeme object
 const lexeme = (token, line, offset, language) =>
   ({
-    type: type(token.type),
+    type: type(token.type, token.content),
     // Pascal is case-insensitive, so make everything lowercase for that language
     content: (language === 'Pascal') ? token.content.toLowerCase() : token.content,
     value: value(token.type, token.content),

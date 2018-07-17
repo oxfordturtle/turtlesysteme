@@ -1,4 +1,4 @@
-/* compiler/pcoder
+/* compiler/tools/pcoder
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -432,5 +432,5 @@ module.exports = {
   subroutineStartCode,
   subroutine,
   programStartCode,
-  programm
+  program,
 };

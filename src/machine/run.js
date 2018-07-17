@@ -1,9 +1,5 @@
-const pc = require('./constants/pc');
-const colours = require('./constants/colours');
-const canvas = require('./canvas');
-const console = require('./console');
-const output = require('./output');
-const memory = require('./memory');
+const { colours, pc } = require('data');
+const { canvas, console, memory, output } = require('components/machine');
 
 const updateTurtleDisplay = (address, value) => {
   const turtleAddress = memory.main[0];
@@ -1217,3 +1213,5 @@ const run = ({ pcode, options }) => {
     executeCode(pcode, 0, 0, options);
   }
 };
+
+module.exports = run;

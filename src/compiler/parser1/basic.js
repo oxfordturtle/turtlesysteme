@@ -10,9 +10,7 @@ subroutines (with their variables and parameters) - lexemes for the program (and
 code themselves are just stored for subsequent handling by the pcoder
 ----------------------------------------------------------------------------------------------------
 */
-
-// local imports
-const factory = require('./factory');
+const { factory } = require('../tools');
 
 // generate an error message
 const message = (messageId, lexeme) => {
