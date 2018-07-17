@@ -256,6 +256,9 @@ const factor = (routine, lex, type, typeNeeded, language) => {
       lex += 1;
       break;
     case 'turtle': // fallthrough
+    case 'command': // fallthrough
+    case 'custom': // fallthrough
+    case 'constant': // fallthrough
     case 'identifier':
       constant = find.constant(routine, lexemes[lex].string, language);
       if (constant) {

@@ -5,6 +5,7 @@
   box-sizing: border-box;
   font-family: $font-family;
   font-size: $font-size;
+  color: $black;
   *, *::before, *::after {
     box-sizing: border-box;
   }
@@ -31,13 +32,14 @@
   table {
     border-collapse: collapse;
     border: $border;
+    font-size: .9375em;
     thead {
       background: $gray;
     }
     th, td {
       border: $border;
       padding: .25em .5em;
-      text-align: left;
+      vertical-align: top;
     }
     th {
       font-weight: bold;

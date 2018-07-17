@@ -49,6 +49,19 @@ const error = (id, messageId, lexeme) =>
 // type of a lexeme
 const type = (type, content) => {
   switch (type) {
+    case 'binary': // fallthrough
+    case 'octal': // fallthrough
+    case 'hexadecimal': // fallthrough
+    case 'decimal': // falthrough
+      return 'integer';
+    default:
+      return type;
+  }
+};
+
+// value of a lexeme
+const value = (type, content) => {
+  switch (type) {
     case 'operator':
       switch (content.toLowerCase()) {
         case '+':
@@ -92,23 +105,6 @@ const type = (type, content) => {
           return null;
       }
       break;
-    case 'punctuation':
-      return content;
-    case 'binary': // fallthrough
-    case 'octal': // fallthrough
-    case 'hexadecimal': // fallthrough
-    case 'decimal': // falthrough
-      return 'integer';
-    case 'keyword':
-      return content.toLowerCase();
-    default:
-      return type;
-  }
-};
-
-// value of a lexeme
-const value = (type, content) => {
-  switch (type) {
     case 'string':
       return content.slice(1, -1).replace(/''/g, '\'').replace(/\\('|")/g, '$1');
     case 'boolean':
