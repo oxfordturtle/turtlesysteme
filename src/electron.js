@@ -1,12 +1,14 @@
 /**
  * entry point for the desktop version of the system
  */
-require('styles/system.scss');
-require('styles/help.scss');
+
+// global imports
 const electron = require('electron');
 const { tabs } = require('dom');
-const { help, machine, program, system } = require('components');
+const { controls, help, machine, program, system } = require('components');
 const state = require('state');
+require('styles/system.scss');
+require('styles/help.scss');
 
 // add the global .tsx-electron class to the root element (for electron-specific stylyes)
 document.body.parentElement.classList.add('tsx-electron');
@@ -33,8 +35,8 @@ switch (electron.remote.getCurrentWindow().page) {
     break;
   default:
     tsx.appendChild(tabs.create('tsx-top-tabs', [
-      { label: 'Program', active: true, content: [system('electron'), program('electron')] },
-      { label: 'Machine', active: false, content: [machine.controls, machine.tabs('electron')] },
+      { label: 'Program', active: true, content: [system('electron'), program.tabs('electron')] },
+      { label: 'Machine', active: false, content: [controls('electron'), machine.tabs('electron')] },
     ]));
     break;
 }

@@ -22,7 +22,7 @@ const storeKey = (event) => {
     memory.deleteFromBuffer();
     memory.deleteFromReadln();
     if (memory.getKeyecho()) {
-      console.innerHTML = console.innerHTML.slice(0, -1);
+      element.innerHTML = element.innerHTML.slice(0, -1);
     }
   }
   // arrow keys
@@ -55,8 +55,8 @@ const putInBuffer = (event) => {
   const pressedKey = event.keyCode || event.charCode;
   memory.addToBuffer(pressedKey);
   if (memory.getKeyecho()) {
-    console.innerHTML += String.fromCharCode(pressedKey);
-    console.scrollTop = console.scrollHeight;
+    element.innerHTML += String.fromCharCode(pressedKey);
+    element.scrollTop = element.scrollHeight;
   }
 };
 
@@ -73,16 +73,16 @@ const removeEventListeners = () => {
 };
 
 const setBackground = (colour) => {
-  console.style.background = hex(colour);
+  element.style.background = hex(colour);
 };
 
 const addText = (text) => {
-  console.innerHTML += text;
-  console.scrollTop = console.scrollHeight;
+  element.innerHTML += text;
+  element.scrollTop = element.scrollHeight;
 };
 
 const clearText = () => {
-  console.innerHTML = '';
+  element.innerHTML = '';
 };
 
 // exports

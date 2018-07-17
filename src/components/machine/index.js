@@ -1,12 +1,14 @@
 /**
  * the machine tabs; one set for the browser environment, and one for electron
  */
+
+// global imports
 const { create, tabs } = require('dom');
-const canvas = require('./canvas');
-const console = require('./console');
-const controls = require('./controls');
-const memory = require('./memory');
-const output = require('./output');
+const { canvas, console, memory, output } = require('machine');
+require('styles/canvas.scss');
+require('styles/console.scss');
+
+// local imports
 const settings = require('./settings');
 
 // settings tab
@@ -14,9 +16,9 @@ const settingsTab = { label: 'Settings', active: false, content: [settings] };
 
 // other tabs
 const otherTabs = [
-  { label: 'Canvas', active: true, content: [canvas.canvas, console.console] },
-  { label: 'Output', active: false, content: [output.output] },
-  { label: 'Memory', active: false, content: [memory.display] }
+  { label: 'Canvas', active: true, content: [canvas, console] },
+  { label: 'Output', active: false, content: [output] },
+  { label: 'Memory', active: false, content: [memory] },
 ];
 
 // all tabs (optionally including the settings tab)
@@ -35,11 +37,6 @@ const machineTabs = (context) => {
 
 // expose the two sets of tabs
 module.exports = {
-  canvas,
-  console,
-  controls,
-  memory,
-  output,
-  settings,
+  settings: settingsTab,
   tabs: machineTabs,
 };

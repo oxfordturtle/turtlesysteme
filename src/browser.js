@@ -1,11 +1,13 @@
 /**
  * entry point for the browser version of the system
  */
+
+// global imports
+const { tabs, popup } = require('dom');
+const { controls, help, machine, program, system } = require('components');
+const state = require('state');
 require('styles/system.scss');
 require('styles/help.scss');
-const { tabs, popup } = require('dom');
-const { help, machine, program, system } = require('components');
-const state = require('state');
 
 // add the global .tsx-browser class to the root element (for browser-specific stylyes)
 document.body.parentElement.classList.add('tsx-browser');
@@ -33,8 +35,8 @@ switch (tsx.getAttribute('data-page')) {
     tsx.classList.add('tsx');
     tsx.classList.add('tsx-system');
     tsx.appendChild(tabs.create('tsx-top-tabs', [
-      { label: 'Program', active: true, content: [system('browser'), program('browser')] },
-      { label: 'Machine', active: false, content: [machine.controls, machine.tabs('browser')] },
+      { label: 'Program', active: true, content: [system('browser'), program.tabs('browser')] },
+      { label: 'Machine', active: false, content: [controls('browser'), machine.tabs('browser')] },
     ]));
     break;
 }

@@ -1,6 +1,12 @@
 /**
  * the sytem control bar
+ * -------------------------------------------------------------------------------------------------
+ * basic system controls shown above the program tabs; includes current filename and language
+ * select menu (the latter in the browser only)
+ * -------------------------------------------------------------------------------------------------
  */
+
+// global imports
 require('styles/controls.scss');
 const { languages } = require('data');
 const { create } = require('dom');

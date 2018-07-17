@@ -13,16 +13,16 @@ const element = create('pre');
 
 // set the background colour
 const setBackground = (colour) => {
-  output.style.background = hex(colour);
+  element.style.background = hex(colour);
 };
 
 // edit text content
 const addText = (text) => {
-  output.innerHTML += text;
+  element.innerHTML += text;
 };
 
 const clearText = () => {
-  output.innerHTML = '';
+  element.innerHTML = '';
 };
 
 // exports

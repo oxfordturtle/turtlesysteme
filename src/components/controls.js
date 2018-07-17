@@ -1,8 +1,11 @@
 /**
- * the machine control bars, with a RUN/HALT button, a PLAY/PAUSE button, and a display of the
- * current turtle properties; this depends on the machine module being appropriately configured to
- * respond to the state, and send back state itself
+ * the machine control bar
+ * -------------------------------------------------------------------------------------------------
+ * a RUN/HALT button, a PLAY/PAUSE button, and a display of the current turtle properties
+ * -------------------------------------------------------------------------------------------------
  */
+
+// global imports
 const { create, hex } = require('dom');
 const state = require('state');
 
@@ -101,10 +104,17 @@ state.on('turtle-changed', ({ property, value }) => {
 });
 
 // the controls div (exposed)
-const controls = create('div', {
-  classes: ['tsx-controls'],
-  content: [runOrHaltButton, playOrPauseButton, turtleDisplay]
-});
+const controls =
 
-// expose the div
-module.exports = controls;
+// expose different control bars for different contexts; in fact there are no differences here, but
+// it's written like this for consistency with the system bar, and in case differences are needed
+// in a later update
+module.exports = (context) => {
+  switch (context) {
+    default:
+      return create('div', {
+        classes: ['tsx-controls'],
+        content: [runOrHaltButton, playOrPauseButton, turtleDisplay]
+      });
+  }
+};

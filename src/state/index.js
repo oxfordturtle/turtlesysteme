@@ -1,8 +1,12 @@
 /**
  * the central hub for maintaining application state and communicating between different modules
  */
+
+// global imports
 const compiler = require('compiler');
 const machine = require ('machine');
+
+// local imports
 const session = require('./session');
 
 // a record of outgoing signals, with arrays for registering callbacks
@@ -130,16 +134,6 @@ const send = (signal, data) => {
         session.code.set(data, session.language.get());
         reply('code-changed', session.code.get());
         break;
-      case 'compile-code':
-        if (session.code.get().length > 0) {
-          result = compiler(session.code.get(), session.language.get());
-          session.usage.set(result.usage, session.language.get());
-          session.pcode.set(result.pcode, session.language.get());
-          session.compiled.set(true, session.language.get());
-          reply('usage-changed', result.usage);
-          reply('pcode-changed', result.pcode);
-        }
-        break;
       case 'toggle-assembler':
         session.assembler.toggle();
         reply('assembler-changed', session.assembler.get());
@@ -199,13 +193,25 @@ const send = (signal, data) => {
         session.advanced.toggle();
         reply('advanced-changed', session.advanced.get());
         break;
+      case 'compile-code':
+        if (session.code.get().length > 0) {
+          result = compiler(session.code.get(), session.language.get());
+          session.usage.set(result.usage, session.language.get());
+          session.pcode.set(result.pcode, session.language.get());
+          session.compiled.set(true, session.language.get());
+          reply('usage-changed', result.usage);
+          reply('pcode-changed', result.pcode);
+          // use data argument to specify whether to run when compiled
+          if (data) send('machine-run');
+        }
+        break;
       case 'machine-run':
         if (!session.compiled.get()) {
-          console.log('RUN!');
-          send('compile-code');
+          send('compile-code', true);
+        } else {
+          reply('machine-started');
+          machine.run(session.pcode.get(), session.machineOptions.get());
         }
-        reply('machine-started');
-        machine.run(session.pcode.get(), session.machineOptions.get());
         break;
       case 'machine-halt':
         reply('machine-stopped');

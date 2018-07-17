@@ -1,8 +1,12 @@
 /**
  * the program tabs; one set for the browser environment, and one for electron
  */
+
+// global imports
 const { tabs } = require('dom');
 const state = require('state');
+
+// loval imports
 const file = require('./file');
 const code = require('./code');
 const usage = require('./usage');
@@ -25,12 +29,17 @@ const allTabs = includeFileTab =>
 // register to show Code tab when file changes
 state.on('file-changed', tabs.show.bind(null, 'Code'));
 
-// expose a function to create the whole div, with content relative to the context
-module.exports = (context) => {
+// program tabs (with or without file tab)
+const programTabs = (context) => {
   switch (context) {
     case 'browser':
       return tabs.create('tsx-system-tabs', allTabs(true));
     case 'electron':
       return tabs.create('tsx-system-tabs', allTabs(false));
   }
+};
+
+// expose a function to create the whole div, with content relative to the context
+module.exports = {
+  tabs: programTabs,
 };

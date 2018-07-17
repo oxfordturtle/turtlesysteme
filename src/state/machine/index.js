@@ -1185,7 +1185,7 @@ const executeCode = (pcode, startLine, startCode, options) => {
   setTimeout(executeCode, 0, pcode, line, code, options);
 };
 
-const run = ({ pcode, options }) => {
+const run = (pcode, options) => {
   if (!status.running) {
     // set up the canvas
     canvas.setDimensions(0, 0, 1000, 1000);
