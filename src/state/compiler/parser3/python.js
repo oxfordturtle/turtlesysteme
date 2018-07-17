@@ -5,9 +5,7 @@ pcode for that routine comes out
 --------------------------------------------------------------------------------
 */
 
-const atoms = require('./atoms');
-const find = require('./find');
-const pcoder = require('./pcoder');
+const { atoms, find, pcoder } = require('../tools');
 
 // pseudo-constructor for errors
 // ----------

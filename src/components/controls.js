@@ -10,7 +10,7 @@ const { create, hex } = require('dom');
 const state = require('state');
 
 // functions for interacting with the machine (via state)
-const run = state.send.bind(null, 'machine-run');
+const run = state.send.bind(null, 'compile-code', true);
 
 const halt = state.send.bind(null, 'machine-halt');
 

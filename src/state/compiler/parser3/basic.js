@@ -1,9 +1,8 @@
-// structures module
-// language-independent pcode generation
+module.exports = (routine, lex, startLine) => {
+  return { lex, pcode: [] };
+};
 
-/*jslint browser: true */
-/*global define */
-
+/*
 define(function (require) {
 
     "use strict";
@@ -730,3 +729,4 @@ define(function (require) {
     return structures;
 
 });
+*/

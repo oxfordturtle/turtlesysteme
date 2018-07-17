@@ -4,7 +4,7 @@
 
 // global imports
 const { create, tabs } = require('dom');
-const { canvas, console, memory, output } = require('machine');
+const { canvas, console, memory, output } = require('state');
 require('styles/canvas.scss');
 require('styles/console.scss');
 

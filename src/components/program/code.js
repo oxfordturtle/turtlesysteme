@@ -1,10 +1,9 @@
 /**
  * the code editor component
  */
-require('styles/code.scss');
 const { create } = require('dom');
-const { highlight } = require('lexer');
 const state = require('state');
+require('styles/code.scss');
 
 // define the main HTML elements for this component
 const ol = create('ol'); // for line numbers
@@ -53,7 +52,7 @@ const refreshTextarea = (text) => {
 const refresh = (text, language = state.getLanguage()) => {
   const lines = text.split('\n');
   ol.innerHTML = lines.map((x, y) => `<li>${(y + 1).toString(10)}</li>`).join('');
-  code.innerHTML = highlight(text, language);
+  code.innerHTML = state.highlight(text, language);
   window.requestAnimationFrame(refreshTextarea.bind(null, text));
 };
 

@@ -14,9 +14,9 @@ const newParameter = (name, type, byref = false, length = 1) =>
 const newCommand = properties =>
   ({
     names: {
-      basic: properties.names[0],
-      pascal: properties.names[1],
-      python: properties.names[2],
+      BASIC: properties.names[0],
+      Pascal: properties.names[1],
+      Python: properties.names[2],
     },
     code: properties.code,
     parameters: properties.parameters || [],

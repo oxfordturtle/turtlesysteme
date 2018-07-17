@@ -1,0 +1,19 @@
+@import 'constants';
+
+.tsx-usage-table {
+  tbody {
+    td {
+      text-align: center;
+      &:first-child, &:last-child {
+        text-align: left;
+      }
+    }
+    .category-heading th {
+      background: $green;
+      color: white;
+      font-style: italic;
+      font-weight: bold;
+      text-align: right;
+    }
+  }
+}

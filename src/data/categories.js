@@ -1,39 +1,28 @@
 /*
- * categories of commands and expressions (for generating usage data)
+ * groups of commands (for the help page)
  */
-const groups = require('./groups');
+const commands = require('./commands');
 
-const newExpression = (names, level) =>
+const inGroup = (index, command) =>
+  command.group === index;
+
+const newGroup = (index, category) =>
   ({
-    names: {
-      basic: names[0],
-      pascal: names[1],
-      python: names[2],
-    },
-    level,
+    index,
+    category,
+    expressions: commands.filter(inGroup.bind(null, index))
   });
 
-module.exports = groups.concat(
-  {
-    category: 'Command structures',
-    expressions: [
-      newExpression(['IF', 'if', 'if'], 0),
-      newExpression(['ELSE', 'else', 'else'], 0),
-      newExpression(['FOR', 'for', 'for'], 0),
-      newExpression(['REPEAT', 'repeat', 'repeat'], 1),
-      newExpression(['WHILE', 'while', 'while'], 1),
-      newExpression(['DEF', null, 'def'], 1),
-      newExpression([null, 'procedure', null], 1),
-      newExpression([null, 'function', null], 2),
-    ],
-  },
-  {
-    category: 'Variable scope modifiers',
-    expressions: [
-      newExpression(['LOCAL', null, null], 1),
-      newExpression(['PRIVATE', null, null], 2),
-      newExpression([null, null, 'global'], 1),
-      newExpression([null, null, 'nonlocal'], 2),
-    ],
-  },
-);
+module.exports = ([
+  newGroup(0, 'Turtle: relative movement'),
+  newGroup(1, 'Turtle: absolute movement'),
+  newGroup(2, 'Turtle: drawing shapes'),
+  newGroup(3, 'Other Turtle commands'),
+  newGroup(4, 'Canvas operations'),
+  newGroup(5, 'General arithmetic functions'),
+  newGroup(6, 'Trig / exp / log functions'),
+  newGroup(7, 'String operations'),
+  newGroup(8, 'Type conversion routines'),
+  newGroup(9, 'Input and timing routines'),
+  newGroup(10, 'Turtle Machine monitoring'),
+]);

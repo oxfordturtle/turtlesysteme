@@ -5,9 +5,12 @@ pcode for that routine comes out
 --------------------------------------------------------------------------------
 */
 
-const atoms = require('./atoms');
-const find = require('./find');
-const pcoder = require('./pcoder');
+module.exports = (routine, lex, startLine) => {
+  return { lex, pcode: [] };
+};
+
+/*
+const { atoms, find, pcoder } = require('../tools');
 
 // pseudo-constructor for errors
 // ----------
@@ -690,3 +693,4 @@ const compileIf = (routines, sub, lex, addresses, offset) => {
     return structures;
 
 });
+*/

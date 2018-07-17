@@ -1,5 +1,4 @@
 const { create } = require('dom');
-const { highlight } = require('lexer');
 const state = require('state');
 
 const BASIC = [
