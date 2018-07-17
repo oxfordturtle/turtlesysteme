@@ -1,9 +1,17 @@
 /**
  * the machine memory
+ * -------------------------------------------------------------------------------------------------
+ * machine runtime variables and memory arrays, including functions for modifying them during
+ * program execution
+ *
+ * includes DIV element containing tables for displaying the contents of the main memory array
+ * -------------------------------------------------------------------------------------------------
  */
+
+// global imports
 const { create } = require('dom');
 
-// the machine memory
+// the memory arrays and runtime variables
 const memory = {
   main: [], // main memory
   keys: [], // keypress input statuses
@@ -320,7 +328,7 @@ const dump = () => {
 };
 
 // the memory display
-const display = create('div', {
+const element = create('div', {
   content: [
     create('button', { content: 'Show Current State' }),
     stackDisplay,
@@ -374,5 +382,5 @@ module.exports = {
   deleteFromReadln,
   clearReadln,
   dump,
-  display
+  element,
 };

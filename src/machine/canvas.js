@@ -1,15 +1,22 @@
 /**
  * the virtual turtle machine canvas
+ * -------------------------------------------------------------------------------------------------
+ * CANVAS element (and associated virtual canvas), together with functions for drawing on it used
+ * by the machine run function
+ * -------------------------------------------------------------------------------------------------
  */
-require('styles/canvas.scss');
+
+// global imports
 const { create, hex } = require('dom');
 const { cursors, fonts } = require('data');
+
+// local imports
 const memory = require('./memory');
 
-// the canvas and drawing context
-const canvas = create('canvas', { classes: ['tsx-canvas'], width: 500, height: 500 });
+// the canvas element and drawing context
+const element = create('canvas', { classes: ['tsx-canvas'], width: 500, height: 500 });
 
-const context = canvas.getContext('2d');
+const context = element.getContext('2d');
 
 // the virtual canvas
 const vcanvas = {
@@ -23,27 +30,27 @@ const vcanvas = {
 
 // convert x to virtual canvas coordinate
 const virtx = (x) => {
-  const { left } = canvas.getBoundingClientRect();
-  const exact = (((x - left) * vcanvas.sizex) / canvas.offsetWidth) + vcanvas.startx;
+  const { left } = element.getBoundingClientRect();
+  const exact = (((x - left) * vcanvas.sizex) / element.offsetWidth) + vcanvas.startx;
   return Math.round(exact);
 };
 
 // convert y to virtual canvas coordinate
 const virty = (y) => {
-  const { top } = canvas.getBoundingClientRect();
-  const exact = (((y - top) * vcanvas.sizey) / canvas.offsetHeight) + vcanvas.starty;
+  const { top } = element.getBoundingClientRect();
+  const exact = (((y - top) * vcanvas.sizey) / element.offsetHeight) + vcanvas.starty;
   return Math.round(exact);
 };
 
 // convert turtx to virtual canvas coordinate
 const turtx = (x) => {
-  const exact = ((x - vcanvas.startx) * canvas.width) / vcanvas.sizex;
+  const exact = ((x - vcanvas.startx) * element.width) / vcanvas.sizex;
   return (vcanvas.doubled) ? Math.round(exact) + 1 : Math.round(exact);
 };
 
 // convert turty to virtual canvas coordinate
 const turty = (y) => {
-  const exact = ((y - vcanvas.starty) * canvas.height) / vcanvas.sizey;
+  const exact = ((y - vcanvas.starty) * element.height) / vcanvas.sizey;
   return (vcanvas.doubled) ? Math.round(exact) + 1 : Math.round(exact);
 };
 
@@ -164,28 +171,28 @@ const preventDefault = (event) => {
 
 // add event listeners for program execution
 const addEventListeners = () => {
-  canvas.addEventListener('contextmenu', preventDefault);
-  canvas.addEventListener('mousemove', storeMouseXY);
-  canvas.addEventListener('touchmove', preventDefault);
-  canvas.addEventListener('touchmove', storeMouseXY);
-  canvas.addEventListener('mousedown', preventDefault);
-  canvas.addEventListener('mousedown', storeClickXY);
-  canvas.addEventListener('touchstart', storeClickXY);
-  canvas.addEventListener('mouseup', releaseClickXY);
-  canvas.addEventListener('touchend', releaseClickXY);
+  element.addEventListener('contextmenu', preventDefault);
+  element.addEventListener('mousemove', storeMouseXY);
+  element.addEventListener('touchmove', preventDefault);
+  element.addEventListener('touchmove', storeMouseXY);
+  element.addEventListener('mousedown', preventDefault);
+  element.addEventListener('mousedown', storeClickXY);
+  element.addEventListener('touchstart', storeClickXY);
+  element.addEventListener('mouseup', releaseClickXY);
+  element.addEventListener('touchend', releaseClickXY);
 };
 
 // remove event listeners (at the end of program execution)
 const removeEventListeners = () => {
-  canvas.removeEventListener('contextmenu', preventDefault);
-  canvas.removeEventListener('mousemove', storeMouseXY);
-  canvas.removeEventListener('touchmove', preventDefault);
-  canvas.removeEventListener('touchmove', storeMouseXY);
-  canvas.removeEventListener('mousedown', preventDefault);
-  canvas.removeEventListener('mousedown', storeClickXY);
-  canvas.removeEventListener('touchstart', storeClickXY);
-  canvas.removeEventListener('mouseup', releaseClickXY);
-  canvas.removeEventListener('touchend', releaseClickXY);
+  element.removeEventListener('contextmenu', preventDefault);
+  element.removeEventListener('mousemove', storeMouseXY);
+  element.removeEventListener('touchmove', preventDefault);
+  element.removeEventListener('touchmove', storeMouseXY);
+  element.removeEventListener('mousedown', preventDefault);
+  element.removeEventListener('mousedown', storeClickXY);
+  element.removeEventListener('touchstart', storeClickXY);
+  element.removeEventListener('mouseup', releaseClickXY);
+  element.removeEventListener('touchend', releaseClickXY);
 };
 
 // getters/setters for the main canvas and virtual canvas properties
@@ -216,13 +223,13 @@ const setDoubled = (doubled) => {
 };
 
 const setResolution = (width, height) => {
-  canvas.width = width;
-  canvas.height = height;
+  element.width = width;
+  element.height = height;
 };
 
 const setCursor = (code) => {
   const corrected = (code < 0 || code > 15) ? 1 : code;
-  canvas.style.cursor = cursors[corrected].css;
+  element.style.cursor = cursors[corrected].css;
 };
 
 // print text to the canvas
@@ -367,17 +374,17 @@ const pixset = (x, y, c) => {
 // black the canvas in the given colour
 const blank = (c) => {
   context.fillStyle = turtc(c);
-  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.fillRect(0, 0, element.width, element.height);
 };
 
 // flood a portion of the canvas
 const flood = (x, y, c1, c2, boundary) => {
-  const img = context.getImageData(0, 0, canvas.width, canvas.height);
+  const img = context.getImageData(0, 0, element.width, element.height);
   const pixStack = [];
   const dx = [0, -1, 1, 0];
   const dy = [-1, 0, 0, 1];
   let i = 0;
-  let offset = (((y * canvas.width) + x) * 4);
+  let offset = (((y * element.width) + x) * 4);
   const c3 = (256 * 256 * img.data[offset]) + (256 * img.data[offset + 1]) + img.data[offset + 2];
   let nextX;
   let nextY;
@@ -395,10 +402,10 @@ const flood = (x, y, c1, c2, boundary) => {
     for (i = 0; i < 4; i += 1) {
       nextX = tx + dx[i];
       nextY = ty + dy[i];
-      test1 = (nextX > 0 && nextX <= canvas.width);
-      test2 = (nextY > 0 && nextY <= canvas.height);
+      test1 = (nextX > 0 && nextX <= element.width);
+      test2 = (nextY > 0 && nextY <= element.height);
       if (test1 && test2) {
-        offset = (((nextY * canvas.width) + nextX) * 4);
+        offset = (((nextY * element.width) + nextX) * 4);
         nextC = (256 * 256 * img.data[offset]);
         nextC += (256 * img.data[offset + 1]);
         nextC += img.data[offset + 2];
@@ -406,7 +413,7 @@ const flood = (x, y, c1, c2, boundary) => {
         test2 = ((nextC !== c2) || !boundary);
         test3 = ((nextC === c3) || boundary);
         if (test1 && test2 && test3) {
-          offset = (((nextY * canvas.width) + nextX) * 4);
+          offset = (((nextY * element.width) + nextX) * 4);
           img.data[offset] = ((c1 & 0xFF0000) >> 16);
           img.data[offset + 1] = ((c1 & 0xFF00) >> 8);
           img.data[offset + 2] = (c1 & 0xFF);
@@ -427,8 +434,9 @@ const recolour = (x, y, colour) =>
 const fill = (x, y, colour, boundaryColour) =>
   flood(x, y, colour, boundaryColour, true);
 
+// exports
 module.exports = {
-  canvas,
+  element,
   addEventListeners,
   removeEventListeners,
   getDimensions,

@@ -1,11 +1,18 @@
 /**
  * the machine console
+ * -------------------------------------------------------------------------------------------------
+ * PRE element for displaying textual output from the program, and user textual input
+ * -------------------------------------------------------------------------------------------------
  */
-require('styles/console.scss');
+
+// global imports
 const { create, hex } = require('dom');
+
+// local imports
 const memory = require('./memory');
 
-const console = create('pre', { classes: ['tsx-console'] });
+// the console element
+const element = create('pre', { classes: ['tsx-console'] });
 
 const storeKey = (event) => {
   const pressedKey = event.keyCode || event.charCode;
@@ -78,11 +85,12 @@ const clearText = () => {
   console.innerHTML = '';
 };
 
+// exports
 module.exports = {
-  console,
+  element,
   addEventListeners,
   removeEventListeners,
   setBackground,
   addText,
-  clearText
+  clearText,
 };
