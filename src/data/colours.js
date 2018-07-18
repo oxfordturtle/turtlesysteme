@@ -12,7 +12,7 @@ const newColour = (index, name, value, dark) =>
       pascal: name,
       python: name,
     },
-    type: 'int',
+    type: 'integer',
     value,
     hex: {
       basic: `&${zeroPadding(value.toString(16))}`,

@@ -12,7 +12,7 @@
  */
 
 // local imports
-const { factory } = require('../tools');
+const { factory, find } = require('../tools');
 
 // generate an error message
 const message = (messageId, lexeme) => {
@@ -78,7 +78,7 @@ const message = (messageId, lexeme) => {
       return `"${lexeme.content}" is not an integer constant.`;
     case 'varArrayOf':
       return 'Array declaration must be followed by "of", and then the type of the elements of the array.'
-    // variable definition errors
+    // variable declaration errors
     case 'varName':
       return 'No variable name found.';
     case 'varTurtle':
@@ -91,6 +91,13 @@ const message = (messageId, lexeme) => {
       return `"${lexeme.content}" is already the name of a constant or variable in the current scope.`;
     case 'varComma':
       return 'Comma missing between variable declarations.';
+    // paramater declaration errors
+    case 'parNoRbkt':
+      return 'Parameter declarations must be followed by a closing bracket ")".';
+    case 'parArrayNoRef':
+      return 'Array parameters can only be passed by reference, not by value.';
+    case 'parArraySize':
+      return 'Array references parameters cannot be given a size specification.';
     // routine declaration errors
     case 'subName':
       return 'No subroutine name found.';
@@ -134,10 +141,6 @@ const error = (messageId, lexeme) =>
 const isDuplicate = (routine, name) =>
   routine.variables.concat(routine.constants).some((x) => x.name === name);
 
-// check if lexeme is identifier-like
-const isIdentifier = lexeme =>
-  [ 'command', 'turtle', 'colour', 'identifier' ].indexOf(lexeme.type) > -1;
-
 // index of the next lexeme (after any semicolons)
 const next = (lexemes, lex, compulsory = false, messageId = null) => {
   if (compulsory) {
@@ -153,8 +156,8 @@ const programAndNext = (lexemes, lex) => {
   const [keyword, identifier] = lexemes.slice(lex, lex + 2);
   if (!keyword || keyword.content !== 'program') throw error('progBegin', keyword);
   if (!identifier) throw error('progName', keyword);
-  if (!isIdentifier(identifier)) throw error('progId', identifier);
   if (identifier.type === 'turtle') throw error('progTurtle', identifier);
+  if (identifier.type !== 'identifier') throw error('progId', identifier);
   return {
     lex: next(lexemes, lex + 2, true, 'progSemi'),
     routine: factory.program(identifier.content, 'Pascal'),
@@ -186,19 +189,27 @@ const stateAndNext = (lexemes, lex, routine) => {
 };
 
 // look for integer literal followed by semicolon; return constant object and next lexeme index
-const negativeAndNext = (lexemes, lex, name) => {
+const negativeAndNext = (lexemes, lex, name, routine) => {
   const value = lexemes[lex];
+  let constant;
   if (!value) throw error('constDef', lexemes[lex - 1]);
   switch (value.type) {
     case 'string':
       throw error('constNegString', value);
     case 'boolean':
       throw error('constNegBoolean', value);
-    case 'integer': // fallthrough
-    case 'colour':
+    case 'integer':
       return {
         lex: next(lexemes, lex + 1, true, 'constSemi'),
-        constant: factory.constant(name, 'integer', -value.value),
+        constant: factory.constant(name, value.type, -value.value),
+      };
+    case 'identifier':
+      constant = find.constant(routine, value.content, 'Pascal')
+        || find.colour(value.content, 'Pascal');
+      if (!constant) throw error('constValue', value);
+      return {
+        lex: next(lexemes, lex + 1, true, 'constSemi'),
+        constant: factory.constant(name, constant.type, -constant.value),
       };
     default:
       throw error('constValue', value);
@@ -206,8 +217,9 @@ const negativeAndNext = (lexemes, lex, name) => {
 };
 
 // look for any literal value followed by semicolon; return constant object and next lexeme index
-const nonnegativeAndNext = (lexemes, lex, name) => {
+const nonnegativeAndNext = (lexemes, lex, name, routine) => {
   const value = lexemes[lex];
+  let constant;
   if (!value) throw error('constDef', lexemes[lex - 1]);
   switch (value.type) {
     case 'boolean': // fallthrough
@@ -217,10 +229,13 @@ const nonnegativeAndNext = (lexemes, lex, name) => {
         lex: next(lexemes, lex + 1, true, 'constSemi'),
         constant: factory.constant(name, value.type, value.value),
       };
-    case 'colour':
+    case 'identifier':
+      constant = find.constant(routine, value.content, 'Pascal')
+        || find.colour(value.content, 'Pascal');
+      if (!constant) throw error('constValue', value);
       return {
         lex: next(lexemes, lex + 1, true, 'constSemi'),
-        constant: factory.constant(name, 'integer', value.value),
+        constant: factory.constant(name, constant.type, constant.value),
       };
     default:
       throw error('constValue', value);
@@ -228,24 +243,80 @@ const nonnegativeAndNext = (lexemes, lex, name) => {
 };
 
 // look for "identifier = value;"; return constant object and next lexeme index
-const constantAndNext = (lexemes, lex, routines, routine) => {
+const constantAndNext = (lexemes, lex, routine) => {
   const [ identifier, assignment, next ] = lexemes.slice(lex, lex + 3);
   if (!identifier) throw error('constName', lexemes[lex - 1]);
-  if (!isIdentifier(identifier)) throw error('constId', identifier);
   if (identifier.type === 'turtle') throw error('constTurtle', identifier);
-  if (identifier.content === routines[0].name) throw error('constProg', identifier);
+  if (identifier.type !== 'identifier') throw error('constId', identifier);
+  if (identifier.content === find.mainProgram(routine).name) throw error('constProg', identifier);
   if (isDuplicate(routine, identifier.content)) throw error('constDupl', identifier);
   if (!assignment) throw error('constDef', identifier);
   if (assignment.content !== '=') throw error('constDef', assignment);
   if (!next) throw error('constDef', assignment);
   return (next.content === '-')
-    ? negativeAndNext(lexemes, lex + 3, identifier.content)
-    : nonnegativeAndNext(lexemes, lex + 2, identifier.content);
+    ? negativeAndNext(lexemes, lex + 3, identifier.content, routine)
+    : nonnegativeAndNext(lexemes, lex + 2, identifier.content, routine);
+};
+
+// look for "[n..m] of <fulltype>" (following "array" in variable declaration)
+const arrayVarTypeAndNext = (lexemes, lex, routine) => {
+  const [ lbkt, start, dots, end, rbkt, keyof ] = lexemes.slice(lex, lex + 6);
+  let constant, endValue, startValue;
+  if (!lbkt) throw error('varArrayBadSize', type);
+  if (lbkt.content !== '[') throw error('varArrayBadSize', lbkt);
+  if (!start) throw error('varArrayBadSize', lbkt);
+  switch (start.type) {
+    case 'identifier':
+      constant = find.constant(routine, start.content, 'Pascal');
+      if (!constant) throw error('varArrayNoConstant', start);
+      if (constant.type !== 'integer') throw error('varArrayBadConstant', start);
+      startValue = constant.value;
+      break;
+    case 'integer':
+      startValue = start.value;
+      break;
+    default:
+      throw error('varArrayBadSize', start);
+  }
+  if (!dots) throw error('varArrayBadSize', start);
+  if (dots.content !== '..') throw error('varArrayBadSize', dots);
+  if (!end) throw error('varArrayBadSize', dots);
+  switch (end.type) {
+    case 'identifier':
+      constant = find.constant(routine, end.content, 'Pascal');
+      if (!constant) throw error('varArrayNoConstant', end);
+      if (constant.type !== 'integer') throw error('varArrayBadConstant', end);
+      endValue = constant.value;
+      break;
+    case 'integer':
+      endValue = end.value;
+      break;
+    default:
+      throw error('varArrayBadSize', end);
+  }
+  if (!rbkt) throw error('varArrayBadSize', end);
+  if (rbkt.content !== ']') throw error('varArrayBadSize', rbkt);
+  if (!keyof) throw error('varArrayOf', rbkt);
+  if (keyof.content !== 'of') throw error('varArrayOf', keyof);
+  result = fulltypeAndNext(lexemes, lex + 6, routine);
+  return {
+    lex: result.lex,
+    fulltype: factory.fulltype('array', endValue - startValue + 1, startValue, result.fulltype),
+  };
+};
+
+// look for "of <fulltype>" (following "array" in parameter declaration)
+const arrayParTypeAndNext = (lexemes, lex, routine, byref) => {
+  if (!byref) throw error('parArrayNoRef', type);
+  if (!lexemes[lex]) throw error('varArrayOf', lexemes[lex - 1]);
+  if (lexemes[lex].content === '[') throw error('parArraySize', lexemes[lex]);
+  if (lexemes[lex].content !== 'of') throw error('varArrayOf', lexemes[lex]);
+  return fulltypeAndNext(lexemes, lex + 1, routine, true, byref);
 };
 
 // look for "<fulltype>: boolean|integer|char|string[size]|array of <fulltype>"; return fulltype
 // object (a property of variables/parameters) and next lexeme index
-const fulltypeAndNext = (lexemes, lex, routines) => {
+const fulltypeAndNext = (lexemes, lex, routine, parameter, byref) => {
   const type = lexemes[lex];
   let result;
   if (!lexemes[lex]) throw error('varType', lexemes[lex - 1]);
@@ -256,6 +327,7 @@ const fulltypeAndNext = (lexemes, lex, routines) => {
       return { lex: lex + 1, fulltype: factory.fulltype(type.content) };
     case 'string':
       if (lexemes[lex + 1] && lexemes[lex + 1].content === '[') {
+        // string of custom size
         const [ size, rbkt ] = lexemes.slice(lex + 2, lex + 4);
         if (!size) throw error('varStringNoSize', lexemes[lex + 1]);
         if (size.type !== 'integer') throw error('varStringBadSize', size);
@@ -263,113 +335,64 @@ const fulltypeAndNext = (lexemes, lex, routines) => {
         if (rbkt.content !== ']') throw error('varStringRbkt', rbkt);
         return { lex: lex + 4, fulltype: factory.fulltype('string', size.value) };
       } else {
+        // string of default size
         return { lex: lex + 1, fulltype: factory.fulltype('string') };
       }
     case 'array':
-      const [ lbkt, start, dots, end, rbkt, keyof ] = lexemes.slice(lex + 1, lex + 7);
-      let constant, endValue, startValue;
-      if (!lbkt) throw error('varArrayBadSize', type);
-      if (lbkt.content !== '[') throw error('varArrayBadSize', lbkt);
-      if (!start) throw error('varArrayBadSize', lbkt);
-      switch (start.type) {
-        case 'identifier': // fallthrough
-        case 'colour': // fallthrough
-        case 'command':
-          constant = routines[0].constants.find(x => x.name === start.content);
-          if (!constant) throw error('varArrayNoConstant', start);
-          if (constant.type !== 'integer') throw error('varArrayBadConstant', start);
-          startValue = constant.value;
-          break;
-        case 'integer':
-          startValue = start.value;
-          break;
-        default:
-          throw error('varArrayBadSize', start);
-      }
-      if (!dots) throw error('varArrayBadSize', start);
-      if (dots.content !== '..') throw error('varArrayBadSize', dots);
-      if (!end) throw error('varArrayBadSize', dots);
-      switch (end.type) {
-        case 'identifier': // fallthrough
-        case 'colour': // fallthrough
-        case 'command':
-          constant = routines[0].constants.find(x => x.name === end.content);
-          if (!constant) throw error('varArrayNoConstant', end);
-          if (constant.type !== 'integer') throw error('varArrayBadConstant', end);
-          endValue = constant.value;
-          break;
-        case 'integer':
-          endValue = end.value;
-          break;
-        default:
-          throw error('varArrayBadSize', end);
-      }
-      if (!rbkt) throw error('varArrayBadSize', end);
-      if (rbkt.content !== ']') throw error('varArrayBadSize', rbkt);
-      if (!keyof) throw error('varArrayOf', rbkt);
-      if (keyof.content !== 'of') throw error('varArrayOf', keyof);
-      result = fulltypeAndNext(lexemes, lex + 7);
-      return {
-        lex: result.lex,
-        fulltype: factory.fulltype('array', endValue - startValue + 1, startValue, result.fulltype),
-      };
+      return parameter ? arrayParTypeAndNext(lexemes, lex + 1, routine, byref)
+        : arrayVarTypeAndNext(lexemes, lex + 1, routine);
     default:
       throw error('varBadType', type);
   }
 };
 
 // array of typed variables (with index of the next lexeme)
-const variablesAndNext = (lexemes, lex, routines, routine, byref) => {
+const variablesAndNext = (lexemes, lex, routine, parameter = false, byref = false) => {
   const variables = [];
   let more = true;
   // gather the variable names
   while (more) {
     if (!lexemes[lex]) throw error('varName', lexemes[lex - 1]);
-    if (!isIdentifier(lexemes[lex])) throw error('varId', lexemes[lex]);
     if (lexemes[lex].type === 'turtle') throw error('varTurtle', lexemes[lex]);
-    if (lexemes[lex].content === routines[0].name) throw error('varProg', lexemes[lex]);
+    if (lexemes[lex].type !== 'identifier') throw error('varId', lexemes[lex]);
+    if (lexemes[lex].content === find.mainProgram(routine).name) throw error('varProg', lexemes[lex]);
     if (isDuplicate(routine, lexemes[lex].content)) throw error('varDupl', lexemes[lex]);
     variables.push(factory.variable(lexemes[lex].content, routine, byref));
     if (!lexemes[lex + 1]) throw error('varType', lexmes[lex]);
-    switch (lexemes[lex + 1].type) {
-      case 'command': // fallthrough
-      case 'turtle': // fallthrough
-      case 'colour': // fallthrough
-      case 'identifier':
-        throw error('varComma', lexemes[lex + 1]);
-      case 'type':
-        throw error('varType', lexemes[lex + 1]);
-      default:
-        if (lexemes[lex + 1].content === ',') {
-          lex += 2;
-          break;
-        }
-        if (lexemes[lex + 1].content === ':') {
-          lex += 2;
-          more = false;
-          break;
-        }
-        throw error('varType', lexemes[lex + 1]);
+    if (lexemes[lex + 1].content === ',') {
+      lex += 2;
+    } else if (lexemes[lex + 1].content === ':') {
+      lex += 2;
+      more = false;
+    } else {
+      switch (lexemes[lex + 1].type) {
+        case 'identifier':
+          throw error('varComma', lexemes[lex + 1]);
+        case 'type':
+          throw error('varType', lexemes[lex + 1]);
+        default:
+          throw error('varType', lexemes[lex + 1]);
+      }
     }
   }
   // expecing type definition for the variables just gathered
-  ({ lex, fulltype } = fulltypeAndNext(lexemes, lex, routines));
+  ({ lex, fulltype } = fulltypeAndNext(lexemes, lex, routine, parameter, byref));
   variables.forEach((x) => x.fulltype = fulltype);
   return { lex, variables };
 };
 
 // look for "[var] identifier1[, identifier2, ...]: <fulltype>"; return array of parameters and
 // index of the next lexeme
-const parametersAndNext = (lexemes, lex, routines, routine) => {
+const parametersAndNext = (lexemes, lex, routine) => {
   let parameters = [];
   let variables = [];
   let more = true;
   while (more) {
     ({ lex, variables } = (lexemes[lex] && lexemes[lex].content === 'var')
-      ? variablesAndNext(lexemes, lex + 1, routines, routine, true)
-      : variablesAndNext(lexemes, lex, routines, routine, false));
+      ? variablesAndNext(lexemes, lex + 1, routine, true, true)
+      : variablesAndNext(lexemes, lex, routine, true, false));
     parameters = parameters.concat(variables);
-    if (!lexemes[lex]) throw error();
+    if (!lexemes[lex]) throw error('parNoRbkt', lexemes[lex - 1]);
     switch (lexemes[lex].content) {
       case ';':
         lex += 1;
@@ -379,34 +402,35 @@ const parametersAndNext = (lexemes, lex, routines, routine) => {
         more = false;
         break;
       default:
-        throw error();
+        throw error('parNoRbkt', lexemes[lex]);
     }
   }
   return { lex, parameters };
 };
 
 // look for "identifier[(parameters)];"; return subroutine object and index of the next lexeme
-const subroutineAndNext = (lexemes, lex, type, routines, parent) => {
+const subroutineAndNext = (lexemes, lex, type, parent) => {
   const identifier = lexemes[lex];
   let routine, parameters, fulltype;
   if (!identifier) throw error('subName', lexemes[lex - 1]);
-  if (!isIdentifier(identifier)) throw error('subId', identifier);
   if (identifier.type === 'turtle') throw error('subTurtle', identifier);
-  if (identifier.content === routines[0].name) throw error('subProg', identifier);
-  if (routines.some((x) => x.name === identifier.content)) throw error('subDupl', identifier);
+  if (identifier.type !== 'identifier') throw error('subId', identifier);
+  if (identifier.content === find.mainProgram(parent).name) throw error('subProg', identifier);
+  if (find.customCommand(parent, identifier.content, 'Pascal')) throw error('subDupl', identifier);
   routine = factory.subroutine(identifier.content, type, parent);
   if (type === 'function') routine.variables.push(factory.variable('result', routine, false));
   lex += 1;
   if (!lexemes[lex]) throw error('subSemi', identifier);
   if (lexemes[lex].content === '(') {
-    ({ parameters, lex } = parametersAndNext(lexemes, lex + 1, routines, routine));
+    ({ parameters, lex } = parametersAndNext(lexemes, lex + 1, routine));
     routine.parameters = parameters;
     routine.variables = routine.variables.concat(parameters);
   }
   if (type === 'function') {
     if (!lexemes[lex]) throw error('fnType', lexemes[lex - 1]);
     if (lexemes[lex].content !== ':') throw error('fnType', lexemes[lex]);
-    ({ lex, fulltype } = fulltypeAndNext(lexemes, lex + 1));
+    ({ lex, fulltype } = fulltypeAndNext(lexemes, lex + 1, routine));
+    // throw an error if return type is array ??
     routine.variables[0].fulltype = fulltype;
   }
   lex = next(lexemes, lex, true, 'subSemi');
@@ -451,24 +475,24 @@ const parser1 = (lexemes) => {
         break;
       case 'const':
         // expecting "<identifier> = <value>;"
-        ({ lex, constant } = constantAndNext(lexemes, lex, routines, routine));
+        ({ lex, constant } = constantAndNext(lexemes, lex, routine));
         routine.constants.push(constant);
         if (!lexemes[lex]) throw error('constAfter', lexemes[lex - 1]);
-        if (!isIdentifier(lexemes[lex])) state = 'crossroads';
+        if (lexemes[lex].type !== 'identifier') state = 'crossroads';
         break;
       case 'var':
         // expecting "<identifier>[, <identifier2>, ...]: <type>;"
-        ({ lex, variables } = variablesAndNext(lexemes, lex, routines, routine));
+        ({ lex, variables } = variablesAndNext(lexemes, lex, routine));
         routine.variables = routine.variables.concat(variables);
         lex = next(lexemes, lex, true, 'varSemi');
         if (!lexemes[lex]) throw error('varAfter', lexemes[lex - 1]);
-        if (!isIdentifier(lexemes[lex])) state = 'crossroads';
+        if (lexemes[lex].type !== 'identifier') state = 'crossroads';
         break;
       case 'procedure': // fallthrough
       case 'function':
         // expecting "<identifier>[(<parameters>)];"
         parent = routineStack[routineStack.length - 1];
-        ({ lex, routine } = subroutineAndNext(lexemes, lex, state, routines, parent));
+        ({ lex, routine } = subroutineAndNext(lexemes, lex, state, parent));
         parent.subroutines.push(routine);
         routineStack.push(routine);
         state = 'crossroads';

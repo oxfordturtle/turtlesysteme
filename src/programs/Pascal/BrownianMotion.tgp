@@ -8,7 +8,7 @@ CONST polradius = 80; {pollen}
       speedratio = 10;
       polcolour = blue;
       molcolour = red;
-      halocolour = #FFFFFE;
+      halocolour = $FFFFFE;
       delay = 50;
 VAR px, py: integer;
     pxvel, pyvel: integer;

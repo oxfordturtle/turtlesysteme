@@ -35,8 +35,8 @@ VAR n, rule: integer;
 BEGIN
   canvas(0, 0, width, height);
   resolution(width, height);
-  cellcol[0] := #FFFFFE;
-  cellcol[1] := #000001;
+  cellcol[0] := $FFFFFE;
+  cellcol[1] := $000001;
   for n := 4 to 45 do
     begin
       rule := n * 4 + 2;

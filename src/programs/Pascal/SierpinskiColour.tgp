@@ -81,7 +81,7 @@ VAR xl, xr, yt, yb, gt: integer;
           r := divmult(255, gridlines - 1, x);
           g := divmult(255, gridlines - 1, y);
           b := divmult(255, 2 * gridlines - 2, 2 * gridlines - 2 - x - y);
-          recolour(cx, cy, (r * #10000) + (g * #100) + (b * #1))
+          recolour(cx, cy, (r * $10000) + (g * $100) + (b * $1))
         end
   End;
 

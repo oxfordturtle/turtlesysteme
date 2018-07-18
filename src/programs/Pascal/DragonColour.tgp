@@ -77,9 +77,9 @@ VAR xl, xr, yt, yb, gt: integer;
       for y := 0 to gridlines - 1 do
         recolour(xl + divmult(xr - xl, gridlines, x) + gt,
                  yt + divmult(yb - yt, gridlines, y) + gt,
-                 divmult(255, gridlines - 1, x) * #10000
-                 + divmult(255, gridlines - 1, y) * #100
-                 + divmult(255, 2 * gridlines - 2, 2 * gridlines - 2 - x - y) * #1)
+                 divmult(255, gridlines - 1, x) * $10000
+                 + divmult(255, gridlines - 1, y) * $100
+                 + divmult(255, 2 * gridlines - 2, 2 * gridlines - 2 - x - y) * $1)
   End;
 
   Procedure map(a, x, y: integer; var newx, newy: integer);

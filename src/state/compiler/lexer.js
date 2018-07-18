@@ -17,7 +17,8 @@ corresponding integer for predefined colours, keycodes, and input queries, or th
 associated with an operator; it is null for all other lexical types
 ----------------------------------------------------------------------------------------------------
 */
-const { colours, inputs, pc } = require('data');
+
+// local imports
 const tokenizer = require('./tokenizer');
 
 // record of error messages
@@ -39,12 +40,7 @@ const messages = {
 
 // create an error object
 const error = (id, messageId, lexeme) =>
-  ({
-    type: 'Compiler',
-    id: `lex${id}`,
-    message: messages[messageId],
-    lexeme,
-  });
+  ({ type: 'Compiler', id: `lex${id}`, message: messages[messageId], lexeme });
 
 // type of a lexeme
 const type = (type, content) => {
@@ -54,6 +50,11 @@ const type = (type, content) => {
     case 'hexadecimal': // fallthrough
     case 'decimal': // falthrough
       return 'integer';
+    case 'command': // fallthrough
+    case 'colour': // fallthrough
+    case 'custom': // fallthrough
+    case 'variable':
+      return 'identifier';
     default:
       return type;
   }
@@ -118,18 +119,6 @@ const value = (type, content) => {
       return parseInt(content.slice(1), 16);
     case 'decimal':
       return parseInt(content);
-    case 'colour':
-      // N.B. case sensitivity is already handled by the tokenizer
-      predefined = colours.find((x) => x.names.pascal === content.toLowerCase());
-      // this should never return null, since the tokenizer only matches predefined colours
-      return predefined ? predefined.value : null;
-      break;
-    case 'keycode': // fallthrough
-    case 'query':
-      // N.B. case sensitivity is already handled by the tokenizer
-      predefined = inputs.find((x) => x.names.pascal === content.toLowerCase());
-      // this may return null, since the tokenizer lets incorrect input codes through
-      return predefined ? predefined.value : null;
     case 'turtle':
       return ['x', 'y', 'd', 't', 'c'].indexOf(content[4].toLowerCase()) + 1;
     default:

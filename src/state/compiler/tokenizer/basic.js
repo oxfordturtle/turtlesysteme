@@ -96,7 +96,7 @@ const turtle = (code) => {
 };
 
 // native colour constants
-const constant = (code) => {
+const colour = (code) => {
   const test = code.match(/^(TRUE|FALSE|GREEN|DARKGREEN|LIGHTGREEN|SEAGREEN|GREENGREY|GREENGRAY|RED|DARKRED|LIGHTRED|MAROON|REDGREY|REDGRAY|BLUE|DARKBLUE|LIGHTBLUE|ROYAL|BLUEGREY|YELLOW|OCHRE|CREAM|GOLD|YELLOWGREY|YELLOWGRAY|VIOLET|INDIGO|LILAC|PURPLE|DARKGREY|DARKGRAY|LIME|OLIVE|YELLOWGREEN|EMERALD|MIDGREY|MIDGRAY|ORANGE|ORANGERED|PEACH|SALMON|LIGHTGREY|LIGHTGRAY|SKYBLUE|TEAL|CYAN|TURQUOISE|SILVER|BROWN|DARKBROWN|LIGHTBROWN|COFFEE|WHITE|PINK|MAGENTA|LIGHTPINK|ROSE|BLACK)\b/);
   return test ? { type: 'colour', content: test[0] } : false;
 };
@@ -150,7 +150,7 @@ const tokenize = (code) => {
       || command(code)
       || custom(code)
       || turtle(code)
-      || constant(code)
+      || colour(code)
       || variable(code)
       || keycode(code)
       || query(code)
