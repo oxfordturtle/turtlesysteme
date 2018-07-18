@@ -7,7 +7,6 @@
  */
 
 // global imports
-require('styles/controls.scss');
 const { languages } = require('data');
 const { create } = require('dom');
 const state = require('state');

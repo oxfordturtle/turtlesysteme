@@ -5,7 +5,6 @@
 // global imports
 const { create } = require('dom');
 const state = require('state');
-require('styles/usage.scss');
 
 // the table header
 const thead = create('thead', { content: [

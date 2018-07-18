@@ -1,7 +1,5 @@
-@import 'constants';
-
 .tsx-console {
-  border: 1px solid silver;
+  border: $border;
   margin: $padding 0 0;
   padding: $padding;
   font-family: $monospace;

@@ -6,8 +6,7 @@
 const { tabs, popup } = require('dom');
 const { controls, help, machine, program, system } = require('components');
 const state = require('state');
-require('styles/system.scss');
-require('styles/help.scss');
+require('styles/main.scss');
 
 // add the global .tsx-browser class to the root element (for browser-specific stylyes)
 document.body.parentElement.classList.add('tsx-browser');

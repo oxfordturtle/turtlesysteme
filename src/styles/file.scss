@@ -1,8 +1,6 @@
-@import 'constants';
-
 .tsx-file-box {
   background: $gray;
-  border: 1px solid silver;
+  border: $border;
   padding: .5em;
   margin-bottom: .25em;
   h2 {

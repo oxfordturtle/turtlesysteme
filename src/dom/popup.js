@@ -1,7 +1,6 @@
 /**
  * create a modal popup for displaying error messages
  */
-require('styles/popup.scss');
 const create = require('./create');
 
 const title = create('h2')

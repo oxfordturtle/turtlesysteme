@@ -5,8 +5,6 @@
 // global imports
 const { create, tabs } = require('dom');
 const { canvas, console, memory, output } = require('state');
-require('styles/canvas.scss');
-require('styles/console.scss');
 
 // local imports
 const settings = require('./settings');

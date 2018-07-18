@@ -3,7 +3,6 @@
  */
 const { create } = require('dom');
 const state = require('state');
-require('styles/code.scss');
 
 // define the main HTML elements for this component
 const ol = create('ol'); // for line numbers

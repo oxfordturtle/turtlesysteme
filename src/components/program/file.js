@@ -1,7 +1,6 @@
 /**
  * the file handling component
  */
-require('styles/file.scss');
 const { create } = require('dom');
 const { examples } = require('data');
 const state = require('state');

@@ -1,7 +1,6 @@
 /**
  * create tabs with associated tab panes
  */
-require('styles/tabs.scss');
 const create = require('./create');
 
 const activate = (node) => {

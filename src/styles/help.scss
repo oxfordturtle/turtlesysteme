@@ -1,5 +1,3 @@
-@import 'constants';
-
 // base settings
 .tsx-help {
   flex-direction: column;
@@ -13,7 +11,7 @@
   }
   pre {
     background: lighten($gray, 5%);
-    border: 1px solid $gray;
+    border: $border;
     padding: $padding ($padding * 2);
     margin: 0 0 .75em;
   }

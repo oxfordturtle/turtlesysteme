@@ -1,6 +1,6 @@
 .tsx-canvas {
-  border: 1px solid silver;
+  border: $border;
   display: block;
-  width: 502px;
-  height: 502px;
+  width: $canvas-width;
+  height: $canvas-width;
 }

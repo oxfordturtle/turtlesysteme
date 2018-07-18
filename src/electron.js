@@ -7,8 +7,7 @@ const electron = require('electron');
 const { tabs } = require('dom');
 const { controls, help, machine, program, system } = require('components');
 const state = require('state');
-require('styles/system.scss');
-require('styles/help.scss');
+require('styles/main.scss');
 
 // add the global .tsx-electron class to the root element (for electron-specific stylyes)
 document.body.parentElement.classList.add('tsx-electron');
