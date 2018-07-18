@@ -28,7 +28,7 @@ const refresh = (usage) => {
   usage.forEach((category) => {
     tbody.appendChild(create('tr', {
       classes: [ 'category-heading' ],
-      content: [ create('th', { colspan: '4', content: category.category }) ],
+      content: [ create('th', { colspan: '4', content: category.title }) ],
     }));
     category.expressions.forEach((expression) => {
       tbody.appendChild(create('tr', { content: [

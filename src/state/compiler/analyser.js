@@ -46,7 +46,7 @@ const usageCategory = (language, lexemes, category) => {
   const filtered = category.expressions.filter(isUsed.bind(null, language, lexemes));
   const mapped = filtered.map(usageExpression.bind(null, language, lexemes));
   return {
-    category: category.category,
+    title: category.title,
     expressions: mapped,
     total: mapped.reduce(countTotal, 0),
   };
@@ -66,7 +66,7 @@ const usage = (lexemes, subroutines, language) => {
   const copy = categories.slice(0);
   // extend it to include command structures, variable scope modifiers, and subroutine calls
   copy.push({
-    category: 'Command structures',
+    title: 'Command structures',
     expressions: [
       expression(['IF', 'if', 'if'], 0),
       expression(['ELSE', 'else', 'else'], 0),
@@ -79,7 +79,7 @@ const usage = (lexemes, subroutines, language) => {
     ],
   });
   copy.push({
-    category: 'Variable scope modifiers',
+    title: 'Variable scope modifiers',
     expressions: [
       expression(['LOCAL', null, null], 1),
       expression(['PRIVATE', null, null], 2),
@@ -88,7 +88,7 @@ const usage = (lexemes, subroutines, language) => {
     ],
   });
   copy.push({
-    category: 'Subroutine calls',
+    title: 'Subroutine calls',
     expressions: subroutines,
   });
   // return the copy mapped and filtered

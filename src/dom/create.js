@@ -1,8 +1,12 @@
 /**
- * create a pre-filled html element
+ * create a pre-filled html element, with options for content and attributes
  */
+
+// direct export of the function
 module.exports = (type, options = {}) => {
+  // create the element
   const element = document.createElement(type);
+  // iterate over the options adding content/attributes
   Object.keys(options).forEach((key) => {
     switch (key) {
       case 'classes':
@@ -16,7 +20,7 @@ module.exports = (type, options = {}) => {
         }
         break;
       case 'value':
-        element.value = options[key];
+        element.value = options.value;
         break;
       case 'on':
         options.on.forEach(e => element.addEventListener(e.type, e.callback));

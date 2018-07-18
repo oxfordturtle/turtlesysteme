@@ -1,6 +1,8 @@
 /**
  * entry point for electron
  */
+
+// global imports
 const { app, BrowserWindow, dialog, Menu, ipcMain } = require('electron');
 const fs = require('fs');
 const { examples } = require('./data');
@@ -8,7 +10,7 @@ const { examples } = require('./data');
 // set to false when building
 const development = true;
 
-// Keep global references of the window objects to avoid garbage collection
+// keep global references of the window objects to avoid garbage collection
 let systemWindow;
 let settingsWindow;
 let helpWindow;
@@ -58,10 +60,6 @@ const createAboutWindow = () => {
 };
 
 // functions called by the menu items
-const sendToSystem = (signal, data) => {
-  systemWindow.webContents.send(signal, data);
-};
-
 const openProgram = () => {
   dialog.showOpenDialog(
     {
@@ -76,7 +74,7 @@ const openProgram = () => {
     (files) => {
       if (files && files[0]) {
         fs.readFile(files[0], 'utf8', (err, content) => {
-          sendToSystem('set-file', { filename: files[0], content });
+          systemWindow.webContents.send('set-file', { filename: files[0], content });
         });
       }
     },
@@ -111,20 +109,47 @@ const showSettingsWindow = () => {
 const languageMenu = {
   label: 'LANGUAGE',
   submenu: [
-    { type: 'radio', label: 'Turtle BASIC', click: sendToSystem.bind(null, 'set-language', 'BASIC') },
-    { type: 'radio', label: 'Turtle Pascal', click: sendToSystem.bind(null, 'set-language', 'Pascal') },
-    { type: 'radio', label: 'Turtle Python', click: sendToSystem.bind(null, 'set-language', 'Python') },
+    {
+      type: 'radio',
+      label: 'Turtle BASIC',
+      click: systemWindow.webContents.send.bind(null, 'set-language', 'BASIC'),
+    },
+    {
+      type: 'radio',
+      label: 'Turtle Pascal',
+      click: systemWindow.webContents.send.bind(null, 'set-language', 'Pascal'),
+    },
+    {
+      type: 'radio',
+      label: 'Turtle Python',
+      click: systemWindow.webContents.send.bind(null, 'set-language', 'Python'),
+    },
   ],
 };
 
 const fileMenu = {
   label: 'File',
   submenu: [
-    { label: 'New program', click: sendToSystem.bind(null, 'new-program') },
-    { label: 'Open program', click: openProgram },
-    { label: 'Save program', click: sendToSystem.bind(null, 'save-program') },
-    { label: 'Save as...', click: sendToSystem.bind(null, 'save-program-as') },
-    { label: 'Close program', click: sendToSystem.bind(null, 'new-program') },
+    {
+      label: 'New program',
+      click: systemWindow.webContents.send.bind(null, 'new-program'),
+    },
+    {
+      label: 'Open program',
+      click: openProgram,
+    },
+    {
+      label: 'Save program',
+      click: systemWindow.webContents.send.bind(null, 'save-program'),
+    },
+    {
+      label: 'Save as...',
+      click: systemWindow.webContents.send.bind(null, 'save-program-as'),
+    },
+    {
+      label: 'Close program',
+      click: systemWindow.webContents.send.bind(null, 'new-program'),
+    },
   ],
 };
 
@@ -143,19 +168,40 @@ const editMenu = {
 const optionsMenu = {
   label: 'Options',
   submenu: [
-    { type: 'checkbox', label: 'Show canvas on run', click: sendToSystem.bind(null, 'toggle-show-canvas') },
-    { type: 'checkbox', label: 'Show output on write', click: sendToSystem.bind(null, 'toggle-show-output') },
-    { type: 'checkbox', label: 'Show memory on dump', click: sendToSystem.bind(null, 'toggle-show-memory') },
+    {
+      type: 'checkbox',
+      label: 'Show canvas on run',
+      click: systemWindow.webContents.send.bind(null, 'toggle-show-canvas'),
+    },
+    {
+      type: 'checkbox',
+      label: 'Show output on write',
+      click: systemWindow.webContents.send.bind(null, 'toggle-show-output'),
+    },
+    {
+      type: 'checkbox',
+      label: 'Show memory on dump',
+      click: systemWindow.webContents.send.bind(null, 'toggle-show-memory'),
+    },
     { type: 'separator' },
-    { label: 'More machine options', click: showSettingsWindow },
+    {
+      label: 'More machine options',
+      click: showSettingsWindow,
+    },
   ],
 };
 
 const exampleMenu = example =>
-  ({ label: example.name, click: sendToSystem.bind(null, 'set-example', example.id) });
+  ({
+    label: example.name,
+    click: systemWindow.webContents.send.bind(null, 'set-example', example.id),
+  });
 
 const exampleGroupMenu = exampleGroup =>
-  ({ label: `${exampleGroup.index}. ${exampleGroup.title}`, submenu: exampleGroup.examples.map(exampleMenu) });
+  ({
+    label: `${exampleGroup.index}. ${exampleGroup.title}`,
+    submenu: exampleGroup.examples.map(exampleMenu),
+  });
 
 const helpMenu = {
   role: 'help',

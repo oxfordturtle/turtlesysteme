@@ -1,6 +1,8 @@
 /**
  * Turtle BASIC example programs
  */
+
+// direct export
 module.exports = {
   'AimCannon': require('./AimCannon.tgb'),
   'AskInput': require('./AskInput.tgb'),

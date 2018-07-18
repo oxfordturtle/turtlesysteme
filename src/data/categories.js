@@ -1,28 +1,25 @@
 /*
- * groups of commands (for the help page)
+ * categories of commands (for the help page and usage data)
  */
+
+// local imports
 const commands = require('./commands');
 
-const inGroup = (index, command) =>
-  command.group === index;
+// function to create a group
+const category = (index, title) =>
+  ({ index, title, expressions: commands.filter((x) => x.category === index) });
 
-const newGroup = (index, category) =>
-  ({
-    index,
-    category,
-    expressions: commands.filter(inGroup.bind(null, index))
-  });
-
+// direct export
 module.exports = ([
-  newGroup(0, 'Turtle: relative movement'),
-  newGroup(1, 'Turtle: absolute movement'),
-  newGroup(2, 'Turtle: drawing shapes'),
-  newGroup(3, 'Other Turtle commands'),
-  newGroup(4, 'Canvas operations'),
-  newGroup(5, 'General arithmetic functions'),
-  newGroup(6, 'Trig / exp / log functions'),
-  newGroup(7, 'String operations'),
-  newGroup(8, 'Type conversion routines'),
-  newGroup(9, 'Input and timing routines'),
-  newGroup(10, 'Turtle Machine monitoring'),
+  category(0, 'Turtle: relative movement'),
+  category(1, 'Turtle: absolute movement'),
+  category(2, 'Turtle: drawing shapes'),
+  category(3, 'Other Turtle commands'),
+  category(4, 'Canvas operations'),
+  category(5, 'General arithmetic functions'),
+  category(6, 'Trig / exp / log functions'),
+  category(7, 'String operations'),
+  category(8, 'Type conversion routines'),
+  category(9, 'Input and timing routines'),
+  category(10, 'Turtle Machine monitoring'),
 ]);

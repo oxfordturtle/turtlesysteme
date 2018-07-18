@@ -1,6 +1,8 @@
 /**
  * Turtle Pascal example programs
  */
+
+// direct export
 module.exports = {
   'AimCannon': require('./AimCannon.tgp'),
   'AskInput': require('./AskInput.tgp'),

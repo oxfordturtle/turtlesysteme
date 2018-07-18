@@ -1,6 +1,8 @@
 /**
  * Turtle Python example programs
  */
+
+// direct export
 module.exports = {
   'AimCannon': require('./AimCannon.tgy'),
   'AskInput': require('./AskInput.tgy'),
