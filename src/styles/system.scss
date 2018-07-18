@@ -56,8 +56,11 @@
 // custom additions for the browser
 .tsx-browser .tsx-system {
   height: $system-height;
-  max-width: $system-width;
+  max-width: $canvas-width + (4 * $padding) + 2px;
   margin: 0 auto;
+  @media (min-width: $system-width) {
+    max-width: $system-width;
+  }
 }
 
 // custom additions for electron
