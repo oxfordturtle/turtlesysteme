@@ -10,9 +10,8 @@ require('styles/highlighting.scss');
 // local imports
 const analyser = require('./analyser');
 const lexer = require('./lexer');
-const parser1 = require('./parser1');
-const parser2 = require('./parser2');
-const parser3 = require('./parser3');
+const parser = require('./parser');
+const coder = require('./coder');
 const tokenizer = require('./tokenizer');
 
 // the highlight function (used for making code look pretty)
@@ -25,13 +24,12 @@ const highlight = (code, language) =>
 // the main compiler function
 const compile = (code, language) => {
   const lexemes = lexer(code, language);
-  const routines = parser2(parser1(lexemes, language), language);
+  const routines = parser(lexemes, language);
   console.log(routines);
   const pcode = [];
-  //const pcode = parser3(routines, language);
+  //const pcode = coder(routines, language);
   //console.log(pcode);
   const usage = analyser(lexemes, routines.slice(1), language);
-  console.log(usage);
   return { usage, pcode };
 };
 
