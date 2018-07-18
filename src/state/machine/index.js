@@ -33,7 +33,7 @@ const setup = (stackSize) => {
   output.clearText();
   output.setBackground(0xFFFFFF);
   // set up the memory
-  memory.setup(options.stackSize);
+  memory.setup(stackSize);
   // set up machine status
   status.running = true;
   status.paused = false;

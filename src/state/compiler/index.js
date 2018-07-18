@@ -26,9 +26,9 @@ const compile = (code, language) => {
   const lexemes = lexer(code, language);
   const routines = parser(lexemes, language);
   console.log(routines);
-  const pcode = [];
-  //const pcode = coder(routines, language);
-  //console.log(pcode);
+  //const pcode = [];
+  const pcode = coder(routines, language);
+  console.log(pcode);
   const usage = analyser(lexemes, routines.slice(1), language);
   return { usage, pcode };
 };

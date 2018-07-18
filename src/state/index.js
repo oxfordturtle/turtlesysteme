@@ -5,6 +5,9 @@
  * -------------------------------------------------------------------------------------------------
  */
 
+// global imports
+const { pc } = require('data');
+
 // local imports
 const session = require('./session');
 const compiler = require('./compiler');
@@ -631,7 +634,7 @@ const executeCode = (pcode, startLine, startCode, options) => {
         a = pcode[line][code + 1];
         b = memory.pop();
         memory.setAddress(a, b);
-        updateTurtleDisplay(a, b);
+        reply('turtle-changed', memory.getTurtle());
         code += 1;
         break;
       case pc.stvv:
@@ -647,7 +650,7 @@ const executeCode = (pcode, startLine, startCode, options) => {
         c = memory.getPointer(a + 9, b);
         d = memory.pop();
         memory.setAddress(c, d);
-        updateTurtleDisplay(c, d);
+        reply('turtle-changed', memory.getTurtle());
         code += 2;
         break;
       case pc.star:
@@ -665,7 +668,7 @@ const executeCode = (pcode, startLine, startCode, options) => {
         a = pcode[line][code + 1];
         b = memory.pop();
         memory.setAddress(a + 9, b);
-        updateTurtleDisplay(a + 9, b);
+        reply('turtle-changed', memory.getTurtle());
         code += 1;
         break;
       // 0x7 - pointer handling
@@ -677,7 +680,7 @@ const executeCode = (pcode, startLine, startCode, options) => {
         b = memory.pop();
         a = memory.pop();
         memory.setAddress(b, a);
-        updateTurtleDisplay(b, a);
+        reply('turtle-changed', memory.getTurtle());
         break;
       case pc.cptr:
         c = memory.pop(); // length
@@ -752,7 +755,7 @@ const executeCode = (pcode, startLine, startCode, options) => {
         }
         memory.push(memory.getAddress(a + 9), 'memory');
         memory.setAddress(a + 9, c);
-        updateTurtleDisplay(a + 9, c);
+        reply('turtle-changed', memory.getTurtle());
         memory.push(c + b, 'memory');
         code += 2;
         break;
@@ -762,7 +765,7 @@ const executeCode = (pcode, startLine, startCode, options) => {
         b = memory.pop('memory');
         memory.push(memory.getAddress(a + 9), 'memory');
         memory.setAddress(a + 9, b);
-        updateTurtleDisplay(a + 9, b);
+        reply('turtle-changed', memory.getTurtle());
         code += 2;
         break;
       case pc.hfix:
@@ -1331,7 +1334,7 @@ const send = (signal, data) => {
       case 'machine-run':
         if (session.pcode.get().length > 0) {
           reply('machine-started');
-          run();
+          run(session.pcode.get(), session.machineOptions.get());
         }
         break;
       case 'machine-halt':

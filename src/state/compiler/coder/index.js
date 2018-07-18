@@ -1,35 +1,33 @@
-/* compiler/parser3
---------------------------------------------------------------------------------
-array of routines goes in, pcode comes out
-
-this second pass over the lexemes generates the compiled pcode, using the language-independent
-pcoder module (the only one that outputs pcode directly), and the appropriate language-specific
-module
-
-the language-specific modules are responsible for running through the lexemes that make up the
-commands of the individual routines; this module pieces those results together, and wraps them up in
-the appropriate routine start and end code
---------------------------------------------------------------------------------
-*/
+/**
+ * coder: array of routines goes in, pcode comes out
+ *
+ * this second pass over the lexemes generates the compiled pcode, using the language-independent
+ * pcoder module (the only one that outputs pcode directly), and the appropriate language-specific
+ * module
+ *
+ * the language-specific modules are responsible for running through the lexemes that make up the
+ * commands of the individual routines; this module pieces those results together, and wraps them up
+ * in the appropriate routine start and end code
+ */
 
 // local imports
 const { pcoder } = require('../tools');
-const BASIC = require('./basic');
-const Pascal = require('./pascal');
-const Python = require('./python');
+const coders = {
+  BASIC: require('./basic'),
+  Pascal: require('./pascal'),
+  Python: require('./python'),
+};
 
 // generate the inner pcode for routines (minus start and end stuff)
 const compileInnerCode = (routine, startLine, language) => {
-  const parsers = { BASIC, Pascal, Python };
-  let pcode = [];
-  let result;
   let lex = 0;
+  let pcode;
+  let result = [];
   while (lex < routine.lexemes.length) {
-    result = parsers[language].call(null, routine, lex, startLine + pcode.length);
-    lex = result.lex;
-    pcode = pcode.concat(result.pcode);
+    ({ lex, pcode } = coders[language].call(null, routine, lex, startLine + result.length));
+    result = result.concat(pcode);
   }
-  return pcode;
+  return result;
 };
 
 // generate the pcode for subroutines (returns an empty array if there aren't any)
@@ -51,8 +49,8 @@ const compileSubroutines = (routines, startLine, language) => {
   return subroutinesCode;
 };
 
-// the main parser3 function - generates pcode from the array of routines
-const parser3 = (routines, language) => {
+// the main coder function - generates pcode from the array of routines
+const coder = (routines, language) => {
   const program = routines[0];
   const subroutines = routines.slice(1);
   const programStartCodeLength = pcoder.programStartCode(program).length;
@@ -65,4 +63,5 @@ const parser3 = (routines, language) => {
   return pcoder.program(routines[0], subroutinesCode, innerCode);
 };
 
-module.exports = parser3;
+// exports
+module.exports = coder;

@@ -1,12 +1,9 @@
-/* compiler/tools/find
---------------------------------------------------------------------------------
+/**
+ *
+ */
 
---------------------------------------------------------------------------------
-*/
-
-const commands = require('data/commands');
-const colours = require('data/colours');
-const inputs = require('data/inputs');
+// global imports
+const { commands, colours, inputs } = require('data');
 
 // get the main program from a routine
 const mainProgram = (routine) =>
@@ -14,7 +11,7 @@ const mainProgram = (routine) =>
 
 // check if object name matches the given name (for the given language)
 matches = (name, language, object) =>
-  ((object.name || object.names[language.toLowerCase()]) === name);
+  ((object.name || object.names[language]) === name);
 
 // find something (constant, variable, or subroutine) visible to a routine search the routine's
 // haystack first, then it's parent (recursively)

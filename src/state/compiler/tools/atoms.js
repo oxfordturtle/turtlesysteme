@@ -1,14 +1,13 @@
-/* compiler/tools/atoms
---------------------------------------------------------------------------------
+/**
+ *
+ */
 
---------------------------------------------------------------------------------
-*/
-
+// local imports
 const find = require('./find');
 const pcoder = require('./pcoder');
 
-// pseudo-constructor for type errors
-const newTypeError = (errorId, needed, found, lexeme) =>
+// create a new type error
+const typeError = (errorId, needed, found, lexeme) =>
   ({
     id: errorId,
     messageId: 'expType',
@@ -16,8 +15,8 @@ const newTypeError = (errorId, needed, found, lexeme) =>
     lexeme,
   });
 
-// pseudo-constructor for function return type error
-const newTypeFnError = (errorId, needed, found, lexeme) =>
+// create a new function return type error
+const typeFnError = (errorId, needed, found, lexeme) =>
   ({
     id: errorId,
     messageId: 'cmdFuncType',
@@ -26,7 +25,7 @@ const newTypeFnError = (errorId, needed, found, lexeme) =>
   });
 
 // pseudo-constructor for any other error
-const newError = (errorId, messageId, lexeme) => {
+const error = (errorId, messageId, lexeme) => {
   const messages = {
     expBracket: 'Closing bracket missing after expression.',
     expKeycode: `'${lexeme.content}' is not a valid keycode.`,
@@ -161,7 +160,7 @@ const factor = (routine, lex, type, typeNeeded, language) => {
       if (lexemes[lex].content === '-') {
         typeFound = 'integer';
         if (!typeIsOk(typeNeeded, typeFound)) {
-          throw newTypeError('exp01', typeNeeded, typeFound, lexemes[lex]);
+          throw typeError('exp01', typeNeeded, typeFound, lexemes[lex]);
         }
         type = typeFound;
         operator = 'neg';
@@ -171,7 +170,7 @@ const factor = (routine, lex, type, typeNeeded, language) => {
       } else if (lexemes[lex].value === 'not') {
         typeFound = 'boolint';
         if (!typeIsOk(typeNeeded, typeFound)) {
-          throw newTypeError('exp02', typeNeeded, typeFound, lexemes[lex]);
+          throw typeError('exp02', typeNeeded, typeFound, lexemes[lex]);
         }
         type = typeFound;
         operator = lexemes[lex].value;
@@ -181,7 +180,7 @@ const factor = (routine, lex, type, typeNeeded, language) => {
         lex = result.lex;
         pcode = mergeLines(result.pcode, [pcoder.applyOperator(operator)]);
       } else {
-        throw newError();
+        throw error();
       }
       break;
     // brackets
@@ -194,14 +193,14 @@ const factor = (routine, lex, type, typeNeeded, language) => {
       if (lexemes[lex] && (lexemes[lex].type === 'rbkt')) {
         lex += 1;
       } else {
-        throw newError('exp03', 'expBracket', lexemes[lex - 1]);
+        throw error('exp03', 'expBracket', lexemes[lex - 1]);
       }
       break;
     // literal values
     case 'integer':
       typeFound = 'integer';
       if (!typeIsOk(typeNeeded, typeFound)) {
-        throw newTypeError('exp04', typeNeeded, typeFound, lexemes[lex]);
+        throw typeError('exp04', typeNeeded, typeFound, lexemes[lex]);
       }
       type = typeFound;
       pcode = [pcoder.loadLiteralValue('int', lexemes[lex].value)];
@@ -210,7 +209,7 @@ const factor = (routine, lex, type, typeNeeded, language) => {
     case 'boolean':
       typeFound = 'boolean';
       if (!typeIsOk(typeNeeded, typeFound)) {
-        throw newTypeError('exp05', typeNeeded, typeFound, lexemes[lex]);
+        throw typeError('exp05', typeNeeded, typeFound, lexemes[lex]);
       }
       type = typeFound;
       pcode = [pcoder.loadLiteralValue('bool', lexemes[lex].value)];
@@ -219,7 +218,7 @@ const factor = (routine, lex, type, typeNeeded, language) => {
     case 'char':
       typeFound = 'char';
       if (!typeIsOk(typeNeeded, typeFound)) {
-        throw newTypeError('exp06', typeNeeded, typeFound, lexemes[lex]);
+        throw typeError('exp06', typeNeeded, typeFound, lexemes[lex]);
       }
       type = typeFound;
       pcode = [pcoder.loadLiteralValue('char', lexemes[lex].value)];
@@ -231,76 +230,73 @@ const factor = (routine, lex, type, typeNeeded, language) => {
     case 'string':
       typeFound = 'string';
       if (!typeIsOk(typeNeeded, typeFound)) {
-        throw newTypeError('exp07', typeNeeded, typeFound, lexemes[lex]);
+        throw typeError('exp07', typeNeeded, typeFound, lexemes[lex]);
       }
       type = typeFound;
       pcode = [pcoder.loadLiteralValue('str', lexemes[lex].value)];
       lex += 1;
       break;
     case 'keycode':
-      input = find.input(lexemes[lex].string, language);
+      input = find.input(lexemes[lex].content, language);
       if (!input) {
-        throw newError('exp08', 'expKeycode', lexemes[lex]);
+        throw error('exp08', 'expKeycode', lexemes[lex]);
       }
       type = 'int';
       pcode = [pcoder.loadKeyValue(input)];
       lex += 1;
       break;
     case 'query':
-      input = find.input(lexemes[lex].string, language);
+      input = find.input(lexemes[lex].content, language);
       if (!input) {
-        throw newError('exp09', 'expQuery', lexemes[lex]);
+        throw error('exp09', 'expQuery', lexemes[lex]);
       }
       type = 'int';
       pcode = [pcoder.loadQueryValue(input)];
       lex += 1;
       break;
     case 'turtle': // fallthrough
-    case 'command': // fallthrough
-    case 'custom': // fallthrough
-    case 'constant': // fallthrough
     case 'identifier':
-      constant = find.constant(routine, lexemes[lex].string, language);
+      constant = find.constant(routine, lexemes[lex].content, language);
       if (constant) {
         typeFound = constant.type;
         if (!typeIsOk(typeNeeded, typeFound)) {
-          throw newTypeError('exp10', typeNeeded, typeFound, lexemes[lex]);
+          throw typeError('exp10', typeNeeded, typeFound, lexemes[lex]);
         }
         type = typeFound;
         pcode = [pcoder.loadLiteralValue(constant.type, constant.value)];
         lex += 1;
         break;
       }
-      variable = find.variable(routine, lexemes[lex].string, language);
+      variable = find.variable(routine, lexemes[lex].content, language);
       if (variable) {
         typeFound = variable.type;
         if (!typeIsOk(typeNeeded, typeFound)) {
-          throw newTypeError('exp11', typeNeeded, typeFound, lexemes[lex]);
+          throw typeError('exp11', typeNeeded, typeFound, lexemes[lex]);
         }
         type = typeFound;
         pcode = [pcoder.loadVariableValue(variable)];
         lex += 1;
         break;
       }
-      colour = find.colour(lexemes[lex].string, language);
+      colour = find.colour(lexemes[lex].content, language);
       if (colour) {
         typeFound = colour.type;
         if (!typeIsOk(typeNeeded, typeFound)) {
-          throw newTypeError('exp12', typeNeeded, typeFound, lexemes[lex]);
+          throw typeError('exp12', typeNeeded, typeFound, lexemes[lex]);
         }
         type = typeFound;
         pcode = [pcoder.loadLiteralValue(colour.type, colour.value)];
         lex += 1;
         break;
       }
-      command = find.anyCommand(routine, lexemes[lex].string, language);
+      command = find.anyCommand(routine, lexemes[lex].content, language);
       if (command) {
         if (command.type === 'procedure') {
-          throw newError('exp13', 'expProcedure', lexemes[lex]);
+          throw error('exp13', 'expProcedure', lexemes[lex]);
         }
         typeFound = command.returns;
         if (!typeIsOk(typeNeeded, typeFound)) {
-          throw newTypeError('exp14', typeNeeded, typeFound, lexemes[lex]);
+          throw typeError('exp14', typeNeeded, typeFound, lexemes[lex]);
         }
         type = typeFound;
         result = commandCall(routine, lex, 'function', language);
@@ -312,10 +308,10 @@ const factor = (routine, lex, type, typeNeeded, language) => {
         }
         break;
       }
-      throw newError('exp15', 'expNotFound', lexemes[lex]);
+      throw error('exp15', 'expNotFound', lexemes[lex]);
     // anything else is an error
     default:
-      throw newError('exp16', 'expWeird', lexemes[lex]);
+      throw error('exp16', 'expWeird', lexemes[lex]);
   }
   return { type, lex, pcode };
 };
@@ -325,7 +321,7 @@ const variableAssignment = (routine, variable, lex, language) => {
   var pcode;
   var type;
   if (!lexemes[lex]) {
-    throw newError('asgn01', 'asgnNothing', lexemes[lex - 1]);
+    throw error('asgn01', 'asgnNothing', lexemes[lex - 1]);
   }
   ({ type, lex, pcode } = expression(routine, lex, 'null', variable.type, language));
   pcode = mergeLines(pcode, [pcoder.storeVariableValue(variable)]);
@@ -342,31 +338,31 @@ const commandCall = (routine, lex, expectedType, language) => {
   var pcode;
   var result;
   if (!command) {
-    throw newError('cmd01', 'cmdNotFound', lexemes[lex]);
+    throw error('cmd01', 'cmdNotFound', lexemes[lex]);
   }
   if (command.type !== expectedType) {
-    throw newTypeFnError('cmd02', expectedType, command.type, lexemes[lex]);
+    throw typeFnError('cmd02', expectedType, command.type, lexemes[lex]);
   }
   argsExpected = command.parameters.length;
   pcode = [[]];
   if (argsExpected === 0) { // no arguments expected
     if (language === 'Python') {
       if (!lexemes[lex + 1] || (lexemes[lex + 1].content !== '(')) {
-        throw newError('cmd03', 'cmdLeftBracket', lexemes[lex]);
+        throw error('cmd03', 'cmdLeftBracket', lexemes[lex]);
       }
       lex += 1;
       if (!lexemes[lex + 1] || (lexemes[lex + 1].content !== ')')) {
-        throw newError('cmd04', 'cmdNoArgs', lexemes[lex - 1]);
+        throw error('cmd04', 'cmdNoArgs', lexemes[lex - 1]);
       }
       lex += 1;
     } else {
       if (lexemes[lex + 1] && (lexemes[lex + 1].content === '(')) {
-        throw newError('cmd05', 'cmdNoArgs', lexemes[lex]);
+        throw error('cmd05', 'cmdNoArgs', lexemes[lex]);
       }
     }
   } else { // some arguments expected
     if (lexemes[lex + 1].content !== '(') {
-      throw newError('cmd06', 'cmdMissingArgs', lexemes[lex]);
+      throw error('cmd06', 'cmdMissingArgs', lexemes[lex]);
     }
     lex += 2;
     argsGiven = 0;
@@ -375,7 +371,7 @@ const commandCall = (routine, lex, expectedType, language) => {
       if (currentArg.byref) { // reference parameter
         variable = find.variable(routine, lexemes[lex].content, language);
         if (!variable) {
-          throw newError('cmd07', 'cmdBadRef', lexemes[lex]);
+          throw error('cmd07', 'cmdBadRef', lexemes[lex]);
         }
         lex += 1;
         pcode = mergeLines(pcode, [pcoder.loadVariableAddress(variable)]);
@@ -387,19 +383,19 @@ const commandCall = (routine, lex, expectedType, language) => {
       argsGiven += 1;
       if (argsGiven < argsExpected) {
         if (!lexemes[lex] || (lexemes[lex].content !== ',')) {
-          throw newError('cmd08', 'cmdComma', lexemes[lex]);
+          throw error('cmd08', 'cmdComma', lexemes[lex]);
         }
         lex += 1;
       }
     }
     if (argsGiven < argsExpected) {
-      throw newError('cmd09', 'cmdTooFew', lexemes[lex]);
+      throw error('cmd09', 'cmdTooFew', lexemes[lex]);
     }
     if (lexemes[lex].content === ',') {
-      throw newError('cmd10', 'cmdTooMany', lexemes[lex]);
+      throw error('cmd10', 'cmdTooMany', lexemes[lex]);
     }
     if (lexemes[lex].content !== ')') {
-      throw newError('cmd11', 'cmdRightBracket', lexemes[lex - 1]);
+      throw error('cmd11', 'cmdRightBracket', lexemes[lex - 1]);
     }
   }
   lex += 1;
