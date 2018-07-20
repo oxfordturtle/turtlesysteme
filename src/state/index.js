@@ -1,8 +1,6 @@
 /**
  * application state
- * -------------------------------------------------------------------------------------------------
  * the central hub for maintaining application state and communicating between different modules
- * -------------------------------------------------------------------------------------------------
  */
 
 // global imports
@@ -110,7 +108,7 @@ const playPause = () => {
 
 // function to halt the machine
 const halt = () => {
-  if (status.running) {
+  if (machine.status.running) {
     // remove event listeners on the canvas and console
     machine.canvas.removeEventListeners();
     machine.console.removeEventListeners();
@@ -119,6 +117,7 @@ const halt = () => {
     // reset the machine status
     machine.status.running = false;
     machine.status.paused = false;
+    reply('machine-stopped');
   }
 };
 
@@ -627,21 +626,20 @@ const executeCode = (pcode, startLine, startCode, options) => {
       case pc.zero:
         a = pcode[line][code + 1];
         b = pcode[line][code + 2];
-        memory.setPointer(a + 9, b, 0);
+        memory.setPointer(a + 9, b, 0, reply);
         code += 2;
         break;
       case pc.stvg:
         a = pcode[line][code + 1];
         b = memory.pop();
-        memory.setAddress(a, b);
-        reply('turtle-changed', memory.getTurtle());
+        memory.setAddress(a, b, reply);
         code += 1;
         break;
       case pc.stvv:
         a = pcode[line][code + 1];
         b = pcode[line][code + 2];
         c = memory.pop();
-        memory.setPointer(a + 9, b, c);
+        memory.setPointer(a + 9, b, c, reply);
         code += 2;
         break;
       case pc.stvr:
@@ -649,15 +647,14 @@ const executeCode = (pcode, startLine, startCode, options) => {
         b = pcode[line][code + 2];
         c = memory.getPointer(a + 9, b);
         d = memory.pop();
-        memory.setAddress(c, d);
-        reply('turtle-changed', memory.getTurtle());
+        memory.setAddress(c, d, reply);
         code += 2;
         break;
       case pc.star:
         a = pcode[line][code + 1];
         b = pcode[line][code + 2];
         c = memory.pop();
-        memory.setPointer(a + 9, b, c);
+        memory.setPointer(a + 9, b, c, reply);
         code += 2;
         break;
       case pc.stmt:
@@ -667,8 +664,7 @@ const executeCode = (pcode, startLine, startCode, options) => {
       case pc.stmb:
         a = pcode[line][code + 1];
         b = memory.pop();
-        memory.setAddress(a + 9, b);
-        reply('turtle-changed', memory.getTurtle());
+        memory.setAddress(a + 9, b, reply);
         code += 1;
         break;
       // 0x7 - pointer handling
@@ -679,8 +675,7 @@ const executeCode = (pcode, startLine, startCode, options) => {
       case pc.sptr:
         b = memory.pop();
         a = memory.pop();
-        memory.setAddress(b, a);
-        reply('turtle-changed', memory.getTurtle());
+        memory.setAddress(b, a, reply);
         break;
       case pc.cptr:
         c = memory.pop(); // length
@@ -754,8 +749,7 @@ const executeCode = (pcode, startLine, startCode, options) => {
           throw tools.error('machine01', 'stackOverflow');
         }
         memory.push(memory.getAddress(a + 9), 'memory');
-        memory.setAddress(a + 9, c);
-        reply('turtle-changed', memory.getTurtle());
+        memory.setAddress(a + 9, c, reply);
         memory.push(c + b, 'memory');
         code += 2;
         break;
@@ -764,8 +758,7 @@ const executeCode = (pcode, startLine, startCode, options) => {
         a = pcode[line][code + 1];
         b = memory.pop('memory');
         memory.push(memory.getAddress(a + 9), 'memory');
-        memory.setAddress(a + 9, b);
-        reply('turtle-changed', memory.getTurtle());
+        memory.setAddress(a + 9, b, reply);
         code += 2;
         break;
       case pc.hfix:
@@ -921,7 +914,7 @@ const executeCode = (pcode, startLine, startCode, options) => {
         console.addText('\n');
         output.addText('\n');
         break;
-      // 0xC - file handling (not implemented in version 11)
+      // 0xC - file handling (not implemented yet)
       // 0xD - canvas, turtle settings
       case pc.canv:
         d = memory.pop();
@@ -929,9 +922,9 @@ const executeCode = (pcode, startLine, startCode, options) => {
         b = memory.pop();
         a = memory.pop();
         canvas.setDimensions(a, b, c, d);
-        memory.setPointer(0, 1, Math.round(a + (c / 2)));
-        memory.setPointer(0, 2, Math.round(b + (d / 2)));
-        memory.setPointer(0, 3, 0);
+        memory.setPointer(0, 1, Math.round(a + (c / 2)), reply);
+        memory.setPointer(0, 2, Math.round(b + (d / 2)), reply);
+        memory.setPointer(0, 3, 0, reply);
         memory.remember();
         drawCount = options.drawCountMax; // force update
         break;
@@ -964,7 +957,7 @@ const executeCode = (pcode, startLine, startCode, options) => {
       case pc.angl:
         a = memory.pop();
         b = Math.round(a + ((memory.getPointer(0, 3) * a) / canvas.getDegrees()));
-        memory.setPointer(0, 3, b % a);
+        memory.setPointer(0, 3, b % a, reply);
         canvas.setDegrees(a);
         break;
       case pc.curs:
@@ -975,32 +968,32 @@ const executeCode = (pcode, startLine, startCode, options) => {
         a = canvas.getDimensions();
         b = a.startx + (a.sizex / 2);
         c = a.starty + (a.sizey / 2);
-        memory.setPointer(0, 1, Math.round(b));
-        memory.setPointer(0, 2, Math.round(c));
-        memory.setPointer(0, 3, 0);
+        memory.setPointer(0, 1, Math.round(b), reply);
+        memory.setPointer(0, 2, Math.round(c), reply);
+        memory.setPointer(0, 3, 0, reply);
         memory.remember();
         break;
       case pc.setx:
         a = memory.pop();
-        memory.setPointer(0, 1, a);
+        memory.setPointer(0, 1, a, reply);
         memory.remember();
         break;
       case pc.sety:
         a = memory.pop();
-        memory.setPointer(0, 2, a);
+        memory.setPointer(0, 2, a, reply);
         memory.remember();
         break;
       case pc.setd:
         a = memory.pop();
-        memory.setPointer(0, 3, a % canvas.getDegrees());
+        memory.setPointer(0, 3, a % canvas.getDegrees(), reply);
         break;
       case pc.thik:
         a = memory.pop();
-        memory.setPointer(0, 4, a);
+        memory.setPointer(0, 4, a, reply);
         break;
       case pc.colr:
         a = memory.pop();
-        memory.setPointer(0, 5, a);
+        memory.setPointer(0, 5, a, reply);
         break;
       case pc.rgb:
         a = memory.pop();
@@ -1022,15 +1015,15 @@ const executeCode = (pcode, startLine, startCode, options) => {
       case pc.toxy:
         b = memory.pop();
         a = memory.pop();
-        memory.setPointer(0, 1, a);
-        memory.setPointer(0, 2, b);
+        memory.setPointer(0, 1, a, reply);
+        memory.setPointer(0, 2, b, reply);
         memory.remember();
         break;
       case pc.mvxy:
         b = memory.pop();
         a = memory.pop();
-        memory.setPointer(0, 1, memory.getPointer(0, 1) + a);
-        memory.setPointer(0, 2, memory.getPointer(0, 2) + b);
+        memory.setPointer(0, 1, memory.getPointer(0, 1) + a, reply);
+        memory.setPointer(0, 2, memory.getPointer(0, 2) + b, reply);
         memory.remember();
         break;
       case pc.drxy:
@@ -1042,8 +1035,8 @@ const executeCode = (pcode, startLine, startCode, options) => {
             drawCount += 1;
           }
         }
-        memory.setPointer(0, 1, memory.getPointer(0, 1) + a);
-        memory.setPointer(0, 2, memory.getPointer(0, 2) + b);
+        memory.setPointer(0, 1, memory.getPointer(0, 1) + a, reply);
+        memory.setPointer(0, 2, memory.getPointer(0, 2) + b, reply);
         memory.remember();
         break;
       case pc.fwrd:
@@ -1060,8 +1053,8 @@ const executeCode = (pcode, startLine, startCode, options) => {
             drawCount += 1;
           }
         }
-        memory.setPointer(0, 1, memory.getPointer(0, 1) + a);
-        memory.setPointer(0, 2, memory.getPointer(0, 2) + b);
+        memory.setPointer(0, 1, memory.getPointer(0, 1) + a, reply);
+        memory.setPointer(0, 2, memory.getPointer(0, 2) + b, reply);
         memory.remember();
         break;
       case pc.back:
@@ -1078,26 +1071,26 @@ const executeCode = (pcode, startLine, startCode, options) => {
             drawCount += 1;
           }
         }
-        memory.setPointer(0, 1, memory.getPointer(0, 1) + a);
-        memory.setPointer(0, 2, memory.getPointer(0, 2) + b);
+        memory.setPointer(0, 1, memory.getPointer(0, 1) + a, reply);
+        memory.setPointer(0, 2, memory.getPointer(0, 2) + b, reply);
         memory.remember();
         break;
       case pc.left:
         a = memory.pop();
         b = memory.getPointer(0, 3);
-        memory.setPointer(0, 3, (b - a) % canvas.getDegrees());
+        memory.setPointer(0, 3, (b - a) % canvas.getDegrees(), reply);
         break;
       case pc.rght:
         a = memory.pop();
         b = memory.getPointer(0, 3);
-        memory.setPointer(0, 3, (b + a) % canvas.getDegrees());
+        memory.setPointer(0, 3, (b + a) % canvas.getDegrees(), reply);
         break;
       case pc.turn:
         b = memory.pop();
         a = memory.pop();
         c = tools.angle(a, b);
         c = Math.round((c * canvas.getDegrees()) / Math.PI / 2);
-        memory.setPointer(0, 3, c % canvas.getDegrees());
+        memory.setPointer(0, 3, c % canvas.getDegrees(), reply);
         break;
       case pc.rmbr:
         memory.remember();
@@ -1220,6 +1213,8 @@ const run = (pcode, options) => {
     // clear detect and readln function pointers
     detectFn = null;
     readlnFn = null;
+    // send the machine started signal
+    reply('machine-started');
     // execute the first block of code (which will in turn trigger execution of the next block)
     executeCode(pcode, 0, 0, options);
   }
@@ -1333,12 +1328,8 @@ const send = (signal, data) => {
         break;
       case 'machine-run':
         if (session.pcode.get().length > 0) {
-          reply('machine-started');
           run(session.pcode.get(), session.machineOptions.get());
         }
-        break;
-      case 'machine-halt':
-        reply('machine-stopped');
         break;
       case 'machine-play-pause':
         if (machine.status.running) {

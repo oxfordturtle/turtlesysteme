@@ -75,12 +75,14 @@ const getTurtle = () =>
     c: getPointer(0, 5)
   });
 
-const setAddress = (address, value) => {
+const setAddress = (address, value, reply = undefined) => {
+  const property = address - memory.main[0];
   memory.main[address] = value;
+  if (0 < property && property <= 5 && reply) reply('turtle-changed', { property, value });
 };
 
-const setPointer = (address, offset, value) => {
-  setAddress(memory.main[address] + offset, value);
+const setPointer = (address, offset, value, reply) => {
+  setAddress(memory.main[address] + offset, value, reply);
 };
 
 // fill a chunk of main memory with zeros
