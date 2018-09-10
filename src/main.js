@@ -112,17 +112,17 @@ const languageMenu = {
     {
       type: 'radio',
       label: 'Turtle BASIC',
-      click: systemWindow.webContents.send.bind(null, 'set-language', 'BASIC'),
+      click: () => systemWindow.webContents.send('set-language', 'BASIC'),
     },
     {
       type: 'radio',
       label: 'Turtle Pascal',
-      click: systemWindow.webContents.send.bind(null, 'set-language', 'Pascal'),
+      click: () => systemWindow.webContents.send('set-language', 'Pascal'),
     },
     {
       type: 'radio',
       label: 'Turtle Python',
-      click: systemWindow.webContents.send.bind(null, 'set-language', 'Python'),
+      click: () => systemWindow.webContents.send('set-language', 'Python'),
     },
   ],
 };
@@ -132,7 +132,7 @@ const fileMenu = {
   submenu: [
     {
       label: 'New program',
-      click: systemWindow.webContents.send.bind(null, 'new-program'),
+      click: () => systemWindow.webContents.send('new-program'),
     },
     {
       label: 'Open program',
@@ -140,15 +140,15 @@ const fileMenu = {
     },
     {
       label: 'Save program',
-      click: systemWindow.webContents.send.bind(null, 'save-program'),
+      click: () => systemWindow.webContents.send('save-program'),
     },
     {
       label: 'Save as...',
-      click: systemWindow.webContents.send.bind(null, 'save-program-as'),
+      click: () => systemWindow.webContents.send('save-program-as'),
     },
     {
       label: 'Close program',
-      click: systemWindow.webContents.send.bind(null, 'new-program'),
+      click: () => systemWindow.webContents.send('new-program'),
     },
   ],
 };
@@ -171,17 +171,17 @@ const optionsMenu = {
     {
       type: 'checkbox',
       label: 'Show canvas on run',
-      click: systemWindow.webContents.send.bind(null, 'toggle-show-canvas'),
+      click: () => systemWindow.webContents.send('toggle-show-canvas'),
     },
     {
       type: 'checkbox',
       label: 'Show output on write',
-      click: systemWindow.webContents.send.bind(null, 'toggle-show-output'),
+      click: () => systemWindow.webContents.send('toggle-show-output'),
     },
     {
       type: 'checkbox',
       label: 'Show memory on dump',
-      click: systemWindow.webContents.send.bind(null, 'toggle-show-memory'),
+      click: () => systemWindow.webContents.send('toggle-show-memory'),
     },
     { type: 'separator' },
     {
@@ -194,7 +194,7 @@ const optionsMenu = {
 const exampleMenu = example =>
   ({
     label: example.name,
-    click: systemWindow.webContents.send.bind(null, 'set-example', example.id),
+    click: () => systemWindow.webContents.send('set-example', example.id),
   });
 
 const exampleGroupMenu = exampleGroup =>
@@ -231,7 +231,7 @@ const menu = development
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
 
 // Setup to recreate systemWindow as necessary
-app.on('activate', () => { if (systemWindow === null) createSystemWindow(); });
+app.on('activate', () => { if (systemWindow === undefined) createSystemWindow(); });
 
 // Get started and add the system menu
 app.on('ready', createSystemWindow);

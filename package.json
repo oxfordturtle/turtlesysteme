@@ -13,17 +13,17 @@
     "dev-electron": "concurrently --kill-others \"webpack-dev-server --config webpack.electron.js --mode development\" \"electron .\""
   },
   "devDependencies": {
-    "concurrently": "^3.6.0",
-    "css-loader": "^0.28.11",
-    "electron": "^1.8.7",
+    "concurrently": "^4.0.1",
+    "css-loader": "^1.0.0",
+    "electron": "^2.0.8",
     "json-loader": "^0.5.7",
-    "node-sass": "^4.9.0",
+    "node-sass": "^4.9.3",
     "raw-loader": "^0.5.1",
-    "sass-loader": "^6.0.7",
-    "style-loader": "^0.20.3",
-    "webpack": "^4.14.0",
-    "webpack-cli": "^2.1.5",
-    "webpack-dev-server": "^3.1.4"
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.23.0",
+    "webpack": "^4.17.2",
+    "webpack-cli": "^3.1.0",
+    "webpack-dev-server": "^3.1.8"
   },
   "repository": {
     "type": "git",
@@ -35,6 +35,6 @@
     "education"
   ],
   "dependencies": {
-    "npm": "^5.10.0"
+    "npm": "^6.4.1"
   }
 }
