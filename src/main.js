@@ -193,8 +193,8 @@ const optionsMenu = {
 
 const exampleMenu = example =>
   ({
-    label: example.name,
-    click: () => systemWindow.webContents.send('set-example', example.id),
+    label: examples.names[example],
+    click: () => systemWindow.webContents.send('set-example', example),
   });
 
 const exampleGroupMenu = exampleGroup =>

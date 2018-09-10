@@ -50,7 +50,7 @@ switch (electron.remote.getCurrentWindow().page) {
 
 // pass ipcRenderer signals (from menu item clicks) onto the signals module
 state.signals.forEach((signal) => {
-  electron.ipcRenderer.on(signal, (event, data) => signals.send(signal, data));
+  electron.ipcRenderer.on(signal, (event, data) => state.send(signal, data));
 });
 
 /**
@@ -73,7 +73,7 @@ state.on('error', (error) => {
 });
 
 // tell the main process about the local storage, so that it can fix the menus accordingly
-electron.ipcRenderer.send('language', state.get.language());
-electron.ipcRenderer.send('show-canvas', state.get.showCanvas());
-electron.ipcRenderer.send('show-output', state.get.showOutput());
-electron.ipcRenderer.send('show-memory', state.get.showMemory());
+electron.ipcRenderer.send('language', state.getLanguage());
+electron.ipcRenderer.send('show-canvas', state.getShowCanvas());
+electron.ipcRenderer.send('show-output', state.getShowOutput());
+electron.ipcRenderer.send('show-memory', state.getShowMemory());
