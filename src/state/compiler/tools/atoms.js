@@ -96,8 +96,8 @@ const expression = (routine, lex, type, typeNeeded, language) => {
   var pcodeTemp;
   if (typeNeeded === 'boolean') typeNeeded = 'null';
   ({ type, lex, pcode } = simple(routine, lex, type, typeNeeded, language));
-  while (lexemes[lex] && (expTypes.indexOf(lexemes[lex].type) > -1)) {
-    operator = unambiguousOperator(lexemes[lex].type, type);
+  while (lexemes[lex] && (expTypes.indexOf(lexemes[lex].value) > -1)) {
+    operator = unambiguousOperator(lexemes[lex].value, type);
     lex += 1;
     pcodeTemp = pcode;
     ({ type, lex, pcode } = simple(routine, lex, type, typeNeeded, language));
@@ -114,8 +114,8 @@ const simple = (routine, lex, type, typeNeeded, language) => {
   var pcode;
   var pcodeTemp;
   ({ type, lex, pcode } = term(routine, lex, type, typeNeeded, language));
-  while (lexemes[lex] && (simpleTypes.indexOf(lexemes[lex].type) > -1)) {
-    operator = unambiguousOperator(lexemes[lex].type, type);
+  while (lexemes[lex] && (simpleTypes.indexOf(lexemes[lex].value) > -1)) {
+    operator = unambiguousOperator(lexemes[lex].value, type);
     lex += 1;
     pcodeTemp = pcode;
     ({ type, lex, pcode } = term(routine, lex, type, typeNeeded, language));
@@ -132,8 +132,8 @@ const term = (routine, lex, type, typeNeeded, language) => {
   var pcode;
   var pcodeTemp;
   ({ type, lex, pcode } = factor(routine, lex, type, typeNeeded, language));
-  while (lexemes[lex] && termTypes.indexOf(lexemes[lex].type) > -1) {
-    operator = lexemes[lex].type;
+  while (lexemes[lex] && termTypes.indexOf(lexemes[lex].value) > -1) {
+    operator = lexemes[lex].value;
     lex += 1;
     pcodeTemp = pcode;
     ({ type, lex, pcode } = factor(routine, lex, type, typeNeeded, language));
@@ -167,7 +167,7 @@ const factor = (routine, lex, type, typeNeeded, language) => {
         lex += 1;
         ({ type, lex, pcode } = factor(routine, lex, type, typeNeeded, language));
         pcode = mergeLines(pcode, [pcoder.applyOperator(operator)]);
-      } else if (lexemes[lex].value === 'not') {
+      } else if (lexemes[lex].content === 'not') {
         typeFound = 'boolint';
         if (!typeIsOk(typeNeeded, typeFound)) {
           throw typeError('exp02', typeNeeded, typeFound, lexemes[lex]);
@@ -175,25 +175,10 @@ const factor = (routine, lex, type, typeNeeded, language) => {
         type = typeFound;
         operator = lexemes[lex].value;
         lex += 1;
-        result = factor(routine, lex, type, typeNeeded, language);
-        type = result.type;
-        lex = result.lex;
-        pcode = mergeLines(result.pcode, [pcoder.applyOperator(operator)]);
+        ({ type, lex, pcode } = factor(routine, lex, type, typeNeeded, language));
+        pcode = mergeLines(pcode, [pcoder.applyOperator(operator)]);
       } else {
         throw error();
-      }
-      break;
-    // brackets
-    case 'lbkt':
-      lex += 1;
-      result = expression(routine, lex, type, typeNeeded, language);
-      type = result.type;
-      lex = result.lex;
-      pcode = result.pcode;
-      if (lexemes[lex] && (lexemes[lex].type === 'rbkt')) {
-        lex += 1;
-      } else {
-        throw error('exp03', 'expBracket', lexemes[lex - 1]);
       }
       break;
     // literal values
@@ -222,7 +207,7 @@ const factor = (routine, lex, type, typeNeeded, language) => {
       }
       type = typeFound;
       pcode = [pcoder.loadLiteralValue('char', lexemes[lex].value)];
-      if (typeNeeded === 'str') {
+      if (typeNeeded === 'string') {
         pcode[0].push(pcoder.applyOperator('ctos'));
       }
       lex += 1;
@@ -254,6 +239,7 @@ const factor = (routine, lex, type, typeNeeded, language) => {
       pcode = [pcoder.loadQueryValue(input)];
       lex += 1;
       break;
+    // identifiers
     case 'turtle': // fallthrough
     case 'identifier':
       constant = find.constant(routine, lexemes[lex].content, language);
@@ -269,7 +255,7 @@ const factor = (routine, lex, type, typeNeeded, language) => {
       }
       variable = find.variable(routine, lexemes[lex].content, language);
       if (variable) {
-        typeFound = variable.type;
+        typeFound = variable.fulltype.type;
         if (!typeIsOk(typeNeeded, typeFound)) {
           throw typeError('exp11', typeNeeded, typeFound, lexemes[lex]);
         }
@@ -299,19 +285,28 @@ const factor = (routine, lex, type, typeNeeded, language) => {
           throw typeError('exp14', typeNeeded, typeFound, lexemes[lex]);
         }
         type = typeFound;
-        result = commandCall(routine, lex, 'function', language);
-        type = typeFound;
-        lex = result.lex;
-        pcode = result.pcode;
+        ({ lex, pcode } = commandCall(routine, lex, 'function', language));
         if (!command.code) { // custom function
           pcode.push(pcoder.loadFunctionReturnValue(command.resultAddress));
         }
         break;
       }
       throw error('exp15', 'expNotFound', lexemes[lex]);
-    // anything else is an error
+    // everything else
     default:
-      throw error('exp16', 'expWeird', lexemes[lex]);
+      // brackets
+      if (lexemes[lex].content === '(') {
+        lex += 1;
+        ({ type, lex, pcode } = expression(routine, lex, type, typeNeeded, language));
+        if (lexemes[lex] && (lexemes[lex].content === ')')) {
+          lex += 1;
+        } else {
+          throw error('exp03', 'expBracket', lexemes[lex - 1]);
+        }
+      // anything else is an error
+      } else {
+        throw error('exp16', 'expWeird', lexemes[lex]);
+      }
   }
   return { type, lex, pcode };
 };
@@ -320,10 +315,8 @@ const variableAssignment = (routine, variable, lex, language) => {
   const lexemes = routine.lexemes;
   var pcode;
   var type;
-  if (!lexemes[lex]) {
-    throw error('asgn01', 'asgnNothing', lexemes[lex - 1]);
-  }
-  ({ type, lex, pcode } = expression(routine, lex, 'null', variable.type, language));
+  if (!lexemes[lex]) throw error('asgn01', 'asgnNothing', lexemes[lex - 1]);
+  ({ type, lex, pcode } = expression(routine, lex, 'null', variable.fulltype.type, language));
   pcode = mergeLines(pcode, [pcoder.storeVariableValue(variable)]);
   return { lex, pcode };
 };

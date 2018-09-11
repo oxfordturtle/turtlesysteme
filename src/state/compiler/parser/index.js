@@ -12,7 +12,7 @@ code themselves are just stored for subsequent handling by the pcoder
 */
 
 // global imports
-const { atoms, find } = require('../tools');
+const { atoms, factory, find } = require('../tools');
 
 // local imports
 const parsers = {
@@ -53,7 +53,6 @@ const determineVariableTypes = (routines, index) => {
         } else if (lexemes[lex] && (lexemes[lex].content === '=')) {
           lex += 1;
           // expecting an expression whose type we can figure out
-          console.log(lexemes[lex]);
           if (lexemes[lex]) {
             try {
               expression = atoms.expression(routine, lex, 'null', 'null', 'Python');

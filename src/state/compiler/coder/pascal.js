@@ -116,48 +116,24 @@ const compileIf = (routine, lex, startLine) => {
   const result = {};
   let ifnoLine = 0;
   let elseJump = 0;
-  let oneLine = true; // for BASIC only
   // if we're here, the previous lexeme was IF
   // so now we're expecting a boolean expression
   if (!lexemes[lex]) {
     throw error('if01', 'ifExpression', lexemes[lex - 1]);
   }
-  // must be on the same line for Python
-  if (language === 'Python') {
-    if (lexemes[lex].line > lexemes[lex - 1].line) {
-      throw error('if06', 'ifColonLine', lexemes[lex]);
-    }
-  }
   // evaluate the boolean expression
   result = commands.expression(routines, sub, lex, addresses, 'null', 'bool', false);
   lex = result.lex;
   pcode = result.pcode;
-  // push IFNO to the end of the pcode, and save the line for fixing the
-  // jump later
+  // push IFNO to the end of the pcode, and save the line for fixing the jump later
   ifnoLine = pcode.length - 1;
   pcode[ifnoLine].push(pc.ifno);
-  // now we're expecting THEN (BASIC and Pascal) or a colon (Python)
-  switch (language) {
-    case 'BASIC': // fallthrough
-    case 'Pascal':
-      if (!lexemes[lex]) {
-        throw error('if02', 'ifThen', lexemes[lex - 1]);
-      }
-      if (lexemes[lex].type !== 'then') {
-        throw error('if03', 'ifThen', lexemes[lex]);
-      }
-      break;
-    case 'Python':
-      if (!lexemes[lex]) {
-        throw error('if04', 'ifColon', lexemes[lex - 1]);
-      }
-      if (lexemes[lex].type !== 'colon') {
-        throw error('if05', 'ifColon', lexemes[lex]);
-      }
-      if (lexemes[lex].line > lexemes[lex - 1].line) {
-        throw error('if06', 'ifColonLine', lexemes[lex]);
-      }
-      break;
+  // expecting THEN
+  if (!lexemes[lex]) {
+    throw error('if02', 'ifThen', lexemes[lex - 1]);
+  }
+  if (lexemes[lex].type !== 'then') {
+    throw error('if03', 'ifThen', lexemes[lex]);
   }
   // expecting some commands next
   lex += 1;
@@ -165,69 +141,29 @@ const compileIf = (routine, lex, startLine) => {
     throw error('if07', 'ifNothing', lexemes[lex]);
   }
   // now things are a bit different for the different languages ...
-  switch (language) {
-    case 'BASIC':
-      if (lexemes[lex].line > lexemes[lex - 1].line) {
-        // if we're on a new line, expect a block of structures
-        result = block(routines, sub, lex, addresses, offset + pcode.length, 'if', null);
-        // and set oneLine to false, so we know to check that any
-        // subsequent ELSE is on a new line
-        oneLine = false;
-      } else {
-        // otherwise just expect a single structure
-        result = structure(routines, sub, lex, addresses, offset + pcode.length);
-      }
-      break;
-    case 'Pascal':
-      if (lexemes[lex].type === 'begin') {
-        // if there's a BEGIN, expect a block of structures
-        result = block(routines, sub, lex + 1, addresses, offset + pcode.length, 'begin', null);
-      } else {
-        // otherwise just expect a single structure
-        result = structure(routines, sub, lex, addresses, offset + pcode.length);
-      }
-      break;
-    case 'Python':
-      // always treat what follows as a block in Python, except the block
-      // may consist of just a single command - it makes no difference
-      result = block(routines, sub, lex, addresses, offset + pcode.length, null, lexemes[lex].indent);
-      break;
+  if (lexemes[lex].type === 'begin') {
+    // if there's a BEGIN, expect a block of structures
+    result = block(routines, sub, lex + 1, addresses, offset + pcode.length, 'begin', null);
+  } else {
+    // otherwise just expect a single structure
+    result = structure(routines, sub, lex, addresses, offset + pcode.length);
   }
   lex = result.lex;
   pcode = pcode.concat(result.pcode);
   // ? ... ELSE ... ?
-  if (elseCheck(language, lexemes, lex, oneLine)) {
+  if (lexemes[lex].content === 'else') {
     lex += 1; // move past 'else'
     if (!lexemes[lex]) {
       throw error('if04', 'elseNothing', lexemes[lex]);
     }
     elseJump = pcode.length;
     pcode.push([pc.jump]);
-    // now things are a bit different for the different languages
-    switch (language) {
-      case 'BASIC':
-        if (lexemes[lex].line > lexemes[lex - 1].line) {
-          // if we're on a new line, expect a block of structures
-          result = block(routines, sub, lex, addresses, offset + pcode.length, 'else', null);
-        } else {
-          // otherwise just expect a single structure
-          result = structure(routines, sub, lex, addresses, offset + pcode.length);
-        }
-        break;
-      case 'Pascal':
-        if (lexemes[lex].type === 'begin') {
-          // if there's a BEGIN, expect a block of structures
-          result = block(routines, sub, lex + 1, addresses, offset + pcode.length, 'begin', null);
-        } else {
-          // otherwise just expect a single structure
-          result = structure(routines, sub, lex, addresses, offset + pcode.length);
-        }
-        break;
-      case 'Python':
-        // always treat what follows as a block in Python, except the block
-        // may consist of just a single command - it makes no difference
-        result = block(routines, sub, lex, addresses, offset + pcode.length, null, lexemes[lex].indent);
-        break;
+    if (lexemes[lex].content === 'begin') {
+      // if there's a BEGIN, expect a block of structures
+      result = block(routines, sub, lex + 1, addresses, offset + pcode.length, 'begin', null);
+    } else {
+      // otherwise just expect a single structure
+      result = structure(routines, sub, lex, addresses, offset + pcode.length);
     }
     lex = result.lex;
     pcode = pcode.concat(result.pcode);
@@ -242,6 +178,24 @@ const compileIf = (routine, lex, startLine) => {
 
 // generate the pcode for a FOR structure
 const compileFor = (routine, lex, startLine) => {
+  const lexemes = routine.lexemes;
+  let result;
+  let variable;
+  let compare;
+  let change;
+  let initial;
+  let final;
+  let innerCode;
+
+  // now we have everything we need to generate the pcode
+  return { lex, pcode: pcoder.forLoop(startLine, variable, initial, final, compare, change, innerCode) };
+};
+
+
+
+
+
+/*
   let lexemes = routine.lexemes;
   let pcode = [];
   let result = {};
@@ -387,6 +341,7 @@ const compileFor = (routine, lex, startLine) => {
   pcode[2].push(offset + pcode.length + 1); // backpatch initial IFNO jump
   return { lex, pcode };
 };
+*/
 
 // generate the pcode for a REPEAT structure
 const compileRepeat = (routine, lex, startLine) => {
@@ -477,7 +432,7 @@ const coder = function (routine, lex, startLine) {
   if (lexemes[lex].type === 'turtle' || lexemes[lex].type === 'identifier') {
     // wrong assignment operator
     if (lexemes[lex + 1] && (lexemes[lex + 1].content === '=')) throw error('cmd01');
-    if (lexemes[lex + 1] && (lexemes[lex + 1].type === ':=')) {
+    if (lexemes[lex + 1] && (lexemes[lex + 1].content === ':=')) {
       // right assignment operator
       variable = find.variable(routine, lexemes[lex].content, 'Pascal');
       ({ lex, pcode } = atoms.variableAssignment(routine, variable, lex + 2, 'Pascal'));

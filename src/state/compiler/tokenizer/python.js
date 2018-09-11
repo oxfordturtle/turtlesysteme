@@ -23,7 +23,7 @@ const comment = (code) => {
 
 // operators
 const operator = (code) => {
-  const test = code.match(/^(\+|-|\*|\/|\/\/|%|==|!=|<=|>=|=|<|>|not\b|and\b|or\b|xor\b)/);
+  const test = code.match(/^(\+|-|\*|\/\/|\/|%|==|!=|<=|>=|=|<|>|not\b|and\b|or\b|xor\b)/);
   return test ? { type: 'operator', content: test[0] } : false;
 };
 

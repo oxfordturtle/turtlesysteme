@@ -4,7 +4,7 @@
  */
 
 // global imports
-const { pc } = require('data');
+const { colours, pc } = require('data');
 
 // local imports
 const session = require('./session');
@@ -131,7 +131,7 @@ let readlnFn;
 // until some appropriate command calls for execution delay (PAUSE, DETECT, READLN), or until
 // the HALT command is encountered
 const executeCode = (pcode, startLine, startCode, options) => {
-  const { canvas, console, memory, output, status } = machine;
+  const { canvas, console, memory, output, status, tools } = machine;
   // don't do anything if we're not running
   if (!status.running) return;
   // try again in 1 millisecond if the machine is paused

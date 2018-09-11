@@ -248,7 +248,7 @@ const parser = (lexemes) => {
         // expecting comma separated list of global variables on the same line
         if (!lexemes[lex]) throw error();
         if (lexemes[lex].line !== lexemes[lex - 1].line) throw error();
-        ({ lex, variables } = globalAndNext(lexemes, lex, routine));
+        ({ lex, variables } = variablesAndNext(lexemes, lex, routine));
         routine.globals = routine.globals.concat(variables);
         routine.nonlocals = routine.nonlocals.concat(variables);
         state = 'crossroads';
