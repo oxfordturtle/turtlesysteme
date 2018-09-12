@@ -12,7 +12,7 @@ const structures = require('./structures');
 const versions = require('./versions');
 
 // the language help tabs
-const language = tabs.create('tsx-help-tabs', [
+const language = tabs.tabs('tsx-help-tabs', [
   { label: 'Commands', active: true, content: [commands] },
   { label: 'Basics', active: false, content: [basics] },
   { label: 'Structures', active: false, content: [structures] },
@@ -22,7 +22,7 @@ const language = tabs.create('tsx-help-tabs', [
 ]);
 
 // the system help tabs
-const system = tabs.create('tsx-help-tabs', [
+const system = tabs.tabs('tsx-help-tabs', [
   { label: 'About', active: true, content: [about] },
   { label: 'Versions', active: false, content: [versions] },
 ]);

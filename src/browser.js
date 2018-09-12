@@ -1,8 +1,9 @@
 /**
  * entry point for the browser version of the system
+ * - fills the page with the appropriate components (depending on the data-page attribute of the
+ *   #tsx element)
+ * - registers to show errors in a modal popup
  */
-
-// global imports
 const { tabs, popup } = require('dom');
 const { controls, help, machine, program, system } = require('components');
 const state = require('state');
@@ -33,7 +34,7 @@ switch (tsx.getAttribute('data-page')) {
     tsx.appendChild(help.language);
     break;
   default: // the (main) system page
-    tsx.appendChild(tabs.create('tsx-top-tabs', [
+    tsx.appendChild(tabs.tabs('tsx-top-tabs', [
       { label: 'Program', active: true, content: [
         system('browser'),
         program.tabs('browser'),

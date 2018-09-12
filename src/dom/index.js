@@ -1,11 +1,15 @@
 /**
- * DOM - for interfacing with the browser page
+ * a handful of utilities for manipulating the DOM
  */
+const element = require('./element');
+const hex = require('./hex');
+const popup = require('./popup');
+const tabs = require('./tabs');
 
-// direct export
+// module exports
 module.exports = {
-  create: require('./create'),
-  hex: require('./hex'),
-  popup: require('./popup'),
-  tabs: require('./tabs'),
+  element,
+  hex,
+  popup,
+  tabs,
 };

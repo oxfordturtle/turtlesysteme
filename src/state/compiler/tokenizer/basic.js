@@ -29,7 +29,7 @@ const operator = (code) => {
 
 // punctuation
 const punctuation = (code) => {
-  const test = code.match(/^(\(|\)|,)/);
+  const test = code.match(/^(\(|\)|,|:)/);
   return test ? { type: 'punctuation', content: test[0] } : false;
 };
 
@@ -103,7 +103,7 @@ const colour = (code) => {
 
 // native keycode constants
 const keycode = (code) => {
-  const test = code.match(/^(\\[#a-z0-9]+)/i);
+  const test = code.match(/^(\\[#A-Z0-9]+)/);
   return test ? { type: 'keycode', content: test[0] } : false;
 };
 

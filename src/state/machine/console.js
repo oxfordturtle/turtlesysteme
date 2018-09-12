@@ -6,13 +6,13 @@
  */
 
 // global imports
-const { create, hex } = require('dom');
+const { element, hex } = require('dom');
 
 // local imports
 const memory = require('./memory');
 
 // the console element
-const element = create('pre', { classes: ['tsx-console'] });
+const console = element('pre', { classes: ['tsx-console'] });
 
 const storeKey = (event) => {
   const pressedKey = event.keyCode || event.charCode;
@@ -22,7 +22,7 @@ const storeKey = (event) => {
     memory.deleteFromBuffer();
     memory.deleteFromReadln();
     if (memory.getKeyecho()) {
-      element.innerHTML = element.innerHTML.slice(0, -1);
+      console.innerHTML = console.innerHTML.slice(0, -1);
     }
   }
   // arrow keys
@@ -55,8 +55,8 @@ const putInBuffer = (event) => {
   const pressedKey = event.keyCode || event.charCode;
   memory.addToBuffer(pressedKey);
   if (memory.getKeyecho()) {
-    element.innerHTML += String.fromCharCode(pressedKey);
-    element.scrollTop = element.scrollHeight;
+    console.innerHTML += String.fromCharCode(pressedKey);
+    console.scrollTop = console.scrollHeight;
   }
 };
 
@@ -73,21 +73,21 @@ const removeEventListeners = () => {
 };
 
 const setBackground = (colour) => {
-  element.style.background = hex(colour);
+  console.style.background = hex(colour);
 };
 
 const addText = (text) => {
-  element.innerHTML += text;
-  element.scrollTop = element.scrollHeight;
+  console.innerHTML += text;
+  console.scrollTop = console.scrollHeight;
 };
 
 const clearText = () => {
-  element.innerHTML = '';
+  console.innerHTML = '';
 };
 
 // exports
 module.exports = {
-  element,
+  console,
   addEventListeners,
   removeEventListeners,
   setBackground,

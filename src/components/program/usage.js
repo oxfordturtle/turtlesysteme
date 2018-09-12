@@ -3,47 +3,47 @@
  */
 
 // global imports
-const { create } = require('dom');
+const { element } = require('dom');
 const state = require('state');
 
 // the table header
-const thead = create('thead', { content: [
-  create('tr', { content: [
-    create('th', { content: 'Expression' }),
-    create('th', { content: 'Level' }),
-    create('th', { content: 'Count' }),
-    create('th', { content: 'Program Lines' }),
+const thead = element('thead', { content: [
+  element('tr', { content: [
+    element('th', { content: 'Expression' }),
+    element('th', { content: 'Level' }),
+    element('th', { content: 'Count' }),
+    element('th', { content: 'Program Lines' }),
   ] })
 ] });
 
 // the table body (content updated to reflect current usage data)
-const tbody = create('tbody');
+const tbody = element('tbody');
 
 // the usage table
-const usage = create('table', { classes: [ 'tsx-usage-table' ], content: [ thead, tbody ] });
+const usage = element('table', { classes: [ 'tsx-usage-table' ], content: [ thead, tbody ] });
 
 // function for updating the table body
 const refresh = (usage) => {
   tbody.innerHTML = '';
   usage.forEach((category) => {
-    tbody.appendChild(create('tr', {
+    tbody.appendChild(element('tr', {
       classes: [ 'category-heading' ],
-      content: [ create('th', { colspan: '4', content: category.title }) ],
+      content: [ element('th', { colspan: '4', content: category.title }) ],
     }));
     category.expressions.forEach((expression) => {
-      tbody.appendChild(create('tr', { content: [
-        create('td', { content: expression.name }),
-        create('td', { content: expression.level.toString() }),
-        create('td', { content: expression.count.toString() }),
-        create('td', { content: expression.lines.replace(/ /g, ', ') }),
+      tbody.appendChild(element('tr', { content: [
+        element('td', { content: expression.name }),
+        element('td', { content: expression.level.toString() }),
+        element('td', { content: expression.count.toString() }),
+        element('td', { content: expression.lines.replace(/ /g, ', ') }),
       ] }));
     });
-    tbody.appendChild(create('tr', {
+    tbody.appendChild(element('tr', {
       content: [
-        create('td'),
-        create('th', { content: 'TOTAL:' }),
-        create('th', { content: category.total.toString() }),
-        create('td'),
+        element('td'),
+        element('th', { content: 'TOTAL:' }),
+        element('th', { content: category.total.toString() }),
+        element('td'),
       ],
     }));
   });

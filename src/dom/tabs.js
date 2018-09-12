@@ -1,15 +1,15 @@
 /**
  * create tabs with associated tab panes
  */
-
-// local imports
-const create = require('./create');
+const element = require('./element');
 
 // function to activate a node (and deactivate its siblings)
 const activate = (node) => {
-  const siblings = Array.prototype.slice.call(node.parentElement.children);
-  siblings.forEach(x => x.classList.remove('active'));
-  node.classList.add('active');
+  if (node) {
+    const siblings = Array.prototype.slice.call(node.parentElement.children);
+    siblings.forEach(x => x.classList.remove('active'));
+    node.classList.add('active');
+  }
 };
 
 // function to change tab
@@ -18,34 +18,34 @@ const changeTab = (e) => {
   activate(document.getElementById(e.currentTarget.getAttribute('data-target')));
 };
 
-// function to create a tab
+// a tab
 const tab = options =>
-  create('a', {
+  element('a', {
     classes: options.active ? [ 'tsx-tab', 'active' ] : [ 'tsx-tab' ],
     content: options.label,
     'data-target': options.label.replace(/ /g, ''),
     on: [ { type: 'click', callback: changeTab } ],
   });
 
-// function to create a list of tabs
+// a list of tabs
 const list = optionsArray =>
-  create('nav', { classes: [ 'tsx-tab-list' ], content: optionsArray.map(tab) });
+  element('nav', { classes: [ 'tsx-tab-list' ], content: optionsArray.map(tab) });
 
-// function to create a tab pane
+// a tab pane
 const pane = options =>
-  create('div', {
+  element('div', {
     classes: options.active ? [ 'tsx-tab-pane', 'active' ] : [ 'tsx-tab-pane' ],
     content: options.content,
     id: options.label.replace(/ /g, ''),
   });
 
-// function to create a set of tab panes
+// a set of tab panes
 const panes = optionsArray =>
-  create('div', { classes: [ 'tsx-tab-panes' ], content: optionsArray.map(pane) });
+  element('div', { classes: [ 'tsx-tab-panes' ], content: optionsArray.map(pane) });
 
-// function to create the tabs div (tab list on top, tab panes below)
+// all the tab elements (tab list on top, tab panes below)
 const tabs = (customClass, optionsArray) =>
-  create('div', {
+  element('div', {
     classes: [ 'tsx-tabs', customClass ],
     content: [ list(optionsArray), panes(optionsArray) ],
   });
@@ -58,6 +58,6 @@ const show = (id) => {
 
 // exports
 module.exports = {
-  create: tabs,
+  tabs,
   show,
 };

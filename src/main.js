@@ -1,5 +1,14 @@
 /**
- * entry point for electron
+ * the Electron main process
+ * - creates the main window and its application menu, and contains functions for creating other
+ *   windows (for machine runtime settings and help)
+ * - there is only one renderer process (and only one HTML file) for each browser window, but the
+ *   renderer process loads different content (effectively a different 'page') depending on the
+ *   browser window; this is achieved by setting a global 'page' variable on each window
+ * - some application menu items send messages to the renderer process using webContents.send; and,
+ *   in the other direction, the application menu is set up at the end to syncronize with the
+ *   application state (as controlled by the renderer process)
+ * -------------------------------------------------------------------------------------------------
  */
 
 // global imports

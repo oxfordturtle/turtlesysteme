@@ -1,17 +1,17 @@
 /**
  * the code editor component
  */
-const { create } = require('dom');
+const { element } = require('dom');
 const state = require('state');
 
 // define the main HTML elements for this component
-const ol = create('ol'); // for line numbers
+const ol = element('ol'); // for line numbers
 
-const code = create('code'); // for the highlighted code
+const code = element('code'); // for the highlighted code
 
-const pre = create('pre', { content: [code] }); // for the above code element
+const pre = element('pre', { content: [code] }); // for the above code element
 
-const textarea = create('textarea', { // for the plain text input by the user
+const textarea = element('textarea', { // for the plain text input by the user
   wrap: 'off',
   spellcheck: 'false',
   autocapitalize: 'off',
@@ -60,7 +60,7 @@ refresh(state.getCode(), state.getLanguage());
 state.on('code-changed', refresh);
 
 // the exposed div, wrapping up all the above elements
-const div = create('div', { classes: ['tsx-code'], content: [textarea, ol, pre] });
+const div = element('div', { classes: ['tsx-code'], content: [textarea, ol, pre] });
 state.on('file-changed', () => { div.scrollTop = 0; div.scrollLeft = 0; });
 
 // expose the HTML element for this component

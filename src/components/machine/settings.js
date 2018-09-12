@@ -1,5 +1,5 @@
-const { create } = require('dom');
+const { element } = require('dom');
 
-const settings = create('div', { content: 'settings page' });
+const settings = element('div', { content: 'settings page' });
 
 module.exports = settings;

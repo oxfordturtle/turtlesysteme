@@ -1,33 +1,30 @@
 /**
  * the machine output
- * -------------------------------------------------------------------------------------------------
+ *
  * PRE element for displaying textual output from the program
- * -------------------------------------------------------------------------------------------------
  */
-
-// global imports
-const { create, hex } = require('dom');
+const { element, hex } = require('dom');
 
 // the output element
-const element = create('pre');
+const output = element('pre');
 
 // set the background colour
 const setBackground = (colour) => {
-  element.style.background = hex(colour);
+  output.style.background = hex(colour);
 };
 
 // edit text content
 const addText = (text) => {
-  element.innerHTML += text;
+  output.innerHTML += text;
 };
 
 const clearText = () => {
-  element.innerHTML = '';
+  output.innerHTML = '';
 };
 
 // exports
 module.exports = {
-  element,
+  output,
   setBackground,
   addText,
   clearText,

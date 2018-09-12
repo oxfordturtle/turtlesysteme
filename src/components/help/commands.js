@@ -1,3 +1,3 @@
-const { create } = require('dom');
+const { element } = require('dom');
 
-module.exports = create('div', { content: 'commands' });
+module.exports = element('div', { content: 'commands' });

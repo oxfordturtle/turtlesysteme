@@ -1,12 +1,8 @@
 /**
  * the machine tabs; one set for the browser environment, and one for electron
  */
-
-// global imports
-const { create, tabs } = require('dom');
+const { element, tabs } = require('dom');
 const { canvas, console, memory, output } = require('state');
-
-// local imports
 const settings = require('./settings');
 
 // settings tab
@@ -27,9 +23,9 @@ const allTabs = includeSettingsTab =>
 const machineTabs = (context) => {
   switch (context) {
     case 'browser':
-      return tabs.create('tsx-system-tabs', allTabs(true));
+      return tabs.tabs('tsx-system-tabs', allTabs(true));
     case 'electron':
-      return tabs.create('tsx-system-tabs', allTabs(false));
+      return tabs.tabs('tsx-system-tabs', allTabs(false));
   }
 };
 

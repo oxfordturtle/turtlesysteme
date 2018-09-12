@@ -1,8 +1,10 @@
 /**
- * entry point for the desktop version of the system
+ * the Electron renderer process
+ * - fills the page with the appropriate components (depending on what the main process asks for,
+ *   via the global 'page' variable)
+ * - also sets things up so that messages from the main process are passed on to the 'state' module,
+ *   and registers to show errors in a system dialog box
  */
-
-// global imports
 const electron = require('electron');
 const { tabs } = require('dom');
 const { controls, help, machine, program, system } = require('components');
@@ -35,7 +37,7 @@ switch (electron.remote.getCurrentWindow().page) {
     tsx.appendChild(help.language);
     break;
   default:
-    tsx.appendChild(tabs.create('tsx-top-tabs', [
+    tsx.appendChild(tabs.tabs('tsx-top-tabs', [
       { label: 'Program', active: true, content: [
         system('electron'),
         program.tabs('electron'),
@@ -48,7 +50,7 @@ switch (electron.remote.getCurrentWindow().page) {
     break;
 }
 
-// pass ipcRenderer signals (from menu item clicks) onto the signals module
+// pass ipcRenderer messages (from menu item clicks) onto the signals module
 state.signals.forEach((signal) => {
   electron.ipcRenderer.on(signal, (event, data) => state.send(signal, data));
 });
@@ -65,11 +67,22 @@ if (electron.remote.getCurrentWindow().page === 'system') {
 
 // show errors as dialog boxes
 state.on('error', (error) => {
-  electron.remote.dialog.showMessageBox({
-    title: `${error.type} Error`,
-    message: error.message,
-    buttons: ['OK'],
-  });
+  let title;
+  let message;
+  console.log(error);
+  if (error.type) {
+    // custom error
+    title = `${error.type} Error`;
+    message = error.message;
+    if (error.lexeme) {
+      title += ` - "${error.lexeme.content}", line ${error.lexeme.line}`;
+    }
+  } else {
+    // native error
+    title = 'System Error';
+    message = 'An unexpected error has occured, suggesting there is a bug in the system. Please contact us with details of what you were doing when this message appeared, and we will do our best to locate and fix the bug.';
+  }
+  electron.remote.dialog.showMessageBox({ title, message, buttons: ['OK'] });
 });
 
 // tell the main process about the local storage, so that it can fix the menus accordingly

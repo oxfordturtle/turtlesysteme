@@ -1342,6 +1342,9 @@ const send = (signal, data) => {
           }
         }
         break;
+      case 'machine-halt':
+        halt();
+        break;
       default:
         console.log(`unknown signal '${signal}'`); // for debugging
         break;
@@ -1363,9 +1366,9 @@ module.exports = {
   getShowCanvas: session.showCanvas.get,
   getShowOutput: session.showOutput.get,
   getShowMemory: session.showMemory.get,
-  canvas: machine.canvas.element,
-  console: machine.console.element,
-  memory: machine.memory.element,
-  output: machine.output.element,
+  canvas: machine.canvas.canvas,
+  console: machine.console.console,
+  memory: machine.memory.display,
+  output: machine.output.output,
   highlight: compiler.highlight,
 };

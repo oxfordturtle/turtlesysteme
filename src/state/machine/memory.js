@@ -9,7 +9,7 @@
  */
 
 // global imports
-const { create } = require('dom');
+const { element } = require('dom');
 
 // the memory arrays and runtime variables
 const memory = {
@@ -313,9 +313,9 @@ const clearReadln = () => {
 };
 
 // the html tables for displaying the main memory
-const stackDisplay = create('table');
+const stackDisplay = element('table');
 
-const heapDisplay = create('table');
+const heapDisplay = element('table');
 
 // function for updating the stack and heap display tables with the current memory
 const dump = () => {
@@ -330,9 +330,9 @@ const dump = () => {
 };
 
 // the memory display
-const element = create('div', {
+const display = element('div', {
   content: [
-    create('button', { content: 'Show Current State' }),
+    element('button', { content: 'Show Current State' }),
     stackDisplay,
     heapDisplay,
   ],
@@ -384,5 +384,5 @@ module.exports = {
   deleteFromReadln,
   clearReadln,
   dump,
-  element,
+  display,
 };

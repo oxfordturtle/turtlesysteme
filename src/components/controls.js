@@ -1,12 +1,9 @@
 /**
  * the machine control bar
- * -------------------------------------------------------------------------------------------------
+ *
  * a RUN/HALT button, a PLAY/PAUSE button, and a display of the current turtle properties
- * -------------------------------------------------------------------------------------------------
  */
-
-// global imports
-const { create, hex } = require('dom');
+const { element, hex } = require('dom');
 const state = require('state');
 
 // functions for interacting with the machine (via state)
@@ -17,40 +14,40 @@ const halt = state.send.bind(null, 'machine-halt');
 const playPause = state.send.bind(null, 'machine-play-pause');
 
 // buttons for interacting with the machine
-const runOrHaltButton = create('button', {
+const runOrHaltButton = element('button', {
   content: 'RUN',
   classes: ['tsx-run-halt-button'],
   on: [{ type: 'click', callback: run }],
 });
 
-const playOrPauseButton = create('button', {
+const playOrPauseButton = element('button', {
   content: '&#10074;&#10074;',
   classes: ['tsx-play-pause-button'],
 });
 
 // current turtle properties display
-const turtx = create('dd', { classes: ['tsx-turtxy'], content: '500' });
+const turtx = element('dd', { classes: ['tsx-turtxy'], content: '500' });
 
-const turty = create('dd', { classes: ['tsx-turtxy'], content: '500' });
+const turty = element('dd', { classes: ['tsx-turtxy'], content: '500' });
 
-const turtd = create('dd', { classes: ['tsx-turtd'], content: '0' });
+const turtd = element('dd', { classes: ['tsx-turtd'], content: '0' });
 
-const turtt = create('dd', { classes: ['tsx-turttc'], content: '2' });
+const turtt = element('dd', { classes: ['tsx-turttc'], content: '2' });
 
-const turtc = create('dd', { classes: ['tsx-turttc'], style: 'background-color:#000;' });
+const turtc = element('dd', { classes: ['tsx-turttc'], style: 'background-color:#000;' });
 
-const turtleDisplay = create('dl', {
+const turtleDisplay = element('dl', {
   classes: ['tsx-turtle-properties'],
   content: [
-    create('dt', { content: 'X' }),
+    element('dt', { content: 'X' }),
     turtx,
-    create('dt', { content: 'Y' }),
+    element('dt', { content: 'Y' }),
     turty,
-    create('dt', { content: 'D' }),
+    element('dt', { content: 'D' }),
     turtd,
-    create('dt', { content: 'T' }),
+    element('dt', { content: 'T' }),
     turtt,
-    create('dt', { content: 'C' }),
+    element('dt', { content: 'C' }),
     turtc,
   ],
 });
@@ -103,18 +100,15 @@ state.on('turtle-changed', ({ property, value }) => {
   }
 });
 
-// the controls div (exposed)
-const controls =
+/**
+ * the controls DIV (written as if different for different contexts, to match the other components,
+ * although in fact this component is the same for all contexts)
+ */
+const controls = content =>
+  element('div', {
+    classes: ['tsx-controls'],
+    content: [runOrHaltButton, playOrPauseButton, turtleDisplay]
+  });
 
-// expose different control bars for different contexts; in fact there are no differences here, but
-// it's written like this for consistency with the system bar, and in case differences are needed
-// in a later update
-module.exports = (context) => {
-  switch (context) {
-    default:
-      return create('div', {
-        classes: ['tsx-controls'],
-        content: [runOrHaltButton, playOrPauseButton, turtleDisplay]
-      });
-  }
-};
+// expose the controls DIV
+module.exports = controls;

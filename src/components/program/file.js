@@ -1,7 +1,7 @@
 /**
  * the file handling component
  */
-const { create } = require('dom');
+const { element } = require('dom');
 const { examples } = require('data');
 const state = require('state');
 
@@ -18,22 +18,22 @@ const openExample = (e) => {
   state.send('set-example', e.currentTarget.value);
 };
 
-const fileInput = create('input', {
+const fileInput = element('input', {
   type: 'file',
   on: [{ type: 'change', callback: openFile }],
 });
 
 const option = example =>
-  create('option', { value: example, content: examples.names[example] });
+  element('option', { value: example, content: examples.names[example] });
 
 const optgroup = exampleGroup =>
-  create('optgroup', {
+  element('optgroup', {
     label: `${exampleGroup.index}. ${exampleGroup.title}`,
     content: exampleGroup.examples.map(option)
   });
 
 const exampleSelect = examples =>
-  create('select', {
+  element('select', {
     content: examples.map(optgroup),
     on: [
       { type: 'change', callback: openExample },
@@ -42,12 +42,12 @@ const exampleSelect = examples =>
   });
 
 const fileBox = (title, content) =>
-  create('div', {
+  element('div', {
     classes: ['tsx-file-box'],
-    content: [create('h2', { content: title }), content],
+    content: [element('h2', { content: title }), content],
   });
 
-const div = create('div', {
+const div = element('div', {
   content: [
     fileBox('Open Local File', fileInput),
     fileBox('Open Example Program', exampleSelect(examples.help)),

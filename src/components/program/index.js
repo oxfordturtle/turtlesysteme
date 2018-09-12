@@ -33,9 +33,9 @@ state.on('file-changed', tabs.show.bind(null, 'Code'));
 const programTabs = (context) => {
   switch (context) {
     case 'browser':
-      return tabs.create('tsx-system-tabs', allTabs(true));
+      return tabs.tabs('tsx-system-tabs', allTabs(true));
     case 'electron':
-      return tabs.create('tsx-system-tabs', allTabs(false));
+      return tabs.tabs('tsx-system-tabs', allTabs(false));
   }
 };
 
