@@ -1,6 +1,6 @@
-/**
- * system-wide constants
- */
+/*
+system-wide constants
+*/
 module.exports = {
   categories: require('./categories'),
   colours: require('./colours'),
@@ -11,5 +11,5 @@ module.exports = {
   inputs: require('./inputs'),
   languages: ['BASIC', 'Pascal', 'Python'],
   pc: require('./pc'),
-  pcodes: require('./pcodes'),
-};
+  pcodes: require('./pcodes')
+}

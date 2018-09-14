@@ -1,13 +1,11 @@
 /**
- *
+ * functions to find various things
  */
-
-// global imports
 const { commands, colours, inputs } = require('data');
 
 // get the main program from a routine
-const mainProgram = (routine) =>
-  routine.parent ? mainProgram(routine.parent) : routine;
+const program = (routine) =>
+  routine.parent ? program(routine.parent) : routine;
 
 // check if object name matches the given name (for the given language)
 matches = (name, language, object) =>
@@ -22,57 +20,55 @@ const something = (routine, haystack, name, language) =>
     : routine[haystack].find(matches.bind(null, name, language));
 
 // find a constant visible to a routine
-const constant = (routine, constantName, language) =>
-  something(routine, 'constants', constantName, language);
+const constant = (routine, name, language) =>
+  something(routine, 'constants', name, language);
 
 // find a variable visible to a routine
-const variable = (routine, variableName, language) => {
-  const turtleProperties = (language === 'BASIC')
+const variable = (routine, name, language) => {
+  const properties = (language === 'BASIC')
     ? ['TURTX%', 'TURTY%', 'TURTD%', 'TURTT%', 'TURTC%']
     : ['turtx', 'turty', 'turtd', 'turtt', 'turtc'];
-  const turtleProperty = turtleProperties.indexOf(variableName) + 1;
-  const isGlobal = (routine.index > 0) ? (routine.globals.indexOf(variableName) > -1) : false;
-  const program = mainProgram(routine);
-  if (turtleProperty > 0) return { turtle: turtleProperty, type: 'int' };
-  if (isGlobal) return something(program, 'variables', variableName, language);
-  return something(routine, 'variables', variableName, language);
+  const turtle = properties.indexOf(name) + 1;
+  const isGlobal = (routine.index > 0) ? (routine.globals.indexOf(name) > -1) : false;
+  if (turtle > 0) return { turtle, type: 'integer' };
+  if (isGlobal) return something(program(routine), 'variables', name, language);
+  return something(routine, 'variables', name, language);
 };
 
+// prepare a name (to allow american spelling
+const prepare = name =>
+  name.replace(/gray/, 'grey')
+    .replace(/GRAY/, 'GREY')
+    .replace(/^COLOR$/, 'COLOUR')
+    .replace(/^color$/, 'colour');
+
 // find a predefined colour constant
-const colour = (name, language) => {
-  // allow American spelling of 'grey'
-  name = name.replace(/gray/, 'grey');
-  name = name.replace(/GRAY/, 'GREY');
-  return colours.find(matches.bind(null, name, language));
-};
+const colour = (name, language) =>
+  colours.find(matches.bind(null, prepare(name), language));
 
 // find an input mouse/key query code
 const input = (name, language) =>
   inputs.find(matches.bind(null, name, language));
 
 // find a custom command visible to a routine
-const customCommand = (routine, commandName, language) =>
-  something(routine, 'subroutines', commandName, language);
+const custom = (routine, name, language) =>
+  something(routine, 'subroutines', name, language);
 
 // find a native turtle command
-const nativeCommand = (name, language) => {
-  // allow American spelling of 'colour'
-  name = name.replace(/^COLOR$/, 'COLOUR');
-  name = name.replace(/^color$/, 'colour');
-  return commands.find(matches.bind(null, name, language));
-};
+const native = (name, language) =>
+  commands.find(matches.bind(null, prepare(name), language));
 
 // find any command (custom or native)
-const anyCommand = (routine, commandName, language) =>
-  customCommand(routine, commandName, language) || nativeCommand(commandName, language);
+const command = (routine, name, language) =>
+  custom(routine, name, language) || native(name, language);
 
 module.exports = {
-  mainProgram,
+  program,
   constant,
   variable,
   colour,
   input,
-  customCommand,
-  nativeCommand,
-  anyCommand,
+  custom,
+  native,
+  command,
 };

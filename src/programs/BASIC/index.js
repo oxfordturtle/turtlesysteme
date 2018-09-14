@@ -1,8 +1,7 @@
-/**
- * Turtle BASIC example programs
- */
+/*
+Turtle BASIC example programs
+*/
 
-// direct export
 module.exports = {
   'AimCannon': require('./AimCannon.tgb'),
   'AskInput': require('./AskInput.tgb'),
@@ -77,5 +76,5 @@ module.exports = {
   'TurtleMove': require('./TurtleMove.tgb'),
   'TwoSlits': require('./TwoSlits.tgb'),
   'WaveSuperposer': require('./WaveSuperposer.tgb'),
-  'YouAreHere': require('./YouAreHere.tgb'),
-};
+  'YouAreHere': require('./YouAreHere.tgb')
+}

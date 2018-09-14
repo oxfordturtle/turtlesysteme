@@ -1,8 +1,7 @@
-/**
- * Turtle Pascal example programs
- */
+/*
+Turtle Pascal example programs
+*/
 
-// direct export
 module.exports = {
   'AimCannon': require('./AimCannon.tgp'),
   'AskInput': require('./AskInput.tgp'),
@@ -77,5 +76,5 @@ module.exports = {
   'TurtleMove': require('./TurtleMove.tgp'),
   'TwoSlits': require('./TwoSlits.tgp'),
   'WaveSuperposer': require('./WaveSuperposer.tgp'),
-  'YouAreHere': require('./YouAreHere.tgp'),
-};
+  'YouAreHere': require('./YouAreHere.tgp')
+}

@@ -52,11 +52,10 @@ const variable = (name, routine, byref = false) =>
     private: null, // routine for private variables (BASIC only)
   });
 
-const fulltype = (type, length = null, start = null, fulltype = null) => {
-  const ft = { type, length, start, fulltype };
-  if (type === 'string') ft.length = 33;
-  return ft;
-};
+const fulltype = (type, length = null, start = null, fulltype = null) =>
+  (type === 'string')
+    ? { type, length: 33, start, fulltype }
+    : { type, length, start, fulltype };
 
 // expose the factory functions
 module.exports = {

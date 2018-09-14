@@ -6,5 +6,26 @@
 }
 
 .tsx-pcode-table {
-  overflow: auto;
+  border: $border;
+  .tsx-row {
+    display: flex;
+    .tsx-head {
+      background: $gray;
+      border-right: $border;
+      font-weight: bold;
+      padding: .25em;
+      flex-basis: 2em;
+    }
+    .tsx-body {
+      span {
+        padding: .25em;
+        &:not(:last-child) {
+          border-right: $border;
+        }
+      }
+    }
+    &:not(:last-child) {
+      border-bottom: $border;
+    }
+  }
 }

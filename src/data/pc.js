@@ -1,15 +1,13 @@
 /*
- * map of machine pcodes (for looking up the value by code)
- */
-const pcodes = require('./pcodes');
+map of machine pcodes (for looking up the value by code)
+*/
 
-const isDefined = pcode =>
-  pcode !== undefined;
+const pcodes = require('./pcodes')
 
 const mapPCode = (sofar, pcode) => {
-  const next = sofar;
-  next[pcode.str.toLowerCase()] = pcode.code;
-  return next;
-};
+  const next = sofar
+  next[pcode.str.toLowerCase()] = pcode.code
+  return next
+}
 
-module.exports = pcodes.filter(isDefined).reduce(mapPCode, {});
+module.exports = pcodes.filter(x => x !== undefined).reduce(mapPCode, {})

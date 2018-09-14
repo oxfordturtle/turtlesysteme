@@ -1,15 +1,12 @@
 /*
- * categories of commands (for the help page and usage data)
- */
+categories of commands (for the help page and usage data)
+*/
 
-// local imports
-const commands = require('./commands');
+const commands = require('./commands')
 
-// function to create a group
 const category = (index, title) =>
-  ({ index, title, expressions: commands.filter((x) => x.category === index) });
+  ({ index, title, expressions: commands.filter((x) => x.category === index) })
 
-// direct export
 module.exports = ([
   category(0, 'Turtle: relative movement'),
   category(1, 'Turtle: absolute movement'),
@@ -21,5 +18,5 @@ module.exports = ([
   category(7, 'String operations'),
   category(8, 'Type conversion routines'),
   category(9, 'Input and timing routines'),
-  category(10, 'Turtle Machine monitoring'),
-]);
+  category(10, 'Turtle Machine monitoring')
+])

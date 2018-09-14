@@ -1,8 +1,7 @@
-/**
- * Turtle Python example programs
- */
+/*
+Turtle Python example programs
+*/
 
-// direct export
 module.exports = {
   'AimCannon': require('./AimCannon.tgy'),
   'AskInput': require('./AskInput.tgy'),
@@ -77,5 +76,5 @@ module.exports = {
   'TurtleMove': require('./TurtleMove.tgy'),
   'TwoSlits': require('./TwoSlits.tgy'),
   'WaveSuperposer': require('./WaveSuperposer.tgy'),
-  'YouAreHere': require('./YouAreHere.tgy'),
-};
+  'YouAreHere': require('./YouAreHere.tgy')
+}

@@ -1,36 +1,36 @@
 /**
  * the machine tabs; one set for the browser environment, and one for electron
  */
-const { element, tabs } = require('dom');
-const { canvas, console, memory, output } = require('state');
-const settings = require('./settings');
+const { tabs } = require('dom')
+const { canvas, console, memory, output } = require('state')
+const settings = require('./settings')
 
 // settings tab
-const settingsTab = { label: 'Settings', active: false, content: [settings] };
+const settingsTab = { label: 'Settings', active: false, content: [settings] }
 
 // other tabs
 const otherTabs = [
   { label: 'Canvas', active: true, content: [canvas, console] },
   { label: 'Output', active: false, content: [output] },
-  { label: 'Memory', active: false, content: [memory] },
-];
+  { label: 'Memory', active: false, content: [memory] }
+]
 
 // all tabs (optionally including the settings tab)
 const allTabs = includeSettingsTab =>
-  (includeSettingsTab ? [settingsTab, ...otherTabs] : otherTabs);
+  (includeSettingsTab ? [settingsTab, ...otherTabs] : otherTabs)
 
 // function to create the whole tabs div, with or without the file tab
 const machineTabs = (context) => {
   switch (context) {
     case 'browser':
-      return tabs.tabs('tsx-system-tabs', allTabs(true));
+      return tabs('tsx-system-tabs', allTabs(true))
     case 'electron':
-      return tabs.tabs('tsx-system-tabs', allTabs(false));
+      return tabs('tsx-system-tabs', allTabs(false))
   }
-};
+}
 
 // expose the two sets of tabs
 module.exports = {
   settings: settingsTab,
-  tabs: machineTabs,
-};
+  tabs: machineTabs
+}

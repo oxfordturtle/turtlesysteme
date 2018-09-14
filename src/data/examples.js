@@ -1,7 +1,135 @@
-/**
- * groups of example programs (for the example menus)
- */
-const names = {
+/*
+groups of example programs (for the example menus)
+*/
+
+const group = (index, title, examples) =>
+  ({ index, title, examples })
+
+module.exports.help = [
+  group(1, 'Drawing, counting, and procedures/methods', [
+    'DrawPause',
+    'OlympicRings1',
+    'OlympicRings2',
+    'ThePlough',
+    'ForLoop',
+    'Circles',
+    'NestedLoops',
+    'SimpleProcedure',
+    'ColourSpiral',
+    'ParameterProcedure',
+    'Polygons',
+    'YouAreHere'
+  ]),
+  group(2, 'Further commands and structures', [
+    'Stars',
+    'PolygonRings',
+    'Clock',
+    'DigitalClock',
+    'CycleColours',
+    'Triangles',
+    'Flashlights',
+    'RefParams',
+    'Balls3D',
+    'AskInput',
+    'StringFunctions',
+    'MathFunctions',
+    'TrigonometricGraphs'
+  ]),
+  group(3, 'Smooth movement and interaction', [
+    'MovingBall',
+    'BouncingBall',
+    'TurtleMove',
+    'TurtleBounce',
+    'MultiBounce',
+    'GravitySteps',
+    'SolarSystem',
+    'SimpleDraw',
+    'FiveTurtles'
+  ]),
+  group(4, 'Complex applications', [
+    'PaintApp',
+    'SnakeGame',
+    'Shoot',
+    'Mandelbrot',
+    'Quine',
+    'NoughtsAndCrosses'
+  ]),
+  group(5, 'Artificial life and social models', [
+    'GameOfLife',
+    'Schelling',
+    'IteratedPD'
+  ])
+]
+
+module.exports.csac = [
+  group(1, 'Introduction, Computer Science for Fun, and Turtling', [
+    'DrawPause',
+    'ColourSpiral'
+  ]),
+  group(2, 'Animation and Movement', [
+    'MovingBall',
+    'BouncingBall',
+    'TurtleMove',
+    'TurtleBounce',
+    'AskInput'
+  ]),
+  group(3, 'Computing in Physics: Cannons and Rockets', [
+    'GravitySteps',
+    'AimCannon',
+    'AutoCannon',
+    'Launch'
+  ]),
+  group(4, 'Cellular Automata: Modelling Disease, \'Life\', and Shell Patterns', [
+    'LifeStart',
+    'Disease',
+    'GameOfLife',
+    'Automata'
+  ]),
+  group(5, 'Computing in Chemistry: Diffusion and Brownian Motion', [
+    'Diffusion',
+    'BrownianMotion'
+  ]),
+  group(6, 'Computing in Biology: Evolution and Behaviour', [
+    'Cheetahs',
+    'SexRatio',
+    'Flocking'
+  ]),
+  group(7, 'Chaos and Self-Similarity', [
+    'Logistic',
+    'LogisticSpider',
+    'Mandelbrot',
+    'MandelbrotMini',
+    'MandelbrotSpectrum',
+    'MandelbrotMiniSpectrum',
+    'Triangles',
+    'Sierpinski',
+    'SierpinskiDots',
+    'IFSBackground',
+    'SierpinskiColour',
+    'SierpinskiIFS',
+    'BarnsleyIFS',
+    'BarnsleyColour',
+    'TreeIFS',
+    'DragonIFS',
+    'DragonColour'
+  ]),
+  group(8, 'Waves and Quantum Mechanics', [
+    'Interference',
+    'WaveSuperposer',
+    'TwoSlits'
+  ]),
+  group(9, 'Games and Computer Science', [
+    'KnightsTour',
+    'Nim',
+    'NoughtsAndCrosses'
+  ]),
+  group(10, 'Philosophy and Social Science', [
+    'Schelling',
+    'IteratedPD'
+  ])
+]
+
+module.exports.names = {
   'AimCannon': 'Firing a cannon (manual)',
   'AskInput': 'Asking for typed input',
   'AutoCannon': 'Firing a cannon (automatic)',
@@ -75,138 +203,5 @@ const names = {
   'TurtleMove': 'Moving ball (using the Turtle)',
   'TwoSlits': 'Young\'s two-slit experiment',
   'WaveSuperposer': 'Wave superposer',
-  'YouAreHere': 'Text and arrow (using PRINT)',
-};
-
-const group = (index, title, examples) =>
-  ({ index, title, examples });
-
-const help = [
-  group(1, 'Drawing, counting, and procedures/methods', [
-    'DrawPause',
-    'OlympicRings1',
-    'OlympicRings2',
-    'ThePlough',
-    'ForLoop',
-    'Circles',
-    'NestedLoops',
-    'SimpleProcedure',
-    'ColourSpiral',
-    'ParameterProcedure',
-    'Polygons',
-    'YouAreHere',
-  ]),
-  group(2, 'Further commands and structures', [
-    'Stars',
-    'PolygonRings',
-    'Clock',
-    'DigitalClock',
-    'CycleColours',
-    'Triangles',
-    'Flashlights',
-    'RefParams',
-    'Balls3D',
-    'AskInput',
-    'StringFunctions',
-    'MathFunctions',
-    'TrigonometricGraphs',
-  ]),
-  group(3, 'Smooth movement and interaction', [
-    'MovingBall',
-    'BouncingBall',
-    'TurtleMove',
-    'TurtleBounce',
-    'MultiBounce',
-    'GravitySteps',
-    'SolarSystem',
-    'SimpleDraw',
-    'FiveTurtles',
-  ]),
-  group(4, 'Complex applications', [
-    'PaintApp',
-    'SnakeGame',
-    'Shoot',
-    'Mandelbrot',
-    'Quine',
-    'NoughtsAndCrosses',
-  ]),
-  group(5, 'Artificial life and social models', [
-    'GameOfLife',
-    'Schelling',
-    'IteratedPD',
-  ]),
-];
-
-const csac = [
-  group(1, 'Introduction, Computer Science for Fun, and Turtling', [
-    'DrawPause',
-    'ColourSpiral',
-  ]),
-  group(2, 'Animation and Movement', [
-    'MovingBall',
-    'BouncingBall',
-    'TurtleMove',
-    'TurtleBounce',
-    'AskInput',
-  ]),
-  group(3, 'Computing in Physics: Cannons and Rockets', [
-    'GravitySteps',
-    'AimCannon',
-    'AutoCannon',
-    'Launch',
-  ]),
-  group(4, 'Cellular Automata: Modelling Disease, \'Life\', and Shell Patterns', [
-    'LifeStart',
-    'Disease',
-    'GameOfLife',
-    'Automata',
-  ]),
-  group(5, 'Computing in Chemistry: Diffusion and Brownian Motion', [
-    'Diffusion',
-    'BrownianMotion',
-  ]),
-  group(6, 'Computing in Biology: Evolution and Behaviour', [
-    'Cheetahs',
-    'SexRatio',
-    'Flocking',
-  ]),
-  group(7, 'Chaos and Self-Similarity', [
-    'Logistic',
-    'LogisticSpider',
-    'Mandelbrot',
-    'MandelbrotMini',
-    'MandelbrotSpectrum',
-    'MandelbrotMiniSpectrum',
-    'Triangles',
-    'Sierpinski',
-    'SierpinskiDots',
-    'IFSBackground',
-    'SierpinskiColour',
-    'SierpinskiIFS',
-    'BarnsleyIFS',
-    'BarnsleyColour',
-    'TreeIFS',
-    'DragonIFS',
-    'DragonColour',
-  ]),
-  group(8, 'Waves and Quantum Mechanics', [
-    'Interference',
-    'WaveSuperposer',
-    'TwoSlits',
-  ]),
-  group(9, 'Games and Computer Science', [
-    'KnightsTour',
-    'Nim',
-    'NoughtsAndCrosses',
-  ]),
-  group(10, 'Philosophy and Social Science', [
-    'Schelling',
-    'IteratedPD',
-  ]),
-];
-
-module.exports = {
-  names,
-  help,
-  csac,
-};
+  'YouAreHere': 'Text and arrow (using PRINT)'
+}

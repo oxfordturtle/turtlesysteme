@@ -1,36 +1,28 @@
-/* compiler/tools/pcoder
---------------------------------------------------------------------------------
-
---------------------------------------------------------------------------------
-*/
-
-const pc = require('data/pc');
+/**
+ * assorted functions for generating the pcode
+ */
+const { pc } = require('data');
 const find = require('./find');
 
-// convert character to ASCII key code
-// ----------
-const charToCode = (character) =>
-  character.charCodeAt(0);
+// merge two arrays of pcode into one, without a line break in between
+const merge = (pcode1, pcode2) =>
+  pcode1.slice(0, -1)
+    .concat([pcode1[pcode1.length - 1].concat(pcode2[0])])
+    .concat(pcode2.slice(1));
 
 // pcode for loading a literal value onto the stack
-// ----------
 const loadLiteralValue = (type, value) =>
-  (type === 'str')
-    ? [pc.lstr, value.length].concat(Array.from(value).map(charToCode))
+  (type === 'string')
+    ? [pc.lstr, value.length].concat(Array.from(value).map(x => x.charCodeAt(0)))
     : [pc.ldin, value];
 
 // pcode for loading an input keycode onto the stack
-// ----------
-const loadKeyValue = (input) =>
-  loadLiteralValue('int', input.value);
-
-// pcode for loading the value of an input variable onto the stack
-// ----------
-const loadQueryValue = (input) =>
-  loadLiteralValue("int", input.value).concat(pc.inpt);
+const loadInputValue = (input) =>
+  (input.value < 0)
+    ? loadLiteralValue('integer', input.value)
+    : loadLiteralValue('integer', input.value).concat(pc.inpt);
 
 // pcode for loading the value of a variable onto the stack
-// ----------
 const loadVariableValue = (variable) => {
   // predefined turtle property
   if (variable.turtle) {
@@ -49,7 +41,6 @@ const loadVariableValue = (variable) => {
 };
 
 // pcode for loading the address of a variable onto the stack
-// ----------
 const loadVariableAddress = (variable) => {
   // predefined turtle property
   if (variable.turtle) {
@@ -64,64 +55,45 @@ const loadVariableAddress = (variable) => {
 };
 
 // pcode for storing the value of a variable in memory
-// ----------
 const storeVariableValue = (variable, parameter) => {
-  const pcode = [];
   // predefined turtle property
   if (variable.turtle) {
-    pcode.push(pc.ldin, 0, pc.lptr);
-    pcode.push(pc.ldin, variable.turtle, pc.plus);
-    pcode.push(pc.sptr);
-    return pcode;
+    return [pc.ldin, 0, pc.lptr, pc.ldin, variable.turtle, pc.plus, pc.sptr];
   }
   // global variable
   if (variable.routine.index === 0) {
-    if (variable.type === "str") {
-      pcode.push(pc.ldvg);
-      pcode.push(variable.routine.turtleAddress + 5 + variable.index);
-      pcode.push(pc.cstr);
-    } else {
-      pcode.push(pc.stvg);
-      pcode.push(variable.routine.turtleAddress + 5 + variable.index);
+    if (variable.fulltype.type === 'string') {
+      return [pc.ldvg, variable.routine.turtleAddress + 5 + variable.index, pc.cstr];
     }
-    return pcode;
+    return [pc.stvg, variable.routine.turtleAddress + 5 + variable.index];
   }
-  // local variable
-  if (variable.type === 'str') {
-    pcode.push(pc.ldvv, variable.routine.index + 9, variable.index);
-    pcode.push(pc.cstr, pc.hclr);
-  } else {
-    if (variable.byref && !parameter) {
-      pcode.push(pc.stvr);
-    } else {
-      pcode.push(pc.stvv);
-    }
-    pcode.push(variable.routine.index + 9, variable.index);
+  // local string variable
+  if (variable.fulltype.type === 'string') {
+    return [pc.ldvv, variable.routine.index + 9, variable.index, pc.cstr, pc.hclr];
   }
-  return pcode;
+  // local (non-string) reference variable (not as a parameter)
+  if (variable.byref && !parameter) {
+    return [pc.stvr, variable.routine.index + 9, variable.index];
+  }
+  // local non-string variable
+  return [pc.stvv, variable.routine.index + 9, variable.index];
 };
 
 // pcode for loading return value of a function onto the stack
-// ----------
 const loadFunctionReturnValue = returnAddress =>
   [pc.ldvv, returnAddress, 1];
 
 // pcode for an expression operator
-// ----------
 const applyOperator = type =>
   [pc[type]];
 
-// pcode for a custom command call
-// (applied after any arguments have been loaded onto the stack)
-// ----------
+// pcode for a custom command call (applied after any arguments have been loaded onto the stack)
 const callCustomCommand = address =>
   [pc.subr, address];
 
-// pcode for a native command call
-// (applied after any arguments have been loaded onto the stack)
-// ----------
+// pcode for a native command call (applied after any arguments have been loaded onto the stack)
 const callNativeCommand = (command, routine, language) => {
-  const turtleAddress = find.mainProgram(routine).turtleAddress;
+  const turtleAddress = find.program(routine).turtleAddress;
   switch (command.code) {
     case pc.newt:
       return [pc.ldin, 0, pc.sptr];
@@ -184,7 +156,6 @@ const callNativeCommand = (command, routine, language) => {
 };
 
 // pcode for a conditional structure
-// ----------
 const conditional = (startLine, test, ifCode, elseCode) => {
   const offset = (elseCode.length > 0) ? 2 : 1;
   const startCode = [
@@ -199,7 +170,6 @@ const conditional = (startLine, test, ifCode, elseCode) => {
 };
 
 // pcode for a FOR loop structure
-// ----------
 const forLoop = (startLine, variable, initial, final, compare, change, innerCode) => {
   const ifnoLine = innerCode.length + startLine + 4;
   const startCode = [
@@ -214,7 +184,6 @@ const forLoop = (startLine, variable, initial, final, compare, change, innerCode
 };
 
 // pcode for a REPEAT loop structure
-// ----------
 const repeatLoop = (startLine, test, innerCode) => {
   const endCode = [
     test.concat([pc.ifno, startLine])
@@ -223,7 +192,6 @@ const repeatLoop = (startLine, test, innerCode) => {
 };
 
 // pcode for a WHILE loop structure
-// ----------
 const whileLoop = (startLine, test, innerCode) => {
   const startCode = [
     test.concat([pc.ifno, innerCode.length + startLine + 2])
@@ -234,13 +202,11 @@ const whileLoop = (startLine, test, innerCode) => {
   return startCode.concat(innerCode).concat(endCode);
 };
 
-// check if variable is string
-// ----------
-const isString = (variable) =>
-  (variable.type === 'str');
+// get string variables from a routine
+const stringVariables = routine =>
+  routine.variables.filter(x => x.fulltype.type === 'string');
 
 // pcode for initialising a global string variable
-// ----------
 const setupGlobalString = (variable) => {
   const index = variable.routine.turtleAddress + 5 + variable.index;
   return [
@@ -256,7 +222,6 @@ const setupGlobalString = (variable) => {
 };
 
 // pcode for initialising a local string variable
-// ----------
 const setupLocalString = (variable) => {
   const routine = variable.routine.index + 9;
   const index = variable.index;
@@ -276,19 +241,16 @@ const setupLocalString = (variable) => {
 };
 
 // pcode for initialising subroutine memory
-// ----------
 const initialiseSubroutineMemory = (routine) => {
   const claimMemory = [pc.memc, routine.index + 9, routine.memoryNeeded];
   const zeroMemory = [pc.ldav, routine.index + 9, 1, pc.ldin, routine.memoryNeeded, pc.zptr];
-  const stringVariables = routine.variables.filter(isString);
   const claimAndZero = [claimMemory, zeroMemory];
-  return (stringVariables.length > 0)
-    ? claimAndZero.concat(stringVariables.map(setupLocalString))
+  return (stringVariables(routine).length > 0)
+    ? claimAndZero.concat(stringVariables(routine).map(setupLocalString))
     : claimAndZero;
 };
 
 // load subroutine arguments from the stack
-// ----------
 const loadSubroutineArguments = (routine) => {
   const pars = routine.parameters.length;
   const result = [];
@@ -300,7 +262,6 @@ const loadSubroutineArguments = (routine) => {
 };
 
 // pcode for the start of a subroutine
-// ----------
 const subroutineStartCode = (routine) => {
   const firstLine = [[pc.pssr, routine.index]];
   const firstTwoLines = firstLine.concat(initialiseSubroutineMemory(routine));
@@ -314,10 +275,9 @@ const subroutineStartCode = (routine) => {
 };
 
 // pcode for the end of a subroutine
-// ----------
 const subroutineEndCode = (routine) => {
   const subAddress = routine.index + 9;
-  const fnResultAddress = find.mainProgram(routine).resultAddress;
+  const fnResultAddress = find.program(routine).resultAddress;
   const storeFunctionResult = [pc.ldvg, subAddress, pc.stvg, fnResultAddress];
   const releaseMemory = [pc.memr, subAddress];
   const exit = [pc.plsr, pc.retn];
@@ -331,7 +291,6 @@ const subroutineEndCode = (routine) => {
 };
 
 // pcode for a subroutine
-// ----------
 const subroutine = (routine, innerCode) => {
   const startCode = subroutineStartCode(routine);
   const endCode = subroutineEndCode(routine);
@@ -339,7 +298,6 @@ const subroutine = (routine, innerCode) => {
 };
 
 // pcode for the first line of a program (global memory setup)
-// ----------
 const setupGlobalMemory = (turtleAddress, memoryNeeded) =>
   ([
     pc.ldin,
@@ -363,7 +321,6 @@ const setupGlobalMemory = (turtleAddress, memoryNeeded) =>
   ]);
 
 // pcode for the second line of a program (program defaults)
-// ----------
 const setupProgramDefaults = [
   pc.home,
   pc.ldin,
@@ -389,22 +346,19 @@ const setupProgramDefaults = [
 ];
 
 // pcode for the start of the main program
-// ----------
 const programStartCode = (routine) => {
-  const stringVariables = routine.variables.filter(isString);
   const startCode = [
     setupGlobalMemory(routine.turtleAddress, routine.memoryNeeded),
     setupProgramDefaults,
   ];
   // maybe setup global string variables
-  if (stringVariables.length > 0) {
-    startCode = startCode.concat(stringVariables.map(setupGlobalString));
+  if (stringVariables(routine).length > 0) {
+    startCode = startCode.concat(stringVariables(routine).map(setupGlobalString));
   }
   return startCode;
 };
 
 // pcode for the main program
-// ----------
 const program = (routine, subroutinesCode, innerCode) => {
   const startCode = programStartCode(routine);
   const jumpLine = [[pc.jump, startCode.length + subroutinesCode.length + 2]];
@@ -415,9 +369,9 @@ const program = (routine, subroutinesCode, innerCode) => {
 };
 
 module.exports = {
+  merge,
   loadLiteralValue,
-  loadKeyValue,
-  loadQueryValue,
+  loadInputValue,
   loadVariableValue,
   loadVariableAddress,
   storeVariableValue,

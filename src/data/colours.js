@@ -1,32 +1,28 @@
-/**
- * an array of native colour constants
- */
+/*
+an array of native colour constants
+*/
 
-// pad a string with leading zeros
-const zeroPadding = string =>
-  (string.length < 6 ? zeroPadding(`0${string}`) : string);
+const { padded } = require('dom')
 
-// create a colour object
 const colour = (index, name, value, dark) =>
   ({
     index,
     names: {
       BASIC: name.toUpperCase(),
       Pascal: name,
-      Python: name,
+      Python: name
     },
     type: 'integer',
     value,
     hex: {
-      BASIC: `&${zeroPadding(value.toString(16))}`,
-      Pascal: `$${zeroPadding(value.toString(16))}`,
-      Python: `0x${zeroPadding(value.toString(16))}`,
+      BASIC: `&${padded(value.toString(16))}`,
+      Pascal: `$${padded(value.toString(16))}`,
+      Python: `0x${padded(value.toString(16))}`
     },
-    css: `#${zeroPadding(value.toString(16))}`,
-    dark,
-  });
+    css: `#${padded(value.toString(16))}`,
+    dark
+  })
 
-// direct export
 module.exports = ([
   colour(1, 'green', 0x228B22, true),
   colour(2, 'red', 0xFF0000, true),
@@ -77,5 +73,5 @@ module.exports = ([
   colour(47, 'lightgrey', 0xA0A0A0, false),
   colour(48, 'silver', 0xC0C0C0, false),
   colour(49, 'white', 0xFFFFFF, false),
-  colour(50, 'black', 0x000000, true),
-]);
+  colour(50, 'black', 0x000000, true)
+])
