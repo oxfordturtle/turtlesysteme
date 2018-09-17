@@ -19,7 +19,7 @@ const fileTab = { label: 'File', active: false, content: [file] }
 const otherTabs = [
   { label: 'Code', active: true, content: [code] },
   { label: 'Usage', active: false, content: [usage] },
-  { label: 'PCode', active: false, content: [pcode] }
+  { label: 'PCode', active: false, content: [pcode.options, pcode.table] }
 ]
 
 // all tabs (optionally including the file tab)

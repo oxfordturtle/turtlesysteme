@@ -1,303 +1,302 @@
-/**
- * compile the basic 'atoms' of a program, i.e. expressions, variable assignments, and command calls
- */
-const find = require('./find');
-const pcoder = require('./pcoder');
+/*
+compile the basic 'atoms' of a program, i.e. expressions, variable assignments, and procedure calls
+*/
 
-// check if found type is okay, based on what is needed
-const typeIsOk = (needed, found) => {
-  // if NULL is needed, everything is ok
-  if (needed === 'null') return true;
-  // found and needed the same is obviously ok
-  if (found === needed) return true;
-  // if STRING is needed, CHAR is ok
-  if ((needed === 'string') && (found === 'char')) return true;
-  // if BOOLINT is needed, either BOOLEAN or INTEGER is ok
-  if (needed === 'boolint' && (found === 'boolean' || found === 'integer')) return true;
-  // if BOOLINT is found, either BOOLEAN or INTEGER needed is ok
-  if (found === 'boolint' && (needed === 'boolean' || needed === 'integer')) return true;
-  // everything else is an error
-  return false;
-};
+// generate pcode for an expression (mutually recursive with simple, term, and factor below)
+module.exports.expression = (routine, lex, type, needed, language) => {
+  const expTypes = ['eqal', 'less', 'lseq', 'more', 'mreq', 'noeq']
+
+  // expressions are boolean anyway
+  if (needed === 'boolean') needed = 'null'
+
+  // evaluate the first bit
+  let result = simple(routine, lex, type, needed, language)
+
+  // evaluate the expression operator and next bit (if any), and merge the results
+  while (routine.lexemes[result.lex] && (expTypes.indexOf(routine.lexemes[result.lex].value) > -1)) {
+    let operator = unambiguousOperator(routine.lexemes[result.lex].value, result.type)
+    let next = simple(routine, result.lex + 1, result.type, needed, language)
+    result = pcoder.mergeWithOperator(result.pcode, next, operator)
+  }
+
+  // return the whole thing
+  return result
+}
+
+// variable assignment
+module.exports.variableAssignment = (routine, variable, lex, language) => {
+  const { lexemes } = routine.lexemes
+
+  // check there is something, and evaluate it
+  if (!lexemes[lex]) throw error('atoms', 7, lexemes[lex - 1])
+  let result = module.exports.expression(routine, lex, 'null', variable.fulltype.type, language)
+
+  // return the next lexeme index and pcode
+  return { lex, pcode: pcoder.merge(result.pcode, [pcoder.storeVariableValue(variable)]) }
+}
+
+// procedure call (but also used internally by the functionCall function below, since most of the
+// code for calling a function (loading arguments onto the stack, then calling the command) is the
+// same
+module.exports.procedureCall = (routine, lex, language, procedureCheck = true) => {
+  // look for the command
+  const command = find.command(routine, routine.lexemes[lex].content, language)
+  if (!command) throw error('{lex} is not defined.', routine.lexemes[lex])
+
+  // check it is a procedure; N.B. this function is also used below for handling functions, where
+  // the procedureCheck argument is false
+  if (procedureCheck && command.type !== 'procedure') {
+    throw error('{lex} is a function, not a procedure.', routine.lexemes[lex])
+  }
+
+  // split into two cases: with and without parameters
+  return (command.parameters.length === 0)
+    ? commandNoParameters(routine, lex, command, language)
+    : commandWithParameters(routine, lex, command, language)
+}
+
+// dependencies
+const atoms = require('./atoms')
+const check = require('./check')
+const error = require('./error')
+const find = require('./find')
+const pcoder = require('./pcoder')
 
 // get unambiguous operator from ambiguous one
 const unambiguousOperator = (operator, type) => {
-  const integerVersions = ['eqal', 'less', 'lseq', 'more', 'mreq', 'noeq', 'plus'];
-  const stringVersions = ['seql', 'sles', 'sleq', 'smor', 'smeq', 'sneq', 'scat'];
+  const integerVersions = ['eqal', 'less', 'lseq', 'more', 'mreq', 'noeq', 'plus']
+  const stringVersions = ['seql', 'sles', 'sleq', 'smor', 'smeq', 'sneq', 'scat']
   return ((type === 'string') || (type === 'char'))
     ? stringVersions[integerVersions.indexOf(operator)]
-    : operator;
-};
+    : operator
+}
 
-// generate pcode for an expression (mutually recursive with simple, term, and factor below)
-const expression = (routine, lex, type, needed, language) => {
-  const { lexemes } = routine;
-  const expTypes = ['eqal', 'less', 'lseq', 'more', 'mreq', 'noeq'];
-  let operator;
-  let pcode;
-  let pcodeTemp;
-  if (needed === 'boolean') needed = 'null';
-  ({ type, lex, pcode } = simple(routine, lex, type, needed, language));
-  while (lexemes[lex] && (expTypes.indexOf(lexemes[lex].value) > -1)) {
-    operator = unambiguousOperator(lexemes[lex].value, type);
-    pcodeTemp = pcode;
-    ({ type, lex, pcode } = simple(routine, lex + 1, type, needed, language));
-    pcode = merge(pcodeTemp, pcode);
-    pcode = merge(pcode, pcoder.applyOperator(operator));
-  }
-  return { type, lex, pcode };
-};
-
+// handle a simple
 const simple = (routine, lex, type, needed, language) => {
-  const { lexemes } = routine;
-  const simpleTypes = ['plus', 'subt', 'or', 'xor'];
-  let operator;
-  let pcode;
-  let pcodeTemp;
-  ({ type, lex, pcode } = term(routine, lex, type, needed, language));
-  while (lexemes[lex] && (simpleTypes.indexOf(lexemes[lex].value) > -1)) {
-    operator = unambiguousOperator(lexemes[lex].value, type);
-    pcodeTemp = pcode;
-    ({ type, lex, pcode } = term(routine, lex + 1, type, needed, language));
-    pcode = merge(pcodeTemp, pcode);
-    pcode = merge(pcode, pcoder.applyOperator(operator));
-  }
-  return { type, lex, pcode };
-};
+  const simpleTypes = ['plus', 'subt', 'or', 'xor']
 
+  // evaluate the first bit
+  let result = term(routine, lex, type, needed, language)
+
+  // evaluate the expression operator and next bit (if any), and merge the results
+  while (routine.lexemes[lex] && (simpleTypes.indexOf(routine.lexemes[lex].value) > -1)) {
+    let operator = unambiguousOperator(routine.lexemes[result.lex].value, result.type)
+    let next = term(routine, result.lex + 1, result.type, needed, language)
+    result = pcoder.mergeWithOperator(result.pcode, next, operator)
+  }
+
+  // return the whole thing
+  return result
+}
+
+// handle a term
 const term = (routine, lex, type, needed, language) => {
-  const { lexemes } = routine;
-  const termTypes = ['and', 'div', 'divr', 'mod', 'mult'];
-  let operator;
-  let pcode;
-  let pcodeTemp;
-  ({ type, lex, pcode } = factor(routine, lex, type, needed, language));
-  while (lexemes[lex] && termTypes.indexOf(lexemes[lex].value) > -1) {
-    operator = lexemes[lex].value;
-    pcodeTemp = pcode;
-    ({ type, lex, pcode } = factor(routine, lex + 1, type, needed, language));
-    pcode = merge(pcodeTemp, pcode);
-    pcode = merge(pcode, pcoder.applyOperator(operator));
-  }
-  return { type, lex, pcode };
-};
+  const termTypes = ['and', 'div', 'divr', 'mod', 'mult']
 
+  // evaluate the first bit
+  let result = factor(routine, lex, type, needed, language)
+
+  // evaluate the term operator and next bit (if any), and merge the results
+  while (routine.lexemes[lex] && termTypes.indexOf(routine.lexemes[lex].value) > -1) {
+    let operator = unambiguousOperator(routine.lexemes[result.lex].value, result.type)
+    let next = factor(routine, result.lex + 1, result.type, needed, language)
+    result = pcoder.mergeWithOperator(result.pcode, next, operator)
+  }
+
+  // return the whole thing
+  return result
+}
+
+// handle a factor (the lowest level of an expression)
 const factor = (routine, lex, type, needed, language) => {
-  const { lexemes } = routine;
-  switch (lexemes[lex].type) {
+  switch (routine.lexemes[lex].type) {
     // operators
     case 'operator':
-      return minus(lexemes, lex, needed, language)
-        || negative(lexemes, lex, needed, language)
-        || (() => { throw error('atoms', 0, lexemes[lex]); })();
+      return negative(routine, lex, needed, language) ||
+        (() => { throw error('{lex} makes no sense here.', routine.lexemes[lex]) })()
+
     // literal values
     case 'boolean': // fallthrough
     case 'char': // fallthrough
     case 'integer': // fallthrough
     case 'string':
-      return literal(lexemes, lex, needed);
+      return atoms.literal(routine.lexemes, lex, needed)
+
     // input codes
     case 'keycode': // fallthrough
     case 'query':
-      return input(lexemes, lex, needed, language)
-        || (() => { throw error('atoms', 1, lexemes[lex]); })();
+      return atoms.input(routine.lexemes, lex, needed, language) ||
+        (() => { throw error('{lex} is not a valid input code.', routine.lexemes[lex]) })()
+
     // identifiers
     case 'turtle': // fallthrough
     case 'identifier':
-      return constant(routine, lex, needed, language)
-        || variable(routine, lex, needed, language)
-        || colour(routine, lex, needed, language)
-        || command(routine, lex, needed, language)
-        || (() => { throw error('atoms', 4, lexemes[lex]); })();
+      return atoms.constant(routine, lex, needed, language) ||
+        atoms.variable(routine, lex, needed, language) ||
+        atoms.colour(routine, lex, needed, language) ||
+        functionCall(routine, lex, needed, language) ||
+        (() => { throw error('{lex} is not defined.', routine.lexemes[lex]) })()
+
     // everything else
     default:
-      return brackets(routine, lex, type, needed, language)
-        || (() => { throw error('atoms', 6, lexemes[lex]); })();
-  }
-};
-
-// factors bottom out at one of the following
-const operator = (lexemes, lex, needed, language) => {
-  let type, pcode;
-  // minus operator
-  if (lexemes[lex].content === '-') {
-    // check an integer here is ok
-    if (!typeIsOk(needed, 'integer')) throw error('atoms', 100, lexemes[lex], needed, 'integer');
-    ({ type, lex, pcode } = factor(routine, lex + 1, 'integer', needed, language));
-    pcode = merge(pcode, [pcoder.applyOperator('neg')]);
-    return { type, lex, pcode };
-  }
-  // negation operator
-  if (lexemes[lex].content === 'not') {
-    // check a boolint here is ok
-    if (!typeIsOk(needed, 'boolint')) throw error('atoms', 101, lexemes[lex], needed, 'boolint');
-    ({ type, lex, pcode } = factor(routine, lex + 1, 'boolint', needed, language));
-    pcode = merge(pcode, [pcoder.applyOperator('not')]);
-    return { type, lex, pcode };
-  }
-  // any other operator is an error
-  throw error('atoms', 0, lexemes[lex]);
-};
-
-const literal = (lexemes, lex, needed) => {
-  // check this type here is ok
-  if (!typeIsOk(needed, lexemes[lex].type)) {
-    throw error('atoms', 102, lexemes[lex], needed, lexemes[lex].type);
-  }
-  let pcode = [pcoder.loadLiteralValue(lexemes[lex].type, lexemes[lex].value)];
-  // maybe add CTOS (char to string) conversion
-  if (lexemes[lex].type === 'char' && needed === 'string') {
-    pcode[0].push(pcoder.applyOperator('ctos'));
-  }
-  return { type: lexemes[lex].type, lex: lex + 1, pcode };
-};
-
-const input = (lexemes, lex, needed, language) => {
-  const input = find.input(lexemes[lex].content, language);
-  if (!hit) throw error('atoms', 1, lexemes[lex]);
-  if (!typeIsOk(needed, 'integer')) throw error('atoms', 103, lexemes[lex], needed, 'integer');
-  return { type: 'integer', lex: lex + 1, pcode: [pcoder.loadInputValue(input)] };
-};
-
-const constant = (routine, lex, needed, language) => {
-  const { lexemes } = routine;
-  const hit = find.constant(routine, lexemes[lex].content, language);
-  if (hit) {
-    if (!typeIsOk(needed, hit.type)) throw error('atoms', 106, lexemes[lex], needed, hit.type);
-    return { type: hit.type, lex: lex + 1, pcode: [pcoder.loadLiteralValue(hit.type, hit.value)] };
+      return brackets(routine, lex, type, needed, language) ||
+        (() => { throw error('{lex} makes no sense here.', routine.lexemes[lex]) })()
   }
 }
 
-const variable = (routine, lex, needed, language) => {
-  const { lexemes } = routine;
-  const hit = find.variable(routine, lexemes[lex].content, language);
-  if (hit) {
-    if (!typeIsOk(needed, hit.fulltype.type)) throw error('atoms', 107, lexemes[lex], needed, hit.fulltype.type);
-    return { type: hit.fulltype.type, lex: lex + 1, pcode: [pcoder.loadVariableValue(hit)] };
-  }
-};
+// handle negation (integer or boolean)
+const negative = (routine, lex, needed, language) => {
+  // check for a negation operator, and handle it if found
+  if (routine.lexemes[lex].content === '-' || routine.lexemes[lex].value === 'not') {
+    const found = routine.lexemes[lex].content === '-' ? 'integer' : 'boolint'
+    const operator = routine.lexemes[lex].content === '-'
+      ? [pcoder.applyOperator('neg')]
+      : [pcoder.applyOperator('not')]
 
-const colour = (routine, lex, needed, language) => {
-  const { lexemes } = routine;
-  const hit = find.colour(lexemes[lex].content, language);
-  if (hit) {
-    if (!typeIsOk(needed, 'integer')) throw error('atoms', 108, lexemes[lex], needed, 'integer');
-    return { type: 'integer', lex: lex + 1, pcode: [pcoder.loadLiteralValue('integer', hit.value)] };
-  }
-};
+    // check the type is okay
+    check(needed, 'integer', routine.lexemes[lex])
 
-const command = (routine, lex, needed, language) => {
-  const { lexemes } = routine;
-  const hit = find.command(routine, lexemes[lex].content, language);
+    // handle what follows (should be a factor)
+    const result = factor(routine, lex + 1, found, needed, language)
+
+    // return the result of the factor, with the negation operator appended
+    return Object.assign(result, { pcode: pcoder.merge(result.pcode, operator) })
+  }
+
+  // return null if there's no negation operator
+  return null
+}
+
+// handle a function call
+const functionCall = (routine, lex, needed, language) => {
+  // look for the function
+  const hit = find.command(routine, routine.lexemes[lex].content, language)
   if (hit) {
-    // should be a function
-    if (hit.type === 'procedure') throw error('atoms', 3, lexemes[lex]);
-    if (!typeIsOk(needed, hit.returns)) throw error('atoms', 109, lexemes[lex], needed, hit.returns);
-    ({ lex, pcode } = commandCall(routine, lex, 'function', language));
+    // check it is a function
+    if (hit.type !== 'function') throw error()
+
+    // check return type (throws an error if wrong)
+    check(needed, hit.returns, routine.lexemes[lex])
+
+    // handle the bulk of the function (mostly works just like a procedure call, expect that the
+    // last argument is set to false, so as to bypass the procedure check)
+    const result = module.exports.commandCall(routine, lex, language, false)
+
     // user-defined functions need this at the end
-    if (!hit.code) {
-      pcode.push(pcoder.loadFunctionReturnValue(hit.resultAddress));
-    }
-    return { type: hit.returns, lex, pcode };
-  }
-};
+    if (!hit.code) result.pcode.push(pcoder.loadFunctionReturnValue(hit.resultAddress))
 
+    return Object.assign(result, { type: hit.returns })
+  }
+
+  // return null if no function is found
+  return null
+}
+
+// handle an expression that starts with an open bracket
 const brackets = (routine, lex, type, needed, language) => {
-  if (lexemes[lex].content === '(') {
-    ({ type, lex, pcode } = expression(routine, lex + 1, type, needed, language));
-    if (lexemes[lex] && (lexemes[lex].content === ')')) {
-      return { type, lex: lex + 1, pcode };
+  // look for an open bracket
+  if (routine.lexemes[lex].content === '(') {
+    // what follows should be an expression
+    const result = module.exports.expression(routine, lex + 1, type, needed, language)
+
+    // now check for a closing bracket
+    if (routine.lexemes[result.lex] && (routine.lexemes[result.lex].content === ')')) {
+      return Object.assign(result, { lex: result.lex + 1 })
     } else {
-      throw error('atoms', 5, lexemes[lex - 1]);
+      throw error('atoms', 5, routine.lexemes[lex - 1])
     }
   }
-};
 
-// variable assignment
-const variableAssignment = (routine, variable, lex, language) => {
-  const { lexemes } = routine.lexemes;
-  let pcode;
-  let type;
-  if (!lexemes[lex]) throw error('atoms', 7, lexemes[lex - 1]);
-  ({ type, lex, pcode } = expression(routine, lex, 'null', variable.fulltype.type, language));
-  pcode = merge(pcode, [pcoder.storeVariableValue(variable)]);
-  return { lex, pcode };
-};
+  // return null if there is no open bracket
+  return null
+}
 
-// command call
-const commandCall = (routine, lex, expectedType, language) => {
-  const lexemes = routine.lexemes;
-  const command = find.command(routine, lexemes[lex].content, language);
-  if (!command) throw error('cmd01', 'cmdNotFound', lexemes[lex]);
-  if (command.type !== expectedType) throw error('cmd02', expectedType, command.type, lexemes[lex]);
-  const argsExpected = command.parameters.length;
-  let argsGiven;
-  let currentArg;
-  let variable;
-  let pcode = [[]];
-  let result;
-  if (argsExpected === 0) { // no arguments expected
-    if (language === 'Python') {
-      if (!lexemes[lex + 1] || (lexemes[lex + 1].content !== '(')) {
-        throw error('cmd03', 'cmdLeftBracket', lexemes[lex]);
-      }
-      lex += 1;
-      if (!lexemes[lex + 1] || (lexemes[lex + 1].content !== ')')) {
-        throw error('cmd04', 'cmdNoArgs', lexemes[lex - 1]);
-      }
-      lex += 1;
-    } else {
-      if (lexemes[lex + 1] && (lexemes[lex + 1].content === '(')) {
-        throw error('cmd05', 'cmdNoArgs', lexemes[lex]);
-      }
+// handle a command with no parameters
+const commandNoParameters = (routine, lex, command, language) => {
+  // command with no parameters in Python
+  if (language === 'Python') {
+    // check for opening bracket
+    if (!routine.lexemes[lex + 1] || (routine.lexemes[lex + 1].content !== '(')) {
+      throw error('Opening bracket missing after command {lex}.', routine.lexemes[lex])
     }
-  } else { // some arguments expected
-    if (lexemes[lex + 1].content !== '(') {
-      throw error('cmd06', 'cmdMissingArgs', lexemes[lex]);
+
+    // check for immediate closing bracket (no arguments)
+    if (!routine.lexemes[lex + 2] || (routine.lexemes[lex + 2].content !== ')')) {
+      throw error('Command {lex} takes no arguments.', routine.lexemes[lex - 1])
     }
-    lex += 2;
-    argsGiven = 0;
-    while ((argsGiven < argsExpected) && (lexemes[lex].content !== ')')) {
-      currentArg = command.parameters[argsGiven];
-      if (currentArg.byref) { // reference parameter
-        variable = find.variable(routine, lexemes[lex].content, language);
-        if (!variable) {
-          throw error('cmd07', 'cmdBadRef', lexemes[lex]);
-        }
-        lex += 1;
-        pcode = merge(pcode, [pcoder.loadVariableAddress(variable)]);
-      } else { // value parameter
-        result = expression(routine, lex, 'null', currentArg.type, language);
-        lex = result.lex;
-        pcode = merge(pcode, result.pcode);
-      }
-      argsGiven += 1;
-      if (argsGiven < argsExpected) {
-        if (!lexemes[lex] || (lexemes[lex].content !== ',')) {
-          throw error('cmd08', 'cmdComma', lexemes[lex]);
-        }
-        lex += 1;
-      }
-    }
-    // final error checking
-    if (argsGiven < argsExpected) throw error('cmd09', 'cmdTooFew', lexemes[lex]);
-    if (lexemes[lex].content === ',') throw error('cmd10', 'cmdTooMany', lexemes[lex]);
-    if (lexemes[lex].content !== ')') throw error('cmd11', 'cmdRightBracket', lexemes[lex - 1]);
+
+    // return the command call and the index of the next lexeme
+    return { lex: lex + 3, pcode: [pcoder.callCommand(command, routine, language)] }
   }
-  lex += 1;
-  if (command.code) {
-    // native command
-    pcode = merge(pcode, [pcoder.callNativeCommand(command, routine, language)]);
-  } else {
-    // custom command
-    pcode = merge(pcode, [pcoder.callCustomCommand(command.startLine)]);
-  }
-  return { lex, pcode };
-};
 
-// export the three main functions
-module.exports = {
-  expression,
-  variableAssignment,
-  commandCall,
-};
+  // command with no parameters in BASIC or Pascal
+  if (routine.lexemes[lex + 1] && (routine.lexemes[lex + 1].content === '(')) {
+    throw error('Command {lex} takes no arguments.', routine.lexemes[lex])
+  }
+
+  return { lex: lex + 1, pcode: [pcoder.callCommand(command, routine, language)] }
+}
+
+// handle a command with parameters
+const commandWithParameters = (routine, lex, command, language) => {
+  // check for opening bracket
+  if (routine.lexemes[lex + 1].content !== '(') {
+    throw error('Opening bracket missing after command {lex}.', routine.lexemes[lex])
+  }
+
+  // handle the parameters
+  const result = args(routine, lex + 2, command, language)
+
+  // return the parameters followed by the pcode for calling the command
+  const callCommand = [pcoder.callCommand(command, routine, language)]
+  return Object.assign(result, { pcode: pcoder.merge(result.pcode, callCommand) })
+}
+
+// pcode for loading arguments for a command call
+const args = (routine, lex, command, language) => {
+  const name = command.name || command.names[language]
+  let result
+
+  // handle the arguments
+  const argsExpected = command.parameters.length
+  let argsGiven = 0
+  while ((argsGiven < argsExpected) && (routine.lexemes[lex].content !== ')')) {
+    result = argument(routine, lex, command, argsGiven, language)
+    argsGiven += 1
+    lex = result.lex
+    if (argsGiven < argsExpected) {
+      if (!routine.lexemes[lex] || (routine.lexemes[lex].content !== ',')) {
+        throw error('Comma needed after parameter.', routine.lexemes[lex])
+      }
+    }
+  }
+
+  // final error checking
+  if (argsGiven < argsExpected) {
+    throw error(`Not enough arguments given for command "${name}".`, routine.lexemes[lex])
+  }
+  if (routine.lexemes[lex].content === ',') {
+    throw error(`Too many arguments given for command "${name}"`, routine.lexemes[lex])
+  }
+  if (routine.lexemes[lex].content !== ')') {
+    throw error(`Closing bracket missing after command "${name}"`, routine.lexemes[lex - 1])
+  }
+
+  // return the next lex index and the pcode
+  return Object.assign(result, { lex: lex + 1 })
+}
+
+// handle the argument to a command call
+const argument = (routine, lex, command, index, language) => {
+  // reference parameter
+  if (command.parameters[index].byref) {
+    let variable = find.variable(routine, routine.lexemes[lex].content, language)
+    if (!variable) {
+      throw error('{lex} is not defined.}', routine.lexemes[lex])
+    }
+    return { lex: lex + 1, pcode: [pcoder.loadVariableAddress(variable)] }
+  }
+
+  // value parameter
+  return module.exports.expression(routine, lex, 'null', command.parameters[index].type, language)
+}

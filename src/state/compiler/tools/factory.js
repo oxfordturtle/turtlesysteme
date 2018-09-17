@@ -1,10 +1,11 @@
-/** factory for the language-specific parsers - creates objects for routines, constants,
- *  and variables; using this module in the language-specific parsers ensures the same basic
- *  structure for the output of the different parsers
- */
+/*
+factory for the language-specific parsers - creates objects for routines, constants, and variables;
+using this module in the language-specific parsers ensures the same basic structure for the output
+of the different parsers
+*/
 
 // create main program object
-const program = (name, language) =>
+module.exports.program = (name, language) =>
   ({
     language,
     name,
@@ -15,11 +16,11 @@ const program = (name, language) =>
     subroutines: [],
     lexemes: [],
     turtleAddress: null, // fixed later by the main parser module
-    memoryNeeded: null,  // fixed later by the main parser module
-  });
+    memoryNeeded: null // fixed later by the main parser module
+  })
 
 // create subroutine object
-const subroutine = (name, type, parent) =>
+module.exports.subroutine = (name, type, parent) =>
   ({
     name,
     type, // "procedure|function"
@@ -35,33 +36,24 @@ const subroutine = (name, type, parent) =>
     subroutines: [],
     lexemes: [],
     memoryNeeded: null // fixed later by the main parser module
-  });
+  })
 
 // create constant object
-const constant = (name, type, value) =>
-  ({ name, type, value });
+module.exports.constant = (name, type, value) =>
+  ({ name, type, value })
 
 // create variable (and parameter) object
-const variable = (name, routine, byref = false) =>
+module.exports.variable = (name, routine, byref = false) =>
   ({
     name,
     routine,
-    byref: byref,   // true only for parameters (potentially)
-    index: null,    // fixed later by the main parser module
+    byref: byref, // true only for parameters (potentially)
+    index: null, // fixed later by the main parser module
     fulltype: null, // set after initial construction
-    private: null, // routine for private variables (BASIC only)
-  });
+    private: null // routine for private variables (BASIC only)
+  })
 
-const fulltype = (type, length = null, start = null, fulltype = null) =>
+module.exports.fulltype = (type, length = null, start = null, fulltype = null) =>
   (type === 'string')
     ? { type, length: 33, start, fulltype }
-    : { type, length, start, fulltype };
-
-// expose the factory functions
-module.exports = {
-  program,
-  subroutine,
-  constant,
-  variable,
-  fulltype,
-};
+    : { type, length, start, fulltype }

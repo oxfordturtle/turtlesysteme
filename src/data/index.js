@@ -11,5 +11,6 @@ module.exports = {
   inputs: require('./inputs'),
   languages: ['BASIC', 'Pascal', 'Python'],
   pc: require('./pc'),
-  pcodes: require('./pcodes')
+  pcodes: require('./pcodes'),
+  usage: require('./usage')
 }

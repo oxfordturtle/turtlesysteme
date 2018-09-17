@@ -1,21 +1,21 @@
-/**
- * lexical analysis; program code (a string) goes in, an array of lexemes comes out
- *
- * the lexer first uses the tokenizer to generate an array of tokens; then it checks for lexical
- * errors, strips whitespace and comments, and enriches the tokens with more information
- *
- * lexemes (enriched tokens) look like this: { type, content, value, line, offset }
- *
- * the types are the same as for token types, except that there are no whitespace or illegal
- * lexemes, and the "binary", "octal", "hexadecimal", and "decimal" token types are all just
- * "integer" lexical types
- *
- * the line and offset properties are generated using (and then discarding) the whitespace tokens
- *
- * the value property stores the result of evaluating literal value expressions, looking up the
- * corresponding integer for predefined colours, keycodes, and input queries, or the pcode
- * associated with an operator; it is null for all other lexical types
- */
+/*
+lexical analysis; program code (a string) goes in, an array of lexemes comes out
+
+the lexer first uses the tokenizer to generate an array of tokens; then it checks for lexical
+errors, strips whitespace and comments, and enriches the tokens with more information
+
+lexemes (enriched tokens) look like this: { type, content, value, line, offset }
+
+the types are the same as for token types, except that there are no whitespace or illegal lexemes,
+and the "binary", "octal", "hexadecimal", and "decimal" token types are all just "integer" lexical
+types
+
+the line and offset properties are generated using (and then discarding) the whitespace tokens
+
+the value property stores the result of evaluating literal value expressions, looking up the
+corresponding integer for predefined colours, keycodes, and input queries, or the pcode associated
+with an operator; it is null for all other lexical types
+*/
 
 module.exports = (code, language) => {
   // run the tokenizer on the code, then setup some constants
@@ -119,11 +119,13 @@ const type = (type, content) => {
     case 'hexadecimal': // fallthrough
     case 'decimal': // falthrough
       return 'integer'
+
     case 'command': // fallthrough
     case 'colour': // fallthrough
     case 'custom': // fallthrough
     case 'variable':
       return 'identifier'
+
     default:
       return type
   }

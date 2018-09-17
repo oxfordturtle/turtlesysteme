@@ -15,13 +15,6 @@ const options = element('div', {
 // the pcode table
 const table = element('div', { classes: ['tsx-pcode-table'] })
 
-// the main pcode element (includes the options box and the pcode table)
-const pcode = element('div', { content: [ options, table ] })
-
-// table cell from pcode
-const td = code =>
-  element('span', { content: code.toString(10) })
-
 // table row from line of pcode
 const row = (line, index) => {
   const number = index + 1
@@ -29,7 +22,7 @@ const row = (line, index) => {
     classes: ['tsx-row'],
     content: [
       element('div', { classes: ['tsx-head'], content: number.toString(10) }),
-      element('div', { classes: ['tsx-body'], content: line.map(td) })
+      element('div', { classes: ['tsx-body'], content: line.toString() })
     ]
   })
 }
@@ -45,4 +38,4 @@ refresh(state.getPCode())
 state.on('pcode-changed', refresh)
 
 // exports
-module.exports = pcode
+module.exports = { options, table }

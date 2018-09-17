@@ -1,6 +1,6 @@
 /*
 the compiler module
--------------------
+
 exports two functions, one for syntax highlighting, the other for compiling program text into
 pcode for the virtual machine
 
@@ -36,7 +36,6 @@ module.exports.compile = (code, language) => {
 }
 
 // dependencies
-require('styles/highlighting.scss')
 const analyser = require('./analyser')
 const lexer = require('./lexer')
 const parser = require('./parser')

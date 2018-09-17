@@ -27,17 +27,13 @@
  *   - illegal (an error)
  */
 
-// local imports
-const BASIC = require('./basic');
-const Pascal = require('./pascal');
-const Python = require('./python');
-
-// collect the language-specific tokenizers into a record
-const tokenizers = { BASIC, Pascal, Python };
-
 // the tokenizer function
-const tokenizer = (code, language) =>
-  tokenizers[language](code);
+module.exports = (code, language) =>
+  tokenizers[language](code)
 
-// export the tokenizer function
-module.exports = tokenizer;
+// dependencies
+const tokenizers = {
+  BASIC: require('./basic'),
+  Pascal: require('./pascal'),
+  Python: require('./python')
+}

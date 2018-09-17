@@ -1,10 +1,8 @@
-/**
- * type check function (throws an error if check fails, does nothing otherwise)
- */
-const error = require('./error')
+/*
+type check function (throws an error if check fails, does nothing otherwise)
+*/
 
-// check if type found matches type needed
-const check = (needed, found, id, lexeme) => {
+module.exports = (needed, found, lexeme) => {
   // if NULL is needed, everything is ok
   if (needed === 'null') return
 
@@ -24,5 +22,5 @@ const check = (needed, found, id, lexeme) => {
   throw error(`Type error: '${needed}' expected but '${found}' found.`, lexeme)
 }
 
-// export the function
-module.exports = check
+// dependencies
+const error = require('./error')

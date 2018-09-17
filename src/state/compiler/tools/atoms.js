@@ -5,16 +5,12 @@
  * module ultimately bottom out
  */
 
-const error = require('./error')
-const find = require('./find')
-const pcoder = require('./pcoder')
-
 // literal value
-const literal = (lexemes, lex, needed) => {
+module.exports.literal = (lexemes, lex, needed) => {
   const { type, value } = lexemes[lex]
 
   // check this type is ok (will throw an error if not)
-  error.check(needed, type, 'atoms00', lexemes[lex])
+  check(needed, type, 'atoms00', lexemes[lex])
 
   // return the stuff
   return (type === 'char' && needed === 'string')
@@ -23,12 +19,12 @@ const literal = (lexemes, lex, needed) => {
 }
 
 // input keycode or query
-const input = (lexemes, lex, needed, language) => {
+module.exports.input = (lexemes, lex, needed, language) => {
   const hit = find.input(lexemes[lex].content, language)
 
   if (hit) {
     // check the type is ok (will throw an error if not)
-    error.check(needed, hit.type, 'atoms01', lexemes[lex])
+    check(needed, hit.type, 'atoms01', lexemes[lex])
 
     // return the stuff
     return { type: 'integer', lex: lex + 1, pcode: [pcoder.loadInputValue(hit)] }
@@ -36,13 +32,13 @@ const input = (lexemes, lex, needed, language) => {
 }
 
 // constant
-const constant = (routine, lex, needed, language) => {
+module.exports.constant = (routine, lex, needed, language) => {
   const { lexemes } = routine
   const hit = find.constant(routine, lexemes[lex].content, language)
 
   if (hit) {
     // check the type is ok (will throw an error if not)
-    error.check(needed, hit.type, 'atoms02', lexemes[lex])
+    check(needed, hit.type, 'atoms02', lexemes[lex])
 
     // return the stuff
     return { type: hit.type, lex: lex + 1, pcode: [pcoder.loadLiteralValue(hit.type, hit.value)] }
@@ -50,13 +46,13 @@ const constant = (routine, lex, needed, language) => {
 }
 
 // variable
-const variable = (routine, lex, needed, language) => {
+module.exports.variable = (routine, lex, needed, language) => {
   const { lexemes } = routine
   const hit = find.variable(routine, lexemes[lex].content, language)
 
   if (hit) {
     // check the type is okay (will throw an error if not)
-    error.check(needed, hit.fulltype.type, 'atoms03', lexemes[lex])
+    check(needed, hit.fulltype.type, 'atoms03', lexemes[lex])
 
     // return the stuff
     return { type: hit.fulltype.type, lex: lex + 1, pcode: [pcoder.loadVariableValue(hit)] }
@@ -64,24 +60,20 @@ const variable = (routine, lex, needed, language) => {
 }
 
 // native colour constant
-const colour = (routine, lex, needed, language) => {
+module.exports.colour = (routine, lex, needed, language) => {
   const { lexemes } = routine
   const hit = find.colour(lexemes[lex].content, language)
 
   if (hit) {
     // check the type is ok (will throw an error if not)
-    error.check(needed, 'integer', 'atoms04', lexemes[lex])
+    check(needed, 'integer', 'atoms04', lexemes[lex])
 
     // return the stuff
     return { type: 'integer', lex: lex + 1, pcode: [pcoder.loadLiteralValue('integer', hit.value)] }
   }
 }
 
-// export the functions
-module.exports = {
-  literal,
-  input,
-  constant,
-  variable,
-  colour
-}
+// dependencies
+const check = require('./check')
+const find = require('./find')
+const pcoder = require('./pcoder')
