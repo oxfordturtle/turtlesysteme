@@ -17,7 +17,7 @@ module.exports.variable = (routine, name, language) => {
     : ['turtx', 'turty', 'turtd', 'turtt', 'turtc']
   const turtle = properties.indexOf(name) + 1
   const isGlobal = (routine.index > 0) ? (routine.globals.indexOf(name) > -1) : false
-  if (turtle > 0) return { turtle, type: 'integer' }
+  if (turtle > 0) return { turtle, fulltype: { type: 'integer' } }
   if (isGlobal) return something(module.exports.program(routine), 'variables', name, language)
   return something(routine, 'variables', name, language)
 }

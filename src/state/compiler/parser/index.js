@@ -1,5 +1,4 @@
-/* compiler/parser
-----------------------------------------------------------------------------------------------------
+/*
 lexemes go in, array of routines comes out; the first element of the array is the main PROGRAM, and
 any subsequent elements are its SUBROUTINES, in the order in which they need to be compiled
 
@@ -8,13 +7,36 @@ look at the tools/factory module to see what the PROGRAM and SUBROUTINE objects 
 this analyses the structure of the program, and builds up lists of all the constants, variables, and
 subroutines (with their variables and parameters) - lexemes for the program (and any subroutine)
 code themselves are just stored for subsequent handling by the pcoder
-----------------------------------------------------------------------------------------------------
 */
 
-// global imports
-const { atoms, factory, find } = require('../tools')
+module.exports = (lexemes, language) => {
+  const routines = parsers[language](lexemes)
+  const program = routines[0]
+  const subroutines = routines.slice(1)
+  if (language === 'BASIC') {
+    // determine function return types
+    // TODO
+  }
+  if (language === 'Python') {
+    // determine variable types recursively (start at main program, then work through subroutines)
+    determineVariableTypes(routines, 0)
+    // determine parameter types recursively (start at last subroutine, then work backwards)
+    if (routines.length > 1) determineParameterTypes(routines, routines.length - 1)
+    // throw errors if any types could not be determined
+    const first = untypedVariable(routines)
+    if (first) {
+      throw error('Could not detetermine type of variable {lex}.', first.lexeme)
+    }
+  }
+  // now do some final calculations
+  routines.forEach(fixVariableMemory)
+  program.turtleAddress = turtleAddress(subroutines)
+  // and return the array of routines
+  return routines
+}
 
-// local imports
+// dependencies
+const { error, molecules, factory, find } = require('../tools')
 const parsers = {
   BASIC: require('./basic'),
   Pascal: require('./pascal'),
@@ -43,7 +65,7 @@ const determineVariableTypes = (routines, index) => {
           // expecting an expression whose type we can figure out
           if (lexemes[lex]) {
             try {
-              expression = atoms.expression(routine, lex, 'null', 'null', 'Python')
+              expression = molecules.expression(routine, lex, 'null', 'null', 'Python')
               variable.fulltype = factory.fulltype(expression.type)
               lex = expression.lex
             } catch (ignore) {
@@ -60,7 +82,7 @@ const determineVariableTypes = (routines, index) => {
       lex += 1
       if (lexemes[lex]) {
         try {
-          expression = atoms.expression(routine, lex, 'null', 'null', 'Python')
+          expression = molecules.expression(routine, lex, 'null', 'null', 'Python')
           variable.fulltype = factory.fulltype(expression.type)
           lex = expression.lex
         } catch (ignore) {
@@ -102,19 +124,16 @@ const determineParameterTypes = function (routines, index) {
   // do what we can with the current routine
   while (lex < lexemes.length) {
     if (lexemes[lex].type === 'identifier') {
-      command = find.custom(routine, lexemes[lex].string, 'Python')
+      command = find.custom(routine, lexemes[lex].content, 'Python')
       if (command && (command.parameters.length > 0)) {
         par = 0
         // move past open bracket
         lex += 2
         while (par < command.parameters.length) {
           try {
-            expression = atoms.expression(routine, lex, 'null', 'null', 'Python')
-            if (command.parameters[par].type === 'boolint') {
-              command.parameters[par].type = expression.type
-              if (expression.type === 'str') {
-                command.parameters[par].length = 34
-              }
+            expression = molecules.expression(routine, lex, 'null', 'null', 'Python')
+            if (command.parameters[par].fulltype === null) {
+              command.parameters[par].fulltype = factory.fulltype(expression.type)
             }
             lex = expression.lex + 1 // move past comma or right bracket
           } catch (ignore) {
@@ -133,6 +152,12 @@ const determineParameterTypes = function (routines, index) {
   } else {
     return determineParameterTypes(routines, index - 1)
   }
+}
+
+// find the first untyped variable
+const untypedVariable = (routines) => {
+  const variables = routines.reduce((sofar, current) => sofar.concat(current.variables), [])
+  return variables.find(x => x.fulltype === null)
 }
 
 // set the address of the variables for a routine, and determine how much memory it needs
@@ -159,28 +184,3 @@ const subroutinePointers = subroutines =>
 // get the address of the turtle global variable (offset by the pointers)
 const turtleAddress = subroutines =>
   basePointers + subroutinePointers(subroutines)
-
-// the main parser function
-const parser = (lexemes, language) => {
-  const routines = parsers[language](lexemes)
-  const program = routines[0]
-  const subroutines = routines.slice(1)
-  if (language === 'BASIC') {
-    // determine function return types
-    // TODO
-  }
-  if (language === 'Python') {
-    // determine variable types recursively (start at main program, then work through subroutines)
-    determineVariableTypes(routines, 0)
-    // determine parameter types recursively (start at last subroutine, then work backwards)
-    if (routines.length > 1) determineParameterTypes(routines, routines.length - 1)
-  }
-  // now do some final calculations
-  routines.forEach(fixVariableMemory)
-  program.turtleAddress = turtleAddress(subroutines)
-  // and return the array of routines
-  return routines
-}
-
-// exports
-module.exports = parser

@@ -1,61 +1,65 @@
-/* compiler/coder/python
---------------------------------------------------------------------------------
-called by coder; lexemes making up the molecules of a routine go in, inner
-pcode for that routine comes out
---------------------------------------------------------------------------------
+/*
+coder for Turtle Python
+
+this function compiles a "command structure" for Turtle Python
+
+a command structure is either a single command (i.e. a variable assignment or a procedure call) or
+some more complex structure (conditional, loop) containing a series of such commands; in the latter
+case, the exported function calls itself recusrively, allowing for structures of indefinite
+complexity
+
+a program or subroutine is a sequence of command structures; this function comiles a single one,
+returning the pcode and the index of the next lexeme - the function calling this function (in the
+main coder module) loops through the lexemes until all command structures have been compiled
 */
 
-// local imports
-const { molecules, find, pcoder } = require('../tools')
+module.exports = (routine, lex, startLine) => {
+  switch (routine.lexemes[lex].type) {
+    // identifiers (variable assignment or procedure call)
+    case 'turtle': // fallthrough
+    case 'identifier':
+      // wrong assignment operator
+      if (routine.lexemes[lex + 1] && (routine.lexemes[lex + 1].content === '==')) {
+        throw error('Variable assignment in Python uses "=", not "==".', routine.lexemes[lex + 1])
+      }
 
-// create an error message
-const message = (id) => {
-  switch (id) {
+      // right assignment operator
+      if (routine.lexemes[lex + 1] && (routine.lexemes[lex + 1].content === '=')) {
+        return molecules.variableAssignment(routine, routine.lexemes[lex].content, lex + 2, 'Python')
+      }
+
+      // otherwise it should be a procedure call
+      return molecules.procedureCall(routine, lex, 'Python')
+
+    // keywords
+    case 'keyword':
+      switch (routine.lexemes[lex].content) {
+        // return (assign return variable of a function)
+        case 'return':
+          return molecules.variableAssignment(routine, 'return', lex + 1, 'Python')
+
+        // start of IF structure
+        case 'if':
+          return compileIf(routine, lex + 1, startLine)
+
+        // start of FOR structure
+        case 'for':
+          return compileFor(routine, lex + 1, startLine)
+
+        // start of WHILE structure
+        case 'while':
+          return compileWhile(routine, lex + 1, startLine)
+      }
+      break
+
+    // any thing else is a mistake
     default:
-      return id
+      throw error('{lex} makes no sense here.', routine.lexemes[lex])
   }
 }
 
-// create an error object
-const error = (messageId, lexeme) =>
-  ({ messageId, message: message(messageId), lexeme })
-
-// check lexeme is on the same line as previous
-const isSameLine = (lexemes, lex) =>
-  (lexemes[lex].line === lexemes[lex - 1].line)
-
-// check lexeme has a certain type and is on the same line as previous
-const isSameLineType = (lexemes, lex, type) =>
-  isSameLine(lexemes, lex) && (lexemes[lex].type === type)
-
-// check lexeme has a certain content and is on the same line as previous
-const isSameLineContent = (lexemes, lex, content) =>
-  isSameLine(lexemes, lex) && (lexemes[lex].content === content)
-
-// check lexeme is indented more than the previous one
-const isIndented = (lexemes, lex) =>
-  (lexemes[lex].offset > lexemes[lex - 1].offset)
-
-// generate the pcode for a block (i.e. a sequence of commands/structures)
-const block = (routine, lex, startLine, offset) => {
-  const lexemes = routine.lexemes
-  let pcode = []
-  let pcodeTemp
-  let end = false
-  // expecting something
-  if (!lexemes[lex]) throw error('blockNothing', lexemes[lex - 1])
-  // loop through until the end of the block (or we run out of lexemes)
-  while (!end && (lex < lexemes.length)) {
-    end = (lexemes[lex].offset < offset)
-    if (!end) {
-      // compile the structure
-      pcodeTemp = pcode
-      ;({ lex, pcode } = coder(routine, lex, startLine + pcode.length))
-      pcode = pcodeTemp.concat(pcode)
-    }
-  }
-  return { lex, pcode }
-}
+// dependencies
+const { error, molecules, find, pcoder } = require('../tools')
 
 // generate the pcode for an IF structure
 const compileIf = (routine, lex, startLine) => {
@@ -210,7 +214,7 @@ const compileWhile = (routine, lex, startLine) => {
   // expecting a boolean expression on the same line
   if (!lexemes[lex]) throw error('while01')
   if (!isSameLine(lexemes, lex)) throw error('while02')
-  result = molecules.expression(routine, lex, 'null', 'bool', 'Python')
+  result = molecules.expression(routine, lex, 'null', 'boolean', 'Python')
   lex = result.lex
   test = result.pcode[0]
   // now expecting a colon on the same line
@@ -228,52 +232,39 @@ const compileWhile = (routine, lex, startLine) => {
   return { lex, pcode: pcoder.whileLoop(startLine, test, innerCode) }
 }
 
-/**
- * generate the pcode for a command structure
- *
- * a command structure is either a single command (variable assignment or // procedure call) or some
- * more complex structure (if, for, while, etc.) containing a series of such single molecules
- * in the latter case, the function for dealing with the more complex structure calls this function
- * again, potentially recursively, allowing for structures of indefinite complexity
- */
-const coder = (routine, lex, startLine) => {
-  const lexemes = routine.lexemes
-  let variable
-  switch (lexemes[lex].type) {
-    // identifiers (assignment or procedure call)
-    case 'turtle': // fallthrough
-    case 'identifier':
-      // wrong assignment operator
-      if (lexemes[lex + 1] && (lexemes[lex + 1].content === '==')) throw error('cmd01')
-      if (lexemes[lex + 1] && (lexemes[lex + 1].content === '=')) {
-        // right assignment operator
-        variable = find.variable(routine, lexemes[lex].content, 'Python')
-        return molecules.variableAssignment(routine, variable, lex + 2, 'Python')
-      }
-      // otherwise it should be a procedure call
-      return molecules.procedureCall(routine, lex, 'Python')
-    // keywords
-    case 'keyword':
-      switch (lexemes[lex].content) {
-        // return (assign return variable of a function)
-        case 'return':
-          variable = find.variable(routine, 'return', 'Python')
-          return molecules.variableAssignment(routine, variable, lex + 1, 'Python')
-        // start of IF structure
-        case 'if':
-          return compileIf(routine, lex + 1, startLine)
-        // start of FOR structure
-        case 'for':
-          return compileFor(routine, lex + 1, startLine)
-        // start of WHILE structure
-        case 'while':
-          return compileWhile(routine, lex + 1, startLine)
-      }
-      break
-    // any thing else is a mistake
-    default:
-      throw error('cmd02', 'cmdWeird', lexemes[lex])
-  }
-}
+// check lexeme is on the same line as previous
+const isSameLine = (lexemes, lex) =>
+  (lexemes[lex].line === lexemes[lex - 1].line)
 
-module.exports = coder
+// check lexeme has a certain type and is on the same line as previous
+const isSameLineType = (lexemes, lex, type) =>
+  isSameLine(lexemes, lex) && (lexemes[lex].type === type)
+
+// check lexeme has a certain content and is on the same line as previous
+const isSameLineContent = (lexemes, lex, content) =>
+  isSameLine(lexemes, lex) && (lexemes[lex].content === content)
+
+// check lexeme is indented more than the previous one
+const isIndented = (lexemes, lex) =>
+  (lexemes[lex].offset > lexemes[lex - 1].offset)
+
+// generate the pcode for a block (i.e. a sequence of commands/structures)
+const block = (routine, lex, startLine, offset) => {
+  const lexemes = routine.lexemes
+  let pcode = []
+  let pcodeTemp
+  let end = false
+  // expecting something
+  if (!lexemes[lex]) throw error('blockNothing', lexemes[lex - 1])
+  // loop through until the end of the block (or we run out of lexemes)
+  while (!end && (lex < lexemes.length)) {
+    end = (lexemes[lex].offset < offset)
+    if (!end) {
+      // compile the structure
+      pcodeTemp = pcode
+      ;({ lex, pcode } = module.exports(routine, lex, startLine + pcode.length))
+      pcode = pcodeTemp.concat(pcode)
+    }
+  }
+  return { lex, pcode }
+}

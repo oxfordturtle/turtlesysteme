@@ -13,6 +13,7 @@ module.exports.init = () => {
 // function to show the modal
 module.exports.show = (error) => {
   console.log(error)
+  if (error.lexeme) console.log(error.lexeme)
   if (error.type) {
     // custom error
     title.innerHTML = `${error.type} Error`

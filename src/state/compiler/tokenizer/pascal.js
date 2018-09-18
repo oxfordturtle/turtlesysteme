@@ -5,7 +5,7 @@ splits code into lexemes and whitespace used by the code highlighting module and
 */
 
 module.exports = (code) => {
-  let tokens = []
+  const tokens = []
   while (code.length > 0) {
     let token = linebreak(code) ||
       spaces(code) ||
@@ -61,7 +61,7 @@ const operator = (code) => {
 
 // punctuation
 const punctuation = (code) => {
-  const test = code.match(/^(\(|\)|\[|\]|,|:||\.\.|\.)/)
+  const test = code.match(/^(\(|\)|\[|\]|,|:|;|\.\.|\.)/)
   return test ? { type: 'punctuation', content: test[0] } : false
 }
 

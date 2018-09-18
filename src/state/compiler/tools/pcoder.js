@@ -12,7 +12,7 @@ module.exports.merge = (pcode1, pcode2) =>
 module.exports.mergeWithOperator = (sofar, next, operator) => {
   const pcode2 = module.exports.merge(sofar, next.pcode)
   const pcode3 = module.exports.merge(pcode2, [pc[operator]])
-  return Object.merge(next, { pcode: pcode3 })
+  return Object.assign(next, { pcode: pcode3 })
 }
 
 // pcode for loading a literal value onto the stack
@@ -235,10 +235,26 @@ module.exports.whileLoop = (startLine, test, innerCode) => {
 
 // pcode for a subroutine
 module.exports.subroutine = (routine, innerCode) => {
-  const startCode = subroutineStartCode(routine)
+  const startCode = module.exports.subroutineStartCode(routine)
   const endCode = subroutineEndCode(routine)
 
   return startCode.concat(innerCode).concat(endCode)
+}
+
+// pcode for the start of a subroutine (exported so that the coder can determine its length)
+module.exports.subroutineStartCode = (routine) => {
+  const firstLine = [[pc.pssr, routine.index]]
+  const firstTwoLines = firstLine.concat(initialiseSubroutineMemory(routine))
+
+  if (routine.variables.length > 0 && routine.parameters.length > 0) {
+    return firstTwoLines.concat(loadSubroutineArguments(routine))
+  }
+
+  if (routine.variables.length > 0) {
+    return firstTwoLines
+  }
+
+  return firstLine
 }
 
 // pcode for the main program
@@ -317,22 +333,6 @@ const loadSubroutineArguments = (routine) => {
   }
 
   return result
-}
-
-// pcode for the start of a subroutine
-const subroutineStartCode = (routine) => {
-  const firstLine = [[pc.pssr, routine.index]]
-  const firstTwoLines = firstLine.concat(initialiseSubroutineMemory(routine))
-
-  if (routine.variables.length > 0 && routine.parameters.length > 0) {
-    return firstTwoLines.concat(loadSubroutineArguments(routine))
-  }
-
-  if (routine.variables.length > 0) {
-    return firstTwoLines
-  }
-
-  return firstLine
 }
 
 // pcode for the end of a subroutine

@@ -43,9 +43,10 @@ module.exports.constant = (name, type, value) =>
   ({ name, type, value })
 
 // create variable (and parameter) object
-module.exports.variable = (name, routine, byref = false) =>
+module.exports.variable = (lexeme, routine, byref = false) =>
   ({
-    name,
+    name: lexeme.content,
+    lexeme, // keep this around in case type cannot be deduced and an error message is needed
     routine,
     byref: byref, // true only for parameters (potentially)
     index: null, // fixed later by the main parser module

@@ -10,7 +10,7 @@ module.exports.literal = (lexemes, lex, needed) => {
   const { type, value } = lexemes[lex]
 
   // check this type is ok (will throw an error if not)
-  check(needed, type, 'atoms00', lexemes[lex])
+  check(needed, type, lexemes[lex])
 
   // return the stuff
   return (type === 'char' && needed === 'string')
@@ -24,7 +24,7 @@ module.exports.input = (lexemes, lex, needed, language) => {
 
   if (hit) {
     // check the type is ok (will throw an error if not)
-    check(needed, hit.type, 'atoms01', lexemes[lex])
+    check(needed, hit.type, lexemes[lex])
 
     // return the stuff
     return { type: 'integer', lex: lex + 1, pcode: [pcoder.loadInputValue(hit)] }
@@ -38,7 +38,7 @@ module.exports.constant = (routine, lex, needed, language) => {
 
   if (hit) {
     // check the type is ok (will throw an error if not)
-    check(needed, hit.type, 'atoms02', lexemes[lex])
+    check(needed, hit.type, lexemes[lex])
 
     // return the stuff
     return { type: hit.type, lex: lex + 1, pcode: [pcoder.loadLiteralValue(hit.type, hit.value)] }
@@ -52,7 +52,7 @@ module.exports.variable = (routine, lex, needed, language) => {
 
   if (hit) {
     // check the type is okay (will throw an error if not)
-    check(needed, hit.fulltype.type, 'atoms03', lexemes[lex])
+    check(needed, hit.fulltype.type, lexemes[lex])
 
     // return the stuff
     return { type: hit.fulltype.type, lex: lex + 1, pcode: [pcoder.loadVariableValue(hit)] }
@@ -66,7 +66,7 @@ module.exports.colour = (routine, lex, needed, language) => {
 
   if (hit) {
     // check the type is ok (will throw an error if not)
-    check(needed, 'integer', 'atoms04', lexemes[lex])
+    check(needed, 'integer', lexemes[lex])
 
     // return the stuff
     return { type: 'integer', lex: lex + 1, pcode: [pcoder.loadLiteralValue('integer', hit.value)] }
