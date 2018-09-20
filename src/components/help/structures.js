@@ -1,9 +1,24 @@
-/**
- * text for the structures help tab
- */
-const { element } = require('dom');
-const state = require('state');
-const { highlight } = state;
+/*
+Text for the structures help tab.
+*/
+
+// create the HTML element first
+const { element } = require('dom')
+const structures = element('div')
+
+// export the HTML element
+module.exports = structures
+
+// function to load the DIV with help text for the current language
+const refresh = (language) => {
+  const text = { BASIC, Pascal, Python }
+  structures.innerHTML = ''
+  text[language].forEach(x => structures.appendChild(x))
+}
+
+// dependencies
+const { highlight } = require('compiler')
+const state = require('state')
 
 // help text for Turtle BASIC
 const BASIC = [
@@ -35,8 +50,8 @@ const BASIC = [
   element('p', { content: `The &lsquo;Simple procedure&rsquo; example program does this, looping until the Turtle is pointing directly north (i.e., <code>${highlight('TURTD% = 0', 'BASIC')}</code>).` }),
   element('p', { content: 'Alternatively, you can loop through a sequence of commands while some condition is true (so that it stops when the condition becomes false):' }),
   element('pre', { content: `<code>${highlight('WHILE REM condition\n  REM sequence of commands\nENDWHILE', 'BASIC')}</code>` }),
-  element('p', { content: `Things that can be done with a <code>${highlight('REPEAT', 'BASIC')}</code> loop can equally be done with a <code>${highlight('WHILE', 'BASIC')}</code> loop (and vice-versa), but sometimes one is more natural than the other. Notice also that a <code>${highlight('REPEAT', 'BASIC')}</code> loop always executes the sequence of commands at least once, because it tests the condition at the end of the loop. But a <code>${highlight('WHILE', 'BASIC')}</code> loop tests the condition <em>before</em> executing the sequence of commands, and so will not execute them even once if condition is false to start with. (For examples of the various loops, see the second set of example programs, &lsquo;Further commands and structures&rsquo;.)` }),
-];
+  element('p', { content: `Things that can be done with a <code>${highlight('REPEAT', 'BASIC')}</code> loop can equally be done with a <code>${highlight('WHILE', 'BASIC')}</code> loop (and vice-versa), but sometimes one is more natural than the other. Notice also that a <code>${highlight('REPEAT', 'BASIC')}</code> loop always executes the sequence of commands at least once, because it tests the condition at the end of the loop. But a <code>${highlight('WHILE', 'BASIC')}</code> loop tests the condition <em>before</em> executing the sequence of commands, and so will not execute them even once if condition is false to start with. (For examples of the various loops, see the second set of example programs, &lsquo;Further commands and structures&rsquo;.)` })
+]
 
 // help text for Turtle Pascal
 const Pascal = [
@@ -69,8 +84,8 @@ const Pascal = [
   element('pre', { content: `<code>${highlight('repeat\n  {command1;}\n  {command2; (etc.)}\nuntil {condition}', 'Pascal')}</code>` }),
   element('p', { content: `<p>The &lsquo;Simple procedure&rsquo; example program does this, looping until the Turtle is pointing directly north (i.e., <code>${highlight('turtd = 0', 'Pascal')}</code>). Alternatively, you can loop through a sequence of commands while some condition is true (so that it stops when the condition becomes false):` }),
   element('pre', { content: `<code>${highlight('while {condition} do\n  begin\n    {sequence of commands}\n  end;', 'Pascal')}</code>` }),
-  element('p', { content: `Things that can be done with a &lsquo;<code>${highlight('repeat', 'Pascal')}</code> loop&rsquo; can equally be done with a &lsquo;<code>${highlight('while', 'Pascal')}</code> loop&rsquo; (and vice-versa), but sometimes one is more natural than the other. Notice also that a <code>${highlight('repeat', 'Pascal')}</code> loop always executes the sequence of commands at least once, because it tests the condition at the end of the loop. But a <code>${highlight('while', 'Pascal')}</code> loop tests the condition <em>before</em> executing the sequence of commands, and so will not execute them even once if condition is false to start with. (For examples of the various loops, see the second set of example programs, &lsquo;Further commands and structures&rsquo;.)` }),
-];
+  element('p', { content: `Things that can be done with a &lsquo;<code>${highlight('repeat', 'Pascal')}</code> loop&rsquo; can equally be done with a &lsquo;<code>${highlight('while', 'Pascal')}</code> loop&rsquo; (and vice-versa), but sometimes one is more natural than the other. Notice also that a <code>${highlight('repeat', 'Pascal')}</code> loop always executes the sequence of commands at least once, because it tests the condition at the end of the loop. But a <code>${highlight('while', 'Pascal')}</code> loop tests the condition <em>before</em> executing the sequence of commands, and so will not execute them even once if condition is false to start with. (For examples of the various loops, see the second set of example programs, &lsquo;Further commands and structures&rsquo;.)` })
+]
 
 // help text for Turtle Python
 const Python = [
@@ -102,24 +117,8 @@ const Python = [
   element('p', { content: 'The increment can be either 1 or -1. To count down through a loop, use an increment of -1.' }),
   element('p', { content: 'If instead of looping a specific number of times, you want to loop through some sequence of commands while some condition is true (so that it stops when the condition becomes false), then you can use:' }),
   element('pre', { content: `<code>${highlight('while condition:\n  # sequence of commands', 'Python')}</code>` }),
-  element('p', { content: `A <code>${highlight('while', 'Python')}</code> loop tests the condition <em>before</em> executing the sequence of commands, and so will not execute them even once if condition is false to start with. (For examples of the various loops, see the second set of example programs, &lsquo;Further commands and structures&rsquo;.)` }),
-];
-
-// associative array of help texts
-const text = { BASIC, Pascal, Python };
-
-// the structures DIV element
-const structures = element('div');
-
-// function to load the DIV with help text for the current language
-const refresh = (language) => {
-  structures.innerHTML = '';
-  text[language].forEach(x => structures.appendChild(x));
-};
+  element('p', { content: `A <code>${highlight('while', 'Python')}</code> loop tests the condition <em>before</em> executing the sequence of commands, and so will not execute them even once if condition is false to start with. (For examples of the various loops, see the second set of example programs, &lsquo;Further commands and structures&rsquo;.)` })
+]
 
 // load text for the current language, and register to keep it in sync with the application state
-refresh(state.getLanguage());
-state.on('language-changed', refresh);
-
-// export the structures DIV element
-module.exports = structures;
+state.on('language-changed', refresh)

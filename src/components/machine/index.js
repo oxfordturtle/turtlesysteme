@@ -1,36 +1,24 @@
-/**
- * the machine tabs; one set for the browser environment, and one for electron
- */
-const { tabs } = require('dom')
-const { canvas, console, memory, output } = require('state')
+/*
+The machine tabs.
+*/
+
+// create the HTML elements first
+const { show, tabs } = require('dom')
+const { canvas, console, memory, output } = require('machine')
 const settings = require('./settings')
-
-// settings tab
-const settingsTab = { label: 'Settings', active: false, content: [settings] }
-
-// other tabs
-const otherTabs = [
+const tabsSettings = [
+  { label: 'Settings', active: false, content: [settings] },
   { label: 'Canvas', active: true, content: [canvas, console] },
   { label: 'Output', active: false, content: [output] },
   { label: 'Memory', active: false, content: [memory] }
 ]
+const machine = tabs('tsx-system-tabs', tabsSettings)
 
-// all tabs (optionally including the settings tab)
-const allTabs = includeSettingsTab =>
-  (includeSettingsTab ? [settingsTab, ...otherTabs] : otherTabs)
+// export the root HTML element
+module.exports = machine
 
-// function to create the whole tabs div, with or without the file tab
-const machineTabs = (context) => {
-  switch (context) {
-    case 'browser':
-      return tabs('tsx-system-tabs', allTabs(true))
-    case 'electron':
-      return tabs('tsx-system-tabs', allTabs(false))
-  }
-}
+// dependencies
+const state = require('state')
 
-// expose the two sets of tabs
-module.exports = {
-  settings: settingsTab,
-  tabs: machineTabs
-}
+// respond to show settings request
+state.on('show-settings', show.bind(null, 'Settings'))

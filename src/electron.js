@@ -28,9 +28,6 @@ require('styles/main.scss')
 
 // fill the #tsx element with stuff, depending on the page
 switch (electron.remote.getCurrentWindow().page) {
-  case 'settings':
-    tsx.apendChild(machine.settings)
-    break
   case 'about':
     tsx.classList.add('tsx-help')
     tsx.appendChild(help.system)
@@ -43,22 +40,30 @@ switch (electron.remote.getCurrentWindow().page) {
     tsx.appendChild(tabs.tabs('tsx-top-tabs', [
       { label: 'Program',
         active: true,
-        content: [
-          system('electron'),
-          program.tabs('electron')
-        ] },
+        content: [system, program]
+      },
       { label: 'Machine',
         active: false,
-        content: [
-          controls('electron'),
-          machine.tabs('electron')
-        ] }
+        content: [controls, machine]
+      }
     ]))
     break
 }
 
 // pass ipcRenderer messages (from menu item clicks) onto the signals module
-state.signals.forEach((signal) => {
+const signals = [
+  'set-file',
+  'set-language',
+  'new-program',
+  'save-program',
+  'save-program-as',
+  'toggle-show-canvas',
+  'toggle-show-output',
+  'toggle-show-memory',
+  'show-settings',
+  'set-example'
+]
+signals.forEach((signal) => {
   electron.ipcRenderer.on(signal, (event, data) => state.send(signal, data))
 })
 

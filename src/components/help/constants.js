@@ -1,3 +1,10 @@
-const { element } = require('dom');
+/*
+Tables showing native colours, cursors, and fonts.
+*/
 
-module.exports = element('div', { content: 'constants' });
+// create the HTML elements first
+const { element } = require('dom')
+const constants = element('div', { content: 'constants' })
+
+// export the HTML element
+module.exports = constants

@@ -1,8 +1,9 @@
 /*
-the application components
+The application components.
 
-these are the HTML elements that make up the interface shown on the page
+These are the HTML elements that make up the interface shown on the page.
 */
+
 module.exports = {
   controls: require('./controls'),
   help: require('./help'),

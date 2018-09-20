@@ -1,67 +1,63 @@
-/**
- * the code editor component
- */
-const { element } = require('dom');
-const state = require('state');
+/*
+The code editor component.
+*/
 
-// define the main HTML elements for this component
-const ol = element('ol'); // for line numbers
-
-const code = element('code'); // for the highlighted code
-
-const pre = element('pre', { content: [code] }); // for the above code element
-
-const textarea = element('textarea', { // for the plain text input by the user
+// create the HTML elements first
+const { element } = require('dom')
+const numbers = element('ol') // for line numbers
+const prettyCode = element('code') // for the highlighted code
+const prettyWrapper = element('pre', { content: [prettyCode] }) // warpper for the highlighted code
+const handleTab = (event) => {
+  if (event.keyCode === 9) {
+    const pos = event.currentTarget.selectionStart
+    const left = event.currentTarget.value.slice(0, pos)
+    const right = event.currentTarget.value.slice(pos)
+    event.preventDefault()
+    event.currentTarget.value = [left, right].join('  ')
+    state.send('set-code', event.currentTarget.value)
+    event.currentTarget.selectionStart = pos + 2
+    event.currentTarget.selectionEnd = pos + 2
+  }
+}
+const plainCode = element('textarea', { // for capturing the user input
   wrap: 'off',
   spellcheck: 'false',
   autocapitalize: 'off',
   autocomplete: 'off',
   autocorrect: 'off',
   on: [
-    { // catch tab press on keydown, and insert spaces instead of losing focus
-      type: 'keydown',
-      callback: (e) => {
-        if (e.keyCode === 9) {
-          const pos = e.currentTarget.selectionStart;
-          const left = e.currentTarget.value.slice(0, pos);
-          const right = e.currentTarget.value.slice(pos);
-          e.preventDefault();
-          e.currentTarget.value = [left, right].join('  ');
-          state.send('set-code', e.currentTarget.value);
-          e.currentTarget.selectionStart = pos + 2;
-          e.currentTarget.selectionEnd = pos + 2;
-        }
-      }
-    },
-    { // send 'set-code' signal on input
-      type: 'input',
-      callback: (e) => { state.send('set-code', e.currentTarget.value); }
-    }
+    { type: 'keydown', callback: handleTab },
+    { type: 'input', callback: (e) => { state.send('set-code', e.currentTarget.value) } }
   ]
-});
+})
+const code = element('div', { classes: ['tsx-code'], content: [plainCode, numbers, prettyWrapper] })
+
+// export the HTML element
+module.exports = code
+
+// dependencies
+const state = require('state')
+const { highlight } = require('compiler')
 
 // function to refresh the textarea
-const refreshTextarea = (text) => {
-  textarea.value = text;
-  textarea.style.height = `${ol.scrollHeight.toString(10)}px`;
-  textarea.style.width = `${pre.scrollWidth.toString(10)}px`;
-};
+const refreshPlain = (text) => {
+  plainCode.value = text
+  plainCode.style.height = `${numbers.scrollHeight.toString(10)}px`
+  plainCode.style.width = `${prettyWrapper.scrollWidth.toString(10)}px`
+}
 
 // function to synchronise the component with the application state
-const refresh = (text, language = state.getLanguage()) => {
-  const lines = text.split('\n');
-  ol.innerHTML = lines.map((x, y) => `<li>${(y + 1).toString(10)}</li>`).join('');
-  code.innerHTML = state.highlight(text, language);
-  window.requestAnimationFrame(refreshTextarea.bind(null, text));
-};
+const refresh = ({ code, language }) => {
+  const lines = code.split('\n')
+  numbers.innerHTML = lines.map((x, y) => `<li>${(y + 1).toString(10)}</li>`).join('')
+  prettyCode.innerHTML = highlight(code, language)
+  window.requestAnimationFrame(refreshPlain.bind(null, code))
+}
 
-// synchronise with the current state, and subscribe to 'code-changed' reply to keep it in sync
-refresh(state.getCode(), state.getLanguage());
-state.on('code-changed', refresh);
+// synchronise with the application state
+state.on('code-changed', refresh)
 
-// the exposed div, wrapping up all the above elements
-const div = element('div', { classes: ['tsx-code'], content: [textarea, ol, pre] });
-state.on('file-changed', () => { div.scrollTop = 0; div.scrollLeft = 0; });
-
-// expose the HTML element for this component
-module.exports = div;
+state.on('file-changed', () => {
+  code.scrollTop = 0
+  code.scrollLeft = 0
+})

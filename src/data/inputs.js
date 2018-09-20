@@ -5,9 +5,9 @@ array of input codes
 const input = (name, value) =>
   ({
     names: {
-      basic: name.toUpperCase(),
-      pascal: name,
-      python: name
+      BASIC: name.toUpperCase(),
+      Pascal: name,
+      Python: name
     },
     value
   })

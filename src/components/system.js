@@ -1,42 +1,31 @@
-/**
- * the sytem control bar
- *
- * basic system controls shown above the program tabs; includes current filename and language
- * select menu (the latter in the browser only)
- */
-const { languages } = require('data');
-const { element } = require('dom');
-const state = require('state');
+/*
+The sytem control bar.
 
-// define the main HTML elements for this component (content depends on current application state)
+Basic system controls shown above the program tabs; includes current filename and language select
+menu. N.B. The latter is hidden by CSS rules in the Electron version, but might as well be included
+anyway to make this module simpler.
+*/
+
+// create the HTML elements first
+const { element } = require('dom')
+const { languages } = require('data')
 const nameInput = element('input', {
   type: 'text',
   placeholder: 'filename',
-  value: state.getName(),
-  on: [{ type: 'input', callback: (e) => { state.send('set-name', e.currentTarget.value); } }]
-});
-
+  on: [{ type: 'input', callback: (e) => { state.send('set-name', e.currentTarget.value) } }]
+})
 const languageSelect = element('select', {
   content: languages.map(language => element('option', { content: language, value: language })),
-  value: state.getLanguage(),
-  on: [{ type: 'change', callback: (e) => { state.send('set-language', e.currentTarget.value); } }]
-});
+  on: [{ type: 'change', callback: (e) => { state.send('set-language', e.currentTarget.value) } }]
+})
+const system = element('div', { classes: ['tsx-controls'], content: [nameInput, languageSelect] })
 
-// the system DIV
-const system = (context) => {
-  switch (context) {
-    case 'help':
-      return element('div', { classes: ['tsx-controls'], content: [languageSelect] });
-    case 'browser':
-      return element('div', { classes: ['tsx-controls'], content: [nameInput, languageSelect]});
-    case 'electron':
-      return element('div', { classes: ['tsx-controls'], content: [nameInput]});
-  }
-};
+// export the root HTML element
+module.exports = system
+
+// dependencies
+const state = require('state')
 
 // subscribe to keep the elements in sync with the application state
-state.on('name-changed', (name) => { nameInput.value = name; });
-state.on('language-changed', (language) => { languageSelect.value = language; });
-
-// export the system DIV element
-module.exports = system;
+state.on('name-changed', (name) => { nameInput.value = name })
+state.on('language-changed', (language) => { languageSelect.value = language })

@@ -1,45 +1,27 @@
-/**
- * the program tabs; one set for the browser environment, and one for electron
- */
+/*
+The program tabs. N.B. The CSS rules for the Electron version hide the file tab (whose functionality
+is handled instead by the application menu); but to keep this code simple it might as well be
+included invisibly.
+*/
 
-// global imports
+// create the HTML elements first
 const { show, tabs } = require('dom')
-const state = require('state')
-
-// loval imports
 const file = require('./file')
 const code = require('./code')
 const usage = require('./usage')
 const pcode = require('./pcode')
-
-// file tab
-const fileTab = { label: 'File', active: false, content: [file] }
-
-// other tabs
-const otherTabs = [
+const program = tabs('tsx-system-tabs', [
+  { label: 'File', active: false, content: [file] },
   { label: 'Code', active: true, content: [code] },
   { label: 'Usage', active: false, content: [usage] },
   { label: 'PCode', active: false, content: [pcode.options, pcode.table] }
-]
+])
 
-// all tabs (optionally including the file tab)
-const allTabs = includeFileTab =>
-  (includeFileTab ? [fileTab, ...otherTabs] : otherTabs)
+// export the root HTML element
+module.exports = program
 
-// register to show Code tab when file changes
+// dependencies
+const state = require('state')
+
+// register to show code tab when file changes
 state.on('file-changed', show.bind(null, 'Code'))
-
-// program tabs (with or without file tab)
-const programTabs = (context) => {
-  switch (context) {
-    case 'browser':
-      return tabs('tsx-system-tabs', allTabs(true))
-    case 'electron':
-      return tabs('tsx-system-tabs', allTabs(false))
-  }
-}
-
-// expose a function to create the whole div, with content relative to the context
-module.exports = {
-  tabs: programTabs
-}

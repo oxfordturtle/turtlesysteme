@@ -1,41 +1,27 @@
-/**
- * the machine control bar
- *
- * a RUN/HALT button, a PLAY/PAUSE button, and a display of the current turtle properties
- */
+/*
+The machine control bar: a RUN/HALT button, a PLAY/PAUSE button, and a display showing the current
+Turtle properties.
+*/
+
+// create the elements first
 const { element, hex } = require('dom')
-const state = require('state')
-
-// functions for interacting with the machine (via state)
-const run = state.send.bind(null, 'compile-code', true)
-
-const halt = state.send.bind(null, 'machine-halt')
-
-const playPause = state.send.bind(null, 'machine-play-pause')
-
-// buttons for interacting with the machine
-const runOrHaltButton = element('button', {
+const run = () => { state.send('compile-code', true) }
+const halt = () => { state.send('machine-halt') }
+const playPause = () => { state.send('machine-play-pause') }
+const runHaltButton = element('button', {
   content: 'RUN',
   classes: ['tsx-run-halt-button'],
   on: [{ type: 'click', callback: run }]
 })
-
-const playOrPauseButton = element('button', {
+const playPauseButton = element('button', {
   content: '&#10074;&#10074;',
   classes: ['tsx-play-pause-button']
 })
-
-// current turtle properties display
 const turtx = element('dd', { classes: ['tsx-turtxy'], content: '500' })
-
 const turty = element('dd', { classes: ['tsx-turtxy'], content: '500' })
-
 const turtd = element('dd', { classes: ['tsx-turtd'], content: '0' })
-
 const turtt = element('dd', { classes: ['tsx-turttc'], content: '2' })
-
 const turtc = element('dd', { classes: ['tsx-turttc'], style: 'background-color:#000;' })
-
 const turtleDisplay = element('dl', {
   classes: ['tsx-turtle-properties'],
   content: [
@@ -51,30 +37,45 @@ const turtleDisplay = element('dl', {
     turtc
   ]
 })
+const controls = element('div', {
+  classes: ['tsx-controls'],
+  content: [runHaltButton, playPauseButton, turtleDisplay]
+})
+
+// expose the root HTML element
+module.exports = controls
+
+// dependencies
+const state = require('state')
 
 // subscribe to keep buttons in sync with the machine state
 state.on('machine-started', () => {
-  runOrHaltButton.innerHTML = 'HALT'
-  runOrHaltButton.removeEventListener('click', run)
-  runOrHaltButton.addEventListener('click', halt)
-  playOrPauseButton.innerHTML = '&#10074;&#10074;'
-  playOrPauseButton.addEventListener('click', playPause)
+  runHaltButton.innerHTML = 'HALT'
+  runHaltButton.removeEventListener('click', run)
+  runHaltButton.addEventListener('click', halt)
+  playPauseButton.innerHTML = '&#10074;&#10074;'
+  playPauseButton.addEventListener('click', playPause)
+  turtx.innerHTML = '500'
+  turty.innerHTML = '500'
+  turtd.innerHTML = '0'
+  turtt.innerHTML = '2'
+  turtc.style = 'background-color:#000'
 })
 
 state.on('machine-stopped', () => {
-  runOrHaltButton.innerHTML = 'RUN'
-  runOrHaltButton.removeEventListener('click', halt)
-  runOrHaltButton.addEventListener('click', run)
-  playOrPauseButton.innerHTML = '&#10074;&#10074;'
-  playOrPauseButton.removeEventListener('click', playPause)
+  runHaltButton.innerHTML = 'RUN'
+  runHaltButton.removeEventListener('click', halt)
+  runHaltButton.addEventListener('click', run)
+  playPauseButton.innerHTML = '&#10074;&#10074;'
+  playPauseButton.removeEventListener('click', playPause)
 })
 
 state.on('machine-played', () => {
-  playOrPauseButton.innerHTML = '&#10074;&#10074;'
+  playPauseButton.innerHTML = '&#10074;&#10074;'
 })
 
 state.on('machine-paused', () => {
-  playOrPauseButton.innerHTML = '&#9658;'
+  playPauseButton.innerHTML = '&#9658;'
 })
 
 // subscribe to keep the turtle property display in sync with machine state
@@ -99,16 +100,3 @@ state.on('turtle-changed', ({ property, value }) => {
       break
   }
 })
-
-/**
- * the controls DIV (written as if different for different contexts, to match the other components,
- * although in fact this component is the same for all contexts)
- */
-const controls = content =>
-  element('div', {
-    classes: ['tsx-controls'],
-    content: [runOrHaltButton, playOrPauseButton, turtleDisplay]
-  })
-
-// expose the controls DIV
-module.exports = controls

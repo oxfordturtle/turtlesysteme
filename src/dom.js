@@ -4,9 +4,6 @@ application (these are inserted into the page an initialised by the entry module
 module has functions for initialising them)
 */
 
-// the overlay (for the modal popup)
-module.exports.overlay = document.createElement('div')
-
 // a pre-filled HTML element, with specified content and attributes
 module.exports.element = (type, options = {}) => {
   // create the element
@@ -21,14 +18,22 @@ module.exports.element = (type, options = {}) => {
         if (typeof options.content === 'string') {
           el.innerHTML = options.content
         } else {
-          options.content.forEach(child => el.appendChild(child))
+          options.content.forEach(child => {
+            if (typeof child === 'string') {
+              el.appendChild(document.createTextNode(child))
+            } else {
+              el.appendChild(child)
+            }
+          })
         }
         break
       case 'value':
         el.value = options.value
         break
       case 'on':
-        options.on.forEach(e => el.addEventListener(e.type, e.callback))
+        options.on.forEach(e => {
+          el.addEventListener(e.type, e.callback)
+        })
         break
       default:
         el.setAttribute(key, options[key])

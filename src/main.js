@@ -23,7 +23,6 @@ const development = true
 
 // keep global references of the window objects to avoid garbage collection
 let systemWindow
-let settingsWindow
 let helpWindow
 let aboutWindow
 
@@ -50,12 +49,6 @@ const createWindow = (width, height, page, showMenu, resizable) => {
 const createSystemWindow = () => {
   systemWindow = createWindow(1024, 700, 'system', true, true)
   systemWindow.on('closed', () => { systemWindow = null })
-}
-
-// function for creating the settings window
-const createSettingsWindow = () => {
-  settingsWindow = createWindow(500, 580, 'settings', false, false)
-  settingsWindow.on('closed', () => { settingsWindow = null })
 }
 
 // function for creating the help window
@@ -109,14 +102,6 @@ const showAboutWindow = () => {
     aboutWindow.focus()
   } else {
     createAboutWindow()
-  }
-}
-
-const showSettingsWindow = () => {
-  if (settingsWindow) {
-    settingsWindow.focus()
-  } else {
-    createSettingsWindow()
   }
 }
 
@@ -201,7 +186,7 @@ const optionsMenu = {
     { type: 'separator' },
     {
       label: 'More machine options',
-      click: showSettingsWindow
+      click: () => systemWindow.webContents.send('show-settings')
     }
   ]
 }

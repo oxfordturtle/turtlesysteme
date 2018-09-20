@@ -1,9 +1,24 @@
-/**
- * text for the user input help tab
- */
-const { element } = require('dom');
-const state = require('state');
-const { highlight } = state;
+/*
+Text for the user input help tab.
+*/
+
+// create the HTML element first
+const { element } = require('dom')
+const input = element('div')
+
+// export the HTML element
+module.exports = input
+
+// function to load the DIV with help text for the current language
+const refresh = (language) => {
+  const text = { BASIC, Pascal, Python }
+  input.innerHTML = ''
+  text[language].forEach(x => input.appendChild(x))
+}
+
+// dependencies
+const { highlight } = require('compiler')
+const state = require('state')
 
 // help text for Turtle BASIC
 const BASIC = [
@@ -12,16 +27,18 @@ const BASIC = [
   element('h4', { content: 'Mouse Position Detection' }),
   element('p', { content: `The x- and y-coordinates of the mouse&rsquo;s current position can be found at any time by using the special global variables <code>${highlight('?MOUSEX', 'BASIC')}</code> and <code>${highlight('?MOUSEY', 'BASIC')}</code> – these do not require the mouse to be clicked.` }),
   element('h4', { content: 'Mouse Click Detection' }),
-  element ('p', { content: `When a mouse click is performed, the x- and y-coordinates of the click position are remembered by the variables <code>${highlight('?CLICKX', 'BASIC')}</code> and <code>${highlight('?CLICKY', 'BASIC')}</code>. However to identify the type of click, use the variable <code>${highlight('?CLICK', 'BASIC')}</code>, which is initially set to a value of -1, but after any click has taken place is set to a numerical value of 128 plus additions as follows:` }),
-  element('table', { classes: ['tsx-help-table'], content: [
-    element('tr', { content: '<td>1</td><td>if the click was with the left mouse button</td>' }),
-    element('tr', { content: '<td>2</td><td>if the click was with the right mouse button</td>' }),
-    element('tr', { content: '<td>4</td><td>if the click was with the middle mouse button</td>' }),
-    element('tr', { content: '<td>8</td><td>if the <kbd>shift</kbd> key was held down while clicking</td>' }),
-    element('tr', { content: '<td>16</td><td>if the <kbd>alt</kbd> key was held down while clicking</td>' }),
-    element('tr', { content: '<td>32</td><td>if the <kbd>ctrl</kbd> key was held down while clicking</td>' }),
-    element('tr', { content: '<td>64</td><td>if it was a double-click</td>' }),
-  ] }),
+  element('p', { content: `When a mouse click is performed, the x- and y-coordinates of the click position are remembered by the variables <code>${highlight('?CLICKX', 'BASIC')}</code> and <code>${highlight('?CLICKY', 'BASIC')}</code>. However to identify the type of click, use the variable <code>${highlight('?CLICK', 'BASIC')}</code>, which is initially set to a value of -1, but after any click has taken place is set to a numerical value of 128 plus additions as follows:` }),
+  element('table', { classes: ['tsx-help-table'],
+    content: [
+      element('tr', { content: '<td>1</td><td>if the click was with the left mouse button</td>' }),
+      element('tr', { content: '<td>2</td><td>if the click was with the right mouse button</td>' }),
+      element('tr', { content: '<td>4</td><td>if the click was with the middle mouse button</td>' }),
+      element('tr', { content: '<td>8</td><td>if the <kbd>shift</kbd> key was held down while clicking</td>' }),
+      element('tr', { content: '<td>16</td><td>if the <kbd>alt</kbd> key was held down while clicking</td>' }),
+      element('tr', { content: '<td>32</td><td>if the <kbd>ctrl</kbd> key was held down while clicking</td>' }),
+      element('tr', { content: '<td>64</td><td>if it was a double-click</td>' })
+    ]
+  }),
   element('p', { content: `So if <code>${highlight('n% = ?CLICK', 'BASIC')}</code> makes <code>${highlight('n%', 'BASIC')}</code> equal to 137 (128+8+1), this indicates that a left-click is currently under way, with the <kbd>shift</kbd> key held down. When the click event is finished, the <code>${highlight('?CLICK', 'BASIC')}</code> value will become negative. Thus if <code>${highlight('?CLICK', 'BASIC')}</code> returns a value of -137, this indicates that the last click event – now finished – was <kbd>shift</kbd>+left; the coordinate position of that click can still be identified – until the next click takes place – as (<code>${highlight('?CLICKX', 'BASIC')}</code>, <code>${highlight('?CLICKY', 'BASIC')}</code>). On a left-click, the variable <code>${highlight('?LMOUSE', 'BASIC')}</code> records the relevant value (as calculated above); likewise <code>${highlight('?RMOUSE', 'BASIC')}</code> and <code>${highlight('?MMOUSE', 'BASIC')}</code> record any right-click or middle-click. Again, these are all made negative when the click is released, so an empty loop like:` }),
   element('pre', { content: `<code>${highlight('REPEAT\nUNTIL ?LMOUSE > 0', 'BASIC')}</code>` }),
   element('p', { content: `waits for a left-click with the mouse. Afterwards, <code>${highlight('?CLICKX', 'BASIC')}</code> and <code>${highlight('?CLICKY', 'BASIC')}</code> indicate where that click event occurred, and <code>${highlight('?CLICK', 'BASIC')}</code> can be queried using the bitwise <code>${highlight('AND', 'BASIC')}</code> operator to discover which special keys were pressed (e.g. <code>${highlight('IF (ABS(?CLICK) AND 8) > 0', 'BASIC')}</code> will test whether <kbd>shift</kbd> was being held down).` }),
@@ -33,8 +50,8 @@ const BASIC = [
   element('h4', { content: 'Keyboard Input' }),
   element('p', { content: `The system provides a <em>keyboard buffer</em> to store typed characters. Initially this is set to store up to 32 characters, but can be extended using e.g. <code>${highlight('KEYBUFFER(50)', 'BASIC')}</code>. To read from the buffer into a string, use e.g. <code>${highlight('s$ = GET$(10)', 'BASIC')}</code>, which reads up to 10 characters (depending on how many are in the buffer). <code>${highlight('KEYSTATUS(\\KEYBUFFER)', 'BASIC')}</code> returns the number of characters it contains, and <code>${highlight('RESET(\\KEYBUFFER)', 'BASIC')}</code> flushes it.` }),
   element('p', { content: `<code>${highlight('s$ = GETLINE$', 'BASIC')}</code> reads a line of text, waiting until the <kbd>return</kbd> key is pressed and then making <code>${highlight('s$', 'BASIC')}</code> equal to what has been typed into the buffer (discarding the <kbd>return</kbd> character).` }),
-  element('p', { content: `The function <code>${highlight('DETECT', 'BASIC')}</code> waits a given time for some input to be received (e.g. a specific key pressed), and returns <code>${highlight('TRUE', 'BASIC')}</code> when that input is received, or <code>${highlight('FALSE', 'BASIC')}</code> if it is not received in time. Thus <code>${highlight('IF DETECT(\\ESCAPE, 5000) THEN - ELSE -', 'BASIC')}</code> gives 5 seconds to press the <kbd>escape</kbd> key (meanwhile continuing to collect any typed characters in the keyboard buffer). By default, text that goes into the keyboard buffer is also &lsquo;echoed&rsquo; to the console (below the Canvas), along with text that is output (using <code>${highlight('WRITE', 'BASIC')}</code> or <code>${highlight('WRITELN', 'BASIC')}</code>). This behaviour can be turned on and off with <code>${highlight('KEYECHO(TRUE)', 'BASIC')}</code> and <code>${highlight('KEYECHO(FALSE)', 'BASIC')}</code>.` }),
-];
+  element('p', { content: `The function <code>${highlight('DETECT', 'BASIC')}</code> waits a given time for some input to be received (e.g. a specific key pressed), and returns <code>${highlight('TRUE', 'BASIC')}</code> when that input is received, or <code>${highlight('FALSE', 'BASIC')}</code> if it is not received in time. Thus <code>${highlight('IF DETECT(\\ESCAPE, 5000) THEN - ELSE -', 'BASIC')}</code> gives 5 seconds to press the <kbd>escape</kbd> key (meanwhile continuing to collect any typed characters in the keyboard buffer). By default, text that goes into the keyboard buffer is also &lsquo;echoed&rsquo; to the console (below the Canvas), along with text that is output (using <code>${highlight('WRITE', 'BASIC')}</code> or <code>${highlight('WRITELN', 'BASIC')}</code>). This behaviour can be turned on and off with <code>${highlight('KEYECHO(TRUE)', 'BASIC')}</code> and <code>${highlight('KEYECHO(FALSE)', 'BASIC')}</code>.` })
+]
 
 // help text for Turtle Pascal
 const Pascal = [
@@ -44,15 +61,17 @@ const Pascal = [
   element('p', { content: `The x- and y-coordinates of the mouse&rsquo;s current position can be found at any time by using the special global variables <code>${highlight('?mousex', 'Pascal')}</code> and <code>${highlight('?mousey', 'Pascal')}</code> – these do not require the mouse to be clicked.` }),
   element('h4', { content: 'Mouse Click Detection' }),
   element('p', { content: `When a mouse click is performed, the x- and y-coordinates of the click position are remembered by the variables <code>${highlight('?clickx', 'Pascal')}</code> and <code>${highlight('?clicky', 'Pascal')}</code>. However to identify the type of click, use the variable <code>${highlight('?click', 'Pascal')}</code>, which is initially set to a value of -1, but after any click has taken place is set to a numerical value of 128 plus additions as follows:` }),
-  element('table', { classes: ['tsx-help-table'], content: [
-    element('tr', { content: '<td>1</td><td>if the click was with the left mouse button</td>' }),
-    element('tr', { content: '<td>2</td><td>if the click was with the right mouse button</td>' }),
-    element('tr', { content: '<td>4</td><td>if the click was with the middle mouse button</td>' }),
-    element('tr', { content: '<td>8</td><td>if the shift key was held down while clicking</td>' }),
-    element('tr', { content: '<td>16</td><td>if the alt key was held down while clicking</td>' }),
-    element('tr', { content: '<td>32</td><td>if the ctrl key was held down while clicking</td>' }),
-    element('tr', { content: '<td>64</td><td>if it was a double-click</td>' }),
-  ] }),
+  element('table', { classes: ['tsx-help-table'],
+    content: [
+      element('tr', { content: '<td>1</td><td>if the click was with the left mouse button</td>' }),
+      element('tr', { content: '<td>2</td><td>if the click was with the right mouse button</td>' }),
+      element('tr', { content: '<td>4</td><td>if the click was with the middle mouse button</td>' }),
+      element('tr', { content: '<td>8</td><td>if the shift key was held down while clicking</td>' }),
+      element('tr', { content: '<td>16</td><td>if the alt key was held down while clicking</td>' }),
+      element('tr', { content: '<td>32</td><td>if the ctrl key was held down while clicking</td>' }),
+      element('tr', { content: '<td>64</td><td>if it was a double-click</td>' })
+    ]
+  }),
   element('p', { content: `So if <code>${highlight('n := ?click', 'Pascal')}</code> makes <code>${highlight('n', 'Pascal')}</code> equal to 137 (128 + 8 + 1), this indicates that a left-click is currently under way, with the <kbd>shift</kbd> key held down. When the click event is finished, the <code>${highlight('?click', 'Pascal')}</code> value will become negative. Thus if <code>${highlight('?click', 'Pascal')}</code> returns a value of -137, this indicates that the last click event – now finished – was shift+left; the coordinate position of that click can still be identified – until the next click takes place – as (<code>${highlight('?clickx', 'Pascal')}</code>, <code>${highlight('?clicky', 'Pascal')}</code>). On a left-click, the variable <code>${highlight('?lmouse', 'Pascal')}</code> records the relevant value (as calculated above); likewise <code>${highlight('?rmouse', 'Pascal')}</code> and <code>${highlight('?mmouse', 'Pascal')}</code> record any right-click or middle-click. Again, these are all made negative when the click is released, so an empty loop like:` }),
   element('pre', { content: `<code>${highlight('repeat\nuntil ?lmouse > 0;', 'Pascal')}</code>` }),
   element('p', { content: `waits for a left-click with the mouse. Afterwards, <code>${highlight('?clickx', 'Pascal')}</code> and <code>${highlight('?clicky', 'Pascal')}</code> indicate where that click event occurred, and <code>${highlight('?click', 'Pascal')}</code> can be queried using the bitwise <code>${highlight('and', 'Pascal')}</code> operator to discover which special keys were pressed (e.g. <code>${highlight('if (abs(?click) and 8) > 0', 'Pascal')}</code> will test whether <kbd>shift</kbd> was being held down).` }),
@@ -64,8 +83,8 @@ const Pascal = [
   element('h4', { content: 'Keyboard Input' }),
   element('p', { content: `The system provides a <em>keyboard buffer</em> to store typed characters. Initially this is set to store up to 32 characters, but can be extended using e.g. <code>${highlight('keybuffer(50)', 'Pascal')}</code>. To read from the buffer into a string, use e.g. <code>${highlight('s := read(10)', 'Pascal')}</code>, which reads up to 10 characters (depending on how many are in the buffer). <code>${highlight('keystatus(\\keybuffer)', 'Pascal')}</code> returns the number of characters it contains, and <code>${highlight('reset(\\keybuffer)', 'Pascal')}</code> flushes it.` }),
   element('p', { content: `<code>${highlight('s := readln', 'Pascal')}</code> reads a line of text, waiting until the <kbd>return</kbd> key is pressed and then making <code>${highlight('s', 'Pascal')}</code> equal to what has been typed into the buffer (discarding the <kbd>return</kbd> character).` }),
-  element('p', { content: `The function <code>${highlight('detect', 'Pascal')}</code> waits a given time for some input to be received (e.g. a specific key pressed), and returns <code>${highlight('true', 'Pascal')}</code> when that input is received, or <code>${highlight('false', 'Pascal')}</code> if it is not received in time. Thus <code>${highlight('if detect(\\escape, 5000) then {command1} else {command2}', 'Pascal')}</code> gives 5 seconds to press the <kbd>escape</kbd> key (meanwhile continuing to collect any typed characters in the keyboard buffer). By default, text that goes into the keyboard buffer is also &lsquo;echoed&rsquo; to the console (below the Canvas), along with text that is output (using <code>${highlight('write', 'Pascal')}</code> or <code>${highlight('writeln', 'Pascal')}</code>). This behaviour can be turned on and off with <code>${highlight('keyecho(true)', 'Pascal')}</code> and <code>${highlight('keyecho(false)', 'Pascal')}</code>.` }),
-];
+  element('p', { content: `The function <code>${highlight('detect', 'Pascal')}</code> waits a given time for some input to be received (e.g. a specific key pressed), and returns <code>${highlight('true', 'Pascal')}</code> when that input is received, or <code>${highlight('false', 'Pascal')}</code> if it is not received in time. Thus <code>${highlight('if detect(\\escape, 5000) then {command1} else {command2}', 'Pascal')}</code> gives 5 seconds to press the <kbd>escape</kbd> key (meanwhile continuing to collect any typed characters in the keyboard buffer). By default, text that goes into the keyboard buffer is also &lsquo;echoed&rsquo; to the console (below the Canvas), along with text that is output (using <code>${highlight('write', 'Pascal')}</code> or <code>${highlight('writeln', 'Pascal')}</code>). This behaviour can be turned on and off with <code>${highlight('keyecho(true)', 'Pascal')}</code> and <code>${highlight('keyecho(false)', 'Pascal')}</code>.` })
+]
 
 // help text for Turtle Python
 const Python = [
@@ -75,15 +94,17 @@ const Python = [
   element('p', { content: `The x- and y-coordinates of the mouse&rsquo;s current position can be found at any time by using the special global variables <code>${highlight('?mousex', 'Python')}</code> and <code>${highlight('?mousey', 'Python')}</code> – these do not require the mouse to be clicked.` }),
   element('h4', { content: 'Mouse Click Detection' }),
   element('p', { content: `When a mouse click is performed, the x- and y-coordinates of the click position are remembered by the variables <code>${highlight('?clickx', 'Python')}</code> and <code>${highlight('?clicky', 'Python')}</code>. However to identify the type of click, use the variable <code>${highlight('?click', 'Python')}</code>, which is initially set to a value of -1, but after any click has taken place is set to a numerical value of 128 plus additions as follows:` }),
-  element('table', { classes: ['tsx-help-table'], content: [
-    element('tr', { content: '<td>1</td><td>if the click was with the left mouse button</td>' }),
-    element('tr', { content: '<td>2</td><td>if the click was with the right mouse button</td>' }),
-    element('tr', { content: '<td>4</td><td>if the click was with the middle mouse button</td>' }),
-    element('tr', { content: '<td>8</td><td>if the shift key was held down while clicking</td>' }),
-    element('tr', { content: '<td>16</td><td>if the alt key was held down while clicking</td>' }),
-    element('tr', { content: '<td>32</td><td>if the ctrl key was held down while clicking</td>' }),
-    element('tr', { content: '<td>64</td><td>if it was a double-click</td>' }),
-  ] }),
+  element('table', { classes: ['tsx-help-table'],
+    content: [
+      element('tr', { content: '<td>1</td><td>if the click was with the left mouse button</td>' }),
+      element('tr', { content: '<td>2</td><td>if the click was with the right mouse button</td>' }),
+      element('tr', { content: '<td>4</td><td>if the click was with the middle mouse button</td>' }),
+      element('tr', { content: '<td>8</td><td>if the shift key was held down while clicking</td>' }),
+      element('tr', { content: '<td>16</td><td>if the alt key was held down while clicking</td>' }),
+      element('tr', { content: '<td>32</td><td>if the ctrl key was held down while clicking</td>' }),
+      element('tr', { content: '<td>64</td><td>if it was a double-click</td>' })
+    ]
+  }),
   element('p', { content: `So if <code>${highlight('n = ?click', 'Python')}</code> makes <code>${highlight('n', 'Python')}</code> equal to 137 (128 + 8 + 1), this indicates that a left-click is currently under way, with the <kbd>shift</kbd> key held down. When the click event is finished, the <code>${highlight('?click', 'Python')}</code> variable will become negative. Thus if <code>${highlight('?click', 'Python')}</code> returns a value of -137, this indicates that the last click event – now finished – was shift+left; the coordinate position of that click can still be identified – until the next click takes place – as (<code>${highlight('?clickx', 'Python')}</code>, <code>${highlight('?clicky', 'Python')}</code>). On a left-click, the variable <code>${highlight('?lmouse', 'Python')}</code> records the relevant value (as calculated above); likewise <code>${highlight('?rmouse', 'Python')}</code> and <code>${highlight('?mmouse', 'Python')}</code> record any right-click or middle-click. Again, these are all made negative when the click is released, so an empty loop like:` }),
   element('pre', { content: `<code>${highlight('while not(?lmouse > 0):\n  pass  # this statement does nothing!', 'Python')}</code>` }),
   element('p', { content: `waits for a left-click with the mouse. Afterwards, <code>${highlight('?clickx', 'Python')}</code> and <code>${highlight('?clicky', 'Python')}</code> indicate where that click event occurred, and <code>${highlight('?click', 'Python')}</code> can be queried using the bitwise <code>${highlight('and', 'Python')}</code> operator to discover which special keys were pressed (e.g. <code>${highlight('if (abs(?click) and 8) > 0', 'Python')}</code> will test whether <kbd>shift</kbd> was being held down).` }),
@@ -95,24 +116,8 @@ const Python = [
   element('h4', { content: 'Keyboard Input' }),
   element('p', { content: `The system provides a <em>keyboard buffer</em> to store typed characters. Initially this is set to store up to 32 characters, but can be extended using e.g. <code>${highlight('keybuffer(50)', 'Python')}</code>. To read from the buffer into a string, use e.g. <code>${highlight('s = read(10)', 'Python')}</code>, which reads up to 10 characters (depending on how many are in the buffer). <code>${highlight('keystatus(\\keybuffer)', 'Python')}</code> returns the number of characters it contains, and <code>${highlight('reset(\\keybuffer)', 'Python')}</code> flushes it.` }),
   element('p', { content: `<code>${highlight('s = readln', 'Python')}</code> reads a line of text, waiting until the <kbd>return</kbd> key is pressed and then making <code>${highlight('s', 'Python')}</code> equal to what has been typed into the buffer (discarding the <kbd>return</kbd> character).` }),
-  element('p', { content: `The function <code>${highlight('detect', 'Python')}</code> waits a given time for some input to be received (e.g. a specific key pressed), and returns <code>${highlight('True', 'Python')}</code> when that input is received, or <code>${highlight('False', 'Python')}</code> if it is not received in time. Thus <code>${highlight('if detect(\\escape, 5000): #command1', 'Python')}</code> <code>${highlight('else: #command2', 'Python')}</code> gives 5 seconds to press the <kbd>escape</kbd> key (meanwhile continuing to collect any typed characters in the keyboard buffer). By default, text that goes into the keyboard buffer is also &lsquo;echoed&rsquo; to the console (below the Canvas), along with text that is output (using <code>${highlight('write', 'Python')}</code> or <code>${highlight('writeln', 'Python')}</code>). This behaviour can be turned on and off with <code>${highlight('keyecho(True)', 'Python')}</code> and <code>${highlight('keyecho(False)', 'Python')}</code>.` }),
-];
+  element('p', { content: `The function <code>${highlight('detect', 'Python')}</code> waits a given time for some input to be received (e.g. a specific key pressed), and returns <code>${highlight('True', 'Python')}</code> when that input is received, or <code>${highlight('False', 'Python')}</code> if it is not received in time. Thus <code>${highlight('if detect(\\escape, 5000): #command1', 'Python')}</code> <code>${highlight('else: #command2', 'Python')}</code> gives 5 seconds to press the <kbd>escape</kbd> key (meanwhile continuing to collect any typed characters in the keyboard buffer). By default, text that goes into the keyboard buffer is also &lsquo;echoed&rsquo; to the console (below the Canvas), along with text that is output (using <code>${highlight('write', 'Python')}</code> or <code>${highlight('writeln', 'Python')}</code>). This behaviour can be turned on and off with <code>${highlight('keyecho(True)', 'Python')}</code> and <code>${highlight('keyecho(False)', 'Python')}</code>.` })
+]
 
-// associative array of help texts
-const text = { BASIC, Pascal, Python };
-
-// the user input DIV element
-const input = element('div');
-
-// function to load the DIV with help text for the current language
-const refresh = (language) => {
-  input.innerHTML = '';
-  text[language].forEach(x => input.appendChild(x));
-};
-
-// load text for the current language, and register to keep it in sync with the application state
-refresh(state.getLanguage());
-state.on('language-changed', refresh);
-
-// export the user input DIV element
-module.exports = input;
+// register to keep text in sync with the application state
+state.on('language-changed', refresh)

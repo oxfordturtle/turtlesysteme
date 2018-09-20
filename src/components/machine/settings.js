@@ -1,5 +1,10 @@
-const { element } = require('dom');
+/*
+The machine settings component.
+*/
 
-const settings = element('div', { content: 'settings page' });
+// create the HTML elements first
+const { element } = require('dom')
+const settings = element('div', { content: 'settings page' })
 
-module.exports = settings;
+// export the root HTML element
+module.exports = settings

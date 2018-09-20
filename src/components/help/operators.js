@@ -1,9 +1,24 @@
-/**
- * text for the operators help tab
- */
-const { element } = require('dom');
-const state = require('state');
-const { highlight } = state;
+/*
+Text for the operators help tab.
+*/
+
+// create the HTML element first
+const { element } = require('dom')
+const operators = element('div')
+
+// export the HTML element
+module.exports = operators
+
+// function to load the DIV with help text for the current language
+const refresh = (language) => {
+  const text = { BASIC, Pascal, Python }
+  operators.innerHTML = ''
+  text[language].forEach(x => operators.appendChild(x))
+}
+
+// dependencies
+const { highlight } = require('compiler')
+const state = require('state')
 
 // help text for Turtle BASIC
 const BASIC = [
@@ -56,8 +71,8 @@ const BASIC = [
   }),
   element('h3', { content: 'Bracketing' }),
   element('p', { content: 'Complex expressions require brackets, e.g.' }),
-  element('pre', { content: `<code>${highlight('IF (n% < 0) OR (n% > 9) THEN\n  n% = ((a% + 1) * (b% + 3) + c%) MOD 10', 'BASIC')}</code>` }),
-];
+  element('pre', { content: `<code>${highlight('IF (n% < 0) OR (n% > 9) THEN\n  n% = ((a% + 1) * (b% + 3) + c%) MOD 10', 'BASIC')}</code>` })
+]
 
 // help text for Turtle Pascal
 const Pascal = [
@@ -110,8 +125,8 @@ const Pascal = [
   }),
   element('h3', { content: 'Bracketing' }),
   element('p', { content: 'Complex expressions require brackets, e.g.' }),
-  element('pre', { content: `<code>${highlight('if (n < 0) or (n > 9) then\n  n := ((a + 1) * (b + 3) + c) mod 10', 'Pascal')}</code>` }),
-];
+  element('pre', { content: `<code>${highlight('if (n < 0) or (n > 9) then\n  n := ((a + 1) * (b + 3) + c) mod 10', 'Pascal')}</code>` })
+]
 
 // help text for Turtle Python
 const Python = [
@@ -165,23 +180,7 @@ const Python = [
   element('h3', { content: 'Bracketing' }),
   element('p', { content: 'Complex expressions require brackets, e.g.' }),
   element('pre', { content: `<code>${highlight('if (n < 0) or (n > 9):\n  n = ((a + 1) * (b + 3) + c) mod 10', 'Python')}</code>` })
-];
-
-// associative array of help texts
-const text = { BASIC, Pascal, Python };
-
-// the operators DIV element
-const operators = element('div');
-
-// function to load the DIV with help text for the current language
-const refresh = (language) => {
-  operators.innerHTML = '';
-  text[language].forEach(x => operators.appendChild(x));
-};
+]
 
 // load text for the current language, and register to keep it in sync with the application state
-refresh(state.getLanguage());
-state.on('language-changed', refresh);
-
-// export the operators DIV element
-module.exports = operators;
+state.on('language-changed', refresh)

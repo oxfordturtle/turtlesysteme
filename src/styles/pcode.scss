@@ -3,30 +3,54 @@
   background: $gray;
   padding: $padding;
   margin-bottom: $padding;
+  display: flex;
+  flex-shrink: 0;
+  div {
+    flex: 1;
+    label {
+      display: block;
+      cursor: pointer;
+    }
+  }
 }
 
 .tsx-pcode-table {
   border: $border;
-  overflow-x: auto;
-  .tsx-row {
+  overflow: auto;
+  font-size: .875em;
+  font-family: $monospace;
+  background: $gray;
+  margin: 0;
+  padding-left: 2.5em;
+  flex: 1;
+  list-style-type: none;
+  counter-reset: pcode-table;
+  li {
+    counter-increment: pcode-table;
     display: flex;
-    .tsx-head {
-      background: $gray;
-      border-right: $border;
+    flex-wrap: wrap;
+    background: #fff;
+    border-left: $border;
+    &::before {
+      content: counter(pcode-table);
       font-weight: bold;
+      margin-left: -2.5em;
+      width: 2.5em;
+      padding: .25em .5em;
+      text-align: right;
+    }
+    &:not(:first-child) {
+      border-top: $border;
+    }
+    div {
+      flex: 0 0 12.5%;
       padding: .25em;
-      flex-basis: 2em;
-    }
-    .tsx-body {
-      span {
-        padding: .25em;
-        &:not(:last-child) {
-          border-right: $border;
-        }
+      overflow: hidden;
+      border-right: $border;
+      text-align: center;
+      &.tsx-pcode-assembled {
+        font-weight: bold;
       }
-    }
-    &:not(:last-child) {
-      border-bottom: $border;
     }
   }
 }

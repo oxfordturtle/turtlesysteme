@@ -15,6 +15,14 @@
   input, select {
     border: $border;
   }
+  label {
+    padding: $padding;
+    input {
+      height: auto;
+      padding: 0;
+      margin-right: .5em;
+    }
+  }
   button {
     background: $green;
     border: 0;
