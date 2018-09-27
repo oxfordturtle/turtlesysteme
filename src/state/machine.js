@@ -33,29 +33,29 @@ module.exports.run = (pcode, options, machine) => {
   returnStack.length = 0
   subroutineStack.length = 0
   // set up heap base markers (for dividing the stack and the heap in the main memory array)
-  heapGlobal = -1
-  heapBase = options.stackSize - 1
-  heapTemp = heapBase
-  heapPerm = heapTemp
-  heapMax = heapTemp
+  heap.global = -1
+  heap.base = options.stackSize - 1
+  heap.temp = heap.base
+  heap.perm = heap.temp
+  heap.max = heap.temp
   // setup the virtual canvas
   // N.B. pcode for every program does most of this anyway; reconsider?
-  startx = 0
-  starty = 0
-  sizex = 1000
-  sizey = 1000
-  width = 1000
-  height = 1000
-  degrees = 360
-  doubled = false
+  vcanvas.startx = 0
+  vcanvas.starty = 0
+  vcanvas.sizex = 1000
+  vcanvas.sizey = 1000
+  vcanvas.width = 1000
+  vcanvas.height = 1000
+  vcanvas.degrees = 360
+  vcanvas.doubled = false
   // setup runtime variables (global to this module)
-  startTime = Date.now()
-  pendown = true
-  update = true
-  keyecho = true
-  input = ''
-  detect = null
-  readline = null
+  runtime.startTime = Date.now()
+  runtime.pendown = true
+  runtime.update = true
+  runtime.keyecho = true
+  runtime.input = ''
+  runtime.detect = null
+  runtime.readline = null
   // setup the machine status
   status.running = true
   status.paused = false
@@ -139,28 +139,9 @@ const stack = []
 const memoryStack = []
 const returnStack = []
 const subroutineStack = []
-
-// runtime variables (global, so they don't have to be passed around all the time)
-let heapGlobal
-let heapBase
-let heapTemp
-let heapPerm
-let heapMax
-let startTime
-let pendown
-let update
-let keyecho
-let input
-let detect
-let readline
-let startx
-let starty
-let sizex
-let sizey
-let width
-let height
-let degrees
-let doubled
+const heap = {}
+const vcanvas = {}
+const runtime = {}
 
 // window event listeners
 const storeKey = (event) => {
@@ -175,8 +156,8 @@ const storeKey = (event) => {
       memory[end] = 0
       memory[buffer + 2] -= 1
     }
-    input = input.slice(0, -1)
-    if (keyecho) component.delete()
+    runtime.input = runtime.input.slice(0, -1)
+    if (runtime.keyecho) component.delete()
   }
   // arrow keys
   if (pressedKey >= 37 && pressedKey <= 40) {
@@ -200,8 +181,20 @@ const releaseKey = (event) => {
 
 const putInBuffer = (event) => {
   const pressedKey = event.keyCode || event.charCode
-  memory.addToBuffer(pressedKey)
-  if (keyecho) {
+  const buffer = memory[1]
+  if (buffer > 0) {
+    let next = 0
+    if (memory[buffer + 2] === memory[buffer]) {
+      next = buffer + 3
+    } else {
+      next = memory[buffer + 2] + 1
+    }
+    if (next !== memory[buffer + 1]) {
+      memory[memory[buffer + 2]] = pressedKey
+      memory[buffer + 2] = next
+    }
+  }
+  if (runtime.keyecho) {
     component.log(String.fromCharCode(pressedKey))
   }
 }
@@ -229,7 +222,7 @@ const storeClickXY = (event) => {
   if (event.shiftKey) query[4] += 8
   if (event.altKey) query[4] += 16
   if (event.ctrlKey) query[4] += 32
-  if (now - memory.getQuery(11) < 300) query[4] += 64 // double-click
+  if (now - query[11] < 300) query[4] += 64 // double-click
   query[11] = now // save to check for next double-click
   switch (event.type) {
     case 'mousedown':
@@ -313,10 +306,10 @@ const execute = (pcode, line, code, options) => {
     return
   }
 
-  // in case of DETECT or READLINE, remove the event listeners the first time we carry on with the
+  // in case of runtime.detect or runtime.readline, remove the event listeners the first time we carry on with the
   // program execution after they have been called
-  window.removeEventListener('keypress', detect)
-  window.removeEventListener('keypress', readline)
+  window.removeEventListener('keypress', runtime.detect)
+  window.removeEventListener('keypress', runtime.readline)
 
   // execute as much code as possible
   let drawCount = 0
@@ -502,7 +495,7 @@ const execute = (pcode, line, code, options) => {
         d = stack.pop()
         c = stack.pop()
         b = stack.pop()
-        a = (b / c) * (2 * Math.PI) / degrees
+        a = (b / c) * (2 * Math.PI) / vcanvas.degrees
         stack.push(Math.round(Math.sin(a) * d))
         break
 
@@ -510,7 +503,7 @@ const execute = (pcode, line, code, options) => {
         d = stack.pop()
         c = stack.pop()
         b = stack.pop()
-        a = (b / c) * (2 * Math.PI) / degrees
+        a = (b / c) * (2 * Math.PI) / vcanvas.degrees
         stack.push(Math.round(Math.cos(a) * d))
         break
 
@@ -518,7 +511,7 @@ const execute = (pcode, line, code, options) => {
         d = stack.pop()
         c = stack.pop()
         b = stack.pop()
-        a = (b / c) * (2 * Math.PI) / degrees
+        a = (b / c) * (2 * Math.PI) / vcanvas.degrees
         stack.push(Math.round(Math.tan(a) * d))
         break
 
@@ -526,7 +519,7 @@ const execute = (pcode, line, code, options) => {
         d = stack.pop()
         c = stack.pop()
         b = stack.pop()
-        a = degrees / (2 * Math.PI)
+        a = vcanvas.degrees / (2 * Math.PI)
         stack.push(Math.round(Math.asin(b / c) * d * a))
         break
 
@@ -534,7 +527,7 @@ const execute = (pcode, line, code, options) => {
         d = stack.pop()
         c = stack.pop()
         b = stack.pop()
-        a = degrees / (2 * Math.PI)
+        a = vcanvas.degrees / (2 * Math.PI)
         stack.push(Math.round(Math.acos(b / c) * d * a))
         break
 
@@ -542,7 +535,7 @@ const execute = (pcode, line, code, options) => {
         d = stack.pop()
         c = stack.pop()
         b = stack.pop()
-        a = degrees / (2 * Math.PI)
+        a = vcanvas.degrees / (2 * Math.PI)
         stack.push(Math.round(Math.atan2(b, c) * d * a))
         break
 
@@ -912,8 +905,8 @@ const execute = (pcode, line, code, options) => {
         return
 
       case pc.subr:
-        if (heapGlobal === -1) {
-          heapGlobal = heapPerm
+        if (heap.global === -1) {
+          heap.global = heap.perm
         }
         returnStack.push(line + 1)
         line = pcode[line][code + 1] - 1
@@ -970,41 +963,41 @@ const execute = (pcode, line, code, options) => {
         break
 
       case pc.hfix:
-        heapPerm = heapTemp
+        heap.perm = heap.temp
         break
 
       case pc.hclr:
-        heapTemp = heapPerm
+        heap.temp = heap.perm
         break
 
       case pc.hrst:
-        if (heapGlobal > -1) {
-          heapTemp = heapGlobal
-          heapPerm = heapGlobal
+        if (heap.global > -1) {
+          heap.temp = heap.global
+          heap.perm = heap.global
         }
         break
 
       // 0xA - runtime flags, text output, debugging
       case pc.pnup:
-        pendown = false
+        runtime.pendown = false
         break
 
       case pc.pndn:
-        pendown = true
+        runtime.pendown = true
         break
 
       case pc.udat:
-        update = true
-        drawCount = options.drawCountMax // force update
+        runtime.update = true
+        drawCount = options.drawCountMax // force runtime.update
         break
 
       case pc.ndat:
-        update = false
+        runtime.update = false
         break
 
       case pc.kech:
         a = (stack.pop() === -1) // -1 for TRUE
-        keyecho = a
+        runtime.keyecho = a
         break
 
       case pc.outp:
@@ -1044,17 +1037,17 @@ const execute = (pcode, line, code, options) => {
         }
         break
 
-      // 0xB - timing, input, text output
+      // 0xB - timing, runtime.input, text output
       case pc.time:
         a = Date.now()
-        a = a - startTime
+        a = a - runtime.startTime
         stack.push(a)
         break
 
       case pc.tset:
         a = Date.now()
         b = stack.pop()
-        startTime = a - b
+        runtime.startTime = a - b
         break
 
       case pc.wait:
@@ -1077,8 +1070,8 @@ const execute = (pcode, line, code, options) => {
           code = 0
         }
         c = setTimeout(execute, a, pcode, line, code, options)
-        detect = detectProto.bind(null, b, c, pcode, line, code, options)
-        window.addEventListener('keyup', detect)
+        runtime.detect = detectProto.bind(null, b, c, pcode, line, code, options)
+        window.addEventListener('keyup', runtime.detect)
         return
 
       case pc.inpt:
@@ -1102,14 +1095,14 @@ const execute = (pcode, line, code, options) => {
       case pc.bufr:
         a = stack.pop()
         if (a > 0) {
-          b = heapTemp + 4
-          stack.push(heapTemp + 1)
-          memory[heapTemp + 1] = b + a
-          memory[heapTemp + 2] = b
-          memory[heapTemp + 3] = b
+          b = heap.temp + 4
+          stack.push(heap.temp + 1)
+          memory[heap.temp + 1] = b + a
+          memory[heap.temp + 2] = b
+          memory[heap.temp + 3] = b
           memory.fill(0, b, b + a)
-          heapTemp = b + a
-          heapMax = Math.max(heapTemp, heapMax)
+          heap.temp = b + a
+          heap.max = Math.max(heap.temp, heap.max)
         }
         break
 
@@ -1140,8 +1133,8 @@ const execute = (pcode, line, code, options) => {
           code = 0
         }
         b = setTimeout(execute, a, pcode, line, code, options)
-        readline = readlineProto.bind(null, b, pcode, line, code, options)
-        window.addEventListener('keypress', readline)
+        runtime.readline = readlineProto.bind(null, b, pcode, line, code, options)
+        window.addEventListener('keypress', runtime.readline)
         return
 
       case pc.prnt:
@@ -1203,18 +1196,18 @@ const execute = (pcode, line, code, options) => {
 
       // 0xD - canvas, turtle settings
       case pc.canv:
-        sizey = stack.pop()
-        sizex = stack.pop()
-        starty = stack.pop()
-        startx = stack.pop()
-        memory[memory[0] + 1] = Math.round(startx + (sizex / 2))
-        memory[memory[0] + 2] = Math.round(starty + (sizey / 2))
+        vcanvas.sizey = stack.pop()
+        vcanvas.sizex = stack.pop()
+        vcanvas.starty = stack.pop()
+        vcanvas.startx = stack.pop()
+        memory[memory[0] + 1] = Math.round(vcanvas.startx + (vcanvas.sizex / 2))
+        memory[memory[0] + 2] = Math.round(vcanvas.starty + (vcanvas.sizey / 2))
         memory[memory[0] + 3] = 0
         replies.turtx(memory[memory[0] + 1])
         replies.turty(memory[memory[0] + 2])
         replies.turtd(memory[memory[0] + 3])
         coords.push([memory[memory[0] + 1], memory[memory[0] + 2]])
-        drawCount = options.drawCountMax // force update
+        drawCount = options.drawCountMax // force runtime.update
         break
 
       case pc.reso:
@@ -1223,13 +1216,13 @@ const execute = (pcode, line, code, options) => {
         if (Math.min(a, b) < options.smallSize) {
           a *= 2
           b *= 2
-          doubled = true
+          vcanvas.doubled = true
         }
-        width = a
-        height = b
+        vcanvas.width = a
+        vcanvas.height = b
         component.resolution(a, b)
         component.blank(0xFFFFFF)
-        drawCount = options.drawCountMax // force update
+        drawCount = options.drawCountMax // force runtime.update
         break
 
       case pc.pixc:
@@ -1242,16 +1235,16 @@ const execute = (pcode, line, code, options) => {
         c = stack.pop()
         b = stack.pop()
         a = stack.pop()
-        component.pixset(turtx(a), turty(b), c, doubled)
-        if (update) drawCount += 1
+        component.pixset(turtx(a), turty(b), c, vcanvas.doubled)
+        if (runtime.update) drawCount += 1
         break
 
       case pc.angl:
         a = stack.pop()
-        b = Math.round(a + memory[memory[0] + 3] * a / degrees)
+        b = Math.round(a + memory[memory[0] + 3] * a / vcanvas.degrees)
         memory[memory[0] + 3] = b % a
         replies.turtd(memory[memory[0] + 3])
-        degrees = a
+        vcanvas.degrees = a
         break
 
       case pc.curs:
@@ -1260,8 +1253,8 @@ const execute = (pcode, line, code, options) => {
         break
 
       case pc.home:
-        a = startx + (sizex / 2)
-        b = starty + (sizey / 2)
+        a = vcanvas.startx + (vcanvas.sizex / 2)
+        b = vcanvas.starty + (vcanvas.sizey / 2)
         memory[memory[0] + 1] = Math.round(a)
         memory[memory[0] + 2] = Math.round(b)
         memory[memory[0] + 3] = 0
@@ -1286,7 +1279,7 @@ const execute = (pcode, line, code, options) => {
         break
 
       case pc.setd:
-        a = stack.pop() % degrees
+        a = stack.pop() % vcanvas.degrees
         memory[memory[0] + 3] = a
         replies.turtd(a)
         break
@@ -1354,9 +1347,9 @@ const execute = (pcode, line, code, options) => {
       case pc.drxy:
         b = stack.pop() + memory[memory[0] + 2]
         a = stack.pop() + memory[memory[0] + 1]
-        if (pendown) {
+        if (runtime.pendown) {
           component.line(turtle(), turtx(a), turty(b))
-          if (update) drawCount += 1
+          if (runtime.update) drawCount += 1
         }
         memory[memory[0] + 1] = a
         memory[memory[0] + 2] = b
@@ -1369,17 +1362,17 @@ const execute = (pcode, line, code, options) => {
         c = stack.pop() // distance
         // work out final y coordinate
         b = memory[memory[0] + 3]
-        b = Math.cos(b * Math.PI / (degrees / 2))
+        b = Math.cos(b * Math.PI / (vcanvas.degrees / 2))
         b = -Math.round(b * c)
         b += memory[memory[0] + 2]
         // work out final x coordinate
         a = memory[memory[0] + 3]
-        a = Math.sin(a * Math.PI / (degrees / 2))
+        a = Math.sin(a * Math.PI / (vcanvas.degrees / 2))
         a = Math.round(a * c)
         a += memory[memory[0] + 1]
-        if (pendown) {
+        if (runtime.pendown) {
           component.line(turtle(), turtx(a), turty(b))
-          if (update) drawCount += 1
+          if (runtime.update) drawCount += 1
         }
         memory[memory[0] + 1] = a
         memory[memory[0] + 2] = b
@@ -1392,17 +1385,17 @@ const execute = (pcode, line, code, options) => {
         c = stack.pop() // distance
         // work out final y coordinate
         b = memory[memory[0] + 3]
-        b = Math.cos(b * Math.PI / (degrees / 2))
+        b = Math.cos(b * Math.PI / (vcanvas.degrees / 2))
         b = Math.round(b * c)
         b += memory[memory[0] + 2]
         // work out final x coordinate
         a = memory[memory[0] + 3]
-        a = Math.sin(a * Math.PI / (degrees / 2))
+        a = Math.sin(a * Math.PI / (vcanvas.degrees / 2))
         a = -Math.round(a * c)
         a += memory[memory[0] + 1]
-        if (pendown) {
+        if (runtime.pendown) {
           component.line(turtle(), turtx(a), turty(b))
-          if (update) drawCount += 1
+          if (runtime.update) drawCount += 1
         }
         memory[memory[0] + 1] = a
         memory[memory[0] + 2] = b
@@ -1412,13 +1405,13 @@ const execute = (pcode, line, code, options) => {
         break
 
       case pc.left:
-        a = (memory[memory[0] + 3] - stack.pop()) % degrees
+        a = (memory[memory[0] + 3] - stack.pop()) % vcanvas.degrees
         memory[memory[0] + 3] = a
         replies.turtd(a)
         break
 
       case pc.rght:
-        a = (memory[memory[0] + 3] + stack.pop()) % degrees
+        a = (memory[memory[0] + 3] + stack.pop()) % vcanvas.degrees
         memory[memory[0] + 3] = a
         replies.turtd(a)
         break
@@ -1444,7 +1437,7 @@ const execute = (pcode, line, code, options) => {
           }
           c /= 2
         }
-        c = Math.round(c * degrees / Math.PI / 2) % degrees
+        c = Math.round(c * vcanvas.degrees / Math.PI / 2) % vcanvas.degrees
         memory[memory[0] + 3] = c
         replies.turtd(c)
         break
@@ -1463,7 +1456,7 @@ const execute = (pcode, line, code, options) => {
         b = coords.length
         a = (c > b) ? 0 : b - c
         component.poly(turtle(), coords.slice(a, b).map(vcoords), false)
-        if (update) drawCount += 1
+        if (runtime.update) drawCount += 1
         break
 
       case pc.pfil:
@@ -1471,33 +1464,33 @@ const execute = (pcode, line, code, options) => {
         b = coords.length
         a = (c > b) ? 0 : b - c
         component.poly(turtle(), coords.slice(a, b).map(vcoords), true)
-        if (update) drawCount += 1
+        if (runtime.update) drawCount += 1
         break
 
       case pc.circ:
         a = stack.pop()
-        component.arc(turtle(), turtx(a + startx), turty(a + starty), false)
-        if (update) drawCount += 1
+        component.arc(turtle(), turtx(a + vcanvas.startx), turty(a + vcanvas.starty), false)
+        if (runtime.update) drawCount += 1
         break
 
       case pc.blot:
         a = stack.pop()
-        component.arc(turtle(), turtx(a + startx), turty(a + starty), true)
-        if (update) drawCount += 1
+        component.arc(turtle(), turtx(a + vcanvas.startx), turty(a + vcanvas.starty), true)
+        if (runtime.update) drawCount += 1
         break
 
       case pc.elps:
         b = stack.pop()
         a = stack.pop()
-        component.arc(turtle(), turtx(a + startx), turty(b + starty), false)
-        if (update) drawCount += 1
+        component.arc(turtle(), turtx(a + vcanvas.startx), turty(b + vcanvas.starty), false)
+        if (runtime.update) drawCount += 1
         break
 
       case pc.eblt:
         b = stack.pop()
         a = stack.pop()
-        component.arc(turtle(), turtx(a + startx), turty(b + starty), true)
-        if (update) drawCount += 1
+        component.arc(turtle(), turtx(a + vcanvas.startx), turty(b + vcanvas.starty), true)
+        if (runtime.update) drawCount += 1
         break
 
       case pc.box:
@@ -1506,13 +1499,13 @@ const execute = (pcode, line, code, options) => {
         b = memory[memory[0] + 2] + stack.pop() // end y coordinate
         a = memory[memory[0] + 1] + stack.pop() // end x coordinate
         component.box(turtle(), turtx(a), turty(b), c, d)
-        if (update) drawCount += 1
+        if (runtime.update) drawCount += 1
         break
 
       case pc.blnk:
         a = stack.pop()
         component.blank(a)
-        if (update) drawCount += 1
+        if (runtime.update) drawCount += 1
         break
 
       case pc.rcol:
@@ -1520,7 +1513,7 @@ const execute = (pcode, line, code, options) => {
         b = stack.pop()
         a = stack.pop()
         component.flood(a, b, c, 0, false)
-        if (update) drawCount += 1
+        if (runtime.update) drawCount += 1
         break
 
       case pc.fill:
@@ -1529,7 +1522,7 @@ const execute = (pcode, line, code, options) => {
         b = stack.pop()
         a = stack.pop()
         component.flood(a, b, c, d, true)
-        if (update) drawCount += 1
+        if (runtime.update) drawCount += 1
         break
 
       case pc.mxin:
@@ -1548,7 +1541,7 @@ const execute = (pcode, line, code, options) => {
     }
   }
   // setTimeout (with no delay) instead of direct recursion means the function will return and the
-  // canvas will be updated
+  // canvas will be runtime.updated
   setTimeout(execute, 0, pcode, line, code, options)
 }
 
@@ -1562,14 +1555,14 @@ const error = (message) => {
 // make a string on the heap
 const makeHeapString = (string) => {
   const stringArray = Array.from(string).map(c => c.charCodeAt(0))
-  stack.push(heapTemp + 1)
-  heapTemp += 1
-  memory[heapTemp] = string.length
+  stack.push(heap.temp + 1)
+  heap.temp += 1
+  memory[heap.temp] = string.length
   stringArray.forEach((code) => {
-    heapTemp += 1
-    memory[heapTemp] = code
+    heap.temp += 1
+    memory[heap.temp] = code
   })
-  heapMax = Math.max(heapTemp, heapMax)
+  heap.max = Math.max(heap.temp, heap.max)
 }
 
 // get a string from the heap
@@ -1578,8 +1571,8 @@ const getHeapString = (address) => {
   const start = address + 1
   const charArray = memory.slice(start, start + length)
   const string = charArray.reduce((a, b) => a + String.fromCharCode(b), '')
-  if (address + length + 1 > heapPerm) {
-    heapTemp = address + length
+  if (address + length + 1 > heap.perm) {
+    heap.temp = address + length
   }
   return string
 }
@@ -1600,7 +1593,7 @@ const copy = (source, target, length) => {
   }
 }
 
-// prototype key detection function
+// prototype key runtime.detection function
 const detectProto = (keyCode, timeoutID, pcode, line, code, options, event) => {
   const pressedKey = event.keyCode || event.charCode
   if (pressedKey === keyCode) {
@@ -1615,14 +1608,14 @@ const detectProto = (keyCode, timeoutID, pcode, line, code, options, event) => {
 const readlineProto = (timeoutID, pcode, line, code, options, event) => {
   const pressedKey = event.keyCode || event.charCode
   if (pressedKey === 13) {
-    makeHeapString(input)
-    input = ''
+    makeHeapString(runtime.input)
+    runtime.input = ''
     window.clearTimeout(timeoutID)
     execute(pcode, line, code, options)
   } else if (pressedKey === 8) {
-    input = input.slice(0, -1)
+    runtime.input = runtime.input.slice(0, -1)
   } else {
-    input += String.fromCharCode(pressedKey)
+    runtime.input += String.fromCharCode(pressedKey)
   }
 }
 
@@ -1637,19 +1630,19 @@ const turtle = () => ({
 
 // convert turtx to virtual canvas coordinate
 const turtx = (x) => {
-  const exact = ((x - startx) * width) / sizex
-  return doubled ? Math.round(exact) + 1 : Math.round(exact)
+  const exact = ((x - vcanvas.startx) * vcanvas.width) / vcanvas.sizex
+  return vcanvas.doubled ? Math.round(exact) + 1 : Math.round(exact)
 }
 
 // convert turty to virtual canvas coordinate
 const turty = (y) => {
-  const exact = ((y - starty) * height) / sizey
-  return doubled ? Math.round(exact) + 1 : Math.round(exact)
+  const exact = ((y - vcanvas.starty) * vcanvas.height) / vcanvas.sizey
+  return vcanvas.doubled ? Math.round(exact) + 1 : Math.round(exact)
 }
 
 // convert turtt to virtual canvas thickness
 const turtt = t =>
-  doubled ? t * 2 : t
+  vcanvas.doubled ? t * 2 : t
 
 // map turtle coordinates to virtual turtle coordinates
 const vcoords = ([x, y]) =>
@@ -1658,13 +1651,13 @@ const vcoords = ([x, y]) =>
 // convert x to virtual canvas coordinate
 const virtx = (x) => {
   const { left, width } = component.bounds()
-  const exact = (((x - left) * sizex) / width) + startx
+  const exact = (((x - left) * vcanvas.sizex) / width) + vcanvas.startx
   return Math.round(exact)
 }
 
 // convert y to virtual canvas coordinate
 const virty = (y) => {
   const { height, top } = component.bounds()
-  const exact = (((y - top) * sizey) / height) + starty
+  const exact = (((y - top) * vcanvas.sizey) / height) + vcanvas.starty
   return Math.round(exact)
 }

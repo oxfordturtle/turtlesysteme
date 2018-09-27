@@ -98,6 +98,7 @@ const assemble = (line, index, decimal) => {
 }
 
 const cell = (content, decimal) => {
+  if (content === null) return element('div', { content: ':(' })
   if (decimal === undefined) return element('div', { content })
   return decimal
     ? element('div', { content: content.toString(10) })

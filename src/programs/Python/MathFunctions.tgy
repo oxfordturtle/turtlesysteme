@@ -39,15 +39,15 @@ def main():
   show('tan', tan(a, b, denominator))
   writeline('')
   show('ln', ln(a, b, denominator))
-  if divmult(a, b, 1000) + ln(denominator, 1, 1000) > ln(maxint, 1, 1000):
+  if divmult(a, b, 1000) + ln(denominator, 1, 1000) > ln(maxint(), 1, 1000):
     writeline('EXP(' + str(a) + ' / ' + str(b) + ') would give numerical overflow, because')
-    writeline('the result * ' + str(denominator) + ' would be greater than ' + str(maxint))
+    writeline('the result * ' + str(denominator) + ' would be greater than ' + str(maxint()))
   else:
     show('exp', exp(a, b, denominator))
   show('log10', log10(a, b, denominator))
-  if divmult(a, b, 1000) + log10(denominator, 1, 1000) > log10(maxint, 1, 1000):
+  if divmult(a, b, 1000) + log10(denominator, 1, 1000) > log10(maxint(), 1, 1000):
     writeline('ANTILOG(' + str(a) + ' / ' + str(b) + ') would give numerical overflow, because')
-    writeline('the result * ' + str(denominator) + ' would be greater than ' + str(maxint))
+    writeline('the result * ' + str(denominator) + ' would be greater than ' + str(maxint()))
   else:
     show('antilog', antilog(a, b, denominator))
   writeline('')

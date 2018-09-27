@@ -106,7 +106,7 @@ const lexeme = (token, line, offset, language) =>
     type: type(token.type, token.content),
     // Pascal is case-insensitive, so make everything lowercase for that language
     content: (language === 'Pascal') ? token.content.toLowerCase() : token.content,
-    value: value(token.type, token.content),
+    value: value(token.type, token.content, language),
     line,
     offset
   })
@@ -132,7 +132,7 @@ const type = (type, content) => {
 }
 
 // value of a lexeme
-const value = (type, content) => {
+const value = (type, content, language) => {
   switch (type) {
     case 'operator':
       switch (content.toLowerCase()) {
@@ -201,13 +201,19 @@ const value = (type, content) => {
       return (content.toLowerCase() === 'true') ? -1 : 0
 
     case 'binary':
-      return parseInt(content.slice(1), 2)
+      return language === 'Python'
+        ? parseInt(content.slice(2), 2)
+        : parseInt(content.slice(1), 2)
 
     case 'octal':
-      return parseInt(content.slice(1), 8)
+      return language === 'Python'
+        ? parseInt(content.slice(2), 8)
+        : parseInt(content.slice(1), 8)
 
     case 'hexadecimal':
-      return parseInt(content.slice(1), 16)
+      return language === 'Python'
+        ? parseInt(content.slice(2), 16)
+        : parseInt(content.slice(1), 16)
 
     case 'decimal':
       return parseInt(content)

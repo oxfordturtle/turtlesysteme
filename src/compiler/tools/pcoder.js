@@ -304,7 +304,7 @@ const setupLocalString = (variable) => {
     routine,
     index,
     pc.ldin,
-    variable.length - 1,
+    variable.fulltype.length - 1,
     pc.stvv,
     routine,
     index + 1

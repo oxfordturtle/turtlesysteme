@@ -957,7 +957,7 @@ module.exports = ([
   }),
   // 8. Type conversion routines
   command({
-    names: [ 'STR$', 'string', 'string' ],
+    names: [ 'STR$', 'str', 'str' ],
     code: pc.itos,
     parameters: [
       parameter('n', 'integer')

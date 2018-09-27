@@ -10,12 +10,24 @@ const machine = require('./machine')
 const runHalt = element('button', {
   content: 'RUN',
   classes: ['tsx-run-halt-button'],
-  on: [{ type: 'click', callback: () => { state.send('machine-run-halt', machine) } }]
+  on: [{
+    type: 'click',
+    callback: (e) => {
+      state.send('machine-run-halt', machine)
+      e.currentTarget.blur()
+    }
+  }]
 })
 const playPause = element('button', {
   content: '&#10074;&#10074;',
   classes: ['tsx-play-pause-button'],
-  on: [{ type: 'click', callback: () => { state.send('machine-play-pause') } }]
+  on: [{
+    type: 'click',
+    callback: (e) => {
+      state.send('machine-play-pause')
+      e.currentTarget.blur()
+    }
+  }]
 })
 const turtx = element('dd', { classes: ['tsx-turtxy'], content: '500' })
 const turty = element('dd', { classes: ['tsx-turtxy'], content: '500' })

@@ -24,9 +24,9 @@ module.exports.tabs = tabs('tsx-system-tabs', [
 
 // show a tab
 module.exports.show = (tab) => {
-  if (tab === 'canvas' || tab === 'console') tabs.show('Canvas')
-  if (tab === 'output') tabs.show('Output')
-  if (tab === 'memory') tabs.show('Memory')
+  if (tab === 'canvas' || tab === 'console') show('Canvas')
+  if (tab === 'output') show('Output')
+  if (tab === 'memory') show('Memory')
 }
 
 // add/remove event listeners to/from the canvas
@@ -217,9 +217,10 @@ module.exports.flood = (x, y, c1, c2, boundary) => {
   context.putImageData(img, 0, 0)
 }
 
-// write text to the textual output
+// write text to the textual output and console
 module.exports.write = (text) => {
   output.innerHTML += text
+  console.innerHTML += text
 }
 
 // log text in the console
@@ -234,13 +235,13 @@ module.exports.delete = () => {
 
 // clear and change the colour of the textual output
 module.exports.output = (clear, colour) => {
-  output.innerHTML = ''
+  if (clear) output.innerHTML = ''
   output.style.background = hex(colour)
 }
 
 // clear and change the colour of the console
 module.exports.console = (clear, colour) => {
-  console.innerHTML = ''
+  if (clear) console.innerHTML = ''
   console.style.background = hex(colour)
 }
 
