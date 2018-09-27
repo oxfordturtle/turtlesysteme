@@ -3,7 +3,7 @@ BEGIN
   colour(red);
   blot(20);
   colour(violet);
-  print('You are here', 4, 36);
+  print('You are here', 2, 36);
   setxy(790, 540);
   colour(blue);
   drawxy(40, 0);

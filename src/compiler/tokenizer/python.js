@@ -77,7 +77,7 @@ const string = (code) => {
 
 // boolean literals
 const boolean = (code) => {
-  const test = code.match(/^(true|false)\b/)
+  const test = code.match(/^(True|False)\b/)
   return test ? { type: 'boolean', content: test[0] } : false
 }
 

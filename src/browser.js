@@ -42,11 +42,11 @@ switch (tsx.getAttribute('data-page')) {
     tsx.appendChild(tabs('tsx-top-tabs', [
       { label: 'Program',
         active: true,
-        content: [ system, program ]
+        content: [ system, program.tabs ]
       },
       { label: 'Machine',
         active: false,
-        content: [ controls, machine ]
+        content: [ controls, machine.tabs ]
       }
     ]))
     break

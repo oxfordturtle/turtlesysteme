@@ -10,15 +10,20 @@ const file = require('./file')
 const code = require('./code')
 const usage = require('./usage')
 const pcode = require('./pcode')
-const program = tabs('tsx-system-tabs', [
+
+// export the tabs
+module.exports.tabs = tabs('tsx-system-tabs', [
   { label: 'File', active: false, content: [file] },
   { label: 'Code', active: true, content: [code] },
   { label: 'Usage', active: false, content: [usage] },
   { label: 'PCode', active: false, content: [pcode.options, pcode.table] }
 ])
 
-// export the root HTML element
-module.exports = program
+// export the other HTML elements too
+module.exports.file = file
+module.exports.code = code
+module.exports.usage = usage
+module.exports.pcode = pcode
 
 // dependencies
 const state = require('state')

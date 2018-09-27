@@ -1,7 +1,6 @@
 # TurtleMove
 
 def main():
-  global turtx, turty
   setxy(100, 700)
   for count in range(0, 100, 1):
     noupdate()

@@ -30,7 +30,9 @@
     display: flex;
     flex-wrap: wrap;
     background: #fff;
-    border-left: $border;
+    &:not(:last-child) {
+      border-bottom: $border;
+    }
     &::before {
       content: counter(pcode-table);
       font-weight: bold;
@@ -39,14 +41,11 @@
       padding: .25em .5em;
       text-align: right;
     }
-    &:not(:first-child) {
-      border-top: $border;
-    }
     div {
       flex: 0 0 12.5%;
       padding: .25em;
       overflow: hidden;
-      border-right: $border;
+      border-left: $border;
       text-align: center;
       &.tsx-pcode-assembled {
         font-weight: bold;

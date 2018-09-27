@@ -3,7 +3,7 @@ REM YouAreHere
 COLOUR(RED)
 BLOT(20)
 COLOUR(VIOLET)
-PRINT("You are here", 4, 36)
+PRINT("You are here", 2, 36)
 SETXY(790, 540)
 COLOUR(BLUE)
 DRAWXY(40, 0)

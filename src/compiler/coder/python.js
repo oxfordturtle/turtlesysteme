@@ -49,8 +49,10 @@ module.exports = (routine, lex, startLine) => {
         // start of WHILE structure
         case 'while':
           return compileWhile(routine, lex + 1, startLine)
+
+        default:
+          throw error('{lex} makes no sense here.', routine.lexemes[lex])
       }
-      break
 
     // any thing else is a mistake
     default:
@@ -88,7 +90,7 @@ const compileIf = (routine, lex, startLine) => {
   lex = result.lex
   ifCode = result.pcode
   // ? ... ELSE ... ?
-  if (lexemes[lex] && (lexemes[lex].type === 'else')) {
+  if (lexemes[lex] && (lexemes[lex].content === 'else')) {
     // check we're on a new line
     if (isSameLine(lexemes, lex)) throw error('if08', lexemes[lex])
     lex += 1
