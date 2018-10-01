@@ -7,6 +7,8 @@
   "license": "MIT",
   "main": "src/main.js",
   "scripts": {
+    "build-css": "node-sass src/styles/tsx.scss -o dist/css --output-style compressed",
+    "watch-css": "node-sass src/styles/tsx.scss -wo dist/css --output-style compressed",
     "build-browser": "webpack --config webpack.browser.js --mode production",
     "build-electron": "webpack --config webpack.electron.js --mode production && electron-builder --windows",
     "dev-browser": "webpack-dev-server --config webpack.browser.js --mode development --open",
@@ -14,16 +16,11 @@
   },
   "devDependencies": {
     "concurrently": "^4.0.1",
-    "css-loader": "^1.0.0",
-    "electron": "^2.0.8",
-    "json-loader": "^0.5.7",
+    "electron": "^3.0.2",
     "node-sass": "^4.9.3",
-    "raw-loader": "^0.5.1",
-    "sass-loader": "^7.1.0",
-    "style-loader": "^0.23.0",
-    "webpack": "^4.17.2",
-    "webpack-cli": "^3.1.0",
-    "webpack-dev-server": "^3.1.8"
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.9"
   },
   "repository": {
     "type": "git",

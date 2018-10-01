@@ -11,7 +11,7 @@ module.exports = (lexemes, subroutines, language) =>
     .filter(category => category.expressions.length > 0)
 
 // dependencies
-const { usage } = require('data')
+const { usage } = require('data/commands')
 
 // check if an expression is used in the program
 const isUsed = (language, lexemes, expression) => {

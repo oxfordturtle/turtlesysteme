@@ -1,0 +1,71 @@
+.tsx {
+  input, select, button {
+    font: inherit;
+    height: 2em;
+    padding: $padding;
+  }
+  input, select {
+    border: $border;
+  }
+  button {
+    background: $green;
+    border: 0;
+    padding: $padding ($padding * 2);
+    cursor: pointer;
+    color: #fff;
+    text-align: center;
+    transition: background .3s;
+    &:hover {
+      background: darken($green, 10%);
+    }
+  }
+}
+
+.tsx-buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: $padding;
+}
+
+.tsx-checkboxes {
+  @include box;
+  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: .875em;
+  label {
+    font-weight: bold;
+    cursor: pointer;
+    flex-basis: 50%;
+    padding: .25rem;
+    input {
+      height: auto;
+      padding: 0;
+      margin-right: .25em;
+    }
+  }
+}
+
+.tsx-option {
+  @include box;
+  flex: 1;
+  font-size: .875em;
+  label {
+    padding: .25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-weight: bold;
+    input {
+      width: 8em;
+      font-weight: normal;
+      text-align: right;
+    }
+  }
+  p {
+    text-align: justify;
+    font-style: italic;
+    padding: $padding * 2;
+    margin: 0;
+  }
+}

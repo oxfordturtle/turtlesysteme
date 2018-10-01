@@ -1,29 +1,21 @@
 const path = require('path')
 
 module.exports = {
-  entry: './src/browser.js',
+  entry: {
+    main: './src/browser-main.js',
+    help: './src/browser-help.js',
+    about: './src/browser-about.js'
+  },
   devServer: {
-    contentBase: './dist/browser',
+    contentBase: './dist',
     port: 8080
   },
   output: {
-    filename: 'tsx.js',
-    path: path.resolve(__dirname, 'dist/browser')
+    filename: 'js/tsx-browser-[name].js',
+    path: path.resolve(__dirname, 'dist')
   },
   target: 'web',
   resolve: {
     modules: [path.resolve(__dirname, 'src'), 'node_modules']
-  },
-  module: {
-    rules: [
-      {
-        test: /\.scss$/,
-        use: ['style-loader', 'css-loader', 'sass-loader']
-      },
-      {
-        test: /\.tg[bpy]$/,
-        use: ['raw-loader']
-      }
-    ]
   }
 }

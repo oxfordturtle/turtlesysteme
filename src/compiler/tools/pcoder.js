@@ -268,7 +268,7 @@ module.exports.program = (routine, subroutinesCode, innerCode) => {
 }
 
 // dependencies
-const { pc } = require('data')
+const { pc } = require('data/pcodes')
 const find = require('./find')
 
 // get string variables from a routine

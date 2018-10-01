@@ -14,3 +14,11 @@ $pause-icon: "\f04c";
 $direction-icon: "\f021";
 $thickness-icon: "\f040";
 $colour-icon: "\f1fb";
+
+@mixin box {
+  border: $border;
+  background: $gray;
+  &:not(:last-child) {
+    margin-bottom: $padding;
+  }
+}

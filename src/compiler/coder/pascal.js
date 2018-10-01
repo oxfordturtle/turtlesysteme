@@ -4,7 +4,7 @@
  */
 
 // local imports
-const { pc } = require('data')
+const { pc } = require('data/pcodes')
 const { molecules, find, pcoder } = require('../tools')
 
 // create an error message

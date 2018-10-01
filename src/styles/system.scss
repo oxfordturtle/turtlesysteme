@@ -7,34 +7,6 @@
   *, *::before, *::after {
     box-sizing: border-box;
   }
-  input, select, button {
-    font: inherit;
-    height: 2em;
-    padding: $padding;
-  }
-  input, select {
-    border: $border;
-  }
-  label {
-    padding: $padding;
-    input {
-      height: auto;
-      padding: 0;
-      margin-right: .5em;
-    }
-  }
-  button {
-    background: $green;
-    border: 0;
-    padding: $padding ($padding * 2);
-    cursor: pointer;
-    color: #fff;
-    text-align: center;
-    transition: background .3s;
-    &:hover {
-      background: darken($green, 10%);
-    }
-  }
   table {
     border-collapse: collapse;
     border: $border;

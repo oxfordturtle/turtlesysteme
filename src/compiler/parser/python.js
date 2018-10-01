@@ -80,9 +80,9 @@ module.exports = (lexemes) => {
   if (routines[0].lexemes.length === 0) {
     if (routines.some(x => x.name === 'main')) {
       routines[0].lexemes = [
-        {type: 'identifier', content: 'main', indent: 0},
-        {type: 'punctuation', content: '(', indent: 0},
-        {type: 'punctuation', content: ')', indent: 0}
+        { type: 'identifier', content: 'main', indent: 0 },
+        { type: 'punctuation', content: '(', indent: 0 },
+        { type: 'punctuation', content: ')', indent: 0 }
       ]
     } else {
       throw error('Program must have some commands or define a "main" procedure.', lexemes[lexemes.length - 1])

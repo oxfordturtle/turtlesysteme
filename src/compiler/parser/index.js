@@ -10,6 +10,7 @@ code themselves are just stored for subsequent handling by the pcoder
 */
 
 module.exports = (lexemes, language) => {
+  if (lexemes.length === 0) throw error('Program does not contain any lexemes.')
   const routines = parsers[language](lexemes)
   const program = routines[0]
   const subroutines = routines.slice(1)

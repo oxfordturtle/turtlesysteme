@@ -1,9 +1,9 @@
 /*
 a modal popup for displaying error messages
 */
+import { element } from '../tools.js'
 
-// create all the HTML elements first
-const { element } = require('dom')
+// create the base HTML elements first
 const title = element('h2')
 const message = element('p')
 const hide = () => { overlay.classList.remove('tsx-open') }
@@ -12,13 +12,12 @@ const buttons = element('div', { classes: ['tsx-buttons'], content: [ok] })
 const head = element('div', { classes: ['tsx-modal-head'], content: [title] })
 const body = element('div', { classes: ['tsx-modal-body'], content: [message, buttons] })
 const modal = element('div', { classes: ['tsx-modal'], content: [head, body] })
-const overlay = element('div', { classes: ['tsx', 'tsx-modal-overlay'], content: [modal] })
 
 // export the modal overlay
-module.exports.overlay = overlay
+export const overlay = element('div', { classes: ['tsx', 'tsx-modal-overlay'], content: [modal] })
 
-// and the function to show the popup (with error details)
-module.exports.show = (error) => {
+// export the function to show the popup (with error details)
+export const show = (error) => {
   console.log(error) // for debugging
   if (error.lexeme) console.log(error.lexeme) // for debugging
   if (error.type) {

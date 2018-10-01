@@ -1,29 +1,10 @@
 /*
-array of commands (for the compilers, the help page, and usage data)
+arrays of commands and command categories (for the compilers, the help page, and usage data)
 */
+import { category, command, expression, parameter } from './factory.js'
+import { pc } from './pcodes.js'
 
-const pc = require('./pc')
-
-const parameter = (name, type, byref = false, length = 1) =>
-  ({ name, type, byref, length })
-
-const command = properties =>
-  ({
-    names: {
-      BASIC: properties.names[0],
-      Pascal: properties.names[1],
-      Python: properties.names[2]
-    },
-    code: properties.code,
-    parameters: properties.parameters || [],
-    returns: properties.returns,
-    type: properties.returns ? 'function' : 'procedure',
-    category: properties.category,
-    level: properties.level,
-    description: properties.description
-  })
-
-module.exports = ([
+export const commands = ([
   // 0. Turtle: relative movement
   command({
     names: [ 'FORWARD', 'forward', 'forward' ],
@@ -1236,3 +1217,42 @@ module.exports = ([
     description: 'Resets the memory heap to the initial global value.'
   })
 ])
+
+export const categories = [
+  category(0, 'Turtle: relative movement', commands.filter((x) => x.category === 0)),
+  category(1, 'Turtle: absolute movement', commands.filter((x) => x.category === 1)),
+  category(2, 'Turtle: drawing shapes', commands.filter((x) => x.category === 2)),
+  category(3, 'Other Turtle commands', commands.filter((x) => x.category === 3)),
+  category(4, 'Canvas operations', commands.filter((x) => x.category === 4)),
+  category(5, 'General arithmetic functions', commands.filter((x) => x.category === 5)),
+  category(6, 'Trig / exp / log functions', commands.filter((x) => x.category === 6)),
+  category(7, 'String operations', commands.filter((x) => x.category === 7)),
+  category(8, 'Type conversion routines', commands.filter((x) => x.category === 8)),
+  category(9, 'Input and timing routines', commands.filter((x) => x.category === 9)),
+  category(10, 'Turtle Machine monitoring', commands.filter((x) => x.category === 10))
+]
+
+export const usage = categories.concat(
+  {
+    title: 'Command structures',
+    expressions: [
+      expression(['IF', 'if', 'if'], 0),
+      expression(['ELSE', 'else', 'else'], 0),
+      expression(['FOR', 'for', 'for'], 0),
+      expression(['REPEAT', 'repeat', 'repeat'], 1),
+      expression(['WHILE', 'while', 'while'], 1),
+      expression(['DEF', null, 'def'], 1),
+      expression([null, 'procedure', null], 1),
+      expression([null, 'function', null], 2)
+    ]
+  },
+  {
+    title: 'Variable scope modifiers',
+    expressions: [
+      expression(['LOCAL', null, null], 1),
+      expression(['PRIVATE', null, null], 2),
+      expression([null, null, 'global'], 1),
+      expression([null, null, 'nonlocal'], 2)
+    ]
+  }
+)

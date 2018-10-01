@@ -43,7 +43,8 @@ module.exports.command = (routine, name, language) =>
   module.exports.custom(routine, name, language) || module.exports.native(name, language)
 
 // dependencies
-const { commands, colours, inputs } = require('data')
+const { colours, inputs } = require('data/constants')
+const { commands } = require('data/commands')
 
 // check if object name matches the given name (for the given language)
 const matches = (name, language, object) =>

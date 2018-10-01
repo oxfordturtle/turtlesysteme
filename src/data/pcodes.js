@@ -1,11 +1,9 @@
 /*
-machine pcodes
+array of machine pcodes, and an object for looking them up
 */
+import { pcode } from './factory.js'
 
-const pcode = (code, args, str) =>
-  ({ code, args, str })
-
-module.exports = ([
+export const pcodes = [
   // 0x00s - basic stack operations, boolean operators
   pcode(0x00, 0, 'NULL'),
   pcode(0x01, 0, 'DUPL'),
@@ -278,4 +276,9 @@ module.exports = ([
   pcode(0xFD, 0, 'FILL'),
   undefined, // 0xFE
   pcode(0xFF, 0, 'MXIN')
-])
+]
+
+export const pc = pcodes.filter(x => x !== undefined).reduce((sofar, pcode) => {
+  sofar[pcode.str.toLowerCase()] = pcode.code
+  return sofar
+}, {})
