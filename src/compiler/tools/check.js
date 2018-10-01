@@ -1,8 +1,9 @@
 /*
 type check function (throws an error if check fails, does nothing otherwise)
 */
+import error from './error.js'
 
-module.exports = (needed, found, lexeme) => {
+export default (needed, found, lexeme) => {
   // if NULL is needed, everything is ok
   if (needed === 'null') return
 
@@ -21,6 +22,3 @@ module.exports = (needed, found, lexeme) => {
   // everything else is an error
   throw error(`Type error: '${needed}' expected but '${found}' found.`, lexeme)
 }
-
-// dependencies
-const error = require('./error')

@@ -21,8 +21,11 @@ for that routine may have been pushed, handled, and popped. This ensures that th
 array has all of the subroutines in the order they need to be compiled in (subroutines before their
 parent routines).
 */
+import error from '../tools/error.js'
+import * as factory from '../tools/factory.js'
+import * as find from '../tools/find.js'
 
-module.exports = (lexemes) => {
+export default (lexemes) => {
   const routines = [] // array of routines to be returned (0 being the main program)
   const routineStack = [] // stack of routines
   let lex = 0 // index of current lexeme
@@ -92,9 +95,6 @@ module.exports = (lexemes) => {
   // return the routines array
   return routines
 }
-
-// dependencies
-const { error, factory, find } = require('../tools')
 
 // crossroads (expecing 'global', 'nonlocal', 'def', or subroutine commands)
 const crossroads = (lexemes, lex, routine) => {

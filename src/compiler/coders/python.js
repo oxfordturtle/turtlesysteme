@@ -12,8 +12,12 @@ a program or subroutine is a sequence of command structures; this function comil
 returning the pcode and the index of the next lexeme - the function calling this function (in the
 main coder module) loops through the lexemes until all command structures have been compiled
 */
+import error from '../tools/error.js'
+import * as molecules from '../tools/molecules.js'
+import * as find from '../tools/find.js'
+import * as pcoder from '../tools/pcoder.js'
 
-module.exports = (routine, lex, startLine) => {
+export default (routine, lex, startLine) => {
   switch (routine.lexemes[lex].type) {
     // identifiers (variable assignment or procedure call)
     case 'turtle': // fallthrough
@@ -59,9 +63,6 @@ module.exports = (routine, lex, startLine) => {
       throw error('{lex} makes no sense here.', routine.lexemes[lex])
   }
 }
-
-// dependencies
-const { error, molecules, find, pcoder } = require('../tools')
 
 // generate the pcode for an IF structure
 const compileIf = (routine, lex, startLine) => {

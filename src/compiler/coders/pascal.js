@@ -1,12 +1,17 @@
-/**
- * coder for Turtle Pascal lexemes making up the atoms of a routine go in, inner pcode for that
- * routine comes out
- */
+/*
+coder for Turtle Pascal lexemes making up the atoms of a routine go in, inner pcode for that
+routine comes out
+*/
+// import { pc } from 'data/pcodes.js'
+// import * as molecules from '../tools/molecules.js'
+// import * as find from '../tools/find.js'
+// import * as pcoder from '../tools/pcoder.js'
 
-// local imports
-const { pc } = require('data/pcodes')
-const { molecules, find, pcoder } = require('../tools')
+export default (routine, lex, startLine) => {
+  return { lex, pcode: [] }
+}
 
+/*
 // create an error message
 const message = (id, lexeme) => {
   switch (id) {
@@ -192,11 +197,6 @@ const compileFor = (routine, lex, startLine) => {
   return { lex, pcode: pcoder.forLoop(startLine, variable, initial, final, compare, change, innerCode) }
 }
 
-
-
-
-
-/*
   let lexemes = routine.lexemes
   let pcode = []
   let result = {}
@@ -342,7 +342,6 @@ const compileFor = (routine, lex, startLine) => {
   pcode[2].push(offset + pcode.length + 1) // backpatch initial IFNO jump
   return { lex, pcode }
 }
-*/
 
 // generate the pcode for a REPEAT structure
 const compileRepeat = (routine, lex, startLine) => {
@@ -416,14 +415,6 @@ const compileWhile = (routines, sub, lex, addresses, offset) => {
   return { lex, pcode }
 }
 
-/**
- * generate the pcode for a command structure
- *
- * a command structure is either a single command (variable assignment or // procedure call) or some
- * more complex structure (if, for, while, etc.) containing a series of such single atoms
- * in the latter case, the function for dealing with the more complex structure calls this function
- * again, potentially recursively, allowing for structures of indefinite complexity
- */
 const coder = function (routine, lex, startLine) {
   const lexemes = routine.lexemes
   const noSemiAfter = [ 'begin', 'do', 'dot', 'repeat', 'semicolon', 'then' ]
@@ -475,6 +466,4 @@ const coder = function (routine, lex, startLine) {
   }
   return { lex, pcode }
 }
-
-// exports
-module.exports = coder
+*/

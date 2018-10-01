@@ -8,8 +8,17 @@ this analyses the structure of the program, and builds up lists of all the const
 subroutines (with their variables and parameters) - lexemes for the program (and any subroutine)
 code themselves are just stored for subsequent handling by the pcoder
 */
+// dependencies
+import error from './tools/error.js'
+import * as molecules from './tools/molecules.js'
+import * as factory from './tools/factory.js'
+import * as find from './tools/find.js'
+import BASIC from './parsers/basic.js'
+import Pascal from './parsers/pascal.js'
+import Python from './parsers/python.js'
 
-module.exports = (lexemes, language) => {
+export default (lexemes, language) => {
+  const parsers = { BASIC, Pascal, Python }
   if (lexemes.length === 0) throw error('Program does not contain any lexemes.')
   const routines = parsers[language](lexemes)
   const program = routines[0]
@@ -34,14 +43,6 @@ module.exports = (lexemes, language) => {
   program.turtleAddress = turtleAddress(subroutines)
   // and return the array of routines
   return routines
-}
-
-// dependencies
-const { error, molecules, factory, find } = require('../tools')
-const parsers = {
-  BASIC: require('./basic'),
-  Pascal: require('./pascal'),
-  Python: require('./python')
 }
 
 // determine the types for the variables of a routine (for Python)

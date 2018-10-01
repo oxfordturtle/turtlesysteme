@@ -16,8 +16,10 @@ the value property stores the result of evaluating literal value expressions, lo
 corresponding integer for predefined colours, keycodes, and input queries, or the pcode associated
 with an operator; it is null for all other lexical types
 */
+import error from './tools/error.js'
+import tokenizer from './tokenizer.js'
 
-module.exports = (code, language) => {
+export default (code, language) => {
   // run the tokenizer on the code, then setup some constants
   const tokens = tokenizer(code, language)
   const lexemes = []
@@ -78,10 +80,6 @@ module.exports = (code, language) => {
   // return the array of lexemes
   return lexemes
 }
-
-// dependencies
-const { error } = require('./tools')
-const tokenizer = require('./tokenizer')
 
 // error messages
 const messages = [

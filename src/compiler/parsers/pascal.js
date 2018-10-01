@@ -1,19 +1,23 @@
-/* Pascal parser (first pass)
- * -------------------------------------------------------------------------------------------------
- * parser for Turtle Pascal - lexemes go in, array of routines comes out; the first element in the
- * array is the main PROGRAM object
- *
- * look at the factory module to see what the PROGRAM object (and its components) look like
- *
- * this analyses the structure of the program, and builds up lists of all the constants, variables,
- * and subroutines (with their variables and parameters) - lexemes for the program (and any
- * subroutine) code themselves are just stored for subsequent handling by the pcoder
- * -------------------------------------------------------------------------------------------------
- */
+/*
+parser for Turtle Pascal - lexemes go in, array of routines comes out; the first element in the
+array is the main PROGRAM object
 
-// local imports
-const { factory, find } = require('../tools');
+look at the factory module to see what the PROGRAM object (and its components) look like
 
+this analyses the structure of the program, and builds up lists of all the constants, variables,
+and subroutines (with their variables and parameters) - lexemes for the program (and any
+subroutine) code themselves are just stored for subsequent handling by the pcoder
+*/
+// import error from '../tools/error.js'
+// import * as factory from '../tools/factory.js'
+// import * as find from '../tools/find.js'
+
+export default (lexemes) => {
+  const routines = []
+  return routines
+}
+
+/*
 // generate an error message
 const message = (messageId, lexeme) => {
   switch (messageId) {
@@ -528,3 +532,4 @@ const parser1 = (lexemes) => {
 
 // exports
 module.exports = parser1;
+*/

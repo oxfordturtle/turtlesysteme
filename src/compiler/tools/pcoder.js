@@ -1,34 +1,36 @@
 /*
 assorted functions for generating the pcode
 */
+import { pc } from 'data/pcodes.js'
+import * as find from './find.js'
 
 // merge two arrays of pcode into one, without a line break in between
-module.exports.merge = (pcode1, pcode2) =>
+export const merge = (pcode1, pcode2) =>
   pcode1.slice(0, -1)
     .concat([pcode1[pcode1.length - 1].concat(pcode2[0])])
     .concat(pcode2.slice(1))
 
 // merge two things with an operator at the end
-module.exports.mergeWithOperator = (sofar, next, operator) => {
-  const pcode2 = module.exports.merge(sofar, next.pcode)
-  const pcode3 = module.exports.merge(pcode2, [pc[operator]])
+export const mergeWithOperator = (sofar, next, operator) => {
+  const pcode2 = merge(sofar, next.pcode)
+  const pcode3 = merge(pcode2, [pc[operator]])
   return Object.assign(next, { pcode: pcode3 })
 }
 
 // pcode for loading a literal value onto the stack
-module.exports.loadLiteralValue = (type, value) =>
+export const loadLiteralValue = (type, value) =>
   (type === 'string')
     ? [pc.lstr, value.length].concat(Array.from(value).map(x => x.charCodeAt(0)))
     : [pc.ldin, value]
 
 // pcode for loading an input keycode onto the stack
-module.exports.loadInputValue = (input) =>
+export const loadInputValue = (input) =>
   (input.value < 0)
-    ? module.exports.loadLiteralValue('integer', input.value)
-    : module.exports.loadLiteralValue('integer', input.value).concat(pc.inpt)
+    ? loadLiteralValue('integer', input.value)
+    : loadLiteralValue('integer', input.value).concat(pc.inpt)
 
 // pcode for loading the value of a variable onto the stack
-module.exports.loadVariableValue = (variable) => {
+export const loadVariableValue = (variable) => {
   // predefined turtle property
   if (variable.turtle) {
     return [pc.ldin, 0, pc.lptr, pc.ldin, variable.turtle, pc.plus, pc.lptr]
@@ -49,7 +51,7 @@ module.exports.loadVariableValue = (variable) => {
 }
 
 // pcode for loading the address of a variable onto the stack
-module.exports.loadVariableAddress = (variable) => {
+export const loadVariableAddress = (variable) => {
   // predefined turtle property
   if (variable.turtle) {
     return [pc.ldin, 0, pc.lptr, pc.ldin, variable.turtle, pc.plus]
@@ -65,7 +67,7 @@ module.exports.loadVariableAddress = (variable) => {
 }
 
 // pcode for storing the value of a variable in memory
-module.exports.storeVariableValue = (variable, parameter) => {
+export const storeVariableValue = (variable, parameter) => {
   // predefined turtle property
   if (variable.turtle) {
     return [pc.ldin, 0, pc.lptr, pc.ldin, variable.turtle, pc.plus, pc.sptr]
@@ -95,15 +97,15 @@ module.exports.storeVariableValue = (variable, parameter) => {
 }
 
 // pcode for loading return value of a function onto the stack
-module.exports.loadFunctionReturnValue = returnAddress =>
+export const loadFunctionReturnValue = returnAddress =>
   [pc.ldvv, returnAddress, 1]
 
 // pcode for an expression operator
-module.exports.applyOperator = type =>
+export const applyOperator = type =>
   [pc[type]]
 
 // pcode for a command call (applied after any arguments have been loaded onto the stack)
-module.exports.callCommand = (command, routine, language) => {
+export const callCommand = (command, routine, language) => {
   const turtleAddress = find.program(routine).turtleAddress
 
   switch (command.code) {
@@ -193,7 +195,7 @@ module.exports.callCommand = (command, routine, language) => {
 }
 
 // pcode for a conditional structure
-module.exports.conditional = (startLine, test, ifCode, elseCode) => {
+export const conditional = (startLine, test, ifCode, elseCode) => {
   const offset = (elseCode.length > 0) ? 2 : 1
   const startCode = [test.concat([pc.ifno, ifCode.length + startLine + offset])]
   const middleCode = [[pc.jump, ifCode.length + elseCode.length + startLine + offset]]
@@ -204,29 +206,29 @@ module.exports.conditional = (startLine, test, ifCode, elseCode) => {
 }
 
 // pcode for a FOR loop structure
-module.exports.forLoop = (startLine, variable, initial, final, compare, change, innerCode) => {
+export const forLoop = (startLine, variable, initial, final, compare, change, innerCode) => {
   const ifnoLine = innerCode.length + startLine + 4
   const startCode = [
     initial,
-    module.exports.storeVariableValue(variable).concat(final),
-    module.exports.loadVariableValue(variable).concat([pc[compare], pc.ifno, ifnoLine])
+    storeVariableValue(variable).concat(final),
+    loadVariableValue(variable).concat([pc[compare], pc.ifno, ifnoLine])
   ]
   const endCode = [
-    module.exports.loadVariableValue(variable).concat([pc[change], pc.jump, startLine + 1])
+    loadVariableValue(variable).concat([pc[change], pc.jump, startLine + 1])
   ]
 
   return startCode.concat(innerCode).concat(endCode)
 }
 
 // pcode for a REPEAT loop structure
-module.exports.repeatLoop = (startLine, test, innerCode) => {
+export const repeatLoop = (startLine, test, innerCode) => {
   const endCode = [test.concat([pc.ifno, startLine])]
 
   return innerCode.concat(endCode)
 }
 
 // pcode for a WHILE loop structure
-module.exports.whileLoop = (startLine, test, innerCode) => {
+export const whileLoop = (startLine, test, innerCode) => {
   const startCode = [test.concat([pc.ifno, innerCode.length + startLine + 2])]
   const endCode = [[pc.jump, startLine]]
 
@@ -234,15 +236,15 @@ module.exports.whileLoop = (startLine, test, innerCode) => {
 }
 
 // pcode for a subroutine
-module.exports.subroutine = (routine, innerCode) => {
-  const startCode = module.exports.subroutineStartCode(routine)
+export const subroutine = (routine, innerCode) => {
+  const startCode = subroutineStartCode(routine)
   const endCode = subroutineEndCode(routine)
 
   return startCode.concat(innerCode).concat(endCode)
 }
 
 // pcode for the start of a subroutine (exported so that the coder can determine its length)
-module.exports.subroutineStartCode = (routine) => {
+export const subroutineStartCode = (routine) => {
   const firstLine = [[pc.pssr, routine.index]]
   const firstTwoLines = firstLine.concat(initialiseSubroutineMemory(routine))
 
@@ -258,7 +260,7 @@ module.exports.subroutineStartCode = (routine) => {
 }
 
 // pcode for the main program
-module.exports.program = (routine, subroutinesCode, innerCode) => {
+export const program = (routine, subroutinesCode, innerCode) => {
   const startCode = programStartCode(routine)
   const jumpLine = [[pc.jump, startCode.length + subroutinesCode.length + 2]]
   const endCode = [[pc.halt]]
@@ -266,10 +268,6 @@ module.exports.program = (routine, subroutinesCode, innerCode) => {
     ? startCode.concat(jumpLine).concat(subroutinesCode).concat(innerCode).concat(endCode)
     : startCode.concat(innerCode).concat(endCode)
 }
-
-// dependencies
-const { pc } = require('data/pcodes')
-const find = require('./find')
 
 // get string variables from a routine
 const stringVariables = routine =>
@@ -329,7 +327,7 @@ const loadSubroutineArguments = (routine) => {
   let pars = routine.parameters.length
   while (pars > 0) {
     pars -= 1
-    result.push(module.exports.storeVariableValue(routine.parameters[pars]))
+    result.push(storeVariableValue(routine.parameters[pars]))
   }
 
   return result

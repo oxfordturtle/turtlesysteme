@@ -1,9 +1,14 @@
 /*
 compile the basic 'atoms' of a program, i.e. expressions, variable assignments, and procedure calls
 */
+import * as atoms from './atoms.js'
+import check from './check.js'
+import error from './error.js'
+import * as find from './find.js'
+import * as pcoder from './pcoder.js'
 
 // generate pcode for an expression (mutually recursive with simple, term, and factor below)
-module.exports.expression = (routine, lex, type, needed, language) => {
+export const expression = (routine, lex, type, needed, language) => {
   const expTypes = ['eqal', 'less', 'lseq', 'more', 'mreq', 'noeq']
 
   // expressions are boolean anyway
@@ -24,7 +29,7 @@ module.exports.expression = (routine, lex, type, needed, language) => {
 }
 
 // variable assignment
-module.exports.variableAssignment = (routine, name, lex, language) => {
+export const variableAssignment = (routine, name, lex, language) => {
   // search for the variable and check it exists
   const variable = find.variable(routine, name, language)
   if (!variable) throw error(`Variable "${name}" is not defined.`, routine.lexemes[lex])
@@ -33,7 +38,7 @@ module.exports.variableAssignment = (routine, name, lex, language) => {
   if (!routine.lexemes[lex]) {
     throw error(`Variable "${name}" must be assigned a value.`, routine.lexemes[lex - 1])
   }
-  const result = module.exports.expression(routine, lex, 'null', variable.fulltype.type, language)
+  const result = expression(routine, lex, 'null', variable.fulltype.type, language)
 
   // return the next lexeme index and pcode
   return { lex: result.lex, pcode: pcoder.merge(result.pcode, [pcoder.storeVariableValue(variable)]) }
@@ -42,7 +47,7 @@ module.exports.variableAssignment = (routine, name, lex, language) => {
 // procedure call (but also used internally by the functionCall function below, since most of the
 // code for calling a function (loading arguments onto the stack, then calling the command) is the
 // same
-module.exports.procedureCall = (routine, lex, language, procedureCheck = true) => {
+export const procedureCall = (routine, lex, language, procedureCheck = true) => {
   // look for the command
   const command = find.command(routine, routine.lexemes[lex].content, language)
   if (!command) throw error('{lex} is not defined.', routine.lexemes[lex])
@@ -58,13 +63,6 @@ module.exports.procedureCall = (routine, lex, language, procedureCheck = true) =
     ? commandNoParameters(routine, lex, command, language)
     : commandWithParameters(routine, lex, command, language)
 }
-
-// dependencies
-const atoms = require('./atoms')
-const check = require('./check')
-const error = require('./error')
-const find = require('./find')
-const pcoder = require('./pcoder')
 
 // get unambiguous operator from ambiguous one
 const unambiguousOperator = (operator, type) => {
@@ -306,5 +304,5 @@ const argument = (routine, lex, command, index, language) => {
 
   // value parameter
   const type = command.parameters[index].type || command.parameters[index].fulltype.type
-  return module.exports.expression(routine, lex, 'null', type, language)
+  return expression(routine, lex, 'null', type, language)
 }

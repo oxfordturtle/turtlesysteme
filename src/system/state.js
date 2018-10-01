@@ -19,7 +19,7 @@ including also the new values of any relevant state variables.
 import { fetch } from '../tools.js'
 import { extensions, languages } from '../data/constants.js'
 import * as examples from '../data/examples.js'
-import { compile } from '../compiler/index.js'
+import compile from '../compiler/compile.js'
 import * as machine from './machine.js'
 
 // function for "sending" signals to this module, asking it to update the state
@@ -233,7 +233,7 @@ export const send = (signal, data) => {
           machine.halt()
         } else {
           if (!get('compiled')) {
-            let result = compile(get('code'))
+            let result = compile(get('code'), get('language'))
             set('usage', result.usage)
             set('pcode', result.pcode)
             set('compiled', true)

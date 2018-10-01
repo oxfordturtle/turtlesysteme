@@ -1,6 +1,6 @@
-module.exports = (routine, lex, startLine) => {
-  return { lex, pcode: [] };
-};
+export default (routine, lex, startLine) => {
+  return { lex, pcode: [] }
+}
 
 /*
 define(function (require) {

@@ -2,7 +2,7 @@
 Text for the operators help tab.
 */
 import { element } from '../tools.js'
-import { highlight } from '../compiler/index.js'
+import highlight from '../compiler/highlight.js'
 
 // help text for Turtle BASIC
 export const BASIC = [

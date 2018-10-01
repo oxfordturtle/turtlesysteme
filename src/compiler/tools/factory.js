@@ -5,7 +5,7 @@ of the different parsers
 */
 
 // create main program object
-module.exports.program = (name, language) =>
+export const program = (name, language) =>
   ({
     language,
     name,
@@ -20,7 +20,7 @@ module.exports.program = (name, language) =>
   })
 
 // create subroutine object
-module.exports.subroutine = (name, type, parent) =>
+export const subroutine = (name, type, parent) =>
   ({
     name,
     type, // "procedure|function"
@@ -39,11 +39,11 @@ module.exports.subroutine = (name, type, parent) =>
   })
 
 // create constant object
-module.exports.constant = (name, type, value) =>
+export const constant = (name, type, value) =>
   ({ name, type, value })
 
 // create variable (and parameter) object
-module.exports.variable = (lexeme, routine, byref = false) =>
+export const variable = (lexeme, routine, byref = false) =>
   ({
     name: lexeme.content,
     lexeme, // keep this around in case type cannot be deduced and an error message is needed
@@ -54,7 +54,7 @@ module.exports.variable = (lexeme, routine, byref = false) =>
     private: null // routine for private variables (BASIC only)
   })
 
-module.exports.fulltype = (type, length = null, start = null, fulltype = null) =>
+export const fulltype = (type, length = null, start = null, fulltype = null) =>
   (type === 'string')
     ? { type, length: 33, start, fulltype }
     : { type, length, start, fulltype }

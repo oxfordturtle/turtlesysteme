@@ -1,12 +1,15 @@
-/**
- * compile the basic 'atoms' of a program, i.e. literal values, variable calls, function calls, etc.
- *
- * these functions are called by the molecules module - they are where the recursions in that
- * module ultimately bottom out
- */
+/*
+compile the basic 'atoms' of a program, i.e. literal values, variable calls, function calls, etc.
+
+these functions are called by the molecules module - they are where the recursions in that
+module ultimately bottom out
+*/
+import check from './check.js'
+import * as find from './find.js'
+import * as pcoder from './pcoder.js'
 
 // literal value
-module.exports.literal = (lexemes, lex, needed) => {
+export const literal = (lexemes, lex, needed) => {
   const { type, value } = lexemes[lex]
 
   // check this type is ok (will throw an error if not)
@@ -19,7 +22,7 @@ module.exports.literal = (lexemes, lex, needed) => {
 }
 
 // input keycode or query
-module.exports.input = (lexemes, lex, needed, language) => {
+export const input = (lexemes, lex, needed, language) => {
   const hit = find.input(lexemes[lex].content, language)
 
   if (hit) {
@@ -32,7 +35,7 @@ module.exports.input = (lexemes, lex, needed, language) => {
 }
 
 // constant
-module.exports.constant = (routine, lex, needed, language) => {
+export const constant = (routine, lex, needed, language) => {
   const { lexemes } = routine
   const hit = find.constant(routine, lexemes[lex].content, language)
 
@@ -46,7 +49,7 @@ module.exports.constant = (routine, lex, needed, language) => {
 }
 
 // variable
-module.exports.variable = (routine, lex, needed, language) => {
+export const variable = (routine, lex, needed, language) => {
   const { lexemes } = routine
   const hit = find.variable(routine, lexemes[lex].content, language)
 
@@ -60,7 +63,7 @@ module.exports.variable = (routine, lex, needed, language) => {
 }
 
 // native colour constant
-module.exports.colour = (routine, lex, needed, language) => {
+export const colour = (routine, lex, needed, language) => {
   const { lexemes } = routine
   const hit = find.colour(lexemes[lex].content, language)
 
@@ -72,8 +75,3 @@ module.exports.colour = (routine, lex, needed, language) => {
     return { type: 'integer', lex: lex + 1, pcode: [pcoder.loadLiteralValue('integer', hit.value)] }
   }
 }
-
-// dependencies
-const check = require('./check')
-const find = require('./find')
-const pcoder = require('./pcoder')

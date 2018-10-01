@@ -10,13 +10,12 @@ actual pcode from the array of routines
 
 the compiler also generates command and structure usage data from the lexemes and subroutines
 */
+import analyser from './analyser.js'
+import lexer from './lexer.js'
+import parser from './parser.js'
+import coder from './coder.js'
 
-// syntax highlighting for the code editor
-module.exports.highlight = (code, language) =>
-  tokenizer(code, language).map(style).join('')
-
-// the compile function
-module.exports.compile = (code, language) => {
+export default (code, language) => {
   // get lexemes from the code
   const lexemes = lexer(code, language)
 
@@ -34,14 +33,3 @@ module.exports.compile = (code, language) => {
   // return usage and pcode
   return { usage, pcode }
 }
-
-// dependencies
-const analyser = require('./analyser')
-const lexer = require('./lexer')
-const parser = require('./parser')
-const coder = require('./coder')
-const tokenizer = require('./tokenizer')
-
-// wrap a token in a <span> tag (used by the highlight function)
-const style = token =>
-  `<span class="tsx-${token.type}">${token.content}</span>`

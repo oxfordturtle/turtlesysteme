@@ -9,9 +9,13 @@ the language-specific modules are responsible for running through the lexemes th
 commands of the individual routines; this module pieces those results together, and wraps them up
 in the appropriate routine start and end code
 */
+import * as pcoder from './tools/pcoder.js'
+import BASIC from './coders/basic.js'
+import Pascal from './coders/pascal.js'
+import Python from './coders/python.js'
 
 // the coder function - generates pcode from the array of routines
-module.exports = (routines, language) => {
+export default (routines, language) => {
   const program = routines[0]
   const subroutines = routines.slice(1)
   const subroutinesStartLine = (subroutines.length > 0) ? 4 : 3
@@ -19,14 +23,6 @@ module.exports = (routines, language) => {
   const programStartLine = subroutinesStartLine + subroutinesCode.length
   const innerCode = compileInnerCode(program, programStartLine, language)
   return pcoder.program(routines[0], subroutinesCode, innerCode)
-}
-
-// dependencies
-const { pcoder } = require('../tools')
-const coders = {
-  BASIC: require('./basic'),
-  Pascal: require('./pascal'),
-  Python: require('./python')
 }
 
 // generate the pcode for subroutines (returns an empty array if there aren't any)
@@ -51,6 +47,7 @@ const compileSubroutines = (routines, startLine, language) => {
 
 // generate the inner pcode for routines (minus start and end stuff)
 const compileInnerCode = (routine, startLine, language) => {
+  const coders = { BASIC, Pascal, Python }
   let pcode = []
 
   // loop through the routine lexmes, compiling each block of code with the coder, and concatenating

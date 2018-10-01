@@ -1,17 +1,13 @@
 /*
-usage data generator
-
-arrays of lexemes and subroutines go in, usage data comes out
+usage data generator - arrays of lexemes and subroutines go in, usage data comes out
 */
+import { usage } from '../data/commands.js'
 
 // the analyser function
-module.exports = (lexemes, subroutines, language) =>
+export default (lexemes, subroutines, language) =>
   usage.concat({ title: 'Subroutine calls', expressions: subroutines })
     .map(usageCategory.bind(null, language, lexemes))
     .filter(category => category.expressions.length > 0)
-
-// dependencies
-const { usage } = require('data/commands')
 
 // check if an expression is used in the program
 const isUsed = (language, lexemes, expression) => {

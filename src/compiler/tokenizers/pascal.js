@@ -4,7 +4,7 @@ tokenizer for Turtle Pascal
 splits code into lexemes and whitespace used by the code highlighting module and by the lexer
 */
 
-module.exports = (code) => {
+export default (code) => {
   const tokens = []
   while (code.length > 0) {
     let token = linebreak(code) ||

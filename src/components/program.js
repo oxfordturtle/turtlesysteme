@@ -6,7 +6,7 @@ included invisibly.
 import { element, show, tabs } from '../tools.js'
 import * as examples from '../data/examples.js'
 import { pcodes } from '../data/pcodes.js'
-import { highlight } from '../compiler/index.js'
+import highlight from '../compiler/highlight.js'
 import { send, on } from '../system/state.js'
 
 // the file tab
