@@ -1,18 +1,27 @@
-.tsx-usage-table {
-  border-collapse: collapse;
-  border: $border;
-  font-size: .875em;
-  line-height: 1.5;
-  width: 100%;
-  th {
-    font-weight: bold;
+.tsx {
+  table {
+    border-collapse: collapse;
+    font-size: .875em;
+    line-height: 1.5;
+    width: 100%;
+  }
+  thead th {
     background: $gray;
   }
-  td, th {
+  th {
+    font-weight: bold;
+  }
+  th, td {
     border: $border;
     padding: .25em .5em;
     vertical-align: top;
     text-align: center;
+  }
+}
+
+.tsx-usage-table {
+  border: $border;
+  td, th {
     &:first-child, &:last-child {
       text-align: left;
     }
@@ -26,7 +35,7 @@
   }
 }
 
-.tsx-pcode-table, .tsx-memory-table {
+.tsx-pcode-table {
   border: $border;
   overflow: auto;
   font-size: .875em;
@@ -36,10 +45,15 @@
   padding-left: 2.5em;
   flex: 1;
   list-style-type: none;
+  counter-reset: pcode-table;
   li {
     display: flex;
     flex-wrap: wrap;
     background: #fff;
+    counter-increment: pcode-table;
+    &::before {
+      content: counter(pcode-table);
+    }
     &:not(:last-child) {
       border-bottom: $border;
     }
@@ -60,25 +74,21 @@
   }
 }
 
-.tsx-pcode-table {
-  counter-reset: pcode-table;
-  li {
-    counter-increment: pcode-table;
-    &::before {
-      content: counter(pcode-table);
-    }
+.tsx-memory-container {
+  flex: 1;
+  border: $border;
+  overflow-y: auto;
+  overflow-x: hidden;
+  &:not(:last-child) {
+    margin-bottom: $padding;
   }
-}
-
-.tsx-pcode-table {
-  counter-reset: memory-table;
-  li {
-    counter-increment: memory-table;
-    counter-increment: memory-table;
-    counter-increment: memory-table;
-    counter-increment: memory-table;
-    &::before {
-      content: counter(memory-table);
-    }
+  table {
+    margin: -1px 0;
+  }
+  th:first-child, td:first-child {
+    border-left: 0;
+  }
+  th:nth-child(9), td:nth-child(9) {
+    border-right: 0;
   }
 }

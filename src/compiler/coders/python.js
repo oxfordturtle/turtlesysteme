@@ -17,7 +17,7 @@ import * as molecules from '../tools/molecules.js'
 import * as find from '../tools/find.js'
 import * as pcoder from '../tools/pcoder.js'
 
-export default (routine, lex, startLine) => {
+export const coder = (routine, lex, startLine) => {
   switch (routine.lexemes[lex].type) {
     // identifiers (variable assignment or procedure call)
     case 'turtle': // fallthrough
@@ -265,7 +265,7 @@ const block = (routine, lex, startLine, offset) => {
     if (!end) {
       // compile the structure
       pcodeTemp = pcode
-      ;({ lex, pcode } = module.exports(routine, lex, startLine + pcode.length))
+      ;({ lex, pcode } = coder(routine, lex, startLine + pcode.length))
       pcode = pcodeTemp.concat(pcode)
     }
   }

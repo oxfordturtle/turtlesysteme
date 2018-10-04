@@ -184,7 +184,7 @@ const functionCall = (routine, lex, needed, language) => {
 
     // handle the bulk of the function (mostly works just like a procedure call, expect that the
     // last argument is set to false, so as to bypass the procedure check)
-    const result = module.exports.procedureCall(routine, lex, language, false)
+    const result = procedureCall(routine, lex, language, false)
 
     // user-defined functions need this at the end
     if (!hit.code) result.pcode.push(pcoder.loadFunctionReturnValue(hit.resultAddress))
@@ -201,7 +201,7 @@ const brackets = (routine, lex, type, needed, language) => {
   // look for an open bracket
   if (routine.lexemes[lex].content === '(') {
     // what follows should be an expression
-    const result = module.exports.expression(routine, lex + 1, type, needed, language)
+    const result = expression(routine, lex + 1, type, needed, language)
 
     // now check for a closing bracket
     if (routine.lexemes[result.lex] && (routine.lexemes[result.lex].content === ')')) {

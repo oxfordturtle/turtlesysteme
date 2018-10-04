@@ -254,6 +254,10 @@ export const send = (signal, data) => {
         }
         break
 
+      case 'dump-memory':
+        reply('dump-memory', machine.dump())
+        break
+
       default:
         console.log(`unknown signal '${signal}'`) // for debugging
         break

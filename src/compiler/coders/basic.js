@@ -1,4 +1,4 @@
-export default (routine, lex, startLine) => {
+export const coder = (routine, lex, startLine) => {
   return { lex, pcode: [] }
 }
 

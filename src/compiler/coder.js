@@ -10,9 +10,9 @@ commands of the individual routines; this module pieces those results together, 
 in the appropriate routine start and end code
 */
 import * as pcoder from './tools/pcoder.js'
-import BASIC from './coders/basic.js'
-import Pascal from './coders/pascal.js'
-import Python from './coders/python.js'
+import * as BASIC from './coders/basic.js'
+import * as Pascal from './coders/pascal.js'
+import * as Python from './coders/python.js'
 
 // the coder function - generates pcode from the array of routines
 export default (routines, language) => {
@@ -47,7 +47,7 @@ const compileSubroutines = (routines, startLine, language) => {
 
 // generate the inner pcode for routines (minus start and end stuff)
 const compileInnerCode = (routine, startLine, language) => {
-  const coders = { BASIC, Pascal, Python }
+  const coders = { BASIC: BASIC.coder, Pascal: Pascal.coder, Python: Python.coder }
   let pcode = []
 
   // loop through the routine lexmes, compiling each block of code with the coder, and concatenating

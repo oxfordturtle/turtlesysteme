@@ -7,7 +7,7 @@ routine comes out
 // import * as find from '../tools/find.js'
 // import * as pcoder from '../tools/pcoder.js'
 
-export default (routine, lex, startLine) => {
+export const coder = (routine, lex, startLine) => {
   return { lex, pcode: [] }
 }
 

@@ -79,17 +79,70 @@ const console = element('pre', { classes: ['tsx-console'] })
 const output = element('pre', { classes: ['tsx-output'] })
 
 // the memory tab
-const dump = (memory) => {}
-const memoryButton = element('button', { on: [{ type: 'click', callback: dump }] })
-const stack = element('ol', { classes: ['tsx-memory-table'] })
-const heap = element('ol', { classes: ['tsx-memory-table'] })
-const memory = element('div', {
-  classes: ['tsx-memory'],
+const dump = (memory) => {
+  const td = byte => element('td', { content: byte.toString(10) })
+  const tr = (bytes, index) => {
+    const th = element('th', { content: (index * 8).toString(10) })
+    return element('tr', { content: [th].concat(bytes.map(td)) })
+  }
+  const stackSplit = []
+  const heapSplit = []
+  while (memory.stack.length > 0) {
+    stackSplit[stackSplit.length] = memory.stack.splice(0, 8)
+  }
+  while (memory.heap.length > 0) {
+    heapSplit[heapSplit.length] = memory.heap.splice(0, 8)
+  }
+  window.console.log(stackSplit)
+  stack.innerHTML = ''
+  heap.innerHTML = ''
+  stackSplit.map(tr).forEach(bytes => { stack.appendChild(bytes) })
+  heapSplit.map(tr).forEach(bytes => { heap.appendChild(bytes) })
+}
+const memoryButtons = element('div', {
+  classes: ['tsx-buttons'],
   content: [
-    element('div', { classes: ['tsx-buttons'], content: [memoryButton] }),
-    stack,
-    heap
+    element('button', {
+      content: 'Show Current State',
+      on: [{ type: 'click', callback: (e) => { send('dump-memory') } }]
+    })
   ]
+})
+const stack = element('tbody')
+const heap = element('tbody')
+const stackTable = element('div', {
+  classes: ['tsx-memory-container'],
+  content: [element('table', { content: [
+    element('thead', { content: [
+      element('td', { content: 'Stack' }),
+      element('th', { content: '+0' }),
+      element('th', { content: '+1' }),
+      element('th', { content: '+2' }),
+      element('th', { content: '+3' }),
+      element('th', { content: '+4' }),
+      element('th', { content: '+5' }),
+      element('th', { content: '+6' }),
+      element('th', { content: '+7' })
+    ] }),
+    stack
+  ] })]
+})
+const heapTable = element('div', {
+  classes: ['tsx-memory-container'],
+  content: [element('table', { content: [
+    element('thead', { content: [
+      element('td', { content: 'Heap' }),
+      element('th', { content: '+0' }),
+      element('th', { content: '+1' }),
+      element('th', { content: '+2' }),
+      element('th', { content: '+3' }),
+      element('th', { content: '+4' }),
+      element('th', { content: '+5' }),
+      element('th', { content: '+6' }),
+      element('th', { content: '+7' })
+    ] }),
+    heap
+  ] })]
 })
 
 // export the tabs (with or without the settings tab
@@ -99,12 +152,12 @@ export const component = (includeSettings) =>
       { label: 'Settings', active: false, content: settings },
       { label: 'Canvas', active: true, content: [canvas, console] },
       { label: 'Output', active: false, content: [output] },
-      { label: 'Memory', active: false, content: [memory] }
+      { label: 'Memory', active: false, content: [memoryButtons, stackTable, heapTable] }
     ])
     : tabs('tsx-system-tabs', [
       { label: 'Canvas', active: true, content: [canvas, console] },
       { label: 'Output', active: false, content: [output] },
-      { label: 'Memory', active: false, content: [memory] }
+      { label: 'Memory', active: false, content: [memoryButtons, stackTable, heapTable] }
     ])
 
 // register to keep in sync with system state

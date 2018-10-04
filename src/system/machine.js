@@ -14,6 +14,13 @@ export const on = (message, callback) => {
 export const isRunning = () => status.running
 export const isPaused = () => status.paused
 
+// get machine memory
+export const dump = () => {
+  const stack = memory.slice(0, markers.stackTop + 1)
+  const heap = memory.slice(markers.heapBase, markers.heapMax)
+  return { stack, heap }
+}
+
 // run the machine
 export const run = (pcode, options) => {
   // initialise the component (grab the HTML elements)
@@ -37,12 +44,13 @@ export const run = (pcode, options) => {
   memoryStack.length = 0
   returnStack.length = 0
   subroutineStack.length = 0
-  // set up heap base markers (for dividing the stack and the heap in the main memory array)
-  heap.global = -1
-  heap.base = options.stackSize - 1
-  heap.temp = heap.base
-  heap.perm = heap.temp
-  heap.max = heap.temp
+  // set up stack top and markers.heapBase markers
+  markers.stackTop = 0
+  markers.heapGlobal = -1
+  markers.heapBase = options.stackSize - 1
+  markers.heapTemp = markers.heapBase
+  markers.heapPerm = markers.heapTemp
+  markers.heapMax = markers.heapTemp
   // setup the virtual canvas
   // N.B. pcode for every program does most of this anyway; reconsider?
   vcanvas.startx = 0
@@ -138,7 +146,7 @@ const stack = []
 const memoryStack = []
 const returnStack = []
 const subroutineStack = []
-const heap = {}
+const markers = {}
 const vcanvas = {}
 const runtime = {}
 
@@ -845,6 +853,7 @@ const execute = (pcode, line, code, options) => {
       case pc.stmt:
         a = stack.pop()
         memoryStack.push(a)
+        markers.stackTop = Math.max(a, markers.stackTop)
         break
 
       // 0x7 - pointer handling
@@ -904,8 +913,8 @@ const execute = (pcode, line, code, options) => {
         return
 
       case pc.subr:
-        if (heap.global === -1) {
-          heap.global = heap.perm
+        if (markers.heapGlobal === -1) {
+          markers.heapGlobal = markers.heapPerm
         }
         returnStack.push(line + 1)
         line = pcode[line][code + 1] - 1
@@ -947,8 +956,10 @@ const execute = (pcode, line, code, options) => {
           throw error('Memory stack has overflowed into memory heap. Probable cause is unterminated recursion.')
         }
         memoryStack.push(memory[a])
+        markers.stackTop = Math.max(memory[a], markers.stackTop)
         memory[a] = c
         memoryStack.push(c + b)
+        markers.stackTop = Math.max(c + b, markers.stackTop)
         code += 2
         break
 
@@ -957,22 +968,23 @@ const execute = (pcode, line, code, options) => {
         a = pcode[line][code + 1]
         b = memoryStack.pop()
         memoryStack.push(memory[a])
+        markers.stackTop = Math.max(memory[a], markers.stackTop)
         memory[a] = b
         code += 2
         break
 
       case pc.hfix:
-        heap.perm = heap.temp
+        markers.heapPerm = markers.heapTemp
         break
 
       case pc.hclr:
-        heap.temp = heap.perm
+        markers.heapTemp = markers.heapPerm
         break
 
       case pc.hrst:
-        if (heap.global > -1) {
-          heap.temp = heap.global
-          heap.perm = heap.global
+        if (markers.heapGlobal > -1) {
+          markers.heapTemp = markers.heapGlobal
+          markers.heapPerm = markers.heapGlobal
         }
         break
 
@@ -1030,9 +1042,7 @@ const execute = (pcode, line, code, options) => {
         break
 
       case pc.dump:
-        a = memory.slice(0, heap.stack - 1)
-        b = memory.slice(heap.stack)
-        replies.dump({ stack: a, heap: b })
+        replies.dump(dump())
         if (options.showMemory) replies.show('memory')
         break
 
@@ -1094,14 +1104,14 @@ const execute = (pcode, line, code, options) => {
       case pc.bufr:
         a = stack.pop()
         if (a > 0) {
-          b = heap.temp + 4
-          stack.push(heap.temp + 1)
-          memory[heap.temp + 1] = b + a
-          memory[heap.temp + 2] = b
-          memory[heap.temp + 3] = b
+          b = markers.heapTemp + 4
+          stack.push(markers.heapTemp + 1)
+          memory[markers.heapTemp + 1] = b + a
+          memory[markers.heapTemp + 2] = b
+          memory[markers.heapTemp + 3] = b
           memory.fill(0, b, b + a)
-          heap.temp = b + a
-          heap.max = Math.max(heap.temp, heap.max)
+          markers.heapTemp = b + a
+          markers.heapMax = Math.max(markers.heapTemp, markers.heapMax)
         }
         break
 
@@ -1555,14 +1565,14 @@ const error = (message) => {
 // make a string on the heap
 const makeHeapString = (string) => {
   const stringArray = Array.from(string).map(c => c.charCodeAt(0))
-  stack.push(heap.temp + 1)
-  heap.temp += 1
-  memory[heap.temp] = string.length
+  stack.push(markers.heapTemp + 1)
+  markers.heapTemp += 1
+  memory[markers.heapTemp] = string.length
   stringArray.forEach((code) => {
-    heap.temp += 1
-    memory[heap.temp] = code
+    markers.heapTemp += 1
+    memory[markers.heapTemp] = code
   })
-  heap.max = Math.max(heap.temp, heap.max)
+  markers.heapMax = Math.max(markers.heapTemp, markers.heapMax)
 }
 
 // get a string from the heap
@@ -1571,8 +1581,8 @@ const getHeapString = (address) => {
   const start = address + 1
   const charArray = memory.slice(start, start + length)
   const string = charArray.reduce((a, b) => a + String.fromCharCode(b), '')
-  if (address + length + 1 > heap.perm) {
-    heap.temp = address + length
+  if (address + length + 1 > markers.heapPerm) {
+    markers.heapTemp = address + length
   }
   return string
 }
