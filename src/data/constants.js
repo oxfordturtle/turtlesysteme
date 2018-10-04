@@ -1,7 +1,31 @@
 /*
 arrays of languages, colours, cursors, fonts, and inputs
 */
-import { colour, cursor, font, input } from './factory.js'
+import { padded } from '../tools.js'
+
+export const colour = (index, name, value, dark) =>
+  ({
+    index,
+    names: { BASIC: name.toUpperCase(), Pascal: name, Python: name },
+    type: 'integer',
+    value,
+    hex: {
+      BASIC: `&${padded(value.toString(16))}`,
+      Pascal: `$${padded(value.toString(16))}`,
+      Python: `0x${padded(value.toString(16))}`
+    },
+    css: `#${padded(value.toString(16))}`,
+    dark
+  })
+
+export const cursor = (index, name, css) =>
+  ({ index, name, css })
+
+export const font = (index, name, css) =>
+  ({ index, name, css })
+
+export const input = (name, value) =>
+  ({ names: { BASIC: name.toUpperCase(), Pascal: name, Python: name }, value })
 
 export const languages = ['BASIC', 'Pascal', 'Python']
 

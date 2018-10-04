@@ -1,29 +1,22 @@
 const path = require('path')
 
 module.exports = {
-  entry: './src/electron.js',
+  entry: {
+    renderer: './src/renderer.js',
+    settings: './src/settings.js',
+    help: './src/help.js',
+    about: './src/about.js'
+  },
   devServer: {
-    contentBase: './dist/electron',
+    contentBase: './dist',
     port: 9000
   },
   output: {
-    filename: 'tsx.js',
-    path: path.resolve(__dirname, 'dist/electron')
+    filename: 'js/tsx-[name].js',
+    path: path.resolve(__dirname, 'dist')
   },
   target: 'electron-renderer',
   resolve: {
     modules: [path.resolve(__dirname, 'src'), 'node_modules']
-  },
-  module: {
-    rules: [
-      {
-        test: /\.scss$/,
-        use: ['style-loader', 'css-loader', 'sass-loader']
-      },
-      {
-        test: /\.tg[bpy]$/,
-        use: ['raw-loader']
-      }
-    ]
   }
 }

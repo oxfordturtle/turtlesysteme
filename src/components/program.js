@@ -120,13 +120,20 @@ const pcodeOptions = element('div', {
 })
 const pcodeList = element('ol', { classes: ['tsx-pcode-table'] })
 
-// export the tabs
-export default tabs('tsx-system-tabs', [
-  { label: 'File', active: false, content: [openLocal, openHelp, openCSAC] },
-  { label: 'Code', active: true, content: [code] },
-  { label: 'Usage', active: false, content: [usage] },
-  { label: 'PCode', active: false, content: [pcodeOptions, pcodeList] }
-])
+// export the tabs (with or without the file tab)
+export const component = (includeFileTab) =>
+  includeFileTab
+    ? tabs('tsx-system-tabs', [
+      { label: 'File', active: false, content: [openLocal, openHelp, openCSAC] },
+      { label: 'Code', active: true, content: [code] },
+      { label: 'Usage', active: false, content: [usage] },
+      { label: 'PCode', active: false, content: [pcodeOptions, pcodeList] }
+    ])
+    : tabs('tsx-system-tabs', [
+      { label: 'Code', active: true, content: [code] },
+      { label: 'Usage', active: false, content: [usage] },
+      { label: 'PCode', active: false, content: [pcodeOptions, pcodeList] }
+    ])
 
 // synchronise with the application state
 on('file-changed', show.bind(null, 'Code'))

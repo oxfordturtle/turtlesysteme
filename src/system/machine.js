@@ -23,7 +23,7 @@ export const run = (pcode, options) => {
   component.console(true, 0xFFFFFF)
   component.output(true, 0xFFFFFF)
   // optionally show the canvas
-  if (options.showCanvas) component.show('canvas')
+  if (options.showCanvas) replies.show('canvas')
   // set up the memory arrays
   memory.length = 0x200000
   keys.length = 0x100
@@ -1005,9 +1005,9 @@ const execute = (pcode, line, code, options) => {
         a = (stack.pop() === -1) // -1 for TRUE
         component.output(a, b)
         if (c) {
-          component.show('output')
+          replies.show('output')
         } else {
-          component.show('console')
+          replies.show('canvas')
         }
         break
 
@@ -1030,8 +1030,10 @@ const execute = (pcode, line, code, options) => {
         break
 
       case pc.dump:
-        component.dump(memory) // TODO: split stack and heap in memory argument
-        if (options.showMemory) component.show('memory')
+        a = memory.slice(0, heap.stack - 1)
+        b = memory.slice(heap.stack)
+        replies.dump({ stack: a, heap: b })
+        if (options.showMemory) replies.show('memory')
         break
 
       // 0xB - timing, runtime.input, text output
@@ -1144,7 +1146,7 @@ const execute = (pcode, line, code, options) => {
       case pc.text:
         a = getHeapString(stack.pop())
         component.write(a)
-        if (options.showOutput) component.show('output')
+        if (options.showOutput) replies.show('output')
         break
 
       case pc.newl:

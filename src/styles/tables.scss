@@ -1,0 +1,84 @@
+.tsx-usage-table {
+  border-collapse: collapse;
+  border: $border;
+  font-size: .875em;
+  line-height: 1.5;
+  width: 100%;
+  th {
+    font-weight: bold;
+    background: $gray;
+  }
+  td, th {
+    border: $border;
+    padding: .25em .5em;
+    vertical-align: top;
+    text-align: center;
+    &:first-child, &:last-child {
+      text-align: left;
+    }
+  }
+  .category-heading th {
+    background: $green;
+    color: white;
+    font-style: italic;
+    font-weight: bold;
+    text-align: right;
+  }
+}
+
+.tsx-pcode-table, .tsx-memory-table {
+  border: $border;
+  overflow: auto;
+  font-size: .875em;
+  font-family: $monospace;
+  background: $gray;
+  margin: 0;
+  padding-left: 2.5em;
+  flex: 1;
+  list-style-type: none;
+  li {
+    display: flex;
+    flex-wrap: wrap;
+    background: #fff;
+    &:not(:last-child) {
+      border-bottom: $border;
+    }
+    &::before {
+      font-weight: bold;
+      margin-left: -2.5em;
+      width: 2.5em;
+      padding: .25em .5em;
+      text-align: right;
+    }
+    div {
+      flex: 0 0 12.5%;
+      padding: .25em;
+      overflow: hidden;
+      border-left: $border;
+      text-align: center;
+    }
+  }
+}
+
+.tsx-pcode-table {
+  counter-reset: pcode-table;
+  li {
+    counter-increment: pcode-table;
+    &::before {
+      content: counter(pcode-table);
+    }
+  }
+}
+
+.tsx-pcode-table {
+  counter-reset: memory-table;
+  li {
+    counter-increment: memory-table;
+    counter-increment: memory-table;
+    counter-increment: memory-table;
+    counter-increment: memory-table;
+    &::before {
+      content: counter(memory-table);
+    }
+  }
+}

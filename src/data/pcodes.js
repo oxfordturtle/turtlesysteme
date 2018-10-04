@@ -1,7 +1,8 @@
 /*
 array of machine pcodes, and an object for looking them up
 */
-import { pcode } from './factory.js'
+export const pcode = (code, args, str) =>
+  ({ code, args, str })
 
 export const pcodes = [
   // 0x00s - basic stack operations, boolean operators

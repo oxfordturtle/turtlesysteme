@@ -1,9 +1,13 @@
 /*
 groups of example programs (for the example menus)
-*/
-import { group } from './factory.js'
 
-export const help = [
+this module is imported directly by the electron main process, so needs to use Node-style module
+syntax
+*/
+const group = (index, title, examples) =>
+  ({ index, title, examples })
+
+module.exports.help = [
   group(1, 'Drawing, counting, and procedures/methods', [
     'DrawPause',
     'OlympicRings1',
@@ -59,7 +63,7 @@ export const help = [
   ])
 ]
 
-export const csac = [
+module.exports.csac = [
   group(1, 'Introduction, Computer Science for Fun, and Turtling', [
     'DrawPause',
     'ColourSpiral'
@@ -127,7 +131,7 @@ export const csac = [
   ])
 ]
 
-export const names = {
+module.exports.names = {
   AimCannon: 'Firing a cannon (manual)',
   AskInput: 'Asking for typed input',
   AutoCannon: 'Firing a cannon (automatic)',

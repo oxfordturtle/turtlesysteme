@@ -16,13 +16,14 @@ state (as controlled by the renderer process)
 // global imports
 const { app, BrowserWindow, dialog, Menu, ipcMain } = require('electron')
 const fs = require('fs')
-const { examples } = require('./data')
+const examples = require('./data/examples')
 
 // set to false when building
 const development = true
 
 // keep global references of the window objects to avoid garbage collection
 let systemWindow
+let settingsWindow
 let helpWindow
 let aboutWindow
 
@@ -37,18 +38,24 @@ const createWindow = (width, height, page, showMenu, resizable) => {
     resizable
   })
   const url = development
-    ? 'http://localhost:9000/'
-    : `file://${__dirname}/../dist/electron/index.html`
-  window.page = page
+    ? `http://localhost:9000/${page}.html`
+    : `file://${__dirname}/../dist/${page}.html`
   window.loadURL(url)
   if (!showMenu) window.setMenu(null)
+  window.isElectron = true
   return window
 }
 
 // function for creating the (main) system window
 const createSystemWindow = () => {
-  systemWindow = createWindow(1024, 700, 'system', true, true)
+  systemWindow = createWindow(1024, 700, 'renderer', true, true)
   systemWindow.on('closed', () => { systemWindow = null })
+}
+
+// function for creating the settings window
+const createSettingsWindow = () => {
+  aboutWindow = createWindow(800, 600, 'settings', false, false)
+  aboutWindow.on('closed', () => { aboutWindow = null })
 }
 
 // function for creating the help window
@@ -87,6 +94,14 @@ const openProgram = () => {
       }
     }
   )
+}
+
+const showSettingsWindow = () => {
+  if (settingsWindow) {
+    settingsWindow.focus()
+  } else {
+    createSettingsWindow()
+  }
 }
 
 const showHelpWindow = () => {
@@ -186,7 +201,7 @@ const optionsMenu = {
     { type: 'separator' },
     {
       label: 'More machine options',
-      click: () => systemWindow.webContents.send('show-settings')
+      click: () => showSettingsWindow()
     }
   ]
 }

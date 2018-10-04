@@ -4,16 +4,12 @@ The machine component
 import { hex } from '../tools.js'
 import { cursors, fonts } from '../data/constants.js'
 
-// TO FOX
-export const show = (what) => {}
-
 // grab the HTML elements from the page and store them in the module globals
 export const init = () => {
   canvas = document.querySelector('.tsx-canvas')
   context = canvas.getContext('2d')
   $console = document.querySelector('.tsx-console')
   $output = document.querySelector('.tsx-output')
-  memory = document.querySelector('.tsx-memory')
 }
 
 // add/remove event listeners to/from the canvas
@@ -232,14 +228,8 @@ export const console = (clear, colour) => {
   $console.style.background = hex(colour)
 }
 
-// dump the memory into the memory display table
-export const dump = (stack, heap) => {
-  memory.innerHTML = 'memory dump was asked for' // TODO
-}
-
 // the HTML elements
 let canvas
 let context
 let $console
 let $output
-let memory

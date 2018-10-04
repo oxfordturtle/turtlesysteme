@@ -1,8 +1,28 @@
 /*
 arrays of commands and command categories (for the compilers, the help page, and usage data)
 */
-import { category, command, expression, parameter } from './factory.js'
 import { pc } from './pcodes.js'
+
+const command = properties =>
+  ({
+    names: { BASIC: properties.names[0], Pascal: properties.names[1], Python: properties.names[2] },
+    code: properties.code,
+    parameters: properties.parameters || [],
+    returns: properties.returns,
+    type: properties.returns ? 'function' : 'procedure',
+    category: properties.category,
+    level: properties.level,
+    description: properties.description
+  })
+
+const parameter = (name, type, byref = false, length = 1) =>
+  ({ name, type, byref, length })
+
+const category = (index, title, expressions) =>
+  ({ index, title, expressions })
+
+const expression = (names, level) =>
+  ({ names: { BASIC: names[0], Pascal: names[1], Python: names[2] }, level })
 
 export const commands = ([
   // 0. Turtle: relative movement
