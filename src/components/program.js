@@ -9,57 +9,86 @@ import { pcodes } from '../data/pcodes.js'
 import highlight from '../compiler/highlight.js'
 import { send, on } from '../system/state.js'
 
-// the file tab
-const openFile = (e) => {
-  const file = e.currentTarget.files[0]
-  const fr = new window.FileReader()
-  fr.onload = () => { send('set-file', { filename: file.name, content: fr.result }) }
-  fr.readAsText(file)
-}
-const openExample = (e) => {
-  send('set-example', e.currentTarget.value)
-}
-const fileInput = element('input', { type: 'file', on: [{ type: 'change', callback: openFile }] })
-const option = example =>
-  element('option', { value: example, content: examples.names[example] })
-const optgroup = exampleGroup =>
+// the file tab elements
+const newFileButtons = element('div', {
+  classes: ['tsx-buttons'],
+  content: [
+    element('button', {
+      content: 'Blank Program',
+      on: [{ type: 'click', callback: () => send('new-program') }]
+    }),
+    element('button', {
+      content: 'Skeleton Program',
+      on: [{ type: 'click', callback: () => send('new-skeleton-program') }]
+    })
+  ]
+})
+
+const fileInput = element('input', {
+  type: 'file',
+  on: [{
+    type: 'change',
+    callback: (e) => {
+      const file = e.currentTarget.files[0]
+      const fr = new window.FileReader()
+      fr.onload = () => { send('set-file', { filename: file.name, content: fr.result }) }
+      fr.readAsText(file)
+    }
+  }]
+})
+
+const optgroup = group =>
   element('optgroup', {
-    label: `${exampleGroup.index}. ${exampleGroup.title}`,
-    content: exampleGroup.examples.map(option)
+    label: `${group.index}. ${group.title}`,
+    content: group.examples.map(x => element('option', { value: x, content: examples.names[x] }))
   })
+
 const exampleSelect = examples =>
   element('select', {
     content: examples.map(optgroup),
     on: [
-      { type: 'change', callback: openExample },
+      { type: 'change', callback: (e) => { send('set-example', e.currentTarget.value) } },
       { type: 'focus', callback: (e) => { e.currentTarget.selectedIndex = -1 } }
     ]
   })
+
+const saveFileButtons = element('div', {
+  classes: ['tsx-buttons'],
+  content: [
+    element('button', {
+      content: 'Save Program File',
+      on: [{ type: 'click', callback: () => { send('save-program') } }]
+    }),
+    element('button', {
+      content: 'Export TGX File',
+      on: [{ type: 'click', callback: () => { send('save-tgx-program') } }]
+    })
+  ]
+})
+
 const fileBox = (title, content) =>
   element('div', {
     classes: ['tsx-file-box'],
     content: [element('label', { content: title }), content]
   })
+
+const newFile = fileBox('New File', newFileButtons)
+
 const openLocal = fileBox('Open Local File', fileInput)
+
 const openHelp = fileBox('Open Example Program', exampleSelect(examples.help))
+
 const openCSAC = fileBox('Open CSAC Book Program', exampleSelect(examples.csac))
+
+const saveFile = fileBox('Save File', saveFileButtons)
 
 // the code tab
 const numbers = element('ol') // for line numbers
+
 const prettyCode = element('code') // for the highlighted code
+
 const prettyWrapper = element('pre', { content: [prettyCode] }) // warpper for the highlighted code
-const handleTab = (event) => {
-  if (event.keyCode === 9) {
-    const pos = event.currentTarget.selectionStart
-    const left = event.currentTarget.value.slice(0, pos)
-    const right = event.currentTarget.value.slice(pos)
-    event.preventDefault()
-    event.currentTarget.value = [left, right].join('  ')
-    send('set-code', event.currentTarget.value)
-    event.currentTarget.selectionStart = pos + 2
-    event.currentTarget.selectionEnd = pos + 2
-  }
-}
+
 const plainCode = element('textarea', { // for capturing the user input
   wrap: 'off',
   spellcheck: 'false',
@@ -67,10 +96,25 @@ const plainCode = element('textarea', { // for capturing the user input
   autocomplete: 'off',
   autocorrect: 'off',
   on: [
-    { type: 'keydown', callback: handleTab },
+    {
+      type: 'keydown',
+      callback: (e) => {
+        if (e.keyCode === 9) {
+          const pos = e.currentTarget.selectionStart
+          const left = e.currentTarget.value.slice(0, pos)
+          const right = e.currentTarget.value.slice(pos)
+          e.preventDefault()
+          e.currentTarget.value = [left, right].join('  ')
+          send('set-code', e.currentTarget.value)
+          e.currentTarget.selectionStart = pos + 2
+          e.currentTarget.selectionEnd = pos + 2
+        }
+      }
+    },
     { type: 'input', callback: (e) => { send('set-code', e.currentTarget.value) } }
   ]
 })
+
 const code = element('div', {
   classes: ['tsx-code'],
   content: [plainCode, numbers, prettyWrapper]
@@ -85,7 +129,9 @@ const usageHead = element('thead', { content: [
     element('th', { content: 'Program Lines' })
   ] })
 ] })
+
 const usageBody = element('tbody')
+
 const usage = element('table', { classes: ['tsx-usage-table'], content: [usageHead, usageBody] })
 
 // the pcode tab
@@ -94,21 +140,25 @@ const assemblerInput = element('input', {
   name: 'pcodeOptions1',
   on: [{ type: 'change', callback: () => send('toggle-assembler') }]
 })
+
 const machineInput = element('input', {
   type: 'radio',
   name: 'pcodeOptions1',
   on: [{ type: 'change', callback: () => send('toggle-assembler') }]
 })
+
 const decimalInput = element('input', {
   type: 'radio',
   name: 'pcodeOptions2',
   on: [{ type: 'change', callback: () => send('toggle-decimal') }]
 })
+
 const hexadecimalInput = element('input', {
   type: 'radio',
   name: 'pcodeOptions2',
   on: [{ type: 'change', callback: () => send('toggle-decimal') }]
 })
+
 const pcodeOptions = element('div', {
   classes: [ 'tsx-checkboxes' ],
   content: [
@@ -118,13 +168,14 @@ const pcodeOptions = element('div', {
     element('label', { content: [hexadecimalInput, 'Hexadecimal'] })
   ]
 })
+
 const pcodeList = element('ol', { classes: ['tsx-pcode-table'] })
 
 // export the tabs (with or without the file tab)
 export const component = (includeFileTab) =>
   includeFileTab
     ? tabs('tsx-system-tabs', [
-      { label: 'File', active: false, content: [openLocal, openHelp, openCSAC] },
+      { label: 'File', active: false, content: [newFile, openLocal, openHelp, openCSAC, saveFile] },
       { label: 'Code', active: true, content: [code] },
       { label: 'Usage', active: false, content: [usage] },
       { label: 'PCode', active: false, content: [pcodeOptions, pcodeList] }
@@ -136,7 +187,7 @@ export const component = (includeFileTab) =>
     ])
 
 // synchronise with the application state
-on('file-changed', show.bind(null, 'Code'))
+on('file-changed', () => { show('Code') })
 
 on('file-changed', () => {
   code.scrollTop = 0

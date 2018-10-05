@@ -1,4 +1,4 @@
-.tsx {
+.tsx, .tsx-modal {
   input, select, button {
     font: inherit;
     height: 2em;
@@ -38,6 +38,14 @@
   }
   input, select {
     width: 100%;
+  }
+  .tsx-buttons {
+    button {
+      flex: 1;
+      &:not(:first-child) {
+        margin-left: .5em;
+      }
+    }
   }
 }
 

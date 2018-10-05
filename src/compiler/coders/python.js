@@ -66,172 +66,292 @@ export const coder = (routine, lex, startLine) => {
 
 // generate the pcode for an IF structure
 const compileIf = (routine, lex, startLine) => {
-  const lexemes = routine.lexemes
-  let test
-  let ifCode
-  let elseCode = [] // empty by default, in case there is no ELSE
+  // values we need to generate the IF code
+  let test, ifCode, elseCode
+
+  // working variable
   let result
-  // if we're here, the previous lexeme was IF
-  // so now we're expecting a boolean expression on the same line
-  if (!lexemes[lex]) throw error('if01', lexemes[lex - 1])
-  if (!isSameLine(lexemes, lex)) throw error('if02', lexemes[lex])
-  // evaluate the boolean expression
+
+  // expecting a boolean expression on the same line
+  if (!routine.lexemes[lex]) {
+    throw error('if01', routine.lexemes[lex - 1])
+  }
+  if (!isSameLine(routine.lexemes, lex)) {
+    throw error('if02', routine.lexemes[lex])
+  }
   result = molecules.expression(routine, lex, 'null', 'boolean', 'Python')
   lex = result.lex
   test = result.pcode[0]
-  // now we're expecting a colon on the same line
-  if (!lexemes[lex]) throw error('if03', lexemes[lex - 1])
-  if (!isSameLineContent(lexemes, lex, ':')) throw error('if04', lexemes[lex])
+
+  // expecting a colon on the same line
+  if (!routine.lexemes[lex]) {
+    throw error('if03', routine.lexemes[lex - 1])
+  }
+  if (!isSameLineContent(routine.lexemes, lex, ':')) {
+    throw error('if04', routine.lexemes[lex])
+  }
   lex += 1
-  // now we're expecting some commands indented on a new line
-  if (!lexemes[lex]) throw error('if05', lexemes[lex - 1])
-  if (isSameLine(lexemes, lex)) throw error('if06', lexemes[lex])
-  if (!isIndented(lexemes, lex)) throw error('if07', lexemes[lex])
-  result = block(routine, lex, startLine + 1, lexemes[lex].offset)
+
+  // expecting some commands indented on a new line
+  if (!routine.lexemes[lex]) {
+    throw error('if05', routine.lexemes[lex - 1])
+  }
+  if (isSameLine(routine.lexemes, lex)) {
+    throw error('if06', routine.lexemes[lex])
+  }
+  if (!isIndented(routine.lexemes, lex)) {
+    throw error('if07', routine.lexemes[lex])
+  }
+  result = block(routine, lex, startLine + 1, routine.lexemes[lex].offset)
   lex = result.lex
   ifCode = result.pcode
-  // ? ... ELSE ... ?
-  if (lexemes[lex] && (lexemes[lex].content === 'else')) {
+
+  // happy with an "else" here (but it's optional)
+  if (routine.lexemes[lex] && (routine.lexemes[lex].content === 'else')) {
     // check we're on a new line
-    if (isSameLine(lexemes, lex)) throw error('if08', lexemes[lex])
+    if (isSameLine(routine.lexemes, lex)) {
+      throw error('if08', routine.lexemes[lex])
+    }
     lex += 1
-    // now expecting a colon on the same line
-    if (!lexemes[lex]) throw error('if09', lexemes[lex - 1])
-    if (!isSameLineContent(lexemes, lex, ':')) throw error('if10', lexemes[lex])
+
+    // expecting a colon on the same line
+    if (!routine.lexemes[lex]) {
+      throw error('if09', routine.lexemes[lex - 1])
+    }
+    if (!isSameLineContent(routine.lexemes, lex, ':')) {
+      throw error('if10', routine.lexemes[lex])
+    }
     lex += 1
-    // now expecting a block of code indented on a new line
-    if (!lexemes[lex]) throw error('if11', lexemes[lex - 1])
-    if (isSameLine(lexemes, lex)) throw error('if12', lexemes[lex])
-    if (!isIndented(lexemes, lex)) throw error('if13', lexemes[lex])
-    result = block(routine, lex, startLine + ifCode.length + 2, lexemes[lex].offset)
+
+    // expecting some commands indented on a new line
+    if (!routine.lexemes[lex]) {
+      throw error('if11', routine.lexemes[lex - 1])
+    }
+    if (isSameLine(routine.lexemes, lex)) {
+      throw error('if12', routine.lexemes[lex])
+    }
+    if (!isIndented(routine.lexemes, lex)) {
+      throw error('if13', routine.lexemes[lex])
+    }
+    result = block(routine, lex, startLine + ifCode.length + 2, routine.lexemes[lex].offset)
     lex = result.lex
     elseCode = result.pcode
   }
+
+  // now we have everything we need
   return { lex, pcode: pcoder.conditional(startLine, test, ifCode, elseCode) }
 }
 
 // generate the pcode for a FOR structure
 const compileFor = (routine, lex, startLine) => {
-  const lexemes = routine.lexemes
+  // values we need to generate the IF code
+  let variable, initial, final, compare, change, innerCode
+
+  // working variable
   let result
-  let variable
-  let compare
-  let change
-  let initial
-  let final
-  let innerCode
+
   // expecting an integer variable
-  if (!lexemes[lex]) throw error('for01', lexemes[lex - 1])
-  // turtle globals are not allowed
-  if (lexemes[lex].type === 'turtle') throw error('for02', lexemes[lex])
-  // must be an identifier on the same line
-  if (!isSameLineType(lexemes, lex, 'identifier')) throw error('for03', lexemes[lex])
-  // must be a variable in scope
-  variable = find.variable(routine, lexemes[lex].content, 'Python')
-  if (!variable) throw error('for04', lexemes[lex])
-  // must be an integer variable
-  if ((variable.fulltype.type !== 'integer') && (variable.fulltype.type !== 'boolint')) {
-    throw error('for05', lexemes[lex])
+  if (!routine.lexemes[lex]) {
+    throw error('for01', routine.lexemes[lex - 1])
   }
-  // otherwise ok, on we go...
+  if (routine.lexemes[lex].type === 'turtle') {
+    throw error('for02', routine.lexemes[lex])
+  }
+  if (!isSameLineType(routine.lexemes, lex, 'identifier')) {
+    throw error('for03', routine.lexemes[lex])
+  }
+  variable = find.variable(routine, routine.lexemes[lex].content, 'Python')
+  if (!variable) {
+    throw error('for04', routine.lexemes[lex])
+  }
+  if ((variable.fulltype.type !== 'integer') && (variable.fulltype.type !== 'boolint')) {
+    throw error('for05', routine.lexemes[lex])
+  }
   lex += 1
-  // now expecting 'in range(initial, final, increment):'
-  // 'in' first...
-  if (!lexemes[lex]) throw error('for06', lexemes[lex - 1])
-  if (!isSameLineContent(lexemes, lex, 'in')) throw error('for07', lexemes[lex])
+
+  // expecting 'in'
+  if (!routine.lexemes[lex]) {
+    throw error('for06', routine.lexemes[lex - 1])
+  }
+  if (!isSameLineContent(routine.lexemes, lex, 'in')) {
+    throw error('for07', routine.lexemes[lex])
+  }
   lex += 1
-  // now 'range' please...
-  if (!lexemes[lex]) throw error('for08', lexemes[lex - 1])
-  if (!isSameLineContent(lexemes, lex, 'range')) throw error('for09', lexemes[lex])
+
+  // expecting 'range'
+  if (!routine.lexemes[lex]) {
+    throw error('for08', routine.lexemes[lex - 1])
+  }
+  if (!isSameLineContent(routine.lexemes, lex, 'range')) {
+    throw error('for09', routine.lexemes[lex])
+  }
   lex += 1
-  // now left bracket...
-  if (!lexemes[lex]) throw error('for10', lexemes[lex - 1])
-  if (!isSameLineContent(lexemes, lex, '(')) throw error('for11', lexemes[lex])
+
+  // expecting a left bracket
+  if (!routine.lexemes[lex]) {
+    throw error('for10', routine.lexemes[lex - 1])
+  }
+  if (!isSameLineContent(routine.lexemes, lex, '(')) {
+    throw error('for11', routine.lexemes[lex])
+  }
   lex += 1
-  // now expecting an integer expression (for the initial value)
-  if (!lexemes[lex]) throw error('for12', lexemes[lex - 1])
-  if (!isSameLine(lexemes, lex)) throw error('for13', lexemes[lex])
+
+  // expecting an integer expression (for the initial value)
+  if (!routine.lexemes[lex]) {
+    throw error('for12', routine.lexemes[lex - 1])
+  }
+  if (!isSameLine(routine.lexemes, lex)) {
+    throw error('for13', routine.lexemes[lex])
+  }
   result = molecules.expression(routine, lex, 'null', 'integer', 'Python')
   lex = result.lex
   initial = result.pcode[0]
-  // now expecting a comma
-  if (!lexemes[lex]) throw error('for14', lexemes[lex - 1])
-  if (!isSameLineContent(lexemes, lex, ',')) throw error('for15', lexemes[lex])
+
+  // expecting a comma
+  if (!routine.lexemes[lex]) {
+    throw error('for14', routine.lexemes[lex - 1])
+  }
+  if (!isSameLineContent(routine.lexemes, lex, ',')) {
+    throw error('for15', routine.lexemes[lex])
+  }
   lex += 1
-  // now expecting an integer expression (for the final value)
-  if (!lexemes[lex]) throw error('for16', lexemes[lex - 1])
-  if (!isSameLine(lexemes, lex)) throw error('for17', lexemes[lex])
+
+  // expecting an integer expression (for the final value)
+  if (!routine.lexemes[lex]) {
+    throw error('for16', routine.lexemes[lex - 1])
+  }
+  if (!isSameLine(routine.lexemes, lex)) {
+    throw error('for17', routine.lexemes[lex])
+  }
   result = molecules.expression(routine, lex, 'null', 'integer', 'Python')
   lex = result.lex
   final = result.pcode[0]
+
   // now expecting another comma
-  if (!lexemes[lex]) throw error('for18', lexemes[lex - 1])
-  if (!isSameLineContent(lexemes, lex, ',')) throw error('for19', lexemes[lex])
+  if (!routine.lexemes[lex]) {
+    throw error('for18', routine.lexemes[lex - 1])
+  }
+  if (!isSameLineContent(routine.lexemes, lex, ',')) {
+    throw error('for19', routine.lexemes[lex])
+  }
   lex += 1
-  // now expecting either '1' or '-1'
-  if (!lexemes[lex]) throw error('for20', lexemes[lex - 1])
-  if (!isSameLine(lexemes, lex)) throw error('for21', lexemes[lex])
-  if (lexemes[lex].type === 'integer') {
+
+  // expecting either '1' or '-1'
+  if (!routine.lexemes[lex]) {
+    throw error('for20', routine.lexemes[lex - 1])
+  }
+  if (!isSameLine(routine.lexemes, lex)) {
+    throw error('for21', routine.lexemes[lex])
+  }
+  if (routine.lexemes[lex].type === 'integer') {
     // only 1 is allowed
-    if (lexemes[lex].value !== 1) throw error('for22', lexemes[lex])
+    if (routine.lexemes[lex].value !== 1) {
+      throw error('for22', routine.lexemes[lex])
+    }
     // otherwise ok
     compare = 'more'
     change = 'incr'
-  } else if (lexemes[lex].content === '-') {
+  } else if (routine.lexemes[lex].content === '-') {
     lex += 1
     // now expecting '1'
-    if (!lexemes[lex]) throw error('for23', lexemes[lex - 1])
-    if (!isSameLineType(lexemes, lex, 'integer')) throw error('for24', lexemes[lex])
-    if (lexemes[lex].value !== 1) throw error('for25', lexemes[lex])
+    if (!routine.lexemes[lex]) {
+      throw error('for23', routine.lexemes[lex - 1])
+    }
+    if (!isSameLineType(routine.lexemes, lex, 'integer')) {
+      throw error('for24', routine.lexemes[lex])
+    }
+    if (routine.lexemes[lex].value !== 1) {
+      throw error('for25', routine.lexemes[lex])
+    }
     compare = 'less'
     change = 'decr'
   } else {
-    throw error('for26', lexemes[lex])
+    throw error('for26', routine.lexemes[lex])
   }
   lex += 1
-  // now expecting right bracket
-  if (!lexemes[lex]) throw error('for27', lexemes[lex - 1])
-  if (!isSameLineContent(lexemes, lex, ')')) throw error('for28', lexemes[lex])
+
+  // expecting a right bracket
+  if (!routine.lexemes[lex]) {
+    throw error('for27', routine.lexemes[lex - 1])
+  }
+  if (!isSameLineContent(routine.lexemes, lex, ')')) {
+    throw error('for28', routine.lexemes[lex])
+  }
   lex += 1
-  // now expecting a colon
-  if (!lexemes[lex]) throw error('for29', lexemes[lex - 1])
-  if (!isSameLineContent(lexemes, lex, ':')) throw error('for30', lexemes[lex])
+
+  // expecting a colon
+  if (!routine.lexemes[lex]) {
+    throw error('for29', routine.lexemes[lex - 1])
+  }
+  if (!isSameLineContent(routine.lexemes, lex, ':')) {
+    throw error('for30', routine.lexemes[lex])
+  }
   lex += 1
+
   // now expecting a block of code, indented on a new line
-  if (!lexemes[lex]) throw error('for31', lexemes[lex - 1])
-  if (isSameLine(lexemes, lex)) throw error('for32', lexemes[lex])
-  if (!isIndented(lexemes, lex)) throw error('for33', lexemes[lex])
-  result = block(routine, lex, startLine + 3, lexemes[lex].offset)
+  if (!routine.lexemes[lex]) {
+    throw error('for31', routine.lexemes[lex - 1])
+  }
+  if (isSameLine(routine.lexemes, lex)) {
+    throw error('for32', routine.lexemes[lex])
+  }
+  if (!isIndented(routine.lexemes, lex)) {
+    throw error('for33', routine.lexemes[lex])
+  }
+  result = block(routine, lex, startLine + 3, routine.lexemes[lex].offset)
   lex = result.lex
   innerCode = result.pcode
-  // now we have everything we need to generate the pcode
-  return { lex, pcode: pcoder.forLoop(startLine, variable, initial, final, compare, change, innerCode) }
+
+  // now we have everything we need
+  return {
+    lex,
+    pcode: pcoder.forLoop(startLine, variable, initial, final, compare, change, innerCode)
+  }
 }
 
 // generate the pcode for a WHILE structure
 const compileWhile = (routine, lex, startLine) => {
-  const lexemes = routine.lexemes
+  // values we need to generate the WHILE code
+  let test, innerCode
+
+  // working variable
   let result
-  let test
-  let innerCode
+
   // expecting a boolean expression on the same line
-  if (!lexemes[lex]) throw error('while01')
-  if (!isSameLine(lexemes, lex)) throw error('while02')
+  if (!routine.lexemes[lex]) {
+    throw error('while01', routine.lexemes[lex - 1])
+  }
+  if (!isSameLine(routine.lexemes, lex)) {
+    throw error('while02', routine.lexemes[lex])
+  }
   result = molecules.expression(routine, lex, 'null', 'boolean', 'Python')
   lex = result.lex
   test = result.pcode[0]
-  // now expecting a colon on the same line
-  if (!lexemes[lex]) throw error('while03')
-  if (!isSameLineContent(lexemes, lex, ':')) throw error('while04')
+
+  // expecting a colon on the same line
+  if (!routine.lexemes[lex]) {
+    throw error('while03', routine.lexemes[lex - 1])
+  }
+  if (!isSameLineContent(routine.lexemes, lex, ':')) {
+    throw error('while04', routine.lexemes[lex])
+  }
   lex += 1
-  // now expecting a block of code, indented on a new line
-  if (!lexemes[lex]) throw error('while05')
-  if (isSameLine(lexemes, lex)) throw error('while06')
-  if (!isIndented(lexemes, lex)) throw error('while07')
-  result = block(routine, lex, startLine + 1, lexemes[lex].offset)
+
+  // expecting a block of code, indented on a new line
+  if (!routine.lexemes[lex]) {
+    throw error('while05', routine.lexemes[lex - 1])
+  }
+  if (isSameLine(routine.lexemes, lex)) {
+    throw error('while06', routine.lexemes[lex])
+  }
+  if (!isIndented(routine.lexemes, lex)) {
+    throw error('while07', routine.lexemes[lex])
+  }
+  result = block(routine, lex, startLine + 1, routine.lexemes[lex].offset)
   lex = result.lex
   innerCode = result.pcode
-  // now we have everything we need to generate the pcode
+
+  // now we have everything we need
   return { lex, pcode: pcoder.whileLoop(startLine, test, innerCode) }
 }
 
@@ -253,15 +373,18 @@ const isIndented = (lexemes, lex) =>
 
 // generate the pcode for a block (i.e. a sequence of commands/structures)
 const block = (routine, lex, startLine, offset) => {
-  const lexemes = routine.lexemes
   let pcode = []
   let pcodeTemp
   let end = false
+
   // expecting something
-  if (!lexemes[lex]) throw error('blockNothing', lexemes[lex - 1])
+  if (!routine.lexemes[lex]) {
+    throw error('blockNothing', routine.lexemes[lex - 1])
+  }
+
   // loop through until the end of the block (or we run out of lexemes)
-  while (!end && (lex < lexemes.length)) {
-    end = (lexemes[lex].offset < offset)
+  while (!end && (lex < routine.lexemes.length)) {
+    end = (routine.lexemes[lex].offset < offset)
     if (!end) {
       // compile the structure
       pcodeTemp = pcode
@@ -269,5 +392,6 @@ const block = (routine, lex, startLine, offset) => {
       pcode = pcodeTemp.concat(pcode)
     }
   }
+
   return { lex, pcode }
 }

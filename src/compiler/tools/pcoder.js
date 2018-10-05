@@ -195,7 +195,7 @@ export const callCommand = (command, routine, language) => {
 }
 
 // pcode for a conditional structure
-export const conditional = (startLine, test, ifCode, elseCode) => {
+export const conditional = (startLine, test, ifCode, elseCode = []) => {
   const offset = (elseCode.length > 0) ? 2 : 1
   const startCode = [test.concat([pc.ifno, ifCode.length + startLine + offset])]
   const middleCode = [[pc.jump, ifCode.length + elseCode.length + startLine + offset]]

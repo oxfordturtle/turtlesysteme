@@ -51,12 +51,41 @@ export const send = (signal, data) => {
         reply('file-changed')
         break
 
-      case 'save-program':
-        // TODO
+      case 'new-skeleton-program':
+        set('name', 'Skeleton program')
+        set('compiled', false)
+        set('usage', [])
+        set('pcode', [])
+        switch (get('language')) {
+          case 'BASIC':
+            set('code', 'REM progname\n\nvar1%=100\nCOLOUR(GREEN)\nBLOT(var1%)\nEND')
+            break
+          case 'Pascal':
+            set('code', 'PROGRAM progname;\nVAR var1: integer;\nBEGIN\n  var1:=100;\n  colour(green);\n  blot(var1)\nEND.')
+            break
+          case 'Python':
+            set('code', '# progname\n\ndef main():\n  var1=100\n  colour(green)\n  blot(var1)')
+            break
+        }
+        reply('file-changed')
         break
 
-      case 'save-program-as':
-        // TODO
+      case 'save-program':
+        const tg = new window.Blob([get('code')], { type: 'text/plain;charset=utf-8' })
+        const a1 = document.createElement('a')
+        a1.setAttribute('href', URL.createObjectURL(tg))
+        a1.setAttribute('download', `${get('name')}.${extensions[get('language')]}`)
+        a1.click()
+        break
+
+      case 'save-tgx-program':
+        maybeCompile()
+        const json = JSON.stringify(get('file'))
+        const tgx = new window.Blob([json], { type: 'text/plain;charset=utf-8' })
+        const a2 = document.createElement('a')
+        a2.setAttribute('href', URL.createObjectURL(tgx))
+        a2.setAttribute('download', `${get('name')}.tgx`)
+        a2.click()
         break
 
       case 'set-language':
@@ -232,14 +261,7 @@ export const send = (signal, data) => {
         if (machine.isRunning()) {
           machine.halt()
         } else {
-          if (!get('compiled')) {
-            let result = compile(get('code'), get('language'))
-            set('usage', result.usage)
-            set('pcode', result.pcode)
-            set('compiled', true)
-            reply('usage-changed', result.usage)
-            reply('pcode-changed', { pcode: result.pcode, assembler: get('assembler'), decimal: get('decimal') })
-          }
+          maybeCompile()
           machine.run(get('pcode'), get('machine-options'))
         }
         break
@@ -343,6 +365,18 @@ const get = item => {
       }
     default:
       return JSON.parse(window.localStorage.getItem(item))
+  }
+}
+
+// compile the current program (if it isn't already compiled)
+const maybeCompile = () => {
+  if (!get('compiled')) {
+    let result = compile(get('code'), get('language'))
+    set('usage', result.usage)
+    set('pcode', result.pcode)
+    set('compiled', true)
+    reply('usage-changed', result.usage)
+    reply('pcode-changed', { pcode: result.pcode, assembler: get('assembler'), decimal: get('decimal') })
   }
 }
 

@@ -1,6 +1,65 @@
+/*
+coder for Turtle BASIC - lexemes making up the atoms of a routine go in, inner pcode for that
+routine comes out
+*/
+import error from '../tools/error.js'
+import * as molecules from '../tools/molecules.js'
+// import * as find from '../tools/find.js'
+// import * as pcoder from '../tools/pcoder.js'
+
 export const coder = (routine, lex, startLine) => {
-  return { lex, pcode: [] }
+  switch (routine.lexemes[lex].type) {
+    // identifiers (variable assignment or procedure call)
+    case 'turtle': // fallthrough
+    case 'identifier':
+      // variable assignment
+      if (routine.lexemes[lex + 1] && (routine.lexemes[lex + 1].content === '=')) {
+        return molecules.variableAssignment(routine, routine.lexemes[lex].content, lex + 2, 'BASIC')
+      }
+
+      // otherwise it should be a procedure call
+      return molecules.procedureCall(routine, lex, 'BASIC')
+
+    // keywords
+    case 'keyword':
+      switch (routine.lexemes[lex].content) {
+        // start of IF structure
+        case 'if':
+          return compileIf(routine, lex + 1, startLine)
+
+        // start of FOR structure
+        case 'for':
+          return compileFor(routine, lex + 1, startLine)
+
+        // start of REPEAT structure
+        case 'repeat':
+          return compileRepeat(routine, lex + 1, startLine)
+
+        // start of WHILE structure
+        case 'while':
+          return compileWhile(routine, lex + 1, startLine)
+
+        default:
+          throw error('{lex} makes no sense here.', routine.lexemes[lex])
+      }
+
+    // any thing else is a mistake
+    default:
+      throw error('{lex} makes no sense here.', routine.lexemes[lex])
+  }
 }
+
+// compile conditional
+const compileIf = (routine, lex, startLine) => {}
+
+// compile for loop
+const compileFor = (routine, lex, startLine) => {}
+
+// compile repeat loop
+const compileRepeat = (routine, lex, startLine) => {}
+
+// compile while loop
+const compileWhile = (routine, lex, startLine) => {}
 
 /*
 define(function (require) {

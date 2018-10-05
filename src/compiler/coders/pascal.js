@@ -1,14 +1,193 @@
 /*
-coder for Turtle Pascal lexemes making up the atoms of a routine go in, inner pcode for that
+coder for Turtle Pascal - lexemes making up the atoms of a routine go in, inner pcode for that
 routine comes out
 */
-// import { pc } from 'data/pcodes.js'
-// import * as molecules from '../tools/molecules.js'
+import error from '../tools/error.js'
+import * as molecules from '../tools/molecules.js'
 // import * as find from '../tools/find.js'
-// import * as pcoder from '../tools/pcoder.js'
+import * as pcoder from '../tools/pcoder.js'
 
 export const coder = (routine, lex, startLine) => {
-  return { lex, pcode: [] }
+  const noSemiAfter = ['begin', 'do', '.', 'repeat', ';', 'then']
+  const noSemiBefore = ['else', 'end', ';', 'until']
+  let result
+  switch (routine.lexemes[lex].type) {
+    // identifiers (variable assignment or procedure call)
+    case 'turtle': // fallthrough
+    case 'identifier':
+      // wrong assignment operator
+      if (routine.lexemes[lex + 1] && (routine.lexemes[lex + 1].content === '=')) {
+        throw error('Variable assignment in Pascal uses ":=", not "=".', routine.lexemes[lex + 1])
+      }
+
+      // right assignment operator
+      if (routine.lexemes[lex + 1] && (routine.lexemes[lex + 1].content === ':=')) {
+        result = molecules.variableAssignment(routine, routine.lexemes[lex].content, lex + 2, 'Pascal')
+        break
+      }
+
+      // otherwise it should be a procedure call
+      result = molecules.procedureCall(routine, lex, 'Pascal')
+      break
+
+    // keywords
+    case 'keyword':
+      switch (routine.lexemes[lex].content) {
+        // start of IF structure
+        case 'if':
+          result = compileIf(routine, lex + 1, startLine)
+          break
+
+        // start of FOR structure
+        case 'for':
+          result = compileFor(routine, lex + 1, startLine)
+          break
+
+        // start of REPEAT structure
+        case 'repeat':
+          result = compileRepeat(routine, lex + 1, startLine)
+          break
+
+        // start of WHILE structure
+        case 'while':
+          result = compileWhile(routine, lex + 1, startLine)
+          break
+
+        default:
+          throw error('{lex} makes no sense here.', routine.lexemes[lex])
+      }
+      break
+
+    // any thing else is a mistake
+    default:
+      throw error('{lex} makes no sense here.', routine.lexemes[lex])
+  }
+
+  // semicolon check
+  if (routine.lexemes[result.lex]) {
+    if (routine.lexemes[result.lex].content !== ';') {
+      if (noSemiAfter.indexOf(routine.lexemes[result.lex - 1].content) === -1) {
+        if (noSemiBefore.indexOf(routine.lexemes[result.lex].content) === -1) {
+          throw error('cmdSemicolon', routine.lexemes[result.lex])
+        }
+      }
+    } else {
+      while (routine.lexemes[result.lex] && routine.lexemes[result.lex].content === ';') {
+        result.lex += 1
+      }
+    }
+  }
+  return result
+}
+
+// compile conditional
+const compileIf = (routine, lex, startLine) => {}
+
+// compile for loop
+const compileFor = (routine, lex, startLine) => {}
+
+// compile repeat loop
+const compileRepeat = (routine, lex, startLine) => {
+  let result, innerCode, test
+
+  // expecting a block of code
+  result = block(routine, lex, startLine, 'repeat')
+  lex = result.lex
+  innerCode = result.pcode
+
+  // expecting a boolean expression
+  if (!routine.lexemes[lex]) {
+    throw error('repeat01', 'repeatExpression', routine.lexemes[lex - 1])
+  }
+  result = molecules.expression(routine, lex, 'null', 'boolean', false)
+  lex = result.lex
+  test = result.pcode[0]
+
+  // now we have everything we need
+  return { lex, pcode: pcoder.repeatLoop(startLine, test, innerCode) }
+}
+
+// compile while loop
+const compileWhile = (routine, lex, startLine) => {
+  let result, test, innerCode
+
+  // expecting a boolean expression
+  if (!routine.lexemes[lex]) {
+    throw error('while01', 'whileExpression', routine.lexemes[lex - 1])
+  }
+  result = molecules.expression(routine, lex, 'null', 'boolean', false)
+  lex = result.lex
+  test = result.pcode[0]
+
+  // expecting "DO"
+  if (!routine.lexemes[lex]) {
+    throw error('while02', 'whileDo', routine.lexemes[lex - 1])
+  }
+  if (routine.lexemes[lex].content !== 'do') {
+    throw error('while03', 'whileDo', routine.lexemes[lex])
+  }
+  lex += 1
+
+  // expecting a block of code
+  if (!routine.lexemes[lex]) {
+    throw error('while04', 'whileNothing', routine.lexemes[lex])
+  }
+  if (routine.lexemes[lex].content === 'begin') {
+    result = block(routine, lex + 1, startLine + 1, 'begin')
+  } else {
+    result = coder(routine, lex, startLine + 1)
+  }
+  lex = result.lex
+  innerCode = result.pcode
+
+  // now we have everything we need to generate the pcode
+  return { lex, pcode: pcoder.whileLoop(startLine, test, innerCode) }
+}
+
+// generate the pcode for a block (i.e. a sequence of commands/structures)
+const block = (routine, lex, startLine, startKeyword) => {
+  let pcode = []
+  let pcodeTemp
+  let end = false
+
+  // expecting something
+  if (!routine.lexemes[lex]) throw error('blockNothing', routine.lexemes[lex - 1])
+
+  // loop through until the end of the block (or we run out of lexemes)
+  while (!end && (lex < routine.lexemes.length)) {
+    end = blockEndCheck(startKeyword, routine.lexemes[lex])
+    if (end) {
+      // move past the end lexeme
+      lex += 1
+    } else {
+      // compile the structure
+      pcodeTemp = pcode
+      ;({ lex, pcode } = coder(routine, lex, startLine + pcode.length))
+      pcode = pcodeTemp.concat(pcode)
+    }
+  }
+
+  // if we've run out of lexemes without reaching the end, this is an error
+  if (!end) throw error('blockNoEnd', routine.lexemes[lex - 1])
+
+  // otherwise all good
+  return { lex, pcode }
+}
+
+// check for the ending to a block, and throw an error if it doesn't match the beginning
+const blockEndCheck = (start, lexeme) => {
+  switch (lexeme.content) {
+    case 'end':
+      if (start !== 'begin') throw error('blockBegin', lexeme)
+      return true
+
+    case 'until':
+      if (start !== 'repeat') throw error('blockRepeat', lexeme)
+      return true
+
+    default:
+      return false
+  }
 }
 
 /*
@@ -75,45 +254,6 @@ const message = (id, lexeme) => {
 // create an error object
 const error = (messageId, lexeme) =>
   ({ messageId, message: message(messageId), lexeme })
-
-// check for the ending to a block, and throw an error if it doesn't match the beginning
-const blockEndCheck = (startLexeme, lexeme) => {
-  switch (lexeme.content) {
-    case 'end':
-      if (startLexeme !== 'begin') throw error('blockBegin', lexeme)
-      return true
-    case 'until':
-      if (startLexeme !== 'repeat') throw error('blockRepeat', lexeme)
-      return true
-    default:
-      return false
-  }
-}
-
-// generate the pcode for a block (i.e. a sequence of commands/structures)
-const block = (routine, lex, startLine, startLexeme, indent) => {
-  const lexemes = routine.lexemes
-  let result = []
-  let end = false
-  let pcode
-  // expecting something
-  if (!lexemes[lex]) throw error('blockNothing', lexemes[lex - 1])
-  // loop through until the end of the block (or we run out of lexemes)
-  while (!end && (lex < lexemes.length)) {
-    end = blockEndCheck(startLexeme, lexemes[lex])
-    if (end) {
-      // move past the end lexeme
-      lex += 1
-    } else {
-      // compile the structure
-      ({ lex, pcode } = coder(routine, lex, startLine + result.length))
-      result = result.concat(pcode)
-    }
-  }
-  // if we've run out of lexemes without reaching the end, this is an error
-  if (!end) throw error('blockNoEnd', lexemes[lex - 1])
-  return { lex, pcode: result }
-}
 
 // generate the pcode for an IF structure
 const compileIf = (routine, lex, startLine) => {
@@ -343,127 +483,4 @@ const compileFor = (routine, lex, startLine) => {
   return { lex, pcode }
 }
 
-// generate the pcode for a REPEAT structure
-const compileRepeat = (routine, lex, startLine) => {
-  let lexemes = routine.lexemes
-  let pcode = []
-  let result = {}
-  result = block(routines, sub, lex, addresses, offset + pcode.length, 'repeat')
-  lex = result.lex
-  pcode = pcode.concat(result.pcode)
-  if (!lexemes[lex]) {
-    throw error('repeat01', 'repeatExpression', lexemes[lex - 1])
-  }
-  result = molecules.expression(routines, sub, lex, addresses, 'null', 'bool', false)
-  lex = result.lex
-  pcode = pcode.concat(result.pcode)
-  pcode[pcode.length - 1].push(pc.ifno)
-  pcode[pcode.length - 1].push(offset + 1)
-  return { lex, pcode }
-}
-
-// generate the pcode for a WHILE structure
-const compileWhile = (routines, sub, lex, addresses, offset) => {
-  let language = routines[0].language
-  let lexemes = routines[sub].lexemes
-  let pcode = []
-  let result = {}
-  let ifnoLine = 0
-  if (!lexemes[lex]) {
-    throw error('while01', 'whileExpression', lexemes[lex - 1])
-  }
-  result = molecules.expression(routines, sub, lex, addresses, 'null', 'bool', false)
-  lex = result.lex
-  pcode = result.pcode
-  ifnoLine = pcode.length - 1
-  pcode[ifnoLine].push(pc.ifno)
-  if (language === 'Pascal') { // Pascal requires DO after WHILE expression
-    if (!lexemes[lex]) {
-      throw error('while02', 'whileDo', lexemes[lex - 1])
-    }
-    if (lexemes[lex].type !== 'do') {
-      throw error('while03', 'whileDo', lexemes[lex])
-    }
-    lex += 1
-  }
-  if (!lexemes[lex]) {
-    throw error('while04', 'whileNothing', lexemes[lex])
-  }
-  switch (language) {
-    case 'BASIC':
-      if (lexemes[lex].line > lexemes[lex - 1].line) {
-        result = block(routines, sub, lex, addresses, offset + pcode.length, 'while')
-      } else {
-        result = structure(routines, sub, lex, addresses, offset + pcode.length)
-      }
-      break
-    case 'Pascal':
-      if (lexemes[lex].type === 'begin') {
-        result = block(routines, sub, lex + 1, addresses, offset + pcode.length, 'begin')
-      } else {
-        result = structure(routines, sub, lex, addresses, offset + pcode.length)
-      }
-      break
-    case 'Python':
-      // WIP ...
-      break
-  }
-  lex = result.lex
-  pcode = pcode.concat(result.pcode)
-  pcode.push([pc.jump, offset + 1])
-  pcode[ifnoLine].push(offset + pcode.length + 1)
-  return { lex, pcode }
-}
-
-const coder = function (routine, lex, startLine) {
-  const lexemes = routine.lexemes
-  const noSemiAfter = [ 'begin', 'do', 'dot', 'repeat', 'semicolon', 'then' ]
-  const noSemiBefore = [ 'else', 'end', 'semicolon', 'until' ]
-  let variable
-  let pcode
-  if (lexemes[lex].type === 'turtle' || lexemes[lex].type === 'identifier') {
-    // wrong assignment operator
-    if (lexemes[lex + 1] && (lexemes[lex + 1].content === '=')) throw error('cmd01')
-    if (lexemes[lex + 1] && (lexemes[lex + 1].content === ':=')) {
-      // right assignment operator
-      variable = find.variable(routine, lexemes[lex].content, 'Pascal')
-      ;({ lex, pcode } = molecules.variableAssignment(routine, variable, lex + 2, 'Pascal'))
-    } else {
-      // otherwise it should be a procedure call
-      ({ lex, pcode } = molecules.procedureCall(routine, lex, 'Pascal'))
-    }
-  } else {
-    switch (lexemes[lex].content) {
-      case 'if':
-        ({ lex, pcode } = compileIf(routine, lex + 1, startLine))
-        break
-      case 'for':
-        ({ lex, pcode } = compileFor(routine, lex + 1, startLine))
-        break
-      case 'repeat':
-        ({ lex, pcode } = compileRepeat(routine, lex + 1, startLine))
-        break
-      case 'while':
-        ({ lex, pcode } = compileWhile(routine, lex + 1, startLine))
-        break
-      default:
-        throw error('cmdWeird', lexemes[lex])
-    }
-  }
-  // semicolon check
-  if (lexemes[lex]) {
-    if (lexemes[lex].content !== '') {
-      if (noSemiAfter.indexOf(lexemes[lex - 1].content) === -1) {
-        if (noSemiBefore.indexOf(lexemes[lex].content) === -1) {
-          throw error('cmdSemicolon', lexemes[lex])
-        }
-      }
-    } else {
-      while (lexemes[lex] && lexemes[lex].content === '') {
-        lex += 1
-      }
-    }
-  }
-  return { lex, pcode }
-}
 */
