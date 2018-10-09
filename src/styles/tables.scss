@@ -38,12 +38,12 @@
 .tsx-pcode-table {
   border: $border;
   overflow: auto;
+  @include scroll;
   font-size: .875em;
   font-family: $monospace;
   background: $gray;
   margin: 0;
   padding-left: 2.5em;
-  flex: 1;
   list-style-type: none;
   counter-reset: pcode-table;
   li {
@@ -79,6 +79,7 @@
   border: $border;
   overflow-y: auto;
   overflow-x: hidden;
+  @include scroll;
   &:not(:last-child) {
     margin-bottom: $padding;
   }

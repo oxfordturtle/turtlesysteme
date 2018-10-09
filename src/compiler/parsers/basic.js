@@ -47,7 +47,7 @@ export default (lexemes) => {
           inProgram = false
           state = 'end'
         } else {
-          if (lexemes[lex].type === 'variable') {
+          if (lexemes[lex].type === 'identifier' && lexemes[lex + 1] && lexemes[lex + 1].content === '=') {
             if (!exists(routines[0], lexemes[lex].content)) {
               variable = factory.variable(lexemes[lex], routines[0], false)
               variable.fulltype = varFulltype(lexemes[lex].content)
@@ -98,13 +98,26 @@ export default (lexemes) => {
         }
         break
       case 'parameters':
-        if (!lexemes[lex]) throw error('Parameter name expected.', lexemes[lex - 1])
+        if (!lexemes[lex]) {
+          throw error('Parameter name expected.', lexemes[lex - 1])
+        }
         byref = (lexemes[lex].content === 'RETURN')
         lex = (lexemes[lex].content === 'RETURN') ? lex + 1 : lex
-        if (!lexemes[lex]) throw error('Parameter name expected.', lexemes[lex - 1])
-        if (lexemes[lex].type === 'turtle') throw error('{lex} is the name of a Turtle property, and cannot be used as a parameter name.', lexemes[lex])
-        if (lexemes[lex].type !== 'variable') throw error('{lex} is not a valid parameter name. Integer parameters must end with "%", and string parameters must end with "$".', lexemes[lex])
-        if (exists(routine, lexemes[lex].content)) throw error('{lex} is already a parameter for this subroutine.', lexemes[lex])
+        if (!lexemes[lex]) {
+          throw error('Parameter name expected.', lexemes[lex - 1])
+        }
+        if (lexemes[lex].type === 'turtle') {
+          throw error('{lex} is the name of a Turtle property, and cannot be used as a parameter name.', lexemes[lex])
+        }
+        if (lexemes[lex].type !== 'identifier') {
+          throw error('{lex} is not a valid parameter name.', lexemes[lex])
+        }
+        if (!varFulltype(lexemes[lex].content)) {
+          throw error('{lex} is not a valid parameter name. Integer parameters must end with "%", and string parameters must end with "$".', lexemes[lex])
+        }
+        if (exists(routine, lexemes[lex].content)) {
+          throw error('{lex} is already a parameter for this subroutine.', lexemes[lex])
+        }
         variable = factory.variable(lexemes[lex], routine, byref)
         variable.fulltype = varFulltype(lexemes[lex].content)
         routine.parameters.push(variable)
@@ -112,7 +125,7 @@ export default (lexemes) => {
         lex += 1
         // expecting comma or closing bracket
         if (!lexemes[lex]) throw error('Closing bracket needed after parameters.', lexemes[lex - 1])
-        if (lexemes[lex].type === 'variable') throw error('Comma needed after parameter.', lexemes[lex])
+        if (lexemes[lex].type === 'identifier') throw error('Comma needed after parameter.', lexemes[lex])
         if (lexemes[lex].content === ')') {
           state = 'variables'
         } else {
@@ -140,10 +153,21 @@ export default (lexemes) => {
         break
       case 'private':
         // expecting comma separated list of private variables
-        if (!lexemes[lex]) throw error('Variable name expected.', lexemes[lex - 1])
-        if (lexemes[lex].type === 'turtle') throw error('{lex} is the name of a Turtle property, and cannot be used as a variable name.', lexemes[lex])
-        if (lexemes[lex].type !== 'variable') throw error('{lex} is not a valid variable name. Integer variables must end with "%", and string variables must end with "$".', lexemes[lex])
-        if (exists(routine, lexemes[lex].content)) throw error('{lex} is already a variable in the current scope.', lexemes[lex])
+        if (!lexemes[lex]) {
+          throw error('Variable name expected.', lexemes[lex - 1])
+        }
+        if (lexemes[lex].type === 'turtle') {
+          throw error('{lex} is the name of a Turtle property, and cannot be used as a variable name.', lexemes[lex])
+        }
+        if (lexemes[lex].type !== 'identifier') {
+          throw error('{lex} is not a valid variable name.', lexemes[lex])
+        }
+        if (!varFulltype(lexemes[lex].content)) {
+          throw error('{lex} is not a valid variable name. Integer variables must end with "%", and string variables must end with "$".', lexemes[lex])
+        }
+        if (exists(routine, lexemes[lex].content)) {
+          throw error('{lex} is already a variable in the current scope.', lexemes[lex])
+        }
         variable = factory.variable(lexemes[lex], routines[0])
         variable.fulltype = varFulltype(lexemes[lex].content)
         variable.private = routine // flag the variable as private to this routine
@@ -159,10 +183,21 @@ export default (lexemes) => {
         break
       case 'local':
         // expecting comma separated list of local variables
-        if (!lexemes[lex]) throw error('Variable name expected.', lexemes[lex - 1])
-        if (lexemes[lex].type === 'turtle') throw error('{lex} is the name of a Turtle property, and cannot be used as a variable name.', lexemes[lex])
-        if (lexemes[lex].type !== 'variable') throw error('{lex} is not a valid variable name. Integer variables must end with "%", and string variables must end with "$".', lexemes[lex])
-        if (exists(routine, lexemes[lex].content)) throw error('{lex} is already a variable in the current scope.', lexemes[lex])
+        if (!lexemes[lex]) {
+          throw error('Variable name expected.', lexemes[lex - 1])
+        }
+        if (lexemes[lex].type === 'turtle') {
+          throw error('{lex} is the name of a Turtle property, and cannot be used as a variable name.', lexemes[lex])
+        }
+        if (lexemes[lex].type !== 'identifier') {
+          throw error('{lex} is not a valid variable name.', lexemes[lex])
+        }
+        if (!varFulltype(lexemes[lex].content)) {
+          throw error('{lex} is not a valid variable name. Integer variables must end with "%", and string variables must end with "$".', lexemes[lex])
+        }
+        if (exists(routine, lexemes[lex].content)) {
+          throw error('{lex} is already a variable in the current scope.', lexemes[lex])
+        }
         variable = factory.variable(lexemes[lex], routine)
         variable.fulltype = varFulltype(lexemes[lex].content)
         routine.variables.push(variable)
@@ -245,7 +280,7 @@ const exists = (routine, string) =>
 const varFulltype = string => {
   const type = string.slice(-1) === '%' ? 'boolint' : 'string'
   const length = type === 'boolint' ? 0 : 34
-  return factory.fulltype(type, length)
+  return type ? factory.fulltype(type, length) : false
 }
 
 // get the type of a subroutine from its name

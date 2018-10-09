@@ -322,8 +322,10 @@ const variable = (lexemes, lex, routine, parameter = false, byref = false) => {
   // add the variables to the routine
   routine.variables = routine.variables.concat(variables)
 
-  // move past semicolons
-  lex = next(lexemes, result.lex, true)
+  // move to the next lexeme
+  lex = (!parameter || lexemes[result.lex].content !== ')')
+    ? next(lexemes, result.lex, true)
+    : result.lex
 
   // final error checking
   if (!lexemes[lex]) {
@@ -332,8 +334,8 @@ const variable = (lexemes, lex, routine, parameter = false, byref = false) => {
 
   // return the next lexeme index and state
   return (lexemes[lex].type === 'identifier')
-    ? { lex, state: 'variable' }
-    : { lex, state: 'crossroads' }
+    ? { lex, variables, state: 'variable' }
+    : { lex, variables, state: 'crossroads' }
 }
 
 // look for "<fulltype>: boolean|integer|char|string[size]|array of <fulltype>"; return fulltype
@@ -527,7 +529,9 @@ const subroutine = (lexemes, lex, type, parent) => {
   routine = factory.subroutine(identifier.content, type, parent)
 
   // add result variable to functions
-  if (type === 'function') routine.variables.push(factory.variable({ content: 'result' }, routine, false))
+  if (type === 'function') {
+    routine.variables.push(factory.variable({ content: 'result' }, routine, false))
+  }
 
   // look for semicolon or parameters
   lex += 1
@@ -538,6 +542,7 @@ const subroutine = (lexemes, lex, type, parent) => {
     result = parameter(lexemes, lex + 1, routine)
     routine.parameters = result.parameters
     routine.variables = routine.variables.concat(result.parameters)
+    lex = result.lex
   }
 
   // if it's a function, look for colon and return type
@@ -573,7 +578,10 @@ const parameter = (lexemes, lex, routine) => {
       ? variable(lexemes, lex + 1, routine, true, true)
       : variable(lexemes, lex, routine, true, false)
     parameters = parameters.concat(result.variables)
-    if (!lexemes[lex]) throw error('Parameter declarations must be followed by a closing bracket ")".', lexemes[lex - 1])
+    lex = result.lex
+    if (!lexemes[lex]) {
+      throw error('Parameter declarations must be followed by a closing bracket ")".', lexemes[lex - 1])
+    }
     switch (lexemes[lex].content) {
       case ';':
         lex += 1

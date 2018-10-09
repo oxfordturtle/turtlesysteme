@@ -22,3 +22,16 @@ $colour-icon: "\f1fb";
     margin-bottom: $padding;
   }
 }
+
+@mixin scroll {
+  &::-webkit-scrollbar {
+    width: $padding;
+    height: $padding;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: silver;
+  }
+}

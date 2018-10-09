@@ -18,6 +18,8 @@ import * as find from '../tools/find.js'
 import * as pcoder from '../tools/pcoder.js'
 
 export const coder = (routine, lex, startLine) => {
+  let result
+
   switch (routine.lexemes[lex].type) {
     // identifiers (variable assignment or procedure call)
     case 'turtle': // fallthrough
@@ -29,39 +31,54 @@ export const coder = (routine, lex, startLine) => {
 
       // right assignment operator
       if (routine.lexemes[lex + 1] && (routine.lexemes[lex + 1].content === '=')) {
-        return molecules.variableAssignment(routine, routine.lexemes[lex].content, lex + 2, 'Python')
+        result = molecules.variableAssignment(routine, routine.lexemes[lex].content, lex + 2, 'Python')
+        break
       }
 
       // otherwise it should be a procedure call
-      return molecules.procedureCall(routine, lex, 'Python')
+      result = molecules.procedureCall(routine, lex, 'Python')
+      break
 
     // keywords
     case 'keyword':
       switch (routine.lexemes[lex].content) {
         // return (assign return variable of a function)
         case 'return':
-          return molecules.variableAssignment(routine, 'return', lex + 1, 'Python')
+          result = molecules.variableAssignment(routine, 'return', lex + 1, 'Python')
+          break
 
         // start of IF structure
         case 'if':
-          return compileIf(routine, lex + 1, startLine)
+          result = compileIf(routine, lex + 1, startLine)
+          break
 
         // start of FOR structure
         case 'for':
-          return compileFor(routine, lex + 1, startLine)
+          result = compileFor(routine, lex + 1, startLine)
+          break
 
         // start of WHILE structure
         case 'while':
-          return compileWhile(routine, lex + 1, startLine)
+          result = compileWhile(routine, lex + 1, startLine)
+          break
 
         default:
           throw error('{lex} makes no sense here.', routine.lexemes[lex])
       }
+      break
 
     // any thing else is a mistake
     default:
       throw error('{lex} makes no sense here.', routine.lexemes[lex])
   }
+
+  // end of command check
+  if (routine.lexemes[result.lex] && routine.lexemes[result.lex].line === routine.lexemes[result.lex - 1].line) {
+    throw error('Command must be on a new line.', routine.lexemes[result.lex])
+  }
+
+  // all good
+  return result
 }
 
 // generate the pcode for an IF structure

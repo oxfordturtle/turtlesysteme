@@ -20,6 +20,7 @@
   font-family: $monospace;
   flex: 1;
   overflow: auto;
+  @include scroll;
 }
 
 .tsx-output {

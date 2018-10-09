@@ -1,12 +1,15 @@
 .tsx, .tsx-modal {
-  input, select, button {
+  input[type="text"], input[type="number"], select, button {
     font: inherit;
     height: 2em;
     padding: $padding;
   }
-  input, select {
+  input[type="text"], input[type="number"], select {
     border: $border;
     background: #fff;
+  }
+  input[type="checkbox"] {
+    margin: .5em;
   }
   button {
     background: $green;

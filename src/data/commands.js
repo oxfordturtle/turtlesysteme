@@ -1239,17 +1239,17 @@ export const commands = ([
 ])
 
 export const categories = [
-  category(0, 'Turtle: relative movement', commands.filter((x) => x.category === 0)),
-  category(1, 'Turtle: absolute movement', commands.filter((x) => x.category === 1)),
-  category(2, 'Turtle: drawing shapes', commands.filter((x) => x.category === 2)),
-  category(3, 'Other Turtle commands', commands.filter((x) => x.category === 3)),
-  category(4, 'Canvas operations', commands.filter((x) => x.category === 4)),
-  category(5, 'General arithmetic functions', commands.filter((x) => x.category === 5)),
-  category(6, 'Trig / exp / log functions', commands.filter((x) => x.category === 6)),
-  category(7, 'String operations', commands.filter((x) => x.category === 7)),
-  category(8, 'Type conversion routines', commands.filter((x) => x.category === 8)),
-  category(9, 'Input and timing routines', commands.filter((x) => x.category === 9)),
-  category(10, 'Turtle Machine monitoring', commands.filter((x) => x.category === 10))
+  category(0, 'Turtle: relative movement', commands.filter(x => x.category === 0)),
+  category(1, 'Turtle: absolute movement', commands.filter(x => x.category === 1)),
+  category(2, 'Turtle: drawing shapes', commands.filter(x => x.category === 2)),
+  category(3, 'Other Turtle commands', commands.filter(x => x.category === 3)),
+  category(4, 'Canvas operations', commands.filter(x => x.category === 4)),
+  category(5, 'General arithmetic functions', commands.filter(x => x.category === 5)),
+  category(6, 'Trig / exp / log functions', commands.filter(x => x.category === 6)),
+  category(7, 'String operations', commands.filter(x => x.category === 7)),
+  category(8, 'Type conversion routines', commands.filter(x => x.category === 8)),
+  category(9, 'Input and timing routines', commands.filter(x => x.category === 9)),
+  category(10, 'Turtle Machine monitoring', commands.filter(x => x.category === 10))
 ]
 
 export const usage = categories.concat(

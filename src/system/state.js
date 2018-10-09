@@ -239,22 +239,22 @@ export const send = (signal, data) => {
 
       case 'set-group':
         set('group', data)
-        reply('group-changed', get('group'))
+        reply('help-options-changed', get('help-options'))
         break
 
       case 'toggle-simple':
         set('simple', !get('simple'))
-        reply('simple-changed', get('simple'))
+        reply('help-options-changed', get('help-options'))
         break
 
       case 'toggle-intermediate':
         set('intermediate', !get('intermediate'))
-        reply('intermediate-changed', get('intermediate'))
+        reply('help-options-changed', get('help-options'))
         break
 
       case 'toggle-advanced':
         set('advanced', !get('advanced'))
-        reply('advanced-changed', get('advanced'))
+        reply('help-options-changed', get('help-options'))
         break
 
       case 'machine-run-halt':
@@ -306,7 +306,10 @@ const reply = (message, data) => {
   if (replies[message]) replies[message].forEach(callback => callback(data))
 
   // if the language has changed, reply that the file has changed as well
-  if (message === 'language-changed') reply('file-changed')
+  if (message === 'language-changed') {
+    reply('file-changed')
+    reply('help-options-changed', get('help-options'))
+  }
 
   // if the file has changed, reply that the file properties have changed as well
   if (message === 'file-changed') {
@@ -362,6 +365,14 @@ const get = item => {
         codeCountMax: get('code-count-max'),
         smallSize: get('small-size'),
         stackSize: get('stack-size')
+      }
+    case 'help-options':
+      return {
+        language: get('language'),
+        group: get('group'),
+        simple: get('simple'),
+        intermediate: get('intermediate'),
+        advanced: get('advanced')
       }
     default:
       return JSON.parse(window.localStorage.getItem(item))

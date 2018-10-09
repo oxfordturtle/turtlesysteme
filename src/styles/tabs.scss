@@ -22,6 +22,7 @@
       flex: 1;
       flex-direction: column;
       overflow: auto;
+      @include scroll;
       &.active {
         display: flex;
       }
@@ -54,45 +55,6 @@
   &>.tsx-tab-panes {
     background: #fff;
     z-index: 2;
-  }
-}
-
-// styles for the help tabs and tab panes
-.tsx-help-tabs {
-  flex-direction: row;
-  &>.tsx-tab-list {
-    flex-direction: column;
-    .tsx-tab {
-      color: #fff;
-      padding: .75em .5em;
-      min-width: 8em;
-      &:hover {
-        background: lighten($black, 20%);
-      }
-      &.active {
-        color: $black;
-        background: #fff;
-      }
-    }
-  }
-  &>.tsx-tab-panes {
-    background: #fff;
-    padding: ($padding * 2) ($padding * 4);
-    .tsx-tab-pane {
-      margin: 0 auto;
-      max-width: 600px;
-      line-height: 1.5;
-      h3 {
-        margin: 0 0 .75em;
-        font-size: 1em;
-      }
-      p {
-        margin: 0 0 .75em;
-        &:last-child {
-          margin-bottom: 0;
-        }
-      }
-    }
   }
 }
 
@@ -137,5 +99,6 @@
 .tsx-electron .tsx-help-tabs {
   &>.tsx-tab-panes {
     overflow: auto;
+    @include scroll;
   }
 }

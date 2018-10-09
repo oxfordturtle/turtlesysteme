@@ -10,19 +10,34 @@ import highlight from '../compiler/highlight.js'
 import { send, on } from '../system/state.js'
 
 // the file tab elements
-const newFileButtons = element('div', {
-  classes: ['tsx-buttons'],
-  content: [
-    element('button', {
-      content: 'Blank Program',
-      on: [{ type: 'click', callback: () => send('new-program') }]
-    }),
-    element('button', {
-      content: 'Skeleton Program',
-      on: [{ type: 'click', callback: () => send('new-skeleton-program') }]
-    })
-  ]
-})
+const newFileButtons = element('div', { content: [
+  element('div', {
+    classes: ['tsx-buttons'],
+    content: [
+      element('button', {
+        content: 'New Program',
+        on: [{ type: 'click', callback: () => send('new-program') }]
+      }),
+      element('button', {
+        content: 'New Skeleton Program',
+        on: [{ type: 'click', callback: () => send('new-skeleton-program') }]
+      })
+    ]
+  }),
+  element('div', {
+    classes: ['tsx-buttons'],
+    content: [
+      element('button', {
+        content: 'Open Program',
+        on: [{ type: 'click', callback: () => { fileInput.click() } }]
+      }),
+      element('button', {
+        content: 'Save Program',
+        on: [{ type: 'click', callback: () => { send('save-program') } }]
+      })
+    ]
+  })
+] })
 
 const fileInput = element('input', {
   type: 'file',
@@ -52,35 +67,17 @@ const exampleSelect = examples =>
     ]
   })
 
-const saveFileButtons = element('div', {
-  classes: ['tsx-buttons'],
-  content: [
-    element('button', {
-      content: 'Save Program File',
-      on: [{ type: 'click', callback: () => { send('save-program') } }]
-    }),
-    element('button', {
-      content: 'Export TGX File',
-      on: [{ type: 'click', callback: () => { send('save-tgx-program') } }]
-    })
-  ]
-})
-
 const fileBox = (title, content) =>
   element('div', {
     classes: ['tsx-file-box'],
     content: [element('label', { content: title }), content]
   })
 
-const newFile = fileBox('New File', newFileButtons)
+const newFile = fileBox('File', newFileButtons)
 
-const openLocal = fileBox('Open Local File', fileInput)
+const openHelp = fileBox('Example Programs', exampleSelect(examples.help))
 
-const openHelp = fileBox('Open Example Program', exampleSelect(examples.help))
-
-const openCSAC = fileBox('Open CSAC Book Program', exampleSelect(examples.csac))
-
-const saveFile = fileBox('Save File', saveFileButtons)
+const openCSAC = fileBox('CSAC Book Programs', exampleSelect(examples.csac))
 
 // the code tab
 const numbers = element('ol') // for line numbers
@@ -175,7 +172,7 @@ const pcodeList = element('ol', { classes: ['tsx-pcode-table'] })
 export const component = (includeFileTab) =>
   includeFileTab
     ? tabs('tsx-system-tabs', [
-      { label: 'File', active: false, content: [newFile, openLocal, openHelp, openCSAC, saveFile] },
+      { label: 'File', active: false, content: [newFile, openHelp, openCSAC] },
       { label: 'Code', active: true, content: [code] },
       { label: 'Usage', active: false, content: [usage] },
       { label: 'PCode', active: false, content: [pcodeOptions, pcodeList] }

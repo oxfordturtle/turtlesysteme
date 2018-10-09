@@ -3,6 +3,7 @@
   border: $border;
   position: relative;
   overflow: auto;
+  @include scroll;
   height: 100%;
   font-family: $monospace;
   line-height: 1.5;
