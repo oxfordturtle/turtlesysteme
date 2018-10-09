@@ -1,0 +1,35 @@
+PROGRAM Clock;
+VAR hours: integer;
+    minutes: integer;
+
+  Procedure showhands;
+  Begin
+    colour(white);
+    blot(360);
+    colour(red);
+    direction(hours * 30);
+    thickness(10);
+    forward(250);
+    back(250);
+    direction(minutes * 6);
+    thickness(6);
+    forward(350);
+    back(350)
+  End;
+
+BEGIN
+  thickness(10);
+  circle(400);
+  hours := 0;
+  minutes := 0;
+  repeat
+    repeat
+      showhands;
+      pause(600);
+      inc(minutes)
+    until minutes = 60;
+    inc(hours);
+    minutes := 0
+  until hours = 12;
+  showhands
+END.

@@ -1,0 +1,91 @@
+REM PaintApp
+
+PROCsetup
+REPEAT
+  IF ?LMOUSE > 0 THEN
+    IF ?MOUSEY > 900 THEN
+      PROCsetbrushcolour(PIXCOL(?MOUSEX, ?MOUSEY))
+    ELSE
+      IF (?MOUSEY > 850) AND ((?MOUSEX > 600) AND (?MOUSEX < 850)) THEN
+        PROCsetbrushwidth(((?MOUSEX DIV 50) * 2) - 16)
+      ELSE
+        IF ?MOUSEY < 850 - BrushWidth% THEN PROCpaintbrush(?MOUSEX, ?MOUSEY)
+      ENDIF
+    ENDIF
+  ENDIF
+  IF (?RMOUSE > 0) AND (?MOUSEY < 850) THEN PROCpaintcan(?MOUSEX, ?MOUSEY)
+  UPDATE
+UNTIL FALSE
+END
+
+DEF PROCsetbrushwidth(wdth%)
+  LOCAL count%
+  BrushWidth% = wdth%
+  NOUPDATE
+  COLOUR(BLACK)
+  FOR count% = 0 TO 4
+    SETXY(625 + count% * 50, 875)
+    BLOT(8 + count% * 2)
+  NEXT
+  COLOUR(BrushColour%)
+  RECOLOUR(((BrushWidth% + 16) * 25) + 25, 875, LIGHTRED)
+  UPDATE
+ENDPROC
+
+DEF PROCsetbrushcolour(clr%)
+  BrushColour% = clr%
+  COLOUR(clr%)
+  SETXY(975, 875)
+  BLOT(16)
+ENDPROC
+
+DEF PROCpaintbrush(x%, y%)
+  SETXY(x%, y%)
+  BLOT(BrushWidth%)
+ENDPROC
+
+DEF PROCpaintcan(x%, y%)
+  RECOLOUR(x%, y%, BrushColour%)
+ENDPROC
+
+DEF PROCtext(input$)
+  COLOUR(BLACK)
+  PRINT(input$, 0, 20)
+ENDPROC
+
+DEF PROCsquare(col%)
+  MOVEXY(50, 0)
+  MOVEXY(0, 50)
+  MOVEXY(-50, 0)
+  MOVEXY(0, -50)
+  COLOUR(col%)
+  POLYGON(4)
+ENDPROC
+
+DEF PROCsetup
+  LOCAL count%
+  COLOUR(LIGHTRED)
+  SETXY(0, 850)
+  DRAWXY(1000, 0)
+  SETXY(0, 900)
+  DRAWXY(1000, 0)
+  SETXY(450, 850)
+  DRAWXY(0, 50)
+  SETXY(850, 850)
+  DRAWXY(0, 50)
+  SETXY(10, 858)
+  PROCtext("Left-click to draw, right-click to fill")
+  SETXY(450 + 10, 858)
+  PROCtext("Brush width:")
+  SETXY(850 + 10, 858)
+  PROCtext("Colour:")
+  SETXY(0, 900)
+  FOR count% = 1 TO 20
+    PROCsquare(RGB(count%))
+    MOVEXY(0, 50)
+    PROCsquare(RGB(count% + 30))
+    MOVEXY(50, -50)
+  NEXT
+  PROCsetbrushwidth(8)
+  PROCsetbrushcolour(BLACK)
+ENDPROC

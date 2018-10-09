@@ -1,0 +1,73 @@
+PROGRAM MandelbrotMiniSpectrum;
+CONST maxcol = 100;
+      scale = 10000;
+      pixels = 300;
+      xcentre = -159200;
+      ycentre = -1033000;
+      spectrum = 7;
+VAR xstart, xfinish, ystart, yfinish: integer;
+    a, b, x, y: integer;
+    iterations, temp: integer;
+    spectcol: array[0..spectrum] of integer;
+    boundary: array[0..spectrum] of integer;
+
+  Procedure colsetup;
+  Var n: integer;
+  Begin
+    spectcol[0] := violet;
+    spectcol[1] := blue;
+    spectcol[2] := cyan;
+    spectcol[3] := lime;
+    spectcol[4] := yellow;
+    spectcol[5] := orange;
+    spectcol[6] := red;
+    spectcol[7] := violet;
+    for n := 0 to spectrum do
+      boundary[n] := divmult(maxcol, spectrum, n)
+  End;
+
+  Function mixcolour(n: integer): integer;
+  Var col1, col2: integer;
+      mix1, mix2: integer;
+  Begin
+    col2 := 0;
+    repeat
+      inc(col2)
+    until (boundary[col2] >= n) or (col2 = spectrum);
+    col1 := col2 - 1;
+    result := mixcols(spectcol[col1], spectcol[col2], boundary[col2] - n, n - boundary[col1])
+  End;
+
+BEGIN
+  colsetup;
+  xstart := divmult(xcentre, 1000000, scale) - pixels / 2;
+  ystart := divmult(ycentre, 1000000, scale) - pixels / 2;
+  xfinish := xstart + pixels - 1;
+  yfinish := ystart + pixels - 1;
+  canvas(xstart, ystart, pixels, pixels);
+  resolution(pixels, pixels);
+  timeset(0);
+  for a := xstart to xfinish do
+    begin
+      noupdate;
+      for b := ystart to yfinish do
+        begin
+          x := a;
+          y := b;
+          iterations := 0;
+          while (hypot(x, y, 1) < 2 * scale) and (iterations <= maxcol) do
+            begin
+              temp := divmult(x + y, scale, x - y);
+              y := divmult(2 * x, scale, y) + b;
+              x := temp + a;
+              inc(iterations)
+            end;
+          if iterations > maxcol then
+            pixset(a, b, black)
+          else
+            pixset(a, b, mixcolour(iterations))
+        end;
+      update
+    end;
+  writeln('Resolution: ' + str(scale * 3) + '; Time taken: ' + qstr(time, 1000, 1) + ' seconds.')
+END.

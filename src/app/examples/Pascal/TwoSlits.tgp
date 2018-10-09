@@ -1,0 +1,108 @@
+PROGRAM TwoSlits;
+CONST sectors = 7;
+      wavelength = 100;
+      sourcey = 730;
+      source1x = 275;
+      source2x = 725;
+VAR lampx: integer;
+    x, y: integer;
+    disty, dist1, dist2: integer;
+    wave1, wave2: integer;
+    waveaddi, waveaddj, waveadd: integer;
+    angleadd: integer;
+    sectcol: array[0..sectors] of integer;
+    boundary: array[0..sectors] of integer;
+
+  Procedure colsetup;
+  Var n: integer;
+  Begin
+    sectcol[0] := violet;
+    sectcol[1] := blue;
+    sectcol[2] := cyan;
+    sectcol[3] := lime;
+    sectcol[4] := yellow;
+    sectcol[5] := orange;
+    sectcol[6] := red;
+    sectcol[7] := violet;
+    for n := 0 to sectors do
+      boundary[n] := divmult(360, sectors, n)
+  End;
+
+  Function wavecolour(n: integer): integer;
+  Var col1, col2: integer;
+      mix1, mix2: integer;
+  Begin
+    col2 := 0;
+    repeat
+      inc(col2)
+    until boundary[col2] >= n;
+    col1 := col2 - 1;
+    result := mixcols(sectcol[col1], sectcol[col2], boundary[col2] - n, n - boundary[col1])
+  End;
+
+  Procedure background;
+  Var n: integer;
+      diagx, diag: integer;
+  Begin
+    lampx := (source1x + source2x) / 2;
+    blank(black);
+    colour(white);
+    thickness(5);
+    setxy(0, 733);
+    drawxy(1000, 0);
+    setxy(source1x, 732);
+    for dist1 := 1 to 4 do
+      begin
+        colour(wavecolour(wavelength - dist1));
+        drawxy(0, 1)
+      end;
+    diagx := lampx - source1x;
+    diag := hypot(diagx, 250, 1);
+    for n := 1 to 250 do
+      begin
+        dist1 := divmult(diag, 250, n);
+        wave1 := wavelength - ((dist1 + 5) mod wavelength);
+        colour(wavecolour(divmult(wave1, wavelength, 360)));
+        drawxy(source1x + divmult(diagx, 250, n) - turtx, 1)
+      end;
+    setxy(source2x, 732);
+    for dist2 := 1 to 4 do
+      begin
+        colour(wavecolour(wavelength - dist2));
+        drawxy(0, 1)
+      end;
+    diagx := source2x - lampx;
+    diag := hypot(diagx, 250, 1);
+    for n := 1 to 250 do
+      begin
+        dist2 := divmult(diag, 250, n);
+        wave2 := wavelength - ((dist2 + 5) mod wavelength);
+        colour(wavecolour(divmult(wave2, wavelength, 360)));
+        drawxy(source2x - divmult(diagx, 250, n) - turtx, 1)
+      end;
+    colour(yellow);
+    setxy(lampx, 984);
+    blot(10);
+  End;
+
+BEGIN
+  colsetup;
+  background;
+  noupdate;
+  for y := 0 to sourcey do
+   begin
+    disty := sourcey - y;
+    for x := 0 to 999 do
+      begin
+        dist1 := hypot(x - source1x, disty, 1);
+        dist2 := hypot(x - source2x, disty, 1);
+        wave1 := dist1 mod wavelength;
+        wave2 := dist2 mod wavelength;
+        waveaddi := sin(wave1 * 360, wavelength, 500) + sin(wave2 * 360, wavelength, 500);
+        waveaddj := cos(wave1 * 360, wavelength, 500) + cos(wave2 * 360, wavelength, 500);
+        waveadd := hypot(waveaddi, waveaddj, 1);
+        angleadd := (arctan(waveaddi, waveaddj, 1) + 360)mod 360;
+        pixset(x, y, mixcols(wavecolour(angleadd), black, waveadd, 1000 - waveadd))
+      end
+    end
+END.

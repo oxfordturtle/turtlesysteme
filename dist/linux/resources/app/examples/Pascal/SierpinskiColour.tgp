@@ -1,0 +1,116 @@
+PROGRAM SierpinskiColour;
+CONST xleft = 0;
+      xright = 999;
+      ytop = 0;
+      ybottom = 999;
+      scaledown = 4;
+      mappings = 3;
+      title = 'Sierpinski triangle';
+      gridlines = 5;
+      gridthick = 64;
+VAR xl, xr, yt, yb, gt: integer;
+    coeffdiv: integer;
+    mapxx, mapxy, mapxc: array[1..mappings] of integer;
+    mapyx, mapyy, mapyc: array[1..mappings] of integer;
+    count: integer;
+
+  Procedure setmaps;
+  Begin
+    coeffdiv := 100;
+    mapxx[1] := 50;
+    mapyx[1] := 0;
+    mapxy[1] := 0;
+    mapyy[1] := 50;
+    mapxc[1] := 250;
+    mapyc[1] := 0;
+    mapxx[2] := 50;
+    mapyx[2] := 0;
+    mapxy[2] := 0;
+    mapyy[2] := 50;
+    mapxc[2] := 0;
+    mapyc[2] := 500;
+    mapxx[3] := 50;
+    mapyx[3] := 0;
+    mapxy[3] := 0;
+    mapyy[3] := 50;
+    mapxc[3] := 500;
+    mapyc[3] := 500
+  End;
+
+  Procedure setscale;
+  Var i: integer;
+  Begin
+    xl := xleft / scaledown;
+    xr := xright / scaledown;
+    yt := ytop / scaledown;
+    yb := ybottom / scaledown;
+    for i := 1 to mappings do
+      begin
+        mapxc[i] := mapxc[i] / scaledown;
+        mapyc[i] := mapyc[i] / scaledown
+      end;
+    gt := gridthick / scaledown
+  End;
+
+  Procedure background(rad: integer);
+  Var x, y, cx, cy, r, g, b: integer;
+  Begin
+    thickness(gt);
+    colour(darkgrey);
+    for x := 1 to gridlines - 1 do
+      begin
+        setxy(xl + divmult(xr - xl, gridlines, x), yt);
+        drawxy(0, yb - yt)
+      end;
+    for y := 1 to gridlines - 1 do
+      begin
+        setxy(xl + gt / 2, yt + divmult(yb - yt, gridlines, y));
+        drawxy(xr - xl - gt, 0)
+      end;
+    colour(black);
+    setxy(xl, yt);
+    drawxy(xr - xl, 0);
+    drawxy(0, yb - yt);
+    drawxy(xl - xr, 0);
+    drawxy(0, yt - yb);
+    for x := 0 to gridlines - 1 do
+      for y := 0 to gridlines - 1 do
+        begin
+          xc := xl + divmult(xr - xl, gridlines, x) + gt;
+          cy := yt + divmult(yb - yt, gridlines, y) + gt;
+          r := divmult(255, gridlines - 1, x);
+          g := divmult(255, gridlines - 1, y);
+          b := divmult(255, 2 * gridlines - 2, 2 * gridlines - 2 - x - y);
+          recolour(cx, cy, (r * $10000) + (g * $100) + (b * $1))
+        end
+  End;
+
+  Procedure map(a, x, y: integer; var newx, newy: integer);
+  Begin
+    newx := divmult(x, coeffdiv, mapxx[a]) + divmult(y, coeffdiv, mapxy[a]) + mapxc[a];
+    newy := divmult(x, coeffdiv, mapyx[a]) + divmult(y, coeffdiv, mapyy[a]) + mapyc[a]
+  End;
+
+  Procedure domap(mapnum: integer);
+  Var x, y, newx, newy: integer;
+  Begin
+    noupdate;
+    for y := yt to yb do
+      for x := xl to xr do
+        begin
+          map(mapnum, x, y, newx, newy);
+          pixset(newx, newy, pixcol(x, y))
+        end;
+    update
+  End;
+
+BEGIN
+  setmaps;
+  setscale;
+  canvas(xl, yt, xr - xl + 1, yb - yt + 1);
+  resolution(xr - xl + 1, yb - yt + 1);
+  background(6);
+  writeln(title + ' mappings in colour');
+  for count := 1 to mappings do
+    domap(count)
+END.

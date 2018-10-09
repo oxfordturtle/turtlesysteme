@@ -1,0 +1,113 @@
+PROGRAM DragonColour;
+CONST xleft = 0;
+      xright = 999;
+      ytop = 0;
+      ybottom = 999;
+      scaledown = 4;
+      mappings = 3;
+      title = 'Dragon curve';
+      gridlines = 5;
+      gridthick = 64;
+VAR xl, xr, yt, yb, gt: integer;
+    coeffdiv: integer;
+    mapxx, mapxy, mapxc: array[1..mappings] of integer;
+    mapyx, mapyy, mapyc: array[1..mappings] of integer;
+    count: integer;
+
+  Procedure setmaps;
+  Begin
+    coeffdiv := 1000;
+    mapxx[1] := 0;
+    mapyx[1] := -577;
+    mapxy[1] := 577;
+    mapyy[1] := 0;
+    mapxc[1] := 95;
+    mapyc[1] := 589;
+    mapxx[2] := 0;
+    mapyx[2] := -577;
+    mapxy[2] := 577;
+    mapyy[2] := 0;
+    mapxc[2] := 441;
+    mapyc[2] := 789;
+    mapxx[3] := 0;
+    mapyx[3] := -577;
+    mapxy[3] := 577;
+    mapyy[3] := 0;
+    mapxc[3] := 95;
+    mapyc[3] := 989;
+  End;
+
+  Procedure setscale;
+  Var i: integer;
+  Begin
+    xl := xleft / scaledown;
+    xr := xright / scaledown;
+    yt := ytop / scaledown;
+    yb := ybottom / scaledown;
+    for i := 1 to mappings do
+      begin
+        mapxc[i] := mapxc[i] / scaledown;
+        mapyc[i] := mapyc[i] / scaledown
+      end;
+    gt := gridthick / scaledown
+  End;
+
+  Procedure background(rad: integer);
+  Var x, y: integer;
+  Begin
+    thickness(gt);
+    colour(darkgrey);
+    for x := 1 to gridlines - 1 do
+      begin
+        setxy(xl + divmult(xr - xl, gridlines, x), yt);
+        drawxy(0, yb - yt)
+      end;
+    for y := 1 to gridlines - 1 do
+      begin
+        setxy(xl + gt / 2, yt + divmult(yb - yt, gridlines, y));
+        drawxy(xr - xl - gt, 0)
+      end;
+    colour(black);
+    setxy(xl, yt);
+    drawxy(xr - xl, 0);
+    drawxy(0, yb - yt);
+    drawxy(xl - xr, 0);
+    drawxy(0, yt - yb);
+    for x := 0 to gridlines - 1 do
+      for y := 0 to gridlines - 1 do
+        recolour(xl + divmult(xr - xl, gridlines, x) + gt,
+                 yt + divmult(yb - yt, gridlines, y) + gt,
+                 divmult(255, gridlines - 1, x) * $10000
+                 + divmult(255, gridlines - 1, y) * $100
+                 + divmult(255, 2 * gridlines - 2, 2 * gridlines - 2 - x - y) * $1)
+  End;
+
+  Procedure map(a, x, y: integer; var newx, newy: integer);
+  Begin
+    newx := divmult(x, coeffdiv, mapxx[a]) + divmult(y, coeffdiv, mapxy[a]) + mapxc[a];
+    newy := divmult(x, coeffdiv, mapyx[a]) + divmult(y, coeffdiv, mapyy[a]) + mapyc[a]
+  End;
+
+  Procedure domap(mapnum: integer);
+  Var x, y, newx, newy: integer;
+  Begin
+    noupdate;
+    for y := yt to yb do
+      for x := xl to xr do
+        begin
+          map(mapnum, x, y, newx, newy);
+          pixset(newx, newy, pixcol(x, y))
+        end;
+    update
+  End;
+
+BEGIN
+  setmaps;
+  setscale;
+  canvas(xl, yt, xr - xl + 1, yb - yt + 1);
+  resolution(xr - xl + 1, yb - yt + 1);
+  background(6);
+  writeln(title + ' mappings in colour');
+  for count := 1 to mappings do
+    domap(count)
+END.

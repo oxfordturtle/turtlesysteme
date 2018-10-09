@@ -18,7 +18,7 @@ including also the new values of any relevant state variables.
 */
 import { fetch } from '../tools.js'
 import { extensions, languages } from '../data/constants.js'
-import * as examples from '../data/examples.js'
+import * as examples from '../app/examples.js'
 import compile from '../compiler/compile.js'
 import * as machine from './machine.js'
 

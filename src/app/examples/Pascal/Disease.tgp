@@ -1,0 +1,55 @@
+PROGRAM Disease;
+CONST width = 100;
+      height = 100;
+      susceptible = lightgreen;
+      infected = red;
+      recovered = blue;
+      startradius = 10;
+      infectprob = 1;
+      immuneprob = 2;
+      recoverprob = 15;
+VAR x, y, n: integer;
+    numinfected: integer;
+
+  Procedure infect(x, y: integer);
+  Begin
+    pixset(x, y, infected);
+    inc(numinfected)
+  End;
+
+BEGIN
+  canvas(0, 0, width, height);
+  resolution(width, height);
+  numinfected := 0;
+  noupdate;
+  for x := 0 to width - 1 do
+    for y := 0 to height - 1 do
+      if (random(100) < infectprob) and (hypot(x - width / 2, y - height / 2, 1) <= startradius) then
+        infect(x, y)
+      else
+      if random(100) < immuneprob then
+        pixset(x, y, recovered)
+      else
+        pixset(x, y, susceptible);
+  update;
+  repeat
+    x := random(width);
+    y := random(height);
+    if pixcol(x, y) = infected then
+      begin
+        if random(100) < recoverprob then
+          begin
+            pixset(x, y, recovered);
+            dec(numinfected)
+          end
+        else
+          begin
+            n := random(4) * 2 + 1;
+            x := x + n div 3 - 1;
+            y := y + n mod 3 - 1;
+            if pixcol(x, y) = susceptible then
+              infect(x, y)
+          end
+      end
+  until numinfected = 0
+END.

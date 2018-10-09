@@ -1,0 +1,22 @@
+REM Flashlights
+
+BLOT(1000)
+THICKNESS(8)
+REPEAT
+  SETX(RND(8) * 111)
+  SETY(RND(8) * 111)
+  PROCdrawit(RND(2) = 1)
+UNTIL FALSE
+END
+
+DEF PROCdrawit(blot%)
+  IF blot% THEN
+    RNDCOL(10)
+    BLOT(25)
+  ELSE
+    COLOUR(BLACK)
+    BLOT(30)
+    RNDCOL(10)
+    CIRCLE(25)
+  ENDIF
+ENDPROC

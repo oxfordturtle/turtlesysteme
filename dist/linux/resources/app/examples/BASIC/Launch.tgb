@@ -1,0 +1,90 @@
+REM Launch
+
+EARTHRADIUS% = 6371000 REM m
+EARTHGM% = 398600442 REM km3 / s2 * 1000
+INITDIRECTION% = 2000 REM seconds of arc
+INITTHRUST% = 20000 REM milliN per kg
+THRUSTTIME% = 500
+ANGLEPRECISION% = 1296000 REM seconds of arc
+CANVAS(-10000, -10000, 20000, 20000)
+ANGLES(ANGLEPRECISION%)
+x% = 0
+y% = -EARTHRADIUS% REM metres
+xvel% = 0
+yvel% = 0
+d% = INITDIRECTION%
+t% = 0
+prevdiff% = 1 REM so first apogee will report
+thrust% = INITTHRUST%
+REPEAT
+  PROCdrawrocket
+  prevdist% = dist%
+  dist% = HYPOT(x%, y% ,1)
+  IF (dist% - prevdist%) * prevdiff% <= 0 THEN PROCreport
+  prevdiff% = dist% - prevdist%
+  gravity% = DIVMULT(EARTHGM%, DIVMULT(dist%, 1000000, dist%), 1000)
+  xgravity% = DIVMULT(gravity%, dist%, -x%)
+  ygravity% = DIVMULT(gravity%, dist%, -y%)
+  xthrust% = SIN(d%, 1, thrust%)
+  ythrust% = -COS(d%, 1, thrust%)
+  xvel% = xvel% + xgravity% + xthrust%
+  yvel% = yvel% + ygravity% + ythrust%
+  x% = x% + xvel% / 1000
+  y% = y% + yvel% / 1000
+  REM report
+  IF yvel% > 0 THEN
+    d% = ANGLEPRECISION% / 2 - ATN(xvel%, yvel%, 1)
+  ELSE
+    d% = ATN(xvel%, -yvel%, 1)
+  ENDIF
+  INC(t%)
+  IF t% = THRUSTTIME% THEN thrust% = 0
+UNTIL (0 = 1) OR (dist% < EARTHRADIUS%) OR (dist% > 40000000)
+IF dist% < EARTHRADIUS% THEN
+  COLOUR(YELLOW)
+  FOR explosion% = 100 TO 200
+    BLOT(explosion%)
+    PAUSE(3)
+  NEXT
+  COLOUR(BLACK)
+  BLOT(200)
+ENDIF
+END
+
+DEF PROCdrawrocket
+  NOUPDATE
+  BLANK(BLACK)
+  COLOUR(TEAL)
+  SETXY(0, 0)
+  BLOT(EARTHRADIUS% / 1000)
+  SETXY(x% / 1000, y% / 1000)
+  DIRECTION(d%)
+  THICKNESS(4)
+  COLOUR(SILVER)
+  FORWARD(200)
+  BACK(200)
+  IF thrust% > 0 THEN
+    THICKNESS(8)
+    COLOUR(YELLOW)
+    BACK(200)
+    FORWARD(200)
+  ENDIF
+  UPDATE
+ENDPROC
+
+DEF PROCreport
+  WRITELN("")
+  WRITELN("TIME = " + STR$(t%))
+  WRITELN(" Xposition = " + STR$(x%) + " metres")
+  WRITELN(" Yposition = " + STR$(y%) + " metres")
+  WRITELN(" Height = " + QSTR$(dist% - EARTHRADIUS%, 1000, 2) + " km")
+  WRITELN(" Direction = " + QSTR$(d%, 3600, 1) + " degrees")
+  WRITELN(" Thrust = " + QSTR$(thrust%, 1000, 1) + " newtons per kg")
+  WRITELN("  Xthrust = " + QSTR$(xthrust%, 1000, 1) + " newtons per kg")
+  WRITELN("  Ythrust = " + QSTR$(ythrust%, 1000, 1) + " newtons per kg")
+  WRITELN(" Gravity = " + QSTR$(gravity%, 1000, 1) + " newtons per kg")
+  WRITELN("  Xgravity = " + QSTR$(xgravity%, 1000, 1) + " newtons per kg")
+  WRITELN("  Ygravity = " + QSTR$(ygravity%, 1000, 1) + " newtons per kg")
+  WRITELN(" Xvelocity = " + QSTR$(xvel%, 1000, 1) + " metres per s")
+  WRITELN(" Yvelocity = " + QSTR$(yvel%, 1000, 1) + " metres per s")
+ENDPROC

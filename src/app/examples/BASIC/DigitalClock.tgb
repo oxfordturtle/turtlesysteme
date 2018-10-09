@@ -1,0 +1,38 @@
+REM DigitalClock
+
+BLANK(LIGHTGREEN)
+SETXY(250, 390)
+COLOUR(MAROON)
+THICKNESS(10)
+BOX(500, 210, LIGHTBROWN, TRUE)
+COLOUR(BLACK)
+Hours% = 0
+Minutes% = 0
+WHILE Hours% < 12
+  PROCshowtime
+  PAUSE(600)
+  INC(Minutes%)
+  IF Minutes% = 60 THEN
+    INC(Hours%)
+    Minutes% = 0
+  ENDIF
+ENDWHILE
+PROCshowtime
+END
+
+DEF PROCshowtime
+  LOCAL hstring$, mstring$
+  SETXY(300, 430)
+  BOX(400, 130, WHITE, FALSE)
+  IF Hours% < 10 THEN
+    hstring$ = "0" + STR$(Hours%)
+  ELSE
+    hstring$ = STR$(Hours%)
+  ENDIF
+  IF Minutes% < 10 THEN
+    mstring$ = "0" + STR$(Minutes%)
+  ELSE
+    mstring$ = STR$(Minutes%)
+  ENDIF
+  PRINT(hstring$ + ":" + mstring$, 19, 100)
+ENDPROC

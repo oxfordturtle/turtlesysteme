@@ -1,0 +1,17 @@
+PROGRAM NestedLoops;
+VAR countblot: integer;
+    countcirc: integer;
+BEGIN
+  penup;
+  for countblot := 1 to 10 do
+    begin
+      forward(260);
+      colour(black);
+      blot(150);
+      colour(rgb(countblot));
+      for countcirc := 1 to 25 do
+        circle(countcirc * 8);
+      back(260);
+      right(36)
+    end
+END.

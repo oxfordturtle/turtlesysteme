@@ -1,0 +1,22 @@
+PROGRAM TurtleBounce;
+VAR xvel, yvel: integer;
+BEGIN
+  setxy(100, 700);
+  xvel := 8;
+  yvel := -4;
+  while 0 < 1 do
+    begin
+      noupdate;
+      colour(white);
+      blot(51);
+      movexy(xvel, yvel);
+      colour(red);
+      blot(50);
+      update;
+      pause(10);
+      if (turtx < 50) or (turtx > 949) then
+        xvel := -xvel;
+      if (turty < 50) or (turty > 949) then
+        yvel := -yvel;
+    end
+END.

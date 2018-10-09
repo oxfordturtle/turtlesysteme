@@ -1,0 +1,30 @@
+REM Polygons
+
+PENUP
+THICKNESS(4)
+SETXY(100, 400)
+PROCpoly(3, BLUE)
+SETXY(400, 400)
+PROCpoly(4, RED)
+SETXY(700, 400)
+PROCpoly(5, YELLOW)
+SETXY(150, 750)
+PROCpoly(6, PINK)
+SETXY(440, 750)
+PROCpoly(7, GREEN)
+SETXY(740, 750)
+PROCpoly(8, TURQUOISE)
+END
+
+DEF PROCpoly(points%, col%)
+  LOCAL count%
+  DIRECTION(90)
+  FOR count% = 1 TO points%
+    FORWARD(600 DIV points%)
+    LEFT(360 DIV points%)
+  NEXT
+  COLOUR(col%)
+  POLYGON(points%)
+  COLOUR(BLACK)
+  POLYLINE(points% + 1)
+ENDPROC

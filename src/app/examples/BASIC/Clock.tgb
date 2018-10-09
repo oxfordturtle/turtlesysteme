@@ -1,0 +1,31 @@
+REM Clock
+
+THICKNESS(10)
+CIRCLE(400)
+Hours% = 0
+Minutes% = 0
+REPEAT
+  REPEAT
+    PROCshowhands
+    PAUSE(600)
+    INC(Minutes%)
+  UNTIL Minutes% = 60
+  INC(Hours%)
+  Minutes% = 0
+UNTIL Hours% = 12
+PROCshowhands
+END
+
+DEF PROCshowhands
+  COLOUR(WHITE)
+  BLOT(360)
+  COLOUR(RED)
+  DIRECTION(Hours% * 30)
+  THICKNESS(10)
+  FORWARD(250)
+  BACK(250)
+  DIRECTION(Minutes% * 6)
+  THICKNESS(6)
+  FORWARD(350)
+  BACK(350)
+ENDPROC

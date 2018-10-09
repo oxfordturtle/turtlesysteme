@@ -1,0 +1,46 @@
+PROGRAM GravitySteps;
+VAR bounce: integer;
+
+  Procedure steps(s: integer);
+  Var size, count: integer;
+  Begin
+    size := 1000 / s;
+    setxy(0, 1000);
+    thickness(1);
+    for count := 1 to s * 2 do
+      if count mod 2 = 0 then
+        movexy(0, -size)
+      else
+        movexy(size, 0);
+    movexy(0, s * size);
+    movexy(-s * size, 0);
+    colour(blue);
+    polygon(s * 2 + 2)
+  End;
+
+  Procedure throwball(xvel, yvel, gravity, floor: integer);
+  Begin
+    repeat
+      colour(white);
+      blot(25);
+      movexy(xvel, yvel);
+      yvel := yvel + gravity;
+      if turty > floor then
+        turty := floor;
+      colour(red);
+      blot(24);
+      update;
+      pause(10);
+      noupdate
+    until turty = floor
+  End;
+
+BEGIN
+  steps(10);
+  setxy(950, 75);
+  repeat
+    throwball(-2, -22, 1, turty + 100)
+  until turtx < 75;
+  for bounce := 1 to 10 do
+    throwball(0, bounce * 2 - 20, 1, turty)
+END.

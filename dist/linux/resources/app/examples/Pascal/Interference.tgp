@@ -1,0 +1,199 @@
+PROGRAM Interference;
+CONST sectors = 7;
+      wavecol1 = red;
+      wavecol2 = skyblue;
+      waveaddcol = indigo;
+      clocks = 16;
+      report = false;
+VAR x, y: integer;
+    sectcol: array[0..sectors] of integer;
+    boundary: array[0..sectors] of integer;
+    clockx: array[1..clocks] of integer;
+    cradius, hand: integer;
+    leftx, rightx: integer;
+    dimensions: integer;
+    wavelength1, wavelength2: integer;
+
+  Procedure colsetup;
+  Var n: integer;
+  Begin
+    sectcol[0] := violet;
+    sectcol[1] := blue;
+    sectcol[2] := cyan;
+    sectcol[3] := lime;
+    sectcol[4] := yellow;
+    sectcol[5] := orange;
+    sectcol[6] := red;
+    sectcol[7] := violet;
+    for n := 0 to sectors do
+      boundary[n] := divmult(360, sectors, n)
+  End;
+
+  Function wavecolour(n: integer): integer;
+  Var col1, col2: integer;
+      mix1, mix2: integer;
+  Begin
+    col2 := 0;
+    repeat
+      inc(col2)
+    until boundary[col2] >= n;
+    col1 := col2 - 1;
+    result:=mixcols(sectcol[col1], sectcol[col2], boundary[col2] - n, n - boundary[col1])
+  End;
+
+  Procedure clocksetup;
+  Var n: integer;
+  Begin
+    for n := 1 to clocks do
+      clockx[n] := divmult(1000, clocks * 2 + 2, n * 2);
+    leftx := clockx[1];
+    rightx := clockx[clocks];
+    cradius := (rightx - leftx) / clocks / 2;
+    hand := cradius * 6 / 7
+  End;
+
+  Procedure drawwave(s: string; top, wavelength, wavecol: integer);
+  Var n, turn: integer;
+  Begin
+    if dimensions = 1 then
+      begin
+        setxy(leftx, top + 25);
+        colour(black);
+        drawxy(rightx - leftx, 0);
+        setxy(leftx, top);
+        colour(wavecol)
+      end;
+    for n := 0 to rightx - leftx do
+      if dimensions = 1 then
+        begin
+          setxy(leftx + n, top + 25 - cos(divmult(n mod wavelength, wavelength, 360), 1, 25));
+          polyline(2)
+        end
+      else
+        begin
+          setxy(leftx + n, top);
+          colour(wavecolour(divmult(n mod wavelength, wavelength,360)));
+          drawxy(0, 50)
+        end;
+    for n := 1 to clocks do
+      begin
+        setxy(clockx[n], top + 70 + cradius);
+        colour(black);
+        circle(cradius);
+        blot(5);
+        turn := divmult((clockx[n] - leftx) mod wavelength, wavelength, 360);
+        if report then
+          writeln(s + ', clock ' + str(n) + ': dist=' + str(clockx[n]) + '; turn=' + str(turn));
+        turnxy(sin(turn, 1, 1000), -cos(turn, 1, 1000));
+        colour(wavecol);
+        forward(hand)
+      end
+  End;
+
+  Procedure drawresult(top: integer);
+  Var n: integer;
+      turn1, turn2: integer;
+      waveaddi, waveaddj, waveadd: integer;
+  Begin
+    if dimensions = 1 then
+      begin
+        setxy(leftx, top + 50);
+        colour(black);
+        drawxy(rightx - leftx, 0);
+        setxy(leftx, top);
+        colour(waveaddcol)
+      end;
+    for n := 0 to rightx - leftx do
+      begin
+        turn1 := divmult(n mod wavelength1, wavelength1, 360);
+        turn2 := divmult(n mod wavelength2, wavelength2, 360);
+        waveaddi := sin(turn1, 1, 500) + sin(turn2, 1, 500);
+        waveaddj := cos(turn1, 1, 500) + cos(turn2, 1, 500);
+        waveadd := hypot(waveaddi, waveaddj, 1);
+        if dimensions = 1 then
+          begin
+            setxy(leftx + n, top + 50 - divmult(waveaddj, 1000, 50));
+            polyline(2)
+          end
+        else
+          begin
+            setxy(leftx + n, top);
+            turnxy(waveaddi, -waveaddj);
+            colour(mixcols(wavecolour(turtd), black, waveadd, 1000 - waveadd));
+            if mixcols(wavecolour(turtd), black, waveadd, 1000 - waveadd) < 51 then
+              colour(black); {to avoid colour code problems}
+            drawxy(0, 100)
+          end
+      end;
+    for n := 1 to clocks do
+      begin
+        setxy(clockx[n], top + 280 + 2 * cradius - (150 * (n mod 2)));
+        colour(black);
+        circle(cradius * 2);
+        blot(5);
+        turn1 := divmult((clockx[n] - leftx) mod wavelength1, wavelength1, 360);
+        turn2 := divmult((clockx[n] - leftx) mod wavelength2, wavelength2, 360);
+        waveaddi := sin(turn1, 1, 500) + sin(turn2, 1, 500);
+        waveaddj := cos(turn1, 1, 500) + cos(turn2, 1, 500);
+        waveadd := hypot(waveaddi, waveaddj, 1);
+        turnxy(waveaddi, -waveaddj);
+        thickness(6);
+        colour(waveaddcol);
+        forward(divmult(waveadd, 1000, hand * 2));
+        setxy(clockx[n], top + 280 + 2 * cradius - (150 * (n mod 2)));
+        thickness(4);
+        direction(turn1);
+        colour(wavecol1);
+        forward(hand);
+        direction(turn2);
+        colour(wavecol2);
+        forward(hand);
+        thickness(2)
+      end
+  End;
+
+  Procedure randomwaves;
+  Begin
+    wavelength1 := random(30) * 10 + 200;
+    wavelength2 := random(30) * 10 + 200
+  End;
+
+  Procedure changeprompt;
+  Begin
+    console(true, white);
+    writeln('Press "1" or "2" for the dimensionality required,');
+    write('or press "R" to pick random new wavelengths: ');
+    repeat
+    until (abs(?key) = \1) or (abs(?key) = \2) or (abs(?key) = \r);
+    if abs(?key) = \1 then
+      dimensions := 1
+    else
+    if abs(?key) = \2 then
+      dimensions := 2
+    else
+      randomwaves;
+    reset(?key);
+    reset(\keybuffer)
+  End;
+
+BEGIN
+  colsetup;
+  clocksetup;
+  dimensions := 1;
+  wavelength1 := 300;
+  wavelength2 := 420;
+  repeat
+    blank(white);
+    noupdate;
+    setxy(leftx, 25);
+    colour(black);
+    print('Component waves (wavelengths ' + str(wavelength1) + ', ' + str(wavelength2) + ')', 4, 30);
+    drawwave('Wave 1', 100, wavelength1, wavecol1);
+    drawwave('Wave 2', 300, wavelength2, wavecol2);
+    setxy(leftx, 505);
+    colour(black);
+    print('Resultant wave', 4, 30);
+    drawresult(580);
+    changeprompt
+  until 0 = 1
+END.

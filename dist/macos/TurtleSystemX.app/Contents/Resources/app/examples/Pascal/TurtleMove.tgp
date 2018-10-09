@@ -1,0 +1,16 @@
+PROGRAM TurtleMove;
+VAR count: integer;
+BEGIN
+  setxy(100, 700);
+  for count := 1 to 100 do
+    begin
+      noupdate;
+      colour(white);
+      blot(51);
+      movexy(8, -4);
+      colour(red);
+      blot(50);
+      update;
+      pause(10)
+    end
+END.

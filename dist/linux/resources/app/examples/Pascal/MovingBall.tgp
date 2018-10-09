@@ -1,0 +1,19 @@
+PROGRAM MovingBall;
+VAR x, y, count: integer;
+BEGIN
+  x := 100;
+  y := 700;
+  for count := 1 to 100 do
+    begin
+      noupdate;
+      colour(white);
+      blot(51);
+      x := x + 8;
+      y := y - 4;
+      setxy(x, y);
+      colour(red);
+      blot(50);
+      update;
+      pause(10)
+    end
+END.

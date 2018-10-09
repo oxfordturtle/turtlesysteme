@@ -4,7 +4,7 @@ is handled instead by the application menu); but to keep this code simple it mig
 included invisibly.
 */
 import { element, show, tabs } from '../tools.js'
-import * as examples from '../data/examples.js'
+import * as examples from '../app/examples.js'
 import { pcodes } from '../data/pcodes.js'
 import highlight from '../compiler/highlight.js'
 import { send, on } from '../system/state.js'

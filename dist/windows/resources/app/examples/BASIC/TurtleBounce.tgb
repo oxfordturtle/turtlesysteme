@@ -1,0 +1,22 @@
+REM TurtleBounce
+
+SETXY(100, 700)
+xvel% = 8
+yvel% = -4
+WHILE 0 < 1
+  NOUPDATE
+  COLOUR(WHITE)
+  BLOT(51)
+  MOVEXY(xvel%, yvel%)
+  COLOUR(RED)
+  BLOT(50)
+  UPDATE
+  PAUSE(5)
+  IF (TURTX% < 50) OR (TURTX% > 949) THEN
+    xvel% = -xvel%
+  ENDIF
+  IF (TURTY% < 50) OR (TURTY% > 949) THEN
+    yvel% = -yvel%
+  ENDIF
+ENDWHILE
+END

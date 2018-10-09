@@ -1,0 +1,66 @@
+PROGRAM SolarSystem;
+CONST sunradius = 50000;
+VAR radius, distancefromsun, design, rotation, speed: array[1..8] of integer;
+VAR i: integer;
+BEGIN
+  radius[1] := 2433;
+  distancefromsun[1] := 5795;
+  speed[1] := 1607;
+  design[1] := white;
+  radius[2] := 6053;
+  distancefromsun[2] := 10811;
+  speed[2] := 1174;
+  design[2] := ochre;
+  radius[3] := 6371;
+  distancefromsun[3] := 14957;
+  speed[3] := 1000;
+  design[3] := blue;
+  radius[4] := 3380;
+  distancefromsun[4] := 22784;
+  speed[4] := 802;
+  design[4] := orangered;
+  radius[5] := 71492;
+  distancefromsun[5] := 77814;
+  speed[5] := 434;
+  design[5] := lightred;
+  radius[6] := 58219;
+  distancefromsun[6] := 142700;
+  speed[6] := 323;
+  design[6] := cream;
+  radius[7] := 23470;
+  distancefromsun[7] := 287030;
+  speed[7] := 182;
+  design[7] := cyan;
+  radius[8] := 23716;
+  distancefromsun[8] := 449990;
+  speed[8] := 159;
+  design[8] := royal;
+  angles(360000);
+  canvas(0, 0, 1000000, 1000000);
+  resolution(500, 500);
+  thickness(1);
+  penup;
+  while true do
+    begin
+      blank(black);
+      home;
+      colour(yellow);
+      blot(sunradius);
+      for i := 1 to 8 do
+        begin
+          home;
+          colour(white);
+          circle(distancefromsun[i] + sunradius);
+          right(rotation[i]);
+          forward(distancefromsun[i] + sunradius);
+          rotation[i] := (rotation[i] + speed[i]) mod 360000;
+          colour(design[i]);
+          if i <= 4 then
+            blot(radius[i] * 2)
+          else
+            blot(radius[i] / 2)
+        end;
+      update;
+      noupdate
+    end
+END.

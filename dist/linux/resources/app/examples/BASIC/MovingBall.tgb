@@ -1,0 +1,17 @@
+REM MovingBall
+
+x% = 100
+y% = 700
+FOR count% = 1 TO 100
+  NOUPDATE
+  COLOUR(WHITE)
+  BLOT(51)
+  x% = x% + 8
+  y% = y% - 4
+  SETXY(x%, y%)
+  COLOUR(RED)
+  BLOT(50)
+  UPDATE
+  PAUSE(5)
+NEXT
+END

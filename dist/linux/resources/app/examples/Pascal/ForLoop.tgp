@@ -1,0 +1,13 @@
+PROGRAM ForLoop;
+VAR count: integer;
+BEGIN
+  for count := 1 to 200 do
+    begin
+      forward(count div 3);
+      right(5);
+      colour(red);
+      blot(200);
+      colour(black);
+      circle(200)
+    end
+END.

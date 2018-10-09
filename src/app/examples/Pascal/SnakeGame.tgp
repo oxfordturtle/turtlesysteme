@@ -1,0 +1,63 @@
+PROGRAM SnakeGame;
+CONST boardsize = 30;
+      snakecolour = purple;
+      applecolour = green;
+VAR snakelength: integer;
+    crash: boolean;
+
+  Procedure newapple;
+  Var x, y: integer;
+  Begin
+    repeat
+      x := random(boardsize);
+      y := random(boardsize)
+    until (pixcol(x, y) <> snakecolour);
+    pixset(x, y, applecolour)
+  End;
+
+BEGIN
+  canvas(0, 0, boardsize, boardsize);
+  resolution(boardsize, boardsize);
+  angles(4);
+  blank(lightblue);
+  cursor(0);
+  colour(snakecolour);
+  thickness(1);
+  penup;
+  forward(1);
+  snakelength := 2;
+  newapple;
+  crash := false;
+  repeat
+    noupdate;
+    if (abs(?key) = \up) and (turtd <> 2) then
+      direction(0);
+    if (abs(?key) = \right) and (turtd <> 3) then
+      direction(1);
+    if (abs(?key) = \down) and (turtd <> 0) then
+      direction(2);
+    if (abs(?key) = \left) and (turtd <> 1) then
+      direction(3);
+    forward(1);
+    if (turtx < 0) or (turtx >= boardsize) or (turty < 0) or (turty >= boardsize) then
+      crash := true;
+    if pixcol(turtx, turty) = snakecolour then
+      crash := true;
+    if pixcol(turtx, turty) = applecolour then
+      begin
+        inc(snakelength);
+        pixset(turtx, turty, snakecolour);
+       newapple
+      end;
+    colour(lightblue);
+    polyline(snakelength + 2);
+    colour(snakecolour);
+    polyline(snakelength);
+    update;
+    pause(250 - (snakelength * 3))
+  until crash;
+  resolution(1000, 1000);
+  blank(lilac);
+  setxy(boardsize / 4, 2 * boardsize / 5);
+  print('Score ' + str(snakelength - 2), 20, 100)
+END.

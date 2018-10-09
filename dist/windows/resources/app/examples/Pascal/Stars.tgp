@@ -1,0 +1,30 @@
+PROGRAM Stars;
+VAR n: integer;
+
+  Procedure star(points, col: integer);
+  Var count: integer;
+  Begin
+    angles(points * 2);
+    for count := 1 to points do
+      begin
+        forward(450);
+        back(450);
+        forget(1);
+        right(1);
+        forward(200);
+        back(200);
+        forget(1);
+        right(1)
+      end;
+    colour(col);
+    polygon(points * 2)
+  End;
+
+BEGIN
+  penup;
+  for n := 3 to 12 do
+    begin
+      star(n, rgb(n - 2));
+      pause(500)
+    end
+END.

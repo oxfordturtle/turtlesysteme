@@ -1,0 +1,69 @@
+# Logistic
+
+def axes():
+  global lmargin, maxgen, maxpop, r
+  colour(black)
+  for i in range(0, 11, 1):
+    setxy(i * 100 - 25, 1000)
+    print(str(i * maxgen / 10), 4, 20)
+  for i in range(1, 11, 1):
+    setxy(-lmargin + 5, 1000 - i * 100 - 20)
+    print(str(i * maxpop / 10), 4, 20)
+  setxy(0, 0)
+  drawxy(0, 1000)
+  drawxy(1000, 0)
+  colour(red)
+  setxy(0, 1060)
+  print('Population over ' + str(maxgen) + ' generations, where P (population/' + str(maxpop) + ')', 4, 25)
+  setxy(0, 1110)
+  print('is determined by the logistic equation P\' = rP(1 - P), with r = ' + qstr(r, 10, 1), 4, 25)
+
+def menu():
+  global tmargin, r
+  colour(black)
+  setxy(10, -tmargin + 20)
+  print('Set r:', 4, 25)
+  for i in range(21, 41, 1):
+    setxy(((i - 1) % 10) * 90 + 130,((i - 1) // 10) * 50 - 100 - tmargin)
+    if (i == r):
+      box(90, 50, red, True)
+    else:
+      box(90, 50, cream, True)
+    print('  ' + qstr(i, 10, 1), 4, 25)
+
+def main():
+  maxpop = 100000
+  maxgen = 100
+  lmargin = 105
+  rmargin = 40
+  tmargin = 150
+  bmargin = 200
+  showoutput = False
+  canvas(-lmargin, -tmargin, 1000 + lmargin + rmargin, 1000 + tmargin + bmargin)
+  resolution(1000 + lmargin + rmargin, 1000 + tmargin + bmargin)
+  thickness(3)
+  r = 30
+  while True:
+    noupdate()
+    blank(white)
+    axes()
+    menu()
+    colour(blue)
+    pop = randint(0, maxpop - 8) + 10
+    if showoutput:
+      writeline('')
+      writeline('r = ' + qstr(r, 10, 1) + ' Initial population = ' + str(pop))
+    setxy(0, 1000 - divmult(pop, maxpop, 1000))
+    for gen in range(1, maxgen + 1, 1):
+      pop = divmult(pop, 10 * maxpop, r * (maxpop - pop))
+      setxy(divmult(gen, maxgen, 1000), 1000 - divmult(pop, maxpop, 1000))
+      polyline(2)
+      if showoutput:
+        write(str(pop) + ' ')
+        if (gen % 10 == 0):
+          writeline('')
+    heapreset()
+    update()
+    while not((?lmouse > 0) and (?clicky < (100 - tmargin)) and (?clickx >= 130) and (?clickx < 1030)):
+      pass
+    r = ((?clickx - 130) // 90) + ((?clicky + tmargin + 100) // 50) * 10 + 1

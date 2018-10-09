@@ -1,0 +1,97 @@
+REM LogisticSpider
+
+MAXPOP% = 100000
+MAXGEN% = 100
+LMARGIN% = 60
+RMARGIN% = 40
+TMARGIN% = 150
+BMARGIN% = 200
+OUTPUT% = TRUE
+CANVAS(-LMARGIN%, -TMARGIN%, 1000 + LMARGIN% + RMARGIN%, 1000 + TMARGIN% + BMARGIN%)
+RESOLUTION(1000 + LMARGIN% + RMARGIN%, 1000 + TMARGIN% + BMARGIN%)
+THICKNESS(3)
+r% = 30
+REPEAT
+  NOUPDATE
+  BLANK(WHITE)
+  PROCaxes
+  PROCmenu
+  PROCcurve
+  pop% = RND(MAXPOP% - 9) + 9
+  IF OUTPUT% THEN
+    WRITELN("")
+    WRITELN("r = " + QSTR$(r%, 10, 1) + " Initial population = " + STR$(pop%))
+  ENDIF
+  SETXY(DIVMULT(pop%, MAXPOP%, 1000), 1000)
+  FOR gen% = 1 TO MAXGEN%
+    pop% = DIVMULT(pop%, 10 * MAXPOP%, r% * (MAXPOP% - pop%))
+    COLOUR(MIXCOLS(LIGHTGREEN, GREEN, MAXGEN% - gen%, gen%))
+    DRAWXY(0, 1000 - DIVMULT(pop%, MAXPOP%, 1000) - TURTY%)
+    DRAWXY(DIVMULT(pop%, MAXPOP%, 1000) - TURTX%, 0)
+    IF OUTPUT% THEN
+      WRITE(STR$(pop%) + " ")
+      IF gen% MOD 10 = 0 THEN WRITELN("")
+    ENDIF
+  NEXT
+  BLOT(3)
+  HEAPRESET
+  UPDATE
+  REPEAT
+  UNTIL (?LMOUSE > 0) AND (?CLICKY < (100 - TMARGIN%)) AND (?CLICKX >= 130) AND (?CLICKX < 1030)
+  r% = ((?CLICKX - 130) DIV 90) + ((?CLICKY + TMARGIN% + 100) DIV 50) * 10 + 1
+UNTIL 0 = 1
+END
+
+DEF PROCaxes
+  LOCAL i%
+  COLOUR(BLACK)
+  FOR i% = 0 TO 10
+    SETXY(i% * 100 - 25, 1000)
+    PRINT(QSTR$(i%, 10, 1), 4, 20)
+  NEXT
+  FOR i% = 1 TO 10
+    SETXY(-LMARGIN% + 5, 1000 - i% * 100 - 20)
+    PRINT(QSTR$(i%, 10, 1), 4, 20)
+  NEXT
+  SETXY(0, 0)
+  DRAWXY(0, 1000)
+  DRAWXY(1000, 0)
+  COLOUR(RED)
+  SETXY(0, 1060)
+  PRINT("Population over " + STR$(MAXGEN%) + " generations, where P (population/" + STR$(MAXPOP%) + ")", 4, 25)
+  SETXY(0, 1110)
+  PRINT("is determined by the logistic equation P' = rP(1 - P), with r = " + QSTR$(r%, 10, 1), 4, 25)
+ENDPROC
+
+DEF PROCmenu
+  LOCAL i%
+  COLOUR(BLACK)
+  SETXY(10, -TMARGIN% + 20)
+  PRINT("Set k:", 4, 25)
+  FOR i% = 21 TO 40
+    SETXY(((i% - 1) MOD 10) * 90 + 130,((i% - 1) DIV 10) * 50 - 100 - TMARGIN%)
+    IF i% = r% THEN
+      BOX(90, 50, RED, TRUE)
+    ELSE
+      BOX(90, 50, CREAM, TRUE)
+    ENDIF
+    PRINT("  " + QSTR$(i%, 10, 1), 4, 25)
+  NEXT
+ENDPROC
+
+DEF PROCcurve
+  LOCAL i%, pop%, nextpop%
+  NOUPDATE
+  COLOUR(BLACK)
+  SETXY(0, 1000)
+  DRAWXY(1000, -1000)
+  COLOUR(BLUE)
+  SETXY(0, 1000)
+  FOR i% = 1 TO 1000
+    pop% = DIVMULT(i%, 1000, MAXPOP%)
+    nextpop% = DIVMULT(pop%, 10 * MAXPOP%, r% * (MAXPOP% - pop%))
+    SETXY(DIVMULT(pop%, MAXPOP%, 1000), 1000 - DIVMULT(nextpop%, MAXPOP%, 1000))
+    POLYLINE(2)
+  NEXT
+  UPDATE
+ENDPROC

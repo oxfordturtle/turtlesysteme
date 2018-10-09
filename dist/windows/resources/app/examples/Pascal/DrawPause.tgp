@@ -1,0 +1,14 @@
+PROGRAM DrawPause;
+BEGIN
+  colour(green);
+  blot(100);
+  pause(1000);
+  colour(red);
+  forward(450);
+  pause(1000);
+  right(90);
+  thickness(9);
+  colour(blue);
+  pause(1000);
+  forward(300)
+END.

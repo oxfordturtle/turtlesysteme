@@ -1,0 +1,20 @@
+PROGRAM ColourSpiral;
+VAR len: integer;
+
+  Procedure lineturn;
+  Begin
+    forward(len);
+    right(60)
+  End;
+
+BEGIN
+  blank(black);
+  forward(15);
+  thickness(27);
+  len := 20;
+  repeat
+    randcol(40);
+    lineturn;
+    len := len + 10
+  until len > 500
+END.

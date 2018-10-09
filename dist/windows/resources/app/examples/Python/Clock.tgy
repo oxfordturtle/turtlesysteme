@@ -1,0 +1,30 @@
+# Clock
+
+def showhands():
+  global hours, minutes
+  colour(white)
+  blot(360)
+  colour(red)
+  direction(hours * 30)
+  thickness(10)
+  forward(250)
+  back(250)
+  direction(minutes * 6)
+  thickness(6)
+  forward(350)
+  back(350)
+
+def main():
+  global hours, minutes
+  thickness(10)
+  circle(400)
+  hours = 0
+  minutes = 0
+  while not(hours == 12):
+    while not(minutes == 60):
+      showhands()
+      pause(600)
+      inc(minutes)
+    inc(hours)
+    minutes = 0
+  showhands()

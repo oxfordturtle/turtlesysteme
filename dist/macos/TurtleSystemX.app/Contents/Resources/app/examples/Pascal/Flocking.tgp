@@ -1,0 +1,137 @@
+PROGRAM Flocking;
+CONST numboids = 30;
+      boidradius = 20;
+      maxspeed = 50;
+      boidcolour = lightbrown;
+      halocolour = $FFFFFE;
+      delay = 50;
+      posfactor = 50;
+      velfactor = 50;
+      neard = 200;
+      nearfactor = 10;
+      tgtradius = 2000;
+VAR boidx, boidy, boidvx, boidvy: array[1..numboids] of integer;
+    avgx, avgy, avgvx, avgvy: integer;
+    tgtx, tgty, tgtangvel: integer;
+    n: integer;
+    cycle: integer;
+
+  Procedure setup;
+  Var n: integer;
+  Begin
+    penup;
+    colour(halocolour);
+    for n := 1 to numboids do
+      begin
+        repeat
+          boidx[n] := random(5000 - 2 * boidradius) + boidradius;
+          boidy[n] := random(5000 - 2 * boidradius) + boidradius
+        until pixcol(boidx[n], boidy[n]) = white;
+        boidvx[n] := random(maxspeed * 2 + 1) - maxspeed;
+        boidvy[n] := random(maxspeed * 2 + 1) - maxspeed;
+        setxy(boidx[n], boidy[n]);
+        blot(2 * boidradius)
+      end
+  End;
+
+  Procedure draw(positive: boolean);
+  Var n, radius: integer;
+  Begin
+    if positive then
+      begin
+        colour(boidcolour);
+        radius := boidradius
+      end
+    else
+      begin
+        colour(white);
+        radius := boidradius + 10
+      end;
+    for n := 1 to numboids do
+      begin
+        setxy(boidx[n], boidy[n]);
+        blot(radius)
+      end
+  End;
+
+  Procedure averages;
+  Var totalx, totaly, totalvx, totalvy: integer;
+      n: integer;
+  Begin
+    totalx := 0;
+    totaly := 0;
+    totalvx := 0;
+    totalvy := 0;
+    for n := 1 to numboids do
+      begin
+        totalx := totalx + boidx[n];
+        totaly := totaly + boidy[n];
+        totalvx := totalvx + boidvx[n];
+        totalvy := totalvy + boidvy[n]
+      end;
+    avgx := totalx / numboids;
+    avgy := totaly / numboids;
+    avgvx := totalvx / numboids;
+    avgvy := totalvy / numboids
+  End;
+
+  Procedure settarget;
+  Begin
+    if cycle mod 100 = 0 then
+      tgtangvel := random(7) - 3;
+    tgtx := divmult(sin(cycle * tgtangvel, 1, 1000), 1000, tgtradius);
+    tgty := -divmult(cos(cycle * tgtangvel, 1, 1000), 1000, tgtradius);
+    inc(cycle)
+  End;
+
+  Procedure move(b: integer);
+  Var n: integer;
+      distx, disty, speed: integer;
+  Begin
+    boidvx[b] := boidvx[b] + (avgx - boidx[b]) / posfactor + (avgvx - boidvx[b]) / velfactor;
+    boidvy[b] := boidvy[b] + (avgy - boidy[b]) / posfactor + (avgvy - boidvy[b]) / velfactor;
+    for n := 1 to numboids do
+      if n <> b then
+        begin
+          distx := boidx[n] - boidx[b];
+          disty := boidy[n] - boidy[b];
+          if hypot(distx, disty, 1) < neard then
+            begin
+              boidvx[b] := boidvx[b] - sign(distx) * (neard - abs(distx)) / nearfactor;
+              boidvy[b] := boidvy[b] - sign(disty) * (neard - abs(disty)) / nearfactor
+            end
+        end;
+    if random(10) = 0 then
+      begin
+        boidvx[b] := tgtx - boidx[b];
+        boidvy[b] := tgty - boidy[b]
+      end;
+    speed := hypot(boidvx[b], boidvy[b], 1);
+    if speed > maxspeed then
+      begin
+        boidvx[b] := divmult(boidvx[b], speed, maxspeed);
+        boidvy[b] := divmult(boidvy[b], speed, maxspeed)
+      end;
+    boidx[b] := boidx[b] + boidvx[b];
+    boidy[b] := boidy[b] + boidvy[b]
+  End;
+
+BEGIN
+  canvas(-2500, -2500, 5000, 5000);
+  noupdate;
+  setup;
+  blank(white);
+  draw(true);
+  cycle := 0;
+  repeat
+    averages;
+    settarget;
+    noupdate;
+    draw(false);
+    for n := 1 to numboids do
+      move(n);
+    draw(true);
+    update;
+    pause(delay)
+  until 0 = 1
+END.

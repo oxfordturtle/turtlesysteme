@@ -1,0 +1,22 @@
+PROGRAM ThePlough;
+BEGIN
+  blank(black);
+  colour(lightblue);
+  setxy(100, 200);
+  blot(10);
+  setxy(300, 250);
+  blot(10);
+  setxy(420, 350);
+  blot(10);
+  setxy(570, 490);
+  blot(10);
+  setxy(900, 560);
+  blot(10);
+  setxy(840, 720);
+  blot(10);
+  setxy(590, 660);
+  blot(10);
+  setxy(570, 490);
+  colour(silver);
+  polyline(8)
+END.

@@ -7,11 +7,11 @@ module.exports = {
     about: './src/about.js'
   },
   devServer: {
-    contentBase: './dist',
+    contentBase: './dist/browser',
     port: 8080
   },
   output: {
-    filename: 'js/tsx-[name].js',
+    filename: 'browser/js/[name].js',
     path: path.resolve(__dirname, 'dist')
   },
   target: 'web',

@@ -1,0 +1,16 @@
+PROGRAM Circles;
+VAR count: integer;
+BEGIN
+  thickness(6);
+  penup;
+  blank(black);
+  colour(orange);
+  for count := 1 to 36 do
+    begin
+      forward(200);
+      circle(200);
+      back(200);
+      right(10);
+      pause(25)
+    end
+END.

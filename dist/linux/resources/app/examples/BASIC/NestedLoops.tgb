@@ -1,0 +1,15 @@
+REM NestedLoops
+
+PENUP
+FOR countblot% = 1 TO 10
+  FORWARD(260)
+  COLOUR(BLACK)
+  BLOT(150)
+  COLOUR(RGB(countblot%))
+  FOR countcirc% = 1 TO 25
+    CIRCLE(countcirc% * 8)
+  NEXT
+  BACK(260)
+  RIGHT(36)
+NEXT
+END

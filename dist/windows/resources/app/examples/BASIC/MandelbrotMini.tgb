@@ -1,0 +1,36 @@
+REM MandelbrotMini
+
+MAXCOL% = 40
+SCALE% = 10000
+PIXELS% = 300
+XCENTRE% = -159200
+YCENTRE% = -1033000
+XSTART% = DIVMULT(XCENTRE%, 1000000, SCALE%) - PIXELS% / 2
+YSTART% = DIVMULT(YCENTRE%, 1000000, SCALE%) - PIXELS% / 2
+XFINISH% = XSTART% + PIXELS% - 1
+YFINISH% = YSTART% + PIXELS% - 1
+CANVAS(XSTART%, YSTART%, PIXELS%, PIXELS%)
+RESOLUTION(PIXELS%, PIXELS%)
+TIMESET(0)
+FOR a% = XSTART% TO XFINISH%
+  NOUPDATE
+  FOR b% = YSTART% TO YFINISH%
+    x% = a%
+    y% = b%
+    iterations% = 0
+    WHILE (HYPOT(x%, y%, 1) < 2 * SCALE%) AND (iterations% <= MAXCOL%)
+      temp% = DIVMULT(x% + y%, SCALE%, x% - y%)
+      y% = DIVMULT(2 * x%, SCALE%, y%) + b%
+      x% = temp% + a%
+      INC(iterations%)
+    ENDWHILE
+    IF iterations% > MAXCOL% THEN
+      PIXSET(a%, b%, BLACK)
+    ELSE
+      PIXSET(a%, b%, RGB(iterations% + 1))
+    ENDIF
+  NEXT
+  UPDATE
+NEXT
+WRITELN("Resolution: " + STR$(SCALE% * 3) + " Time taken: " + QSTR$(TIME, 1000, 1) + " seconds.")
+END

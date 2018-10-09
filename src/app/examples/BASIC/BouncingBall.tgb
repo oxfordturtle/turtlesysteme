@@ -1,0 +1,25 @@
+REM BouncingBall
+
+x% = 100
+y% = 700
+xvel% = 8
+yvel% = -4
+WHILE 0 < 1
+  NOUPDATE
+  COLOUR(WHITE)
+  BLOT(51)
+  x% = x% + xvel%
+  y% = y% + yvel%
+  SETXY(x%, y%)
+  COLOUR(RED)
+  BLOT(50)
+  UPDATE
+  PAUSE(5)
+  IF (x% < 50) OR (x% > 949) THEN
+    xvel% = -xvel%
+  ENDIF
+  IF (y% < 50) OR (y% > 949) THEN
+    yvel% = -yvel%
+  ENDIF
+ENDWHILE
+END

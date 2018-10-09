@@ -1,0 +1,124 @@
+PROGRAM SierpinskiIFS;
+CONST xleft = 0;
+      xright = 999;
+      ytop = 0;
+      ybottom = 999;
+      scaledown = 4;
+      mappings = 3;
+      title = 'Sierpinski triangle';
+      live = black;
+      copied = darkgrey;
+      pauseval = 2000;
+VAR xl, xr, yt, yb: integer;
+    coeffdiv: integer;
+    mapxx, mapxy, mapxc: array[1..mappings] of integer;
+    mapyx, mapyy, mapyc: array[1..mappings] of integer;
+    iteration, starttime: integer;
+    count, numborn, numkilled: integer;
+
+  Procedure setmaps;
+  Begin
+    coeffdiv := 100;
+    mapxx[1] := 50;
+    mapyx[1] := 0;
+    mapxy[1] := 0;
+    mapyy[1] := 50;
+    mapxc[1] := 250;
+    mapyc[1] := 0;
+    mapxx[2] := 50;
+    mapyx[2] := 0;
+    mapxy[2] := 0;
+    mapyy[2] := 50;
+    mapxc[2] := 0;
+    mapyc[2] := 500;
+    mapxx[3] := 50;
+    mapyx[3] := 0;
+    mapxy[3] := 0;
+    mapyy[3] := 50;
+    mapxc[3] := 500;
+    mapyc[3] := 500
+  End;
+
+  Procedure setscale;
+  Var i: integer;
+  Begin
+    xl := xleft / scaledown;
+    xr := xright / scaledown;
+    yt := ytop / scaledown;
+    yb := ybottom / scaledown;
+    for i := 1 to mappings do
+      begin
+        mapxc[i] := mapxc[i] / scaledown;
+        mapyc[i] := mapyc[i] / scaledown
+      end
+  End;
+
+  Procedure map(a, x, y: integer; var newx, newy: integer);
+  Begin
+    newx := divmult(x, coeffdiv, mapxx[a]) + divmult(y, coeffdiv, mapxy[a]) + mapxc[a];
+    newy := divmult(x, coeffdiv, mapyx[a]) + divmult(y, coeffdiv, mapyy[a]) + mapyc[a]
+  End;
+
+  Procedure domap(mapnum: integer);
+  Var x, y, newx, newy: integer;
+  Begin
+    noupdate;
+    for y := yt to yb do
+      for x := xl to xr do
+        if pixcol(x, y) <> white then
+          begin
+            map(mapnum, x, y, newx, newy);
+            if pixcol(newx, newy) = white then
+              inc(numborn);
+            pixset(newx, newy, copied)
+          end;
+    update
+  End;
+
+  Procedure cleanup;
+  Var x, y: integer;
+  Begin
+    noupdate;
+    for y := yt to yb do
+      for x := xl to xr do
+        if pixcol(x, y) = live then
+          begin
+            pixset(x, y, white);
+            inc(numkilled)
+          end
+        else
+        if pixcol(x, y) = copied then
+          pixset(x, y, live);
+    update
+  End;
+
+BEGIN
+  setmaps;
+  setscale;
+  canvas(xl, yt, xr - xl + 1, yb - yt + 1);
+  resolution(xr - xl + 1, yb - yt + 1);
+  blank(live);
+  iteration := 0;
+  writeln(title + ' by iterative mapping');
+  timeset(0);
+  repeat
+    starttime := time;
+    inc(iteration);
+    writeln('');
+    writeln('Iteration ' + str(iteration) + ':');
+    numborn := 0;
+    for count := 1 to mappings do
+      domap(count);
+    numkilled := 0;
+    cleanup;
+    writeln('  ' + str(numborn) + ' pixels born; ' + str(numkilled) + ' pixels killed');
+    writeln('  (took ' + str((time - starttime) / 1000) + ' seconds - total ' + str(time / 1000) + ' seconds so far)');
+    if (numborn + numkilled > 0) and (pauseval >= 1000) then
+      begin
+        write('  (now pausing ' + qstr(pauseval, 1000, 1) + ' seconds to allow halting if desired ...)');
+        pause(pauseval);
+        writeln('')
+      end
+  until numborn + numkilled = 0;
+  writeln('FINISH - fixed point of iterative mapping has been reached')
+END.

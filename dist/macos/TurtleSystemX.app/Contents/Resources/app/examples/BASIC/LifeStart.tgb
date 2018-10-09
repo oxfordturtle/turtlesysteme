@@ -1,0 +1,16 @@
+REM LifeStart
+
+WIDTH% = 32
+HEIGHT% = 32
+CANVAS(0, 0, WIDTH%, HEIGHT%)
+RESOLUTION(WIDTH%, HEIGHT%)
+FOR x% = 0 TO WIDTH% - 1
+  FOR y% = 0 TO HEIGHT% - 1
+    IF RND(7) = 1 THEN
+      PIXSET(x%, y%, BLACK)
+    ELSE
+      PIXSET(x%, y%, WHITE)
+    ENDIF
+  NEXT
+NEXT
+END

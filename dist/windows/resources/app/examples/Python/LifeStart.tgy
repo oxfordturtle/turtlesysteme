@@ -1,0 +1,13 @@
+# LifeStart
+
+def main():
+  width = 32
+  height = 32
+  canvas(0, 0, width, height)
+  resolution(width, height)
+  for x in range(0, width, 1):
+    for y in range(0, height, 1):
+      if (randint(0, 6) == 0):
+        pixset(x, y, black)
+      else:
+        pixset(x, y, white)

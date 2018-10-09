@@ -1,0 +1,16 @@
+REM CycleColours
+
+BLANK(BLACK)
+colinc% = RND(5) - 1
+colcode% = RND(20)
+COLOUR(RGB(colcode%))
+length% = 0
+THICKNESS(16)
+REPEAT
+  colcode% = (colcode% + colinc%) MOD 20 + 1
+  COLOUR(RGB(colcode%))
+  length% = length% + 1
+  FORWARD(length%)
+  RIGHT(30)
+UNTIL length% > 250
+END

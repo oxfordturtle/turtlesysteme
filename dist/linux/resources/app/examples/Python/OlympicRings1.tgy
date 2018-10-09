@@ -1,0 +1,23 @@
+# OlympicRings1
+
+def main():
+  thickness(20)
+  penup()
+  forward(50)
+  circle(130)
+  left(90)
+  forward(300)
+  colour(blue)
+  circle(130)
+  back(600)
+  colour(red)
+  circle(130)
+  forward(150)
+  right(90)
+  back(125)
+  colour(lime)
+  circle(130)
+  left(90)
+  forward(300)
+  colour(yellow)
+  circle(130)

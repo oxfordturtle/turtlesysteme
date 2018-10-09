@@ -1,0 +1,42 @@
+PROGRAM DigitalClock;
+VAR hours: integer;
+    minutes: integer;
+
+  Procedure showtime;
+  Var hstring, mstring: string;
+  Begin
+    setxy(300, 430);
+    box(400, 130, white, false);
+    if hours < 10 then
+      hstring := '0' + str(hours)
+    else
+      hstring := str(hours);
+    if minutes < 10 then
+      mstring := '0' + str(minutes)
+    else
+      mstring := str(minutes);
+    print(hstring + ':' + mstring, 19, 100)
+  End;
+
+BEGIN
+  blank(lightgreen);
+  setxy(250, 390);
+  colour(maroon);
+  thickness(10);
+  box(500, 210, lightbrown, true);
+  colour(black);
+  hours := 0;
+  minutes := 0;
+  while hours < 12 do
+    begin
+      showtime;
+      pause(600);
+      inc(minutes);
+      if minutes = 60 then
+        begin
+          inc(hours);
+          minutes := 0
+        end
+    end;
+  showtime
+END.

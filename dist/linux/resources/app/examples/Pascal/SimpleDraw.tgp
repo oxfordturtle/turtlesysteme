@@ -1,0 +1,30 @@
+PROGRAM SimpleDraw;
+
+  Procedure palette;
+  Var colcode: integer;
+  Begin
+    for colcode := 1 to 10 do
+      begin
+        setxy(colcode * 100 - 50, 950);
+        colour(rgb(colcode));
+        blot(50)
+      end
+  End;
+
+BEGIN
+  palette;
+  home;
+  thickness(10);
+  blot(2);
+  repeat
+    repeat
+    until (?lmouse > 0) or (?rmouse > 0);
+    if ?mousey > 900 then
+      colour(rgb(?mousex div 100 + 1))
+    else
+      if ?lmouse > 0 then
+      drawxy(?mousex - turtx, ?mousey - turty)
+    else
+      setxy(?mousex, ?mousey)
+  until false
+END.

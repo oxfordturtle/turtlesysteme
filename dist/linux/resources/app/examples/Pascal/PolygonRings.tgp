@@ -1,0 +1,30 @@
+PROGRAM PolygonRings;
+
+  Procedure annulus(inner, width, angle: integer);
+  Var count: integer;
+  Begin
+    for count := 0 to 360 div angle do
+      begin
+        forward(inner + width);
+        back(width);
+        back(inner);
+        forget(1);
+        right(angle);
+        forward(inner);
+        forward(width);
+        colour(rgb(count mod 20 + 1));
+        polygon(4);
+        back(inner + width)
+      end
+  End;
+
+BEGIN
+  penup;
+  blot(500);
+  randcol(6);
+  annulus(410, 80, 2);
+  annulus(310, 80, 3);
+  annulus(210, 80, 5);
+  annulus(110, 80, 7);
+  annulus(10, 80, 1)
+END.
