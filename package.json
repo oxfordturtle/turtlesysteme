@@ -27,7 +27,7 @@
     "dev:browser": "webpack-dev-server --config webpack.browser.js --mode development --open"
   },
   "devDependencies": {
-    "electron": "^3.0.2",
+    "electron": "^3.0.3",
     "node-sass": "^4.9.3",
     "webpack": "^4.20.2",
     "webpack-cli": "^3.1.2",
