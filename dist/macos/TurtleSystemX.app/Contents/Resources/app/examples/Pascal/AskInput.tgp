@@ -1,9 +1,0 @@
-PROGRAM AskInput;
-VAR s: string;
-BEGIN
-  writeln('What is your name?');
-  s := readln;
-  writeln('');
-  writeln('Hello, ' + s + ',');
-  writeln('How are you?')
-END.

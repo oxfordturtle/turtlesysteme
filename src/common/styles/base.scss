@@ -1,0 +1,63 @@
+// base settings
+.tsx {
+  display: grid;
+  grid-gap: $padding;
+  padding: $padding;
+  grid-template-areas:
+    "program-controls"
+    "program-tabs"
+    "machine-controls"
+    "machine-tabs";
+  box-sizing: border-box;
+  max-width: $padding + $padding + $canvas-width + $padding + $padding;
+  margin: 0 auto;
+  background: $black;
+  font-family: $font-family;
+  font-size: $font-size;
+  line-height: 1;
+  color: $black;
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+}
+
+.tsx-program-controls {
+  grid-area: program-controls;
+}
+
+.tsx-machine-controls {
+  grid-area: machine-controls;
+}
+
+.tsx-program-tabs {
+  grid-area: program-tabs;
+}
+
+.tsx-machine-tabs {
+  grid-area: machine-tabs;
+}
+
+@media (min-width: $system-width) {
+  .tsx {
+    grid-template-columns: 1fr ($padding + $canvas-width + $padding);
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "program-controls machine-controls"
+      "program-tabs machine-tabs";
+    max-width: $system-width;
+  }
+}
+
+// custom additions for electron
+.tsx-electron {
+  margin: 0;
+  height: 100%;
+  body {
+    margin: 0;
+    height: 100%;
+  }
+  .tsx {
+    height: 100%;
+    max-width: initial;
+  }
+}

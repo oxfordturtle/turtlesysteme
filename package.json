@@ -2,47 +2,34 @@
   "name": "turtlesystemx",
   "productName": "Turtle System X",
   "version": "1.0.0",
-  "description": "A cross platform version of the Oxford Turtle System",
-  "author": "Amyas Merivale",
   "license": "MIT",
   "scripts": {
-    "css:browser": "node-sass src/styles/tsx.scss -o dist/browser/css --output-style compressed",
-    "css:linux": "node-sass src/styles/tsx.scss -o dist/linux/resources/app/css --output-style compressed",
-    "css:macos": "node-sass src/styles/tsx.scss -o dist/macos/TurtleSystemX.app/Contents/Resources/app/css --output-style compressed",
-    "css:windows": "node-sass src/styles/tsx.scss -o dist/windows/resources/app/css --output-style compressed",
-    "css:all": "npm run css:browser && npm run css:linux && npm run css:macos && npm run css:windows",
-    "js:browser": "webpack --config webpack.browser.js --mode production",
-    "js:linux": "webpack --config webpack.electron.linux.js --mode production",
-    "js:macos": "webpack --config webpack.electron.macos.js --mode production",
-    "js:windows": "webpack --config webpack.electron.windows.js --mode production",
-    "js:all": "npm run js:browser && npm run js:linux && npm run js:macos && npm run js:windows",
-    "resources:browser": "xcopy \"src/app/examples\" \"dist/browser/examples\" /s /y /q",
-    "resources:linux": "xcopy \"src/app\" \"dist/linux/resources/app\" /s /y /q",
-    "resources:macos": "xcopy \"src/app\" \"dist/macos/TurtleSystemX.app/Contents/Resources/app\" /s /y /q",
-    "resources:windows": "xcopy \"src/app\" \"dist/windows/resources/app\" /s /y /q",
-    "build:browser": "del \"dist/browser\" /s /q && npm run css:browser && npm run js:browser && npm run resources:browser",
-    "build:linux": "del \"dist/linux/resources/app\" /s /q && npm run css:linux && npm run js:linux && npm run resources:linux",
-    "build:macos": "del \"dist/macos/TurtleSystemX.app/Contents/Resources/app\" /s /q && npm run css:macos && npm run js:macos && npm run resources:macos",
-    "build:windows": "del \"dist/windows/resources/app\" /s /q && npm run css:windows && npm run js:windows && npm run resources:windows",
-    "dev:browser": "webpack-dev-server --config webpack.browser.js --mode development --open"
+    "dev-electron": "electron-webpack dev",
+    "compile-electron": "electron-webpack",
+    "dist-electron": "yarn compile && electron-builder",
+    "dist-electron:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
+    "dev-browser": "webpack-dev-server --config webpack.browser.js --mode development --open",
+    "compile-browser": "webpack --config webpack.browser.js --mode production"
+  },
+  "dependencies": {
+    "source-map-support": "^0.5.10"
   },
   "devDependencies": {
-    "electron": "^3.0.3",
-    "node-sass": "^4.9.3",
-    "webpack": "^4.20.2",
-    "webpack-cli": "^3.1.2",
-    "webpack-dev-server": "^3.1.9"
+    "electron": "^4.1.0",
+    "electron-builder": "^20.39.0",
+    "electron-webpack": "^2.6.2",
+    "node-sass": "^4.11.0",
+    "raw-loader": "^1.0.0",
+    "sass-loader": "^7.1.0",
+    "webpack": "^4.29.0",
+    "webpack-dev-server": "^3.2.0"
   },
-  "repository": {
-    "type": "git",
-    "url": "github.com/oxfordturtle/turtlesystemx"
-  },
-  "keywords": [
-    "turtle",
-    "programming",
-    "education"
-  ],
-  "dependencies": {
-    "npm": "^6.4.1"
+  "electronWebpack": {
+    "main": {
+      "webpackConfig": "webpack.electron.js"
+    },
+    "renderer": {
+      "webpackConfig": "webpack.electron.js"
+    }
   }
 }

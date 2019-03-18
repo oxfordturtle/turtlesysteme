@@ -1,0 +1,40 @@
+PROGRAM StringFunctions;
+CONST delay = 500;
+VAR s1, s2, s3, s4, s5: string;
+    posn, n: integer;
+BEGIN
+  output(true, cream, true);
+  s1 := 'Turtle Pascal';
+  s2 := copy(s1, 1, 6);
+  writeln(s2 + ' is the name of a small animal.');
+  pause(delay);
+  s3 := copy(s1, 8, 6);
+  writeln(s3 + ' was a French philosopher.');
+  pause(delay);
+  s4 := insert('eter R', s3, 2);
+  writeln('''' + s4 + ''' is a silly name.');
+  pause(delay);
+  writeln('"' + s1 + '" has ' + str(length(s1)) + ' characters.');
+  pause(delay);
+  writeln('In lower case it is "' + lowercase(s1) + '".');
+  writeln('In upper case it is "' + uppercase(s1) + '".');
+  pause(delay);
+  posn := pos(s3, s1);
+  if posn > 0 then
+    writeln('"' + s3 + '" occurs within "' + s1 + '" at position ' + str(posn) + '.');
+  pause(delay);
+  s5 := '3.14159';
+  writeln(s5 + ' times 100000 = ' + str(qval(s5, 100000, -1)) + '.');
+  pause(delay);
+  n := qval(s5, 100000, -1);
+  writeln(str(n) + ' divided by 100000 = ' + qstr(n, 100000, 5) + '.');
+  writeln('');
+  pause(delay * 5);
+  writeln('Now back to the Canvas and Console ...');
+  output(false, peach, true);
+  pause(delay * 5);
+  output(false, lightred, false);
+  pause(delay * 5);
+  console(true, lightblue);
+  writeln('You will see this on a clear light blue Console')
+END.

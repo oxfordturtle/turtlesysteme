@@ -2,20 +2,34 @@ const path = require('path')
 
 module.exports = {
   entry: {
-    index: './src/index.js',
-    help: './src/help.js',
-    about: './src/about.js'
+    app: './src/browser/index.js',
+    about: './src/browser/about.js',
+    help: './src/browser/help.js',
+    system: './src/browser/system.js'
   },
+  devtool: 'inline-source-map',
   devServer: {
-    contentBase: './dist/browser',
-    port: 8080
+    contentBase: path.join(__dirname, 'browser')
   },
   output: {
-    filename: 'browser/js/[name].js',
-    path: path.resolve(__dirname, 'dist')
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, 'browser')
   },
-  target: 'web',
   resolve: {
-    modules: [path.resolve(__dirname, 'src'), 'node_modules']
+    alias: {
+      common: path.resolve(__dirname, 'src/common/')
+    }
+  },
+  module: {
+    rules: [
+      {
+        test: /\.scss$/,
+        use: ['style-loader', 'css-loader', 'sass-loader']
+      },
+      {
+        test: /\.tg(b|p|y|x)$/,
+        use: 'raw-loader'
+      }
+    ]
   }
 }

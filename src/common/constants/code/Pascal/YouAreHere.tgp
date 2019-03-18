@@ -1,0 +1,20 @@
+PROGRAM YouAreHere;
+BEGIN
+  colour(red);
+  blot(20);
+  colour(violet);
+  print('You are here', 2, 35);
+  setxy(790, 540);
+  colour(blue);
+  drawxy(40, 0);
+  drawxy(28, -28);
+  drawxy(0, -40);
+  drawxy(-28, -28);
+  drawxy(-40, 0);
+  setxy(500, 500);
+  setxy(530, 480);
+  setxy(535, 505);
+  setxy(500, 500);
+  polyline(5);
+  polygon(3)
+END.
