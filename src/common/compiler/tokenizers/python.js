@@ -10,8 +10,8 @@ export default (code) => {
     let token = linebreak(code) ||
       spaces(code) ||
       comment(code) ||
-      operator(code) ||
       punctuation(code) ||
+      operator(code) ||
       string(code) ||
       boolean(code) ||
       binary(code) ||
@@ -50,16 +50,16 @@ const comment = (code) => {
   return false
 }
 
+// punctuation
+const punctuation = (code) => {
+  const test = code.match(/^(\(|\)|,|:|->)/)
+  return test ? { type: 'punctuation', content: test[0] } : false
+}
+
 // operators
 const operator = (code) => {
   const test = code.match(/^(\+|-|\*|\/\/|\/|%|==|!=|<=|>=|=|<|>|not\b|and\b|or\b|xor\b)/)
   return test ? { type: 'operator', content: test[0] } : false
-}
-
-// punctuation
-const punctuation = (code) => {
-  const test = code.match(/^(\(|\)|,|:)/)
-  return test ? { type: 'punctuation', content: test[0] } : false
 }
 
 // string literals

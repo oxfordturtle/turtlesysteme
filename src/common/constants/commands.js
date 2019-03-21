@@ -478,7 +478,7 @@ export default [
     description: 'Returns the absolute value of <code>n</code>, i.e. <code>n</code> if positive, <code>-n</code> if negative.'
   },
   {
-    names: { BASIC: 'SIGN', Pascal: 'sign', Python: 'sign' },
+    names: { BASIC: 'SGN', Pascal: 'sign', Python: 'sign' },
     code: pc.sign,
     parameters: [
       { name: 'a', type: 'integer', byref: false, length: 1 }
@@ -906,7 +906,7 @@ export default [
     description: 'Returns the input <code>string</code> with the specified <code>substring</code> inserted at the given <code>index</code>.'
   },
   {
-    names: { BASIC: 'REPLACE', Pascal: 'replace', Python: 'replace' },
+    names: { BASIC: 'REPLACE$', Pascal: 'replace', Python: 'replace' },
     code: pc.repl,
     parameters: [
       { name: 'string', type: 'string', byref: false, length: 1 },
@@ -956,7 +956,7 @@ export default [
     description: 'Returns the integer <code>n</code> as a string, e.g. <code>str(12)=\'12\'</code>.'
   },
   {
-    names: { BASIC: 'VAL', Pascal: 'val', Python: 'integer' },
+    names: { BASIC: 'VAL', Pascal: 'val', Python: 'int' },
     code: pc.svd0,
     parameters: [
       { name: 'string', type: 'string', byref: false, length: 1 }

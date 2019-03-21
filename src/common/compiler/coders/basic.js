@@ -26,7 +26,7 @@ const coder = (routine, lex, startLine) => {
       break
 
     // keywords
-    case 'keyword':
+    default:
       switch (routine.lexemes[lex].content) {
         // start of IF structure
         case 'IF':
@@ -48,14 +48,15 @@ const coder = (routine, lex, startLine) => {
           result = compileWhile(routine, lex + 1, startLine)
           break
 
+        // function return value
+        case '=':
+          result = molecules.variableAssignment(routine, '!result', lex + 1, 'BASIC')
+          break
+
         default:
           throw error('{lex} makes no sense here.', routine.lexemes[lex])
       }
       break
-
-    // any thing else is a mistake
-    default:
-      throw error('{lex} makes no sense here.', routine.lexemes[lex])
   }
 
   // end of command check
@@ -63,7 +64,7 @@ const coder = (routine, lex, startLine) => {
     // check for a colon or a new line, and move past any colons
     if (routine.lexemes[result.lex].content !== ':') {
       if (routine.lexemes[result.lex].line === routine.lexemes[result.lex - 1].line) {
-        if (routine.lexemes[result.lex].type !== 'else') {
+        if (routine.lexemes[result.lex].content !== 'ELSE') {
           throw error('Command must be on a new line, or followed by a colon.', routine.lexemes[result.lex - 1])
         }
       }
@@ -181,7 +182,7 @@ const compileFor = (routine, lex, startLine) => {
   if (!routine.lexemes[lex]) {
     throw error('"FOR" loop variable must be assigned an initial value.', routine.lexemes[lex - 1])
   }
-  result = molecules.expression(routine, lex, 'null', 'integer', 'Pascal')
+  result = molecules.expression(routine, lex, 'null', 'integer', 'BASIC')
   lex = result.lex
   initial = result.pcode[0]
 
@@ -198,7 +199,7 @@ const compileFor = (routine, lex, startLine) => {
   if (!routine.lexemes[lex]) {
     throw error('"TO" must be followed by an integer (or integer constant).', routine.lexemes[lex - 1])
   }
-  result = molecules.expression(routine, lex, 'null', 'integer', 'Pascal')
+  result = molecules.expression(routine, lex, 'null', 'integer', 'BASIC')
   lex = result.lex
   final = result.pcode[0]
 
@@ -262,9 +263,9 @@ const compileRepeat = (routine, lex, startLine) => {
   if (!routine.lexemes[lex]) {
     throw error('"UNTIL" must be followed by a boolean expression.', routine.lexemes[lex - 1])
   }
-  result = molecules.expression(routine, lex, 'null', 'boolean', false)
+  result = molecules.expression(routine, lex, 'null', 'boolean', 'BASIC')
   lex = result.lex
-  test = result.pcode[0]
+  test = result.pcode
 
   // now we have everything we need
   return { lex, pcode: pcoder.repeatLoop(startLine, test, innerCode) }
@@ -338,23 +339,33 @@ const block = (routine, lex, startLine, startKeyword) => {
 const blockEndCheck = (start, lexeme) => {
   switch (lexeme.content) {
     case 'ELSE':
-      if (start !== 'IF') throw error('"ELSE" does not have any matching "IF".', lexeme)
+      if (start !== 'IF') {
+        throw error('"ELSE" does not have any matching "IF".', lexeme)
+      }
       return true
 
     case 'ENDIF':
-      if ((start !== 'IF') && (start !== 'else')) throw error('"ENDIF" does not have any matching "IF".', lexeme)
+      if ((start !== 'IF') && (start !== 'ELSE')) {
+        throw error('"ENDIF" does not have any matching "IF".', lexeme)
+      }
       return true
 
     case 'NEXT':
-      if (start !== 'FOR') throw error('"NEXT" does not have any matching "FOR".', lexeme)
+      if (start !== 'FOR') {
+        throw error('"NEXT" does not have any matching "FOR".', lexeme)
+      }
       return true
 
     case 'UNTIL':
-      if (start !== 'REPEAT') throw error('"UNTIL" does not have any matching "REPEAT".', lexeme)
+      if (start !== 'REPEAT') {
+        throw error('"UNTIL" does not have any matching "REPEAT".', lexeme)
+      }
       return true
 
     case 'ENDWHILE':
-      if (start !== 'WHILE') throw error('"ENDWHILE" does not have any matching "WHILE".', lexeme)
+      if (start !== 'WHILE') {
+        throw error('"ENDWHILE" does not have any matching "WHILE".', lexeme)
+      }
       return true
 
     default:

@@ -36,13 +36,22 @@ export default (lexemes) => {
         break
       case 'dim':
         // TODO
+        throw error('The BASIC cmpiler does not yet support DIM variables.', lexemes[lex])
         break
       case 'prog':
         // expecting program commands or "END" (definitions not allowed)
-        if (lexemes[lex].content === 'DIM') throw error('"DIM" commands must occur at the top of the program.', lexemes[lex])
-        if (lexemes[lex].content === 'PRIVATE') throw error('Private variables cannot be defined in the main program.', lexemes[lex])
-        if (lexemes[lex].content === 'LOCAL') throw error('Local variables cannot be defined in the main program.', lexemes[lex])
-        if (lexemes[lex].content === 'DEF') throw error('Subroutines must be defined after program "END".', lexemes[lex])
+        if (lexemes[lex].content === 'DIM') {
+          throw error('"DIM" commands must occur at the top of the program.', lexemes[lex])
+        }
+        if (lexemes[lex].content === 'PRIVATE') {
+          throw error('Private variables cannot be defined in the main program.', lexemes[lex])
+        }
+        if (lexemes[lex].content === 'LOCAL') {
+          throw error('Local variables cannot be defined in the main program.', lexemes[lex])
+        }
+        if (lexemes[lex].content === 'DEF') {
+          throw error('Subroutines must be defined after program "END".', lexemes[lex])
+        }
         if (lexemes[lex].content === 'END') {
           inProgram = false
           state = 'end'
@@ -67,28 +76,39 @@ export default (lexemes) => {
             state = 'def'
           } else {
             // anything else is an error
-            if (routine.index === 0) throw error('No program text can appear after program "END" (except subroutine definitions).', lexemes[lex])
+            if (routine.index === 0) {
+              throw error('No program text can appear after program "END" (except subroutine definitions).',
+              lexemes[lex])
+            }
             throw error('No program text can appear after subroutine end (except further subroutine definitions).', lexemes[lex])
           }
         }
         break
       case 'def':
         // expecting subroutine name
-        if (!lexemes[lex]) throw error('"DEF" must be followed by a valid procedure or function name. (Procedure names must begin with "PROC", and function names must begin with "FN".)', lexemes[lex - 1])
-        if (!subType(lexemes[lex].content)) throw error('"DIM" commands can only occur within the main program. To declare a local or private array, use "LOCAL" or "PRIVATE" instead.', lexemes[lex])
-        routine = factory.subroutine(lexemes[lex].content, subType(lexemes[lex].content, routines[0]))
-        routine.parent = routines[0]
+        if (!lexemes[lex]) {
+          throw error('"DEF" must be followed by a valid procedure or function name. (Procedure names must begin with "PROC", and function names must begin with "FN".)', lexemes[lex - 1])
+        }
+        if (!subType(lexemes[lex].content)) {
+          throw error('"DIM" commands can only occur within the main program. To declare a local or private array, use "LOCAL" or "PRIVATE" instead.', lexemes[lex])
+        }
+        routine = factory.subroutine(lexemes[lex].content, subType(lexemes[lex].content), routines[0])
+        routine.index = routines.length
         routines.push(routine)
         routines[0].subroutines.push(routine)
         if (routine.type === 'procedure') {
           inProcedure = true
         } else {
           inFunction = true
-          variable = factory.variable({ content: 'result' }, routine)
+          variable = factory.variable({ content: '!result' }, routine)
+          variable.fulltype = varFulltype(lexemes[lex].content)
           routine.variables.push(variable)
+          routine.returns = variable.fulltype.type
         }
         // expecting parameters, variables, or the start of the subroutine
-        if (!lexemes[lex + 1]) throw error('No program text can appear after subroutine end (except further subroutine definitions).', lexemes[lex])
+        if (!lexemes[lex + 1]) {
+          throw error('No program text can appear after subroutine end (except further subroutine definitions).', lexemes[lex])
+        }
         lex += 1
         if (lexemes[lex].content === '(') {
           lex += 1
@@ -112,9 +132,6 @@ export default (lexemes) => {
         if (lexemes[lex].type !== 'identifier') {
           throw error('{lex} is not a valid parameter name.', lexemes[lex])
         }
-        if (!varFulltype(lexemes[lex].content)) {
-          throw error('{lex} is not a valid parameter name. Integer parameters must end with "%", and string parameters must end with "$".', lexemes[lex])
-        }
         if (exists(routine, lexemes[lex].content)) {
           throw error('{lex} is already a parameter for this subroutine.', lexemes[lex])
         }
@@ -124,18 +141,26 @@ export default (lexemes) => {
         routine.variables.push(variable)
         lex += 1
         // expecting comma or closing bracket
-        if (!lexemes[lex]) throw error('Closing bracket needed after parameters.', lexemes[lex - 1])
-        if (lexemes[lex].type === 'identifier') throw error('Comma needed after parameter.', lexemes[lex])
+        if (!lexemes[lex]) {
+          throw error('Closing bracket needed after parameters.', lexemes[lex - 1])
+        }
+        if (lexemes[lex].type === 'identifier') {
+          throw error('Comma needed after parameter.', lexemes[lex])
+        }
         if (lexemes[lex].content === ')') {
           state = 'variables'
         } else {
-          if (lexemes[lex].content !== ',') throw error('Closing bracket needed after parameters.', lexemes[lex])
+          if (lexemes[lex].content !== ',') {
+            throw error('Closing bracket needed after parameters.', lexemes[lex])
+          }
         }
         lex += 1
         break
       case 'variables':
         // expecting variable declarations, or the start of the subroutine commands
-        if (!lexemes[lex]) throw error('Subroutine definition must be followed by some commands.', lexemes[lex - 1])
+        if (!lexemes[lex]) {
+          throw error('Subroutine definition must be followed by some commands.', lexemes[lex - 1])
+        }
         switch (lexemes[lex].content) {
           case 'DIM':
             throw error('"DIM" commands can only occur within the main program. To declare a local or private array, use "LOCAL" or "PRIVATE" instead.', lexemes[lex])
@@ -161,9 +186,6 @@ export default (lexemes) => {
         }
         if (lexemes[lex].type !== 'identifier') {
           throw error('{lex} is not a valid variable name.', lexemes[lex])
-        }
-        if (!varFulltype(lexemes[lex].content)) {
-          throw error('{lex} is not a valid variable name. Integer variables must end with "%", and string variables must end with "$".', lexemes[lex])
         }
         if (exists(routine, lexemes[lex].content)) {
           throw error('{lex} is already a variable in the current scope.', lexemes[lex])
@@ -192,9 +214,6 @@ export default (lexemes) => {
         if (lexemes[lex].type !== 'identifier') {
           throw error('{lex} is not a valid variable name.', lexemes[lex])
         }
-        if (!varFulltype(lexemes[lex].content)) {
-          throw error('{lex} is not a valid variable name. Integer variables must end with "%", and string variables must end with "$".', lexemes[lex])
-        }
         if (exists(routine, lexemes[lex].content)) {
           throw error('{lex} is already a variable in the current scope.', lexemes[lex])
         }
@@ -218,14 +237,22 @@ export default (lexemes) => {
       case 'subroutine':
         // expecting subroutine commands
         // DIMs only allowed in the main program
-        if (lexemes[lex].content === 'DIM') throw error('"DIM" commands can only occur within the main program. To declare a local or private array, use "LOCAL" or "PRIVATE" instead.', lexemes[lex])
+        if (lexemes[lex].content === 'DIM') {
+          throw error('"DIM" commands can only occur within the main program. To declare a local or private array, use "LOCAL" or "PRIVATE" instead.', lexemes[lex])
+        }
         // too late for PRIVATE or LOCAL variables to be declared
-        if (lexemes[lex].content === 'PRIVATE') throw error('Private variables must be declared at the start of the subroutine.', lexemes[lex])
-        if (lexemes[lex].content === 'LOCAL') throw error('Local variables must be declared at the start of the subroutine.', lexemes[lex])
+        if (lexemes[lex].content === 'PRIVATE') {
+          throw error('Private variables must be declared at the start of the subroutine.', lexemes[lex])
+        }
+        if (lexemes[lex].content === 'LOCAL') {
+          throw error('Local variables must be declared at the start of the subroutine.', lexemes[lex])
+        }
         // next subroutine DEF must come after this subroutine has finished
-        if (lexemes[lex].content === 'DEF') throw error('The next subroutine must be defined after subroutine "ENDPROC".', lexemes[lex])
+        if (lexemes[lex].content === 'DEF') {
+          throw error('The next subroutine must be defined after subroutine "ENDPROC".', lexemes[lex])
+        }
         // check for undefined variables, and add them to the main program
-        if (lexemes[lex].type === 'variable') {
+        if (lexemes[lex].type === 'identifier' && lexemes[lex + 1] && lexemes[lex + 1].content === '=') {
           if (!exists(routines[0], lexemes[lex].content) && !exists(routine, lexemes[lex].content)) {
             variable = factory.variable(lexemes[lex], routines[0])
             variable.fulltype = varFulltype(lexemes[lex].content)
@@ -255,7 +282,9 @@ export default (lexemes) => {
         }
         break
       case 'result':
-        if (!lexemes[lex]) throw error('Subroutine definition must be followed by some commands.', lexemes[lex - 1])
+        if (!lexemes[lex]) {
+          throw error('Function return value must be specified.', lexemes[lex - 1])
+        }
         fnResultLine = lexemes[lex].line
         while (lexemes[lex] && lexemes[lex].line === fnResultLine) {
           routine.lexemes.push(lexemes[lex])
@@ -278,9 +307,9 @@ const exists = (routine, string) =>
 
 // get variable fulltype from its name
 const varFulltype = string => {
-  const type = string.slice(-1) === '%' ? 'boolint' : 'string'
+  const type = string.slice(-1) === '$' ? 'string' : 'boolint'
   const length = type === 'boolint' ? 0 : 34
-  return type ? factory.fulltype(type, length) : false
+  return factory.fulltype(type, length)
 }
 
 // get the type of a subroutine from its name

@@ -149,7 +149,8 @@ const factor = (routine, lex, type, needed, language) => {
 // handle negation (integer or boolean)
 const negative = (routine, lex, needed, language) => {
   // check for a negation operator, and handle it if found
-  if (routine.lexemes[lex].content === '-' || routine.lexemes[lex].content === 'not') {
+  const negs = ['-', 'not', 'NOT']
+  if (negs.indexOf(routine.lexemes[lex].content) > -1) {
     const found = routine.lexemes[lex].content === '-' ? 'integer' : 'boolint'
     const operator = routine.lexemes[lex].content === '-'
       ? [pcoder.applyOperator('neg')]

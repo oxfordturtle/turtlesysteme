@@ -1224,7 +1224,6 @@ const execute = (pcode, line, code, options) => {
         b = stack.pop()
         a = stack.pop()
         if (Math.min(a, b) <= options.smallSize) {
-          console.log('hello?')
           a = a * 2
           b = b * 2
           vcanvas.doubled = true

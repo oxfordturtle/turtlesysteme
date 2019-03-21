@@ -120,7 +120,7 @@ const command = (code) => {
 
 // built-in turtle property variables
 const turtle = (code) => {
-  const test = code.match(/^(TURT[XYDTC]%)\b/)
+  const test = code.match(/^(TURT[XYDTC]%)/)
   return test ? { type: 'turtle', content: test[0] } : false
 }
 
@@ -144,13 +144,13 @@ const query = (code) => {
 
 // custom procedure or function names
 const custom = (code) => {
-  const test = code.match(/^((PROC|FN)[_a-zA-Z]+)\b/)
+  const test = code.match(/^((PROC|FN)[_a-zA-Z0-9]+[%|$]?)/)
   return test ? { type: 'custom', content: test[0] } : false
 }
 
 // variable names
 const variable = (code) => {
-  const test = code.match(/^([_a-zA-Z0-9]+[$|%])/)
+  const test = code.match(/^([_a-zA-Z][_a-zA-Z0-9]*[%|$]?)/)
   return test ? { type: 'variable', content: test[0] } : false
 }
 

@@ -22,10 +22,6 @@ export default (lexemes, language) => {
   const routines = parsers[language](lexemes)
   const program = routines[0]
   const subroutines = routines.slice(1)
-  if (language === 'BASIC') {
-    // determine function return types
-    // TODO
-  }
   if (language === 'Python') {
     // determine variable types recursively (start at main program, then work through subroutines)
     determineVariableTypes(routines, 0)
