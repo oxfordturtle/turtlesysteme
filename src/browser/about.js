@@ -17,7 +17,7 @@ const language = document.createElement('div')
 language.classList.add('tsx-controls')
 language.appendChild(languageSelect)
 
-const about = create('tsx-system-tabs', [
+const about = create([
   { label: 'System', active: true, content: [system] },
   { label: 'Canvas', active: false, content: [canvas] }
 ])

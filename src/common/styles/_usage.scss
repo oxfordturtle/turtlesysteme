@@ -1,0 +1,17 @@
+.tsx-usage {
+  flex: 1;
+  border: 1px solid $gray;
+  overflow: auto;
+  td, th {
+    &:first-child, &:last-child {
+      text-align: left;
+    }
+  }
+  .tsx-category-heading th {
+    background: $green;
+    color: white;
+    font-style: italic;
+    font-weight: bold;
+    text-align: right;
+  }
+}

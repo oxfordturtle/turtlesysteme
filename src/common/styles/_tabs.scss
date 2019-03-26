@@ -1,0 +1,43 @@
+.tsx-body {
+  display: flex;
+  flex: 1;
+  .tsx-tabs:first-child {
+    flex: 1;
+    border-right: $padding solid $darkgray;
+  }
+  .tsx-tabs:last-child {
+    width: $padding + $canvas-coords-width + $canvas-width + $padding;
+  }
+}
+
+.tsx-tabs {
+  display: flex;
+  flex-direction: column;
+  .tsx-tab-pane {
+    display: none;
+    &.active {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      overflow: auto;
+      padding: $padding;
+      background: #fff;
+      color: $black;
+    }
+  }
+  .tsx-tab-list {
+    display: flex;
+    .tsx-tab {
+      display: block;
+      cursor: pointer;
+      padding: .625em .75em;
+      &:hover {
+        background: $gray;
+      }
+      &.active {
+        background: #fff;
+        color: $black;
+      }
+    }
+  }
+}

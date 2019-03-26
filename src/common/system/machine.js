@@ -61,6 +61,7 @@ export const run = (pcode, options, elements) => {
   vcanvas.height = 1000
   vcanvas.degrees = 360
   vcanvas.doubled = false
+  component.canvas(0, 0, 1000, 1000)
   // setup runtime variables (global to this module)
   runtime.startTime = Date.now()
   runtime.pendown = true
@@ -1210,6 +1211,7 @@ const execute = (pcode, line, code, options) => {
         vcanvas.sizex = stack.pop()
         vcanvas.starty = stack.pop()
         vcanvas.startx = stack.pop()
+        component.canvas(vcanvas.startx, vcanvas.starty, vcanvas.sizex, vcanvas.sizey)
         memory[memory[0] + 1] = Math.round(vcanvas.startx + (vcanvas.sizex / 2))
         memory[memory[0] + 2] = Math.round(vcanvas.starty + (vcanvas.sizey / 2))
         memory[memory[0] + 3] = 0

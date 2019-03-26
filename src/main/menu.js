@@ -1,10 +1,14 @@
 /*
 Required by main/index.js; handles the system menu.
 */
-import { app, dialog, ipcMain, Menu } from 'electron'
+import { app, dialog, ipcMain, Menu, systemPreferences } from 'electron'
 import { readFile } from 'fs'
 import { show, windows } from './windows'
 import * as examples from 'common/constants/examples'
+
+// disable dication and emoji items in edit menu on macos
+systemPreferences.setUserDefault('NSDisabledDictationMenuItem', 'boolean', true)
+systemPreferences.setUserDefault('NSDisabledCharacterPaletteMenuItem', 'boolean', true)
 
 // system menu
 const systemMenu = {
@@ -25,6 +29,9 @@ const systemMenu = {
       label: 'Turtle Python',
       click: () => windows.system.webContents.send('set-language', 'Python')
     },
+    { type: 'separator' },
+    { label: 'Language Guide', click: () => show('help') },
+    { label: 'About', click: () => show('about') },
     { type: 'separator' },
     { role: 'quit' }
   ]
@@ -139,16 +146,16 @@ const exampleGroupMenuItem = exampleGroup =>
     submenu: exampleGroup.examples.map(exampleMenuItem)
   })
 
-// help menu
-const helpMenu = {
-  label: 'Help',
-  submenu: [
-    { label: 'Language Guide', click: () => show('help') },
-    { label: 'About', click: () => show('about') },
-    { type: 'separator' },
-    { label: 'Illustrative Examples', submenu: examples.help.map(exampleGroupMenuItem) },
-    { label: 'CSAC Examples', submenu: examples.csac.map(exampleGroupMenuItem) }
-  ]
+// examples menu
+const examplesMenu = {
+  label: 'Examples',
+  submenu: examples.help.map(exampleGroupMenuItem)
+}
+
+// CSAC examples menu
+const csacMenu = {
+  label: 'CSAC',
+  submenu: examples.csac.map(exampleGroupMenuItem)
 }
 
 // the full menu bar
@@ -157,7 +164,8 @@ const menu = Menu.buildFromTemplate([
   fileMenu,
   editMenu,
   optionsMenu,
-  helpMenu
+  examplesMenu,
+  csacMenu
 ])
 
 // set the full menu bar as the application menu

@@ -1,0 +1,48 @@
+.tsx-code {
+  flex: 1;
+  position: relative;
+  border: 1px solid $gray;
+  font-family: $monospace;
+  line-height: 1.5;
+  z-index: 4;
+  overflow: auto;
+  textarea, ol, pre {
+    position: absolute;
+    top: 0;
+    left: 0;
+    min-height: 100%;
+    margin: 0;
+    font: inherit;
+  }
+  textarea, pre {
+    padding: 0 .5em 0 3.25em;
+    min-width: 100%;
+  }
+  textarea {
+    background: transparent;
+    border: 0;
+    outline: 0;
+    resize: none;
+    overflow: hidden;
+    opacity: .4;
+    z-index: 1;
+  }
+  ol, pre {
+    pointer-events: none;
+  }
+  ol {
+    list-style: none;
+    padding: 0 .5em;
+    width: 3em;
+    background: $lightgray;
+    li {
+      text-align: right;
+    }
+  }
+  pre {
+    z-index: 2;
+  }
+  code {
+    font: inherit;
+  }
+}

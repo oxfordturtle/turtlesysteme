@@ -75,12 +75,12 @@ overlay.querySelector('button').addEventListener('click', () => {
 
 // program controls
 const programControls = document.createElement('div')
-programControls.classList.add('tsx-program-controls')
+programControls.classList.add('tsx-controls')
 programControls.appendChild(file.nameInput)
 programControls.appendChild(file.languageSelect)
 
 // program tabs
-const programTabs = create('tsx-program-tabs', [
+const programTabs = create([
   { label: 'File', active: false, content: [file.newFile, file.openHelp, file.openCSAC] },
   { label: 'Code', active: true, content: [code] },
   { label: 'Usage', active: false, content: [usage] },
@@ -88,7 +88,7 @@ const programTabs = create('tsx-program-tabs', [
 ])
 
 // machine tabs
-const machineTabs = create('tsx-machine-tabs', [
+const machineTabs = create([
   { label: 'Settings', active: false, content: [settings.buttons, settings.showOptions, settings.drawCountMax, settings.codeCountMax, settings.smallSize, settings.stackSize] },
   { label: 'Canvas', active: true, content: [canvas, console] },
   { label: 'Output', active: false, content: [output] },

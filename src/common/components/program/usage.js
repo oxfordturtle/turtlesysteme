@@ -4,21 +4,23 @@ The program usage component.
 import { on } from 'common/system/state'
 
 // the usage element
-const usage = document.createElement('table')
+const usage = document.createElement('div')
 export default usage
 
 // initialise the element
-usage.classList.add('tsx-usage-table')
+usage.classList.add('tsx-usage')
 usage.innerHTML = `
-  <thead>
-    <tr>
-      <th>Expression</th>
-      <th>Level</th>
-      <th>Count</th>
-      <th>Program Lines</th>
-    </tr>
-  </thead>
-  <tbody data-bind="usage"></tbody>`
+  <table>
+    <thead>
+      <tr>
+        <th>Expression</th>
+        <th>Level</th>
+        <th>Count</th>
+        <th>Program Lines</th>
+      </tr>
+    </thead>
+    <tbody data-bind="usage"></tbody>
+  </table>`
 
 // grab sub-elements of interest
 const usageBody = usage.querySelector('[data-bind="usage"]')

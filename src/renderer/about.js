@@ -12,7 +12,7 @@ export default (tsx) => {
 }
 
 // the about tabs
-const about = create('tsx-system-tabs', [
+const about = create([
   { label: 'System', active: true, content: [system] },
   { label: 'Canvas', active: false, content: [canvas] }
 ])

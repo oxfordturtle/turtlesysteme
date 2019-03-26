@@ -3,13 +3,13 @@ Setup the system page (Electron).
 */
 import { ipcRenderer, remote } from 'electron'
 import { create, show } from 'common/components/tabs'
+import controls from 'common/components/controls'
 import code from 'common/components/program/code'
 import * as pcode from 'common/components/program/pcode'
 import { nameInput } from 'common/components/program/file'
 import usage from 'common/components/program/usage'
 import canvas from 'common/components/machine/canvas'
 import console from 'common/components/machine/console'
-import controls from 'common/components/machine/controls'
 import output from 'common/components/machine/output'
 import * as memory from 'common/components/machine/memory'
 import signals from 'common/constants/signals'
@@ -17,11 +17,12 @@ import { on, send } from 'common/system/state'
 
 // setup the system page
 export default (tsx) => {
+  // add the system class
+  tsx.classList.add('tsx-system')
+
   // append the system components (defined below)
-  tsx.appendChild(programControls)
-  tsx.appendChild(machineControls)
-  tsx.appendChild(programTabs)
-  tsx.appendChild(machineTabs)
+  tsx.appendChild(controls)
+  tsx.appendChild(tabs)
 
   // register to switch tabs when called for
   on('file-changed', () => { show('Code') })
@@ -41,6 +42,7 @@ export default (tsx) => {
     let message
     let detail
     window.console.log(error) // for deugging
+    if (error.lexeme) window.console.log(error.lexeme)
     if (error.type) {
       // custom error
       message = `${error.type} Error`
@@ -72,24 +74,22 @@ export default (tsx) => {
   })
 }
 
-// program controls
-const programControls = document.createElement('div')
-programControls.classList.add('tsx-program-controls')
-programControls.appendChild(nameInput)
-
-// machine controls
-const machineControls = controls
-
 // program tabs
-const programTabs = create('tsx-program-tabs', [
+const programTabs = create([
   { label: 'Code', active: true, content: [code] },
   { label: 'Usage', active: false, content: [usage] },
   { label: 'PCode', active: false, content: [pcode.options, pcode.list] }
 ])
 
 // machine tabs
-const machineTabs = create('tsx-machine-tabs', [
+const machineTabs = create([
   { label: 'Canvas', active: true, content: [canvas, console] },
   { label: 'Output', active: false, content: [output] },
   { label: 'Memory', active: false, content: [memory.buttons, memory.stack, memory.heap] }
 ])
+
+// both tabs
+const tabs = document.createElement('div')
+tabs.classList.add('tsx-body')
+tabs.appendChild(programTabs)
+tabs.appendChild(machineTabs)

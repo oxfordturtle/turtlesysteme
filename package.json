@@ -1,12 +1,12 @@
 {
-  "name": "turtlesystemx",
-  "productName": "Turtle System X",
-  "version": "1.0.0",
+  "name": "turtlesysteme",
+  "productName": "Turtle System E",
+  "version": "19.4.1",
   "license": "MIT",
   "scripts": {
     "dev-electron": "electron-webpack dev",
     "compile-electron": "electron-webpack",
-    "dist-electron": "yarn compile && electron-builder",
+    "dist-electron": "yarn compile-electron && electron-builder",
     "dist-electron:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
     "dev-browser": "webpack-dev-server --config webpack.browser.js --mode development --open",
     "compile-browser": "webpack --config webpack.browser.js --mode production"

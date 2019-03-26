@@ -3,12 +3,11 @@ a handful of system-wide tools
 */
 
 // create tabs (tab list on top, tab panes below)
-export const create = (customClass, optionsArray) => {
+export const create = (optionsArray) => {
   const div = document.createElement('div')
   div.classList.add('tsx-tabs')
-  div.classList.add(customClass)
+  optionsArray.forEach((x) => { div.appendChild(pane(x)) })
   div.appendChild(list(optionsArray))
-  div.appendChild(panes(optionsArray))
   return div
 }
 

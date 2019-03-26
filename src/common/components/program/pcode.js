@@ -12,11 +12,11 @@ export const list = document.createElement('ol')
 options.classList.add('tsx-checkboxes')
 options.innerHTML = `
   <label><input type="radio" name="pcodeOptions1" data-bind="assembler">Assembler Code</label>
-  <label><input type="radio" name="pcodeOptions1" data-bind="machine">Machine Code</label>
   <label><input type="radio" name="pcodeOptions2" data-bind="decimal">Decimal</label>
+  <label><input type="radio" name="pcodeOptions1" data-bind="machine">Machine Code</label>
   <label><input type="radio" name="pcodeOptions2" data-bind="hexadecimal">Hexadecimal</label>`
 
-list.classList.add('tsx-pcode-table')
+list.classList.add('tsx-pcode')
 
 // grab sub-elements of interest
 const assemblerInput = options.querySelector('[data-bind="assembler"]')

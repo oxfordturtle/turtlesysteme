@@ -237,6 +237,7 @@ export const send = (signal, data) => {
 
       case 'set-group':
         set('group', data)
+        console.log(data)
         reply('help-options-changed', get('help-options'))
         break
 

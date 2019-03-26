@@ -2,12 +2,9 @@
 The program file component.
 */
 import * as examples from 'common/constants/examples'
-import languages from 'common/constants/languages'
 import { on, send } from 'common/system/state'
 
 // the file elements
-export const nameInput = document.createElement('input')
-export const languageSelect = document.createElement('select')
 export const newFile = document.createElement('div')
 export const openHelp = document.createElement('div')
 export const openCSAC = document.createElement('div')
@@ -18,12 +15,6 @@ const optgroup = (group) => `
   <optgroup label="${group.index.toString(10)}. ${group.title}">
     ${group.examples.map(x => `<option value="${x}">${examples.names[x]}</option>`).join('')}
   </optgroup>`
-
-// initialise the file elements
-nameInput.type = 'text'
-nameInput.placeholder = 'filename'
-
-languageSelect.innerHTML = languages.map(x => `<option value="${x}">${x}</option>`).join('')
 
 newFile.classList.add('tsx-file-box')
 newFile.innerHTML = `
@@ -62,14 +53,6 @@ const helpExamples = openHelp.querySelector('[data-bind="help-examples"]')
 const csacExamples = openCSAC.querySelector('[data-bind="csac-examples"]')
 
 // setup event listeners on interactive elements
-nameInput.addEventListener('input', (e) => {
-  send('set-name', nameInput.value)
-})
-
-languageSelect.addEventListener('change', (e) => {
-  send('set-language', languageSelect.value)
-})
-
 newButton.addEventListener('click', () => {
   send('new-program')
 })
@@ -105,13 +88,4 @@ fileInput.addEventListener('click', () => {
   const fr = new window.FileReader()
   fr.onload = () => { send('set-file', { filename: file.name, content: fr.result }) }
   fr.readAsText(file)
-})
-
-// register to keep in sync with system state
-on('name-changed', (name) => {
-  nameInput.value = name
-})
-
-on('language-changed', (language) => {
-  languageSelect.value = language
 })

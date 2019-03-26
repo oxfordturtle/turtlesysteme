@@ -6,13 +6,17 @@ import fonts from 'common/constants/fonts'
 
 // the HTML elements
 let $canvas
+let $xcoords
+let $ycoords
 let $context
 let $console
 let $output
 
 // store the HTML elements in the module globals
 export const init = ({ canvas, console, output }) => {
-  $canvas = canvas
+  $xcoords = Array.from(canvas.querySelectorAll('.tsx-canvas-right span'))
+  $ycoords = Array.from(canvas.querySelectorAll('.tsx-canvas-left span'))
+  $canvas = canvas.querySelector('canvas')
   $context = $canvas.getContext('2d')
   $console = console
   $output = output
@@ -35,6 +39,20 @@ export const bounds = () =>
 export const resolution = (width, height) => {
   $canvas.width = width
   $canvas.height = height
+}
+
+// set the virtual canvas dimensions (updates coordinates display)
+export const canvas = (startx, starty, sizex, sizey) => {
+  $xcoords[0].innerHTML = startx
+  $xcoords[1].innerHTML = Math.round((startx + sizex) / 4)
+  $xcoords[2].innerHTML = Math.round((startx + sizex) / 2)
+  $xcoords[3].innerHTML = Math.round((startx + sizex) / 4 * 3)
+  $xcoords[4].innerHTML = Math.round((startx + sizex) - 1)
+  $ycoords[0].innerHTML = startx
+  $ycoords[1].innerHTML = Math.round((starty + sizey) / 4)
+  $ycoords[2].innerHTML = Math.round((starty + sizey) / 2)
+  $ycoords[3].innerHTML = Math.round((starty + sizey) / 4 * 3)
+  $ycoords[4].innerHTML = Math.round((starty + sizey) - 1)
 }
 
 // set the canvas cursor

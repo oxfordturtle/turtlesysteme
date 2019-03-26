@@ -1,0 +1,61 @@
+.tsx-controls {
+  display: flex;
+  margin-bottom: $padding;
+  .tsx-program-controls, .tsx-machine-controls {
+    display: flex;
+    background: #fff;
+    color: $black;
+    padding: $padding;
+  }
+  .tsx-program-controls {
+    flex: 1;
+    margin-right: $padding;
+    .tsx-language-select {
+      margin-right: $padding;
+    }
+    .tsx-filename-input {
+      flex: 1;
+      text-align: center;
+    }
+  }
+  .tsx-machine-controls {
+    width: $padding + $canvas-coords-width + $canvas-width + $padding;
+    font-size: 12px;
+    .tsx-run-halt-button, .tsx-play-pause-button {
+      margin-right: $padding;
+    }
+    .tsx-run-halt-button {
+      width: 4em;
+      font-weight: bold;
+    }
+    .tsx-play-pause-button {
+      width: 2.5em;
+    }
+    .tsx-turtle-properties {
+      flex: 1;
+      display: flex;
+      justify-content: flex-end;
+      margin: 0;
+      dd, dt {
+        margin: 0;
+        padding: $padding * 2;
+        text-align: center;
+      }
+      dt {
+        font-weight: bold;
+      }
+      dd {
+        background: $lightgray;
+        &.tsx-turtxy {
+          width: 3.75em;
+        }
+        &.tsx-turtd {
+          width: 2.8em;
+        }
+        &.tsx-turttc {
+          width: 2.6em;
+        }
+      }
+    }
+  }
+}

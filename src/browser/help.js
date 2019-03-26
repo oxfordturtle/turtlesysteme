@@ -23,7 +23,7 @@ const language = document.createElement('div')
 language.classList.add('tsx-controls')
 language.appendChild(languageSelect)
 
-const help = create('tsx-system-tabs', [
+const help = create([
   { label: 'Commands', active: true, content: [commands] },
   { label: 'Basics', active: false, content: [basics] },
   { label: 'Structures', active: false, content: [structures] },

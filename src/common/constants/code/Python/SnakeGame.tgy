@@ -29,13 +29,13 @@ def main():
   crash=False
   while not crash:
     noupdate()
-    if (abs(?key)==\\up) and (turtd!=2):
+    if (abs(?key)==\up) and (turtd!=2):
       direction(0)
-    if (abs(?key)==\\right) and (turtd!=3):
+    if (abs(?key)==\right) and (turtd!=3):
       direction(1)
-    if (abs(?key)==\\down) and (turtd!=0):
+    if (abs(?key)==\down) and (turtd!=0):
       direction(2)
-    if (abs(?key)==\\left) and (turtd!=1):
+    if (abs(?key)==\left) and (turtd!=1):
       direction(3)
     forward(1)
     if (turtx<0) or (turtx>=boardsize) or (turty<0) or (turty>=boardsize):

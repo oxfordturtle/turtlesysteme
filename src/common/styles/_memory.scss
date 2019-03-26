@@ -1,0 +1,9 @@
+.tsx-memory-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border: 1px solid $gray;
+  &:not(:last-child) {
+    margin-bottom: $padding;
+  }
+}

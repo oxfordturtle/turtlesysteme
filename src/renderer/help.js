@@ -17,7 +17,7 @@ export default (tsx) => {
   tsx.appendChild(help)
 }
 
-const help = create('tsx-system-tabs', [
+const help = create([
   { label: 'Commands', active: true, content: [commands] },
   { label: 'Basics', active: false, content: [basics] },
   { label: 'Structures', active: false, content: [structures] },

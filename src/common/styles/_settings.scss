@@ -1,0 +1,34 @@
+.tsx-settings {
+  height: 100%;
+  padding: $padding;
+  border: $padding solid $darkgray;
+  display: flex;
+  flex-direction: column;
+  .tsx-option {
+    flex: 1;
+    font-size: .875em;
+    border: 1px solid $gray;
+    background: $lightgray;
+    &:not(:last-child) {
+      margin-bottom: $padding;
+    }
+    label {
+      padding: .25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-weight: bold;
+      input {
+        width: 8em;
+        font-weight: normal !important;
+        text-align: right;
+      }
+    }
+    p {
+      text-align: justify;
+      font-style: italic;
+      padding: $padding * 2;
+      margin: 0;
+    }
+  }
+}

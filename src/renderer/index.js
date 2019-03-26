@@ -7,12 +7,11 @@ import help from './help'
 import settings from './settings'
 import system from './system'
 import { send } from 'common/system/state'
-import 'common/styles/tsx.scss'
+import 'common/styles/electron.scss'
 
 // grab the #tsx element and add style classes
 const tsx = document.getElementById('app')
 tsx.classList.add('tsx')
-document.body.parentElement.classList.add('tsx-electron')
 
 // setup the page
 switch (remote.getCurrentWindow().page) {

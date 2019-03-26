@@ -13,6 +13,9 @@ export default (needed, found, lexeme) => {
   // if STRING is needed, CHAR is ok
   if ((needed === 'string') && (found === 'char')) return
 
+  // if CHAR is needed, STRING of length 1 is ok
+  if ((needed === 'char') && (found === 'string') && (lexeme.value.length === 1)) return
+
   // if BOOLINT is needed, either BOOLEAN or INTEGER is ok
   if (needed === 'boolint' && (found === 'boolean' || found === 'integer')) return
 
