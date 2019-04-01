@@ -140,7 +140,7 @@ const colour = (code) => {
 
 // native keycode constants
 const keycode = (code) => {
-  const test = code.match(/^(\\[#a-z0-9]+)/i)
+  const test = code.match(/^(\\[#a-z0-9]+)/)
   return test ? { type: 'keycode', content: test[0] } : false
 }
 

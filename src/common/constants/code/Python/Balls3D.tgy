@@ -1,28 +1,28 @@
 # Balls3D
 
-def main():
-  global turtc
-  setxy(250, 250)
-  colour(0x00FFFF)
-  for count in range(240, 0, -1):
-    blot(count)
-    turtc = turtc + 0x10000
-  right(60)
-  setxy(750, 250)
-  colour(0xD2691E)
-  for count in range(40, 0, -1):
-    blot(count * 6)
-    forward(3)
-    turtc=turtc + 0x10102
-  setxy(250, 750)
-  colour(0xD2691E)
-  for count in range(40, 0, -1):
-    blot(count * 6)
-    forward(3)
-    turtc = turtc + 0x10102
-  setxy(750, 750)
-  colour(0xFFA500)
-  for count in range(80, 0, -1):
-    blot(count * 3)
-    forward(2)
-    turtc = turtc + 0x101
+count: int
+
+setxy(250, 250)
+colour(0x00FFFF)
+for count in range(240, 0, -1):
+  blot(count)
+  turtc = turtc + 0x10000
+right(60)
+setxy(750, 250)
+colour(0xD2691E)
+for count in range(40, 0, -1):
+  blot(count * 6)
+  forward(3)
+  turtc=turtc + 0x10102
+setxy(250, 750)
+colour(0xD2691E)
+for count in range(40, 0, -1):
+  blot(count * 6)
+  forward(3)
+  turtc = turtc + 0x10102
+setxy(750, 750)
+colour(0xFFA500)
+for count in range(80, 0, -1):
+  blot(count * 3)
+  forward(2)
+  turtc = turtc + 0x101

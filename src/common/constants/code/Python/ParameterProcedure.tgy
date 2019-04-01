@@ -1,12 +1,13 @@
 # ParameterProcedure
 
-def prong(length):
+count: int
+
+def prong(length: int):
   forward(length)
   blot(length // 20)
   back(length)
 
-def main():
-  for count in range(360, 0, -1):
-    randcol(10)
-    prong(count + 100)
-    right(61)
+for count in range(360, 0, -1):
+  randcol(10)
+  prong(count + 100)
+  right(61)

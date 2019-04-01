@@ -22,9 +22,7 @@ export default (lexemes) => {
   let state = 'program'
 
   // loop through the lexemes
-  let count = 0
-  while (lex < lexemes.length && count < 10000) {
-    count += 1
+  while (lex < lexemes.length) {
     switch (state) {
       case 'program':
         // expecting "PROGRAM <identifier>"

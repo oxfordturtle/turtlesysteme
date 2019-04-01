@@ -1,7 +1,9 @@
 # DigitalClock
 
+hours: int = 0
+minutes: int = 0
+
 def showtime():
-  global hours, minutes
   setxy(300, 430)
   box(400, 130, white, False)
   if hours < 10:
@@ -14,21 +16,17 @@ def showtime():
     mstring = str(minutes)
   print(hstring + ':' + mstring, 19, 100)
 
-def main():
-  global hours, minutes
-  blank(lightgreen)
-  setxy(250, 390)
-  colour(maroon)
-  thickness(10)
-  box(500, 210, lightbrown, True)
-  colour(black)
-  hours = 0
-  minutes = 0
-  while hours < 12:
-    showtime()
-    pause(600)
-    inc(minutes)
-    if minutes == 60:
-      inc(hours)
-      minutes = 0
+blank(lightgreen)
+setxy(250, 390)
+colour(maroon)
+thickness(10)
+box(500, 210, lightbrown, True)
+colour(black)
+while hours < 12:
   showtime()
+  pause(600)
+  minutes = minutes + 1
+  if minutes == 60:
+    hours = hours + 1
+    minutes = 0
+showtime()

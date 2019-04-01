@@ -1,7 +1,13 @@
 # AutoCannon
 
+gunlength: int = 1000
+distancecol: int = green
+timecol: int = red
+steps: int = 0
+n: int
+
 def graphaxes():
-  global distancecol, timecol
+  n: int
   thickness(5)
   setxy(9700, 600)
   drawxy(0, 3900)
@@ -26,13 +32,12 @@ def graphaxes():
   setxy(9600, 100)
   print('Time', 2, 24)
 
-def plot(x, y, col):
+def plot(x: int, y: int, col: int):
   setxy(700 + x * 100, 4500 - y * 2 / 5)
   colour(col)
   blot(40)
 
-def aim(elevation):
-  global gunlength
+def aim(elevation: int):
   noupdate()
   setxy(0, 10000)
   colour(cream)
@@ -49,12 +54,12 @@ def aim(elevation):
   blot(100)
   update()
 
-def fire(xvel, yvel, gravity, floor):
-  global turtx, turty
+def fire(xvel: int, yvel: int, gravity: int, floor: int):
+  global steps, turty
   setxy(250, 9750)
   steps = 0
   while (turty != floor):
-    inc(steps)
+    steps = steps + 1
     if (pixcol(turtx, turty) == black):
       colour(white)
       blot(80)
@@ -69,21 +74,15 @@ def fire(xvel, yvel, gravity, floor):
     pause(10)
     noupdate()
 
-def main():
-  global turtd, turtx
-  gunlength = 1000
-  distancecol = green
-  timecol = red
-  steps = 0
-  canvas(0, 0, 10500, 10000)
-  graphaxes()
-  turtd = 45
-  thickness(20)
-  for n in range(0, 91, 1):
-    aim(n)
-    write('Elevation: ' + str(90 - turtd))
-    fire(cos(90 - turtd, 1, 96), sin(90 - turtd, 1, -96), 1, 9950)
-    write('  Distance: ' + str(turtx))
-    writeline('  Time: ' + str(steps))
-    plot(90 - turtd, turtx, distancecol)
-    plot(90 - turtd, steps * 50, timecol)
+canvas(0, 0, 10500, 10000)
+graphaxes()
+turtd = 45
+thickness(20)
+for n in range(0, 91, 1):
+  aim(n)
+  write('Elevation: ' + str(90 - turtd))
+  fire(cos(90 - turtd, 1, 96), sin(90 - turtd, 1, -96), 1, 9950)
+  write('  Distance: ' + str(turtx))
+  writeline('  Time: ' + str(steps))
+  plot(90 - turtd, turtx, distancecol)
+  plot(90 - turtd, steps * 50, timecol)

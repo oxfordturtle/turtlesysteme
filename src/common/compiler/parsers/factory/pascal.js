@@ -213,15 +213,16 @@ const fulltype = (lexemes, lex, routine, parameter, byref) => {
 
     case 'array':
       throw error('The Turtle System E does not yet support arrays. This feature will be added soon. In the meantime, please use the Turtle System D.', lexemes[lex])
-      /*return parameter
+      /* return parameter
         ? arrayParameterType(lexemes, lex + 1, routine, byref)
-        : arrayVariableType(lexemes, lex + 1, routine)*/
+        : arrayVariableType(lexemes, lex + 1, routine) */
 
     default:
       throw error('{lex} is not a valid variable type (expected "array", "boolean", "char", "integer", or "string").', type)
   }
 }
 
+/*
 // look for "of <fulltype>" (following "array" in parameter declaration)
 const arrayParameterType = (lexemes, lex, routine, byref) => {
   // error checking
@@ -336,6 +337,7 @@ const arrayVariableType = (lexemes, lex, routine) => {
     fulltype: factory.fulltype('array', endValue - startValue + 1, startValue, result.fulltype)
   }
 }
+*/
 
 // look for "identifier[(parameters)]"
 export const subroutine = (lexemes, lex, type, parent) => {

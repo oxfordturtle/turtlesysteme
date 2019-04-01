@@ -1,7 +1,11 @@
 # TrigonometricGraphs
 
+xorigin: int = 500
+yorigin: int = 500
+halfwidth: int = 400
+yscale: int = 200
+
 def axes():
-  global yscale, xorigin, yorigin, halfwidth
   thickness(3)
   setxy(xorigin - halfwidth, yorigin)
   drawxy(halfwidth * 2, 0)
@@ -28,7 +32,9 @@ def axes():
   print('180', 0, 20)
 
 def sinecurve():
-  global yscale, xorigin, yorigin, halfwidth
+  degrees: int
+  x: int
+  y: int
   for degrees in range(-180, 181, 1):
     x = xorigin + divmult(degrees, 180, halfwidth)
     y = yorigin - sin(degrees, 1, yscale)
@@ -36,7 +42,9 @@ def sinecurve():
   polyline(361)
 
 def cosinecurve():
-  global yscale, xorigin, yorigin, halfwidth
+  degrees: int
+  x: int
+  y: int
   for degrees in range(-180, 181, 1):
     x = xorigin + divmult(degrees, 180, halfwidth)
     y = yorigin - cos(degrees, 1, yscale)
@@ -44,37 +52,32 @@ def cosinecurve():
   polyline(361)
 
 def tancurve():
-  global yscale, xorigin, yorigin, halfwidth
+  degrees: int
+  x: int
+  y: int
   for degrees in range(-180, 181, 1):
     if degrees == -90:
       polyline(90)
+    elif degrees == 90:
+      polyline(179)
     else:
-      if degrees == 90:
-        polyline(179)
-      else:
-        x = xorigin + divmult(degrees, 180, halfwidth)
-        y = yorigin - tan(degrees, 1, yscale)
-        setxy(x, y)
+      x = xorigin + divmult(degrees, 180, halfwidth)
+      y = yorigin - tan(degrees, 1, yscale)
+      setxy(x, y)
   polyline(90)
 
-def main():
-  global xorigin, yorigin, halfwidth, yscale
-  xorigin = 500
-  yorigin = 500
-  halfwidth = 400
-  yscale = 200
-  axes()
-  noupdate()
-  thickness(4)
-  colour(green)
-  setxy(20, 800)
-  print('sine', 16, 40)
-  sinecurve()
-  colour(red)
-  setxy(20, 860)
-  print('cosine', 16, 40)
-  cosinecurve()
-  colour(blue)
-  setxy(20, 920)
-  print('tangent', 16, 40)
-  tancurve()
+axes()
+noupdate()
+thickness(4)
+colour(green)
+setxy(20, 800)
+print('sine', 16, 40)
+sinecurve()
+colour(red)
+setxy(20, 860)
+print('cosine', 16, 40)
+cosinecurve()
+colour(blue)
+setxy(20, 920)
+print('tangent', 16, 40)
+tancurve()

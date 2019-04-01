@@ -9,8 +9,8 @@ REPEAT
 UNTIL FALSE
 END
 
-DEF PROCdrawit(blot%)
-  IF blot% THEN
+DEF PROCdrawit(doblot%)
+  IF doblot% THEN
     RNDCOL(10)
     BLOT(25)
   ELSE

@@ -1,9 +1,7 @@
 # Flashlights
 
-def drawit(blob):
-  temp = 0
-  temp = blob
-  if blob:
+def drawit(doblot: bool):
+  if doblot:
     randcol(10)
     blot(25)
   else:
@@ -12,10 +10,9 @@ def drawit(blob):
     randcol(10)
     circle(25)
 
-def main():
-  blot(1000)
-  thickness(8)
-  while True:
-    setx(randint(1, 8) * 111)
-    sety(randint(1, 8) * 111)
-    drawit(randint(0, 1) == 1)
+blot(1000)
+thickness(8)
+while True:
+  setx(randint(1, 8) * 111)
+  sety(randint(1, 8) * 111)
+  drawit(randint(0, 1) == 1)

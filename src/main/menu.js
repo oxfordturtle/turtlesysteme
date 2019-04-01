@@ -1,18 +1,20 @@
 /*
 Required by main/index.js; handles the system menu.
 */
-import { app, dialog, ipcMain, Menu, systemPreferences } from 'electron'
+import { dialog, ipcMain, Menu, systemPreferences } from 'electron'
 import { readFile } from 'fs'
 import { show, windows } from './windows'
 import * as examples from 'common/constants/examples'
 
 // disable dication and emoji items in edit menu on macos
-systemPreferences.setUserDefault('NSDisabledDictationMenuItem', 'boolean', true)
-systemPreferences.setUserDefault('NSDisabledCharacterPaletteMenuItem', 'boolean', true)
+if (process.platform === 'darwin') {
+  systemPreferences.setUserDefault('NSDisabledDictationMenuItem', 'boolean', true)
+  systemPreferences.setUserDefault('NSDisabledCharacterPaletteMenuItem', 'boolean', true)
+}
 
 // system menu
 const systemMenu = {
-  label: 'Turtle System X',
+  label: 'Turtle System E',
   submenu: [
     {
       type: 'radio',

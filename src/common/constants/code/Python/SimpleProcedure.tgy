@@ -5,12 +5,10 @@ def prong():
   blot(20)
   back(400)
 
-def main():
-  global turtd
+randcol(10)
+prong()
+right(61)
+while turtd != 0:
   randcol(10)
   prong()
   right(61)
-  while turtd != 0:
-    randcol(10)
-    prong()
-    right(61)

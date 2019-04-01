@@ -1,6 +1,6 @@
 # Sierpinski
 
-def triangle(x1, y1, x2, y2, x3, y3):
+def triangle(x1: int, y1: int, x2: int, y2: int, x3: int, y3: int):
   setxy(x1, y1)
   setxy(x2, y2)
   setxy(x3, y3)
@@ -23,7 +23,6 @@ def triangle(x1, y1, x2, y2, x3, y3):
     triangle(x2, y2, x23, y23, x12, y12)
     triangle(x3, y3, x31, y31, x23, y23)
 
-def main():
-  blank(cream)
-  thickness(1)
-  triangle(400, 138, 843, 650, 179, 778)
+blank(cream)
+thickness(1)
+triangle(400, 138, 843, 650, 179, 778)

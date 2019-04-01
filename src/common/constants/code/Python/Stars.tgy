@@ -1,6 +1,9 @@
 # Stars
 
-def star(points, col):
+n: int
+
+def star(points: int, col: int):
+  count: int
   angles(points * 2)
   for count in range(0, points, 1):
     forward(450)
@@ -14,8 +17,7 @@ def star(points, col):
   colour(col)
   polygon(points * 2)
 
-def main():
-  penup()
-  for n in range(3, 13, 1):
-    star(n, rgb(n - 2))
-    pause(500)
+penup()
+for n in range(3, 13, 1):
+  star(n, rgb(n - 2))
+  pause(500)

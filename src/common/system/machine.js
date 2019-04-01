@@ -1008,14 +1008,14 @@ const execute = (pcode, line, code, options) => {
         break
 
       case pc.kech:
-        a = (stack.pop() === -1) // -1 for TRUE
+        a = (stack.pop() !== 0)
         runtime.keyecho = a
         break
 
       case pc.outp:
-        c = (stack.pop() === -1) // -1 for TRUE
+        c = (stack.pop() !== 0)
         b = stack.pop()
-        a = (stack.pop() === -1) // -1 for TRUE
+        a = (stack.pop() !== 0)
         component.output(a, hex(b))
         if (c) {
           replies.show('output')
@@ -1026,7 +1026,7 @@ const execute = (pcode, line, code, options) => {
 
       case pc.cons:
         b = stack.pop()
-        a = (stack.pop() === -1) // -1 for TRUE
+        a = (stack.pop() !== 0)
         component.console(a, hex(b))
         break
 
@@ -1506,7 +1506,7 @@ const execute = (pcode, line, code, options) => {
         break
 
       case pc.box:
-        d = (stack.pop() === -1) // border (-1 for TRUE)
+        d = (stack.pop() !== 0) // border
         c = stack.pop() // fill colour
         b = memory[memory[0] + 2] + stack.pop() // end y coordinate
         a = memory[memory[0] + 1] + stack.pop() // end x coordinate

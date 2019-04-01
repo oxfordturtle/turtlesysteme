@@ -1,7 +1,7 @@
 # PolygonRings
 
-def annulus(inner, width, angle):
-  global turtc
+def annulus(inner: int, width: int, angle: int):
+  count: int
   for count in range(0, 360 // angle + 1, 1):
     forward(inner + width)
     back(width)
@@ -14,12 +14,11 @@ def annulus(inner, width, angle):
     polygon(4)
     back(inner + width)
 
-def main():
-  penup()
-  blot(500)
-  randcol(6)
-  annulus(410, 80, 2)
-  annulus(310, 80, 3)
-  annulus(210, 80, 5)
-  annulus(110, 80, 7)
-  annulus(10, 80, 1)
+penup()
+blot(500)
+randcol(6)
+annulus(410, 80, 2)
+annulus(310, 80, 3)
+annulus(210, 80, 5)
+annulus(110, 80, 7)
+annulus(10, 80, 1)

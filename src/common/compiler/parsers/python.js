@@ -24,21 +24,74 @@ export default (lexemes) => {
   routines.push(routine)
   routineStack.push(routine)
 
-  // loop through lexemes
+  // loop through the lexemes
   while (lex < lexemes.length) {
     switch (state) {
       case 'crossroads':
         // expecting 'global', 'nonlocal', 'def', or routine commands
-        ({ lex, state } = crossroads(lexemes, lex, routine))
+        if (!lexemes[lex]) return routines
+
+        if (!routine.indent) {
+          // set the base indent for this routine from the current lexeme
+          routine.indent = lexemes[lex].offset
+        } else {
+          // otherwise check it matches the base indent
+          if (lexemes[lex].offset < routine.indent) {
+            throw error('There are not enough spaces before {lex}.', lexemes[lex])
+          }
+          if (lexemes[lex].offset > routine.indent) {
+            throw error('There are too many spaces before {lex}.', lexemes[lex])
+          }
+        }
+
+        // do different things depending on the lexeme
+        switch (lexemes[lex].content) {
+          // global variable declarations
+          case 'global':
+            lex += 1
+            state = 'global'
+            break
+
+          // nonlocal variable definitions
+          case 'nonlocal':
+            lex += 1
+            state = 'nonlocal'
+            break
+
+          // subroutine definitions
+          case 'def':
+            lex += 1
+            state = 'def'
+            break
+
+          // anything else
+          default:
+            state = 'commands'
+            break
+        }
         break
 
       case 'global':
         // expecting comma separated list of global variables on the same line
+        // error checking
+        if (routine.index === 0) {
+          throw error('Global variables are only allowed in subroutines.', lexemes[lex])
+        }
+        if (routine.subroutines.length > 0) {
+          throw error('Global variables must be declared before any subroutine definitions.', lexemes[lex])
+        }
         ({ lex, state } = globals(lexemes, lex, routine))
         break
 
       case 'nonlocal':
         // expecting comma separated list of nonlocal variables
+        // error checking
+        if (routine.index === 0) {
+          throw error('Nonlocal variables are only allowed in subroutines.', lexemes[lex])
+        }
+        if (routine.subroutines.length > 0) {
+          throw error('Nonlocal variables must be declared before any subroutine definitions.', lexemes[lex])
+        }
         ({ lex, state } = nonlocals(lexemes, lex, routine))
         break
 
@@ -65,72 +118,8 @@ export default (lexemes) => {
     }
   }
 
-  // finally, if the program has no commands, check for a 'main' subroutine, and fix the main
-  // program so that it calls it
-  if (routines[0].lexemes.length === 0) {
-    if (routines.some(x => x.name === 'main')) {
-      routines[0].lexemes = [
-        { type: 'identifier', content: 'main', indent: 0 },
-        { type: 'punctuation', content: '(', indent: 0 },
-        { type: 'punctuation', content: ')', indent: 0 }
-      ]
-    } else {
-      throw error('Program must have some commands or define a "main" procedure.', lexemes[lexemes.length - 1])
-    }
-  }
-
   // return the routines array
   return routines
-}
-
-// crossroads (expecing 'global', 'nonlocal', 'def', or subroutine commands)
-const crossroads = (lexemes, lex, routine) => {
-  if (!lexemes[lex]) throw error('No commands given.', lexemes[lex - 1])
-
-  if (!routine.indent) {
-    // set the base indent for this routine from the current lexeme
-    routine.indent = lexemes[lex].offset
-  } else {
-    // otherwise check it matches the base indent
-    if (lexemes[lex].offset < routine.indent) throw error('Not enough indentation.', lexemes[lex])
-    if (lexemes[lex].offset > routine.indent) throw error('Too much indentation.', lexemes[lex])
-  }
-
-  // do different things depending on the lexeme
-  switch (lexemes[lex].content) {
-    // global variable declarations
-    case 'global':
-      // error checking
-      if (routine.index === 0) {
-        throw error('Global variables are only allowed in subroutines.', lexemes[lex])
-      }
-      if (routine.subroutines.length > 0) {
-        throw error('Global variables must be declared before any subroutine definitions.', lexemes[lex])
-      }
-      return { lex: lex + 1, state: 'global' }
-
-    // nonlocal variable definitions
-    case 'nonlocal':
-      // error checking
-      if (routine.index === 0) {
-        throw error('Nonlocal variables are only allowed in subroutines.', lexemes[lex])
-      }
-      if (routine.subroutines.length > 0) {
-        throw error('Nonlocal variables must be declared before any subroutine definitions.', lexemes[lex])
-      }
-      return { lex: lex + 1, state: 'nonlocal' }
-
-    // subroutine definitions
-    case 'def':
-      if (routine.lexemes.length > 0) {
-        throw error('Subroutine definitions must come before the routine\'s commands', lexemes[lex])
-      }
-      return { lex: lex + 1, state: 'def' }
-
-    // anything else
-    default:
-      return { lex, state: 'commands' }
-  }
 }
 
 // globals (expecting comma separated list of globals on the same line)

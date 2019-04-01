@@ -1,24 +1,23 @@
 # SimpleDraw
 
 def palette():
+  col: int
   for col in range(1, 11, 1):
     setxy(col * 100 - 50, 950)
     colour(rgb(col))
     blot(50)
 
-def main():
-  global turtx, turty
-  palette()
-  home()
-  thickness(10)
-  blot(2)
-  while True:
-    while not((?lmouse > 0) or (?rmouse > 0)):
-      update()
-    if ?mousey > 900:
-      colour(rgb(?mousex // 100 + 1))
+palette()
+home()
+thickness(10)
+blot(2)
+while True:
+  while not((?lmouse > 0) or (?rmouse > 0)):
+    update()
+  if ?mousey > 900:
+    colour(rgb(?mousex // 100 + 1))
+  else:
+    if ?lmouse > 0:
+      drawxy(?mousex - turtx, ?mousey - turty)
     else:
-      if ?lmouse > 0:
-        drawxy(?mousex - turtx, ?mousey - turty)
-      else:
-        setxy(?mousex, ?mousey)
+      setxy(?mousex, ?mousey)

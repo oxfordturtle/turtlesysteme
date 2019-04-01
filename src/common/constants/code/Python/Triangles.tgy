@@ -1,6 +1,6 @@
 # Triangles
 
-def triangle(size):
+def triangle(size: int):
   if size >= 2:
     forward(size)
     triangle(size // 2)
@@ -12,6 +12,5 @@ def triangle(size):
     triangle(size // 2)
     right(120)
 
-def main():
-  movexy(-100, 150)
-  triangle(256)
+movexy(-100, 150)
+triangle(256)

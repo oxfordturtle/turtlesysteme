@@ -1,7 +1,20 @@
 # IFSBackground
 
-def background(rad):
-  global gridscale, gridthick
+xleft = 0
+xright = 999
+ytop = 0
+ybottom = 999
+gridscale = 5
+gridthick = 64
+
+def background(rad: int):
+  x: int
+  y: int
+  cx: int
+  cy: int
+  r: int
+  g: int
+  b: int
   thickness(gridthick)
   colour(darkgrey)
   for x in range(1, gridscale, 1):
@@ -25,13 +38,6 @@ def background(rad):
       b = divmult(255, 2 * gridscale - 2, 2 * gridscale - 2 - x - y)
       recolour(cx, cy, (r * 0x10000) + (g * 0x100) + (b * 0x1))
 
-def main():
-  xleft = 0
-  xright = 999
-  ytop = 0
-  ybottom = 999
-  gridscale = 5
-  gridthick = 64
-  canvas(xleft, ytop, xright - xleft + 1, ybottom - ytop + 1)
-  resolution(xright - xleft + 1, ybottom - ytop + 1)
-  background(6)
+canvas(xleft, ytop, xright - xleft + 1, ybottom - ytop + 1)
+resolution(xright - xleft + 1, ybottom - ytop + 1)
+background(6)

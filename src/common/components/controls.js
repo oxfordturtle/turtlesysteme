@@ -19,8 +19,10 @@ element.innerHTML = `
     <input class="tsx-filename-input" data-bind="name-input" type="text" placeholder="filename">
   </div>
   <div class="tsx-machine-controls">
-    <button class="tsx-run-halt-button" data-bind="run-halt">RUN</button>
-    <button class="tsx-play-pause-button" data-bind="play-pause">&#10074;&#10074;</button>
+    <div class="tsx-machine-buttons">
+      <button class="tsx-run-halt-button" data-bind="run-halt">RUN</button>
+      <button class="tsx-play-pause-button" data-bind="play-pause">&#10074;&#10074;</button>
+    </div>
     <dl class="tsx-turtle-properties">
       <dt>X</dt>
       <dd class="tsx-turtxy" data-bind="turtx">500</dd>

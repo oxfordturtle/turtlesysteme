@@ -1,7 +1,8 @@
 # AskInput
 
-def main():
-  name=input('What is your name?')
-  writeline('')
-  writeline('Hello, ' + name + ',')
-  writeline('How are you?')
+name: str
+
+name = input('What is your name?')
+writeline('')
+writeline('Hello, ' + name + ',')
+writeline('How are you?')

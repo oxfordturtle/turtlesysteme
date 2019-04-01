@@ -13,13 +13,16 @@ import * as factory from './factory/factory'
 
 export default (lexemes) => {
   const routines = [] // array of routines (0 being the main program)
-  var lex = 0 // index of current lexeme
-  var inProgram, inProcedure, inFunction, byref // flags
-  var routine, variable // object references
-  // var fnResultLex
-  // var fnResultExp
-  var fnResultLine
-  var state = 'start'
+  let lex = 0 // index of the current lexeme
+  let routine = {} // reference to the current routine
+  let variable = {} // reference to the current variable
+  let inProgram = false
+  let inProcedure = false
+  let inFunction = false
+  let byref = false
+  let state = 'start'
+
+  // loop through the lexemes
   while (lex < lexemes.length) {
     switch (state) {
       case 'start':
@@ -34,10 +37,11 @@ export default (lexemes) => {
         if (lexemes[lex].content === 'DEF') throw error('Subroutines must be defined after program "END".', lexemes[lex])
         state = (lexemes[lex].content === 'DIM') ? 'dim' : 'prog'
         break
+
       case 'dim':
         // TODO
         throw error('The BASIC cmpiler does not yet support DIM variables.', lexemes[lex])
-        break
+
       case 'prog':
         // expecting program commands or "END" (definitions not allowed)
         if (lexemes[lex].content === 'DIM') {
@@ -67,6 +71,7 @@ export default (lexemes) => {
         }
         lex += 1
         break
+
       case 'end':
         // expecting nothing, or the start of a new subroutine
         if (lexemes[lex]) {
@@ -77,13 +82,13 @@ export default (lexemes) => {
           } else {
             // anything else is an error
             if (routine.index === 0) {
-              throw error('No program text can appear after program "END" (except subroutine definitions).',
-              lexemes[lex])
+              throw error('No program text can appear after program "END" (except subroutine definitions).', lexemes[lex])
             }
             throw error('No program text can appear after subroutine end (except further subroutine definitions).', lexemes[lex])
           }
         }
         break
+
       case 'def':
         // expecting subroutine name
         if (!lexemes[lex]) {
@@ -117,6 +122,7 @@ export default (lexemes) => {
           state = 'variables'
         }
         break
+
       case 'parameters':
         if (!lexemes[lex]) {
           throw error('Parameter name expected.', lexemes[lex - 1])
@@ -156,6 +162,7 @@ export default (lexemes) => {
         }
         lex += 1
         break
+
       case 'variables':
         // expecting variable declarations, or the start of the subroutine commands
         if (!lexemes[lex]) {
@@ -176,6 +183,7 @@ export default (lexemes) => {
             state = 'subroutine'
         }
         break
+
       case 'private':
         // expecting comma separated list of private variables
         if (!lexemes[lex]) {
@@ -203,6 +211,7 @@ export default (lexemes) => {
           state = 'variables' // move back
         }
         break
+
       case 'local':
         // expecting comma separated list of local variables
         if (!lexemes[lex]) {
@@ -234,6 +243,7 @@ export default (lexemes) => {
           state = 'variables' // move back
         }
         break
+
       case 'subroutine':
         // expecting subroutine commands
         // DIMs only allowed in the main program
@@ -281,23 +291,27 @@ export default (lexemes) => {
           lex += 1
         }
         break
+
       case 'result':
         if (!lexemes[lex]) {
           throw error('Function return value must be specified.', lexemes[lex - 1])
         }
-        fnResultLine = lexemes[lex].line
-        while (lexemes[lex] && lexemes[lex].line === fnResultLine) {
+        while (inFunction) {
           routine.lexemes.push(lexemes[lex])
           lex += 1
+          if (!lexemes[lex] || lexemes[lex].line > lexemes[lex - 1].line) inFunction = false
         }
-        inFunction = false
         state = 'end'
         break
     }
   }
+
+  // final error checking
   if (inProgram) throw error('Program must finish with "END".', lexemes[lex - 1])
   if (inProcedure) throw error('Procedure must finish with "ENDPROC".', lexemes[lex - 1])
   if (inFunction) throw error('Function must finish with "=expression".', lexemes[lex - 1])
+
+  // return the routines array
   return routines
 }
 
@@ -305,7 +319,7 @@ export default (lexemes) => {
 const exists = (routine, string) =>
   routine.variables.some((x) => ((x.name || x.names.basic) === string))
 
-// get variable fulltype from its name
+// get the fulltype of a variable from its name
 const varFulltype = string => {
   const type = string.slice(-1) === '$' ? 'string' : 'boolint'
   const length = type === 'boolint' ? 0 : 34

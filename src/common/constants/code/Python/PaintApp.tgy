@@ -1,83 +1,84 @@
 # PaintApp
 
-def setbrushwidth(wdth):
-  global brushwidth,brushcolour
-  brushwidth=0
-  colour(black)
-  for count in range(0,5,1):
-    setxy(625+count*50,875)
-    blot(8+count*2)
-  colour(brushcolour)
-  brushwidth=wdth
-  recolour(((brushwidth+16)*25)+25,875,lightred)
+brushwidth: int
+brushcolour: int
 
-def setbrushcolour(clr):
+def setbrushwidth(wdth: int):
+  global brushwidth
+  count: int
+  brushwidth = 0
+  colour(black)
+  for count in range(0, 5, 1):
+    setxy(625 + count * 50, 875)
+    blot(8 + count * 2)
+  colour(brushcolour)
+  brushwidth = wdth
+  recolour(((brushwidth + 16) * 25) + 25, 875, lightred)
+
+def setbrushcolour(clr: int):
   global brushcolour
-  brushcolour=clr
+  brushcolour = clr
   colour(clr)
-  setxy(975,875)
+  setxy(975, 875)
   blot(16)
 
-def paintbrush(x,y):
-  global brushwidth
-  setxy(x,y)
+def paintbrush(x: int, y: int):
+  setxy(x, y)
   blot(brushwidth)
 
-def paintcan(x,y):
-  global brushcolour
-  recolour(x,y,brushcolour)
+def paintcan(x, y):
+  recolour(x, y, brushcolour)
 
 def setup():
+  count: int
 
-  def square(col):
-    movexy(50,0)
-    movexy(0,50)
-    movexy(-50,0)
-    movexy(0,-50)
+  def square(col: int):
+    movexy(50, 0)
+    movexy(0, 50)
+    movexy(-50, 0)
+    movexy(0, -50)
     colour(col)
     polygon(4)
 
-  def text(s):
+  def text(s: str):
     colour(black)
-    print(s,0,20)
+    print(s, 0, 20)
 
   colour(lightred)
-  setxy(0,850)
-  drawxy(1000,0)
-  setxy(0,900)
-  drawxy(1000,0)
-  setxy(450,850)
-  drawxy(0,50)
-  setxy(850,850)
-  drawxy(0,50)
-  setxy(10,858)
+  setxy(0, 850)
+  drawxy(1000, 0)
+  setxy(0, 900)
+  drawxy(1000, 0)
+  setxy(450, 850)
+  drawxy(0, 50)
+  setxy(850, 850)
+  drawxy(0, 50)
+  setxy(10, 858)
   text('Left-click to draw, right-click to fill')
-  setxy(450+10,858)
+  setxy(450 + 10, 858)
   text('Brush width:')
-  setxy(850+10,858)
+  setxy(850 + 10, 858)
   text('Colour:')
-  setxy(0,900)
-  for count in range(1,21,1):
+  setxy(0, 900)
+  for count in range(1, 21, 1):
     square(rgb(count))
-    movexy(0,50)
-    square(rgb(count+30))
-    movexy(50,-50)
+    movexy(0, 50)
+    square(rgb(count + 30))
+    movexy(50, -50)
   setbrushwidth(8)
   setbrushcolour(black)
 
-def main():
-  global brushwidth,brushcolour
-  setup()
-  while True:
-    if ?lmouse>0:
-      if ?mousey>900:
-        setbrushcolour(pixcol(?mousex,?mousey))
+setup()
+while True:
+  if (?lmouse > 0):
+    if (?mousey > 900):
+      setbrushcolour(pixcol(?mousex, ?mousey))
+    else:
+      if ((?mousey>850) and ((?mousex>600) and (?mousex<850))):
+        setbrushwidth(((?mousex // 50) * 2) - 16)
       else:
-        if ((?mousey>850) and ((?mousex>600) and (?mousex<850))):
-          setbrushwidth(((?mousex//50)*2)-16)
-        else:
-          if ?mousey<850-brushwidth:
-            paintbrush(?mousex,?mousey)
-    if (?rmouse>0) and (?mousey<850):
-      paintcan(?mousex,?mousey)
-    update()
+        if (?mousey < 850 - brushwidth):
+          paintbrush(?mousex, ?mousey)
+  if (?rmouse > 0) and (?mousey < 850):
+    paintcan(?mousex, ?mousey)
+  update()

@@ -1,7 +1,8 @@
 .tsx-usage {
   flex: 1;
   border: 1px solid $gray;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   td, th {
     &:first-child, &:last-child {
       text-align: left;

@@ -1,22 +1,22 @@
 # BouncingBall
 
-def main():
-  x = 100
-  y = 700
-  xvel = 8
-  yvel = -4
-  while 0 < 1:
-    noupdate()
-    colour(white)
-    blot(51)
-    x = x + xvel
-    y = y + yvel
-    setxy(x, y)
-    colour(red)
-    blot(50)
-    update()
-    pause(5)
-    if (x < 50) or (x > 949):
-      xvel = -xvel
-    if (y < 50) or (y > 949):
-      yvel = -yvel
+x: int = 100
+y: int = 700
+xvel: int = 8
+yvel: int = -4
+
+while 0 < 1:
+  noupdate()
+  colour(white)
+  blot(51)
+  x = x + xvel
+  y = y + yvel
+  setxy(x, y)
+  colour(red)
+  blot(50)
+  update()
+  pause(5)
+  if (x < 50) or (x > 949):
+    xvel = -xvel
+  if (y < 50) or (y > 949):
+    yvel = -yvel
