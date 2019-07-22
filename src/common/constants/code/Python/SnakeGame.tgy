@@ -7,17 +7,15 @@ snakelength: int = 2
 crash: bool = False
 
 def newapple():
-  x: int
-  y: int
-  x = randint(0, boardsize - 1)
-  y = randint(0, boardsize - 1)
+  x: int = randint(0, boardsize - 1)
+  y: int = randint(0, boardsize - 1)
   while pixcol(x, y) == snakecolour:
     x = randint(0, boardsize - 1)
     y = randint(0, boardsize - 1)
   pixset(x, y, applecolour)
 
-canvas(0,0,boardsize,boardsize)
-resolution(boardsize,boardsize)
+canvas(0,0,boardsize, boardsize)
+resolution(boardsize, boardsize)
 angles(4)
 blank(lightblue)
 cursor(0)

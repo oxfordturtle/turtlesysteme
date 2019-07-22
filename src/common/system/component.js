@@ -48,7 +48,7 @@ export const canvas = (startx, starty, sizex, sizey) => {
   $xcoords[2].innerHTML = Math.round((startx + sizex) / 2)
   $xcoords[3].innerHTML = Math.round((startx + sizex) / 4 * 3)
   $xcoords[4].innerHTML = Math.round((startx + sizex) - 1)
-  $ycoords[0].innerHTML = startx
+  $ycoords[0].innerHTML = starty
   $ycoords[1].innerHTML = Math.round((starty + sizey) / 4)
   $ycoords[2].innerHTML = Math.round((starty + sizey) / 2)
   $ycoords[3].innerHTML = Math.round((starty + sizey) / 4 * 3)
@@ -228,6 +228,7 @@ export const flood = (x, y, c1, c2, boundary) => {
 export const write = (text) => {
   $output.innerHTML += text
   $console.innerHTML += text
+  $console.scrollTop = $console.scrollHeight
 }
 
 // log text in the console

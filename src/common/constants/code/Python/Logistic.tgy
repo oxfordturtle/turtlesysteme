@@ -11,7 +11,6 @@ r: int
 pop: int
 
 def axes():
-  i: int
   colour(black)
   for i in range(0, 11, 1):
     setxy(i * 100 - 25, 1000)
@@ -29,7 +28,6 @@ def axes():
   print('is determined by the logistic equation P\' = rP(1 - P), with r = ' + qstr(r, 10, 1), 4, 25)
 
 def menu():
-  i: int
   colour(black)
   setxy(10, -tmargin + 20)
   print('Set r:', 4, 25)

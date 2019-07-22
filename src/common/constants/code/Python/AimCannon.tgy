@@ -6,7 +6,6 @@ timecol: int = red
 steps: int = 0
 
 def graphaxes():
-  n: int
   thickness(5)
   setxy(9700, 600)
   drawxy(0, 3900)

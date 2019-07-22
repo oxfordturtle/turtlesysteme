@@ -1,7 +1,5 @@
 # Balls3D
 
-count: int
-
 setxy(250, 250)
 colour(0x00FFFF)
 for count in range(240, 0, -1):

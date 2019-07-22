@@ -1,8 +1,6 @@
 # AskInput
 
-name: str
-
-name = input('What is your name?')
+name: str = input('What is your name?')
 writeline('')
 writeline('Hello, ' + name + ',')
 writeline('How are you?')

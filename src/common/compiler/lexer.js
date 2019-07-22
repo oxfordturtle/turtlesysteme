@@ -4,13 +4,11 @@ lexical analysis; program code (a string) goes in, an array of lexemes comes out
 the lexer first uses the tokenizer to generate an array of tokens; then it checks for lexical
 errors, strips whitespace and comments, and enriches the tokens with more information
 
-lexemes (enriched tokens) look like this: { type, content, value, line, offset }
+lexemes (enriched tokens) look like this: { type, content, value, line }
 
-the types are the same as for token types, except that there are no whitespace or illegal lexemes,
-and the "binary", "octal", "hexadecimal", and "decimal" token types are all just "integer" lexical
-types
-
-the line and offset properties are generated using (and then discarding) the whitespace tokens
+the types are the same as for token types, except that there are no illegal lexemes, whitespace
+is handled differently, and the "binary", "octal", "hexadecimal", and "decimal" token types are
+all just "integer" lexical types
 
 the value property stores the result of evaluating literal value expressions, looking up the
 corresponding integer for predefined colours, keycodes, and input queries, or the pcode associated
@@ -28,57 +26,82 @@ export default (code, language) => {
   // loop through the tokens, pushing lexemes into the lexemes array (or throwing an error)
   let index = 0
   let line = 1
-  let startofline = true
-  let offset = 0
+  let indent = 0
+  let indents = [indent]
   while (index < tokens.length) {
     switch (tokens[index].type) {
       case 'linebreak':
         line += 1
-        startofline = true
-        offset = 0
+        // line breaks are significant in BASIC and Python
+        if (language === 'BASIC' || language === 'Python') {
+          // create a NEWLINE lexeme, unless this is just blank lines at the start of the program
+          if (lexemes[lexemes.length - 1]) {
+            lexemes.push({ type: 'NEWLINE', line: line - 1 })
+          }
+          // move past any additional line breaks, just incrementing the line number
+          while (tokens[index + 1].type === 'linebreak') {
+            index += 1
+            line += 1
+          }
+        }
+
+        // indents are significant in Python
+        if (language === 'Python') {
+          indent = tokens[index + 1].type === 'spaces' ? tokens[index + 1].content.length : 0
+          if (indent > indents[indents.length - 1]) {
+            indents.push(indent)
+            lexemes.push({ type: 'INDENT', line })
+          } else {
+            while (indent < indents[indents.length - 1]) {
+              indents.pop()
+              lexemes.push({ type: 'DEDENT', line })
+            }
+            if (indent !== indents[indents.length - 1]) {
+              throw error(`Inconsistent indentation at line ${line}.`)
+            }
+          }
+        }
         break
 
       case 'spaces':
-        if (startofline) offset = tokens[index].content.length
-        startofline = false
+        // ignore
         break
 
       case 'comment':
-        startofline = false
+        // ignore
         break
 
       case 'unterminated-comment':
-        throw error(messages[0], lexeme(tokens[index], line, offset, language))
+        throw error(messages[0], lexeme(tokens[index], line, language))
 
       case 'unterminated-string':
-        throw error(messages[1], lexeme(tokens[index], line, offset, language))
+        throw error(messages[1], lexeme(tokens[index], line, language))
 
       case 'bad-binary':
-        throw error(messages[2 + errorOffset], lexeme(tokens[index], line, offset, language))
+        throw error(messages[2 + errorOffset], lexeme(tokens[index], line, language))
 
       case 'bad-octal':
-        throw error(messages[5 + errorOffset], lexeme(tokens[index], line, offset, language))
+        throw error(messages[5 + errorOffset], lexeme(tokens[index], line, language))
 
       case 'bad-hexadecimal':
-        throw error(messages[8 + errorOffset], lexeme(tokens[index], line, offset, language))
+        throw error(messages[8 + errorOffset], lexeme(tokens[index], line, language))
 
       case 'bad-decimal':
-        throw error(messages[11], lexeme(tokens[index], line, offset, language))
+        throw error(messages[11], lexeme(tokens[index], line, language))
 
       case 'illegal':
-        throw error(messages[12], lexeme(tokens[index], line, offset, language))
+        throw error(messages[12], lexeme(tokens[index], line, language))
 
       default:
-        startofline = false
-        lexemes.push(lexeme(tokens[index], line, offset, language))
+        lexemes.push(lexeme(tokens[index], line, language))
         break
     }
 
     index += 1
   }
 
-  // return the array of lexemes
-  return lexemes
+  // return the array of lexemes (give NEWLINE, INDENT, and DEDENT some content for error messages)
+  return lexemes.map(x => (x.content === undefined) ? Object.assign(x, { content: x.type }) : x)
 }
 
 // error messages
@@ -99,14 +122,13 @@ const messages = [
 ]
 
 // create a lexeme object
-const lexeme = (token, line, offset, language) =>
+const lexeme = (token, line, language) =>
   ({
     type: type(token.type, token.content),
     // Pascal is case-insensitive, so make everything lowercase for that language
     content: (language === 'Pascal') ? token.content.toLowerCase() : token.content,
     value: value(token.type, token.content, language),
-    line,
-    offset
+    line
   })
 
 // type of a lexeme

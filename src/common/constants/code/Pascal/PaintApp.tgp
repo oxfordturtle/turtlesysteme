@@ -50,7 +50,7 @@ VAR brushwidth: integer;
       polygon(4)
     end;
 
-    procedure text(input: string);
+    procedure text(input: string[40]);
     begin
       colour(black);
       print(input, 0, 20)

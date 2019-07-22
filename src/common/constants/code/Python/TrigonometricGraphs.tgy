@@ -32,38 +32,30 @@ def axes():
   print('180', 0, 20)
 
 def sinecurve():
-  degrees: int
-  x: int
-  y: int
   for degrees in range(-180, 181, 1):
-    x = xorigin + divmult(degrees, 180, halfwidth)
-    y = yorigin - sin(degrees, 1, yscale)
+    x: int = xorigin + divmult(degrees, 180, halfwidth)
+    y: int = yorigin - sin(degrees, 1, yscale)
     setxy(x, y)
   polyline(361)
 
 def cosinecurve():
-  degrees: int
-  x: int
-  y: int
   for degrees in range(-180, 181, 1):
-    x = xorigin + divmult(degrees, 180, halfwidth)
-    y = yorigin - cos(degrees, 1, yscale)
+    x: int = xorigin + divmult(degrees, 180, halfwidth)
+    y: int = yorigin - cos(degrees, 1, yscale)
     setxy(x, y)
   polyline(361)
 
 def tancurve():
-  degrees: int
-  x: int
-  y: int
   for degrees in range(-180, 181, 1):
     if degrees == -90:
       polyline(90)
-    elif degrees == 90:
-      polyline(179)
     else:
-      x = xorigin + divmult(degrees, 180, halfwidth)
-      y = yorigin - tan(degrees, 1, yscale)
-      setxy(x, y)
+      if degrees == 90:
+        polyline(179)
+      else:
+        x: int = xorigin + divmult(degrees, 180, halfwidth)
+        y: int = yorigin - tan(degrees, 1, yscale)
+        setxy(x, y)
   polyline(90)
 
 axes()

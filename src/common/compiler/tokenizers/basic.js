@@ -12,7 +12,7 @@ export default (code) => {
       comment(code) ||
       string(code) ||
       operator(code) ||
-      punctuation(code) ||
+      delimiter(code) ||
       boolean(code) ||
       binary(code) ||
       hexadecimal(code) ||
@@ -57,9 +57,9 @@ const operator = (code) => {
 }
 
 // punctuation
-const punctuation = (code) => {
+const delimiter = (code) => {
   const test = code.match(/^(\(|\)|,|:)/)
-  return test ? { type: 'punctuation', content: test[0] } : false
+  return test ? { type: 'delimiter', content: test[0] } : false
 }
 
 // string literals
@@ -126,7 +126,7 @@ const turtle = (code) => {
 
 // native colour constants
 const colour = (code) => {
-  const test = code.match(/^(TRUE|FALSE|GREEN|DARKGREEN|LIGHTGREEN|SEAGREEN|GREENGREY|GREENGRAY|RED|DARKRED|LIGHTRED|MAROON|REDGREY|REDGRAY|BLUE|DARKBLUE|LIGHTBLUE|ROYAL|BLUEGREY|YELLOW|OCHRE|CREAM|GOLD|YELLOWGREY|YELLOWGRAY|VIOLET|INDIGO|LILAC|PURPLE|DARKGREY|DARKGRAY|LIME|OLIVE|YELLOWGREEN|EMERALD|MIDGREY|MIDGRAY|ORANGE|ORANGERED|PEACH|SALMON|LIGHTGREY|LIGHTGRAY|SKYBLUE|TEAL|CYAN|TURQUOISE|SILVER|BROWN|DARKBROWN|LIGHTBROWN|COFFEE|WHITE|PINK|MAGENTA|LIGHTPINK|ROSE|BLACK)\b/)
+  const test = code.match(/^(GREEN|DARKGREEN|LIGHTGREEN|SEAGREEN|GREENGREY|GREENGRAY|RED|DARKRED|LIGHTRED|MAROON|REDGREY|REDGRAY|BLUE|DARKBLUE|LIGHTBLUE|ROYAL|BLUEGREY|YELLOW|OCHRE|CREAM|GOLD|YELLOWGREY|YELLOWGRAY|VIOLET|INDIGO|LILAC|PURPLE|DARKGREY|DARKGRAY|LIME|OLIVE|YELLOWGREEN|EMERALD|MIDGREY|MIDGRAY|ORANGE|ORANGERED|PEACH|SALMON|LIGHTGREY|LIGHTGRAY|SKYBLUE|TEAL|CYAN|TURQUOISE|SILVER|BROWN|DARKBROWN|LIGHTBROWN|COFFEE|WHITE|PINK|MAGENTA|LIGHTPINK|ROSE|BLACK)\b/)
   return test ? { type: 'colour', content: test[0] } : false
 }
 

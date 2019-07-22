@@ -319,6 +319,7 @@ const reply = (message, data) => {
     reply('name-changed', get('name'))
     reply('code-changed', { code: get('code'), language: get('language') })
     reply('usage-changed', get('usage'))
+    reply('lexemes-changed', get('lexemes'))
     reply('pcode-changed', { pcode: get('pcode'), assembler: get('assembler'), decimal: get('decimal') })
   }
 }
@@ -330,6 +331,7 @@ const set = (item, value) => {
     case 'compiled': // fallthrough
     case 'code': // fallthrough
     case 'usage': // fallthrough
+    case 'lexemes': // fallthrough
     case 'pcode':
       set(`${item}-${get('language')}`, value)
       break
@@ -346,6 +348,7 @@ const get = item => {
     case 'compiled': // fallthrough
     case 'code': // fallthrough
     case 'usage': // fallthrough
+    case 'lexemes': // fallthrough
     case 'pcode':
       return get(`${item}-${get('language')}`)
 
@@ -388,9 +391,11 @@ const maybeCompile = () => {
   if (!get('compiled')) {
     let result = compile(get('code'), get('language'))
     set('usage', result.usage)
+    set('lexemes', result.lexemes)
     set('pcode', result.pcode)
     set('compiled', true)
     reply('usage-changed', result.usage)
+    reply('lexemes-changed', result.lexemes)
     reply('pcode-changed', { pcode: result.pcode, assembler: get('assembler'), decimal: get('decimal') })
   }
 }
@@ -409,6 +414,7 @@ languages.forEach((language) => {
   if (get(`compiled-${language}`) === null) set(`compiled-${language}`, false)
   if (get(`code-${language}`) === null) set(`code-${language}`, '')
   if (get(`usage-${language}`) === null) set(`usage-${language}`, [])
+  if (get(`lexemes-${language}`) === null) set(`lexemes-${language}`, [])
   if (get(`pcode-${language}`) === null) set(`pcode-${language}`, [])
 })
 if (get('assembler') === null) set('assembler', true)

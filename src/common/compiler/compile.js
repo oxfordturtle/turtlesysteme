@@ -18,6 +18,7 @@ import coder from './coder.js'
 export default (code, language) => {
   // get lexemes from the code
   const lexemes = lexer(code, language)
+  console.log(lexemes)
 
   // get routines from the lexemes
   const routines = parser(lexemes, language)
@@ -31,5 +32,5 @@ export default (code, language) => {
   const usage = analyser(lexemes, routines.slice(1), language)
 
   // return usage and pcode
-  return { usage, pcode }
+  return { lexemes, pcode, usage }
 }

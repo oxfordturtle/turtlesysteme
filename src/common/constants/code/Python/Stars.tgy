@@ -1,9 +1,6 @@
 # Stars
 
-n: int
-
 def star(points: int, col: int):
-  count: int
   angles(points * 2)
   for count in range(0, points, 1):
     forward(450)

@@ -1,7 +1,6 @@
 # Polygons
 
 def poly(points: int, col: int):
-  count: int
   direction(90)
   for count in range(0, points, 1):
     forward(600 // points)

@@ -1,6 +1,5 @@
 # MovingBall
 
-count: int
 x: int = 100
 y: int = 700
 

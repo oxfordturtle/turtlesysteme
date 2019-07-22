@@ -8,7 +8,7 @@ import * as find from '../tools/find'
 import * as pcoder from '../tools/pcoder'
 
 // the coder is the default export, but it needs to be named so it can call itself recursively
-const coder = (routine, lex, startLine) => {
+const coder = (routine, lex, startLine, oneLine = false) => {
   let result
 
   switch (routine.lexemes[lex].type) {
@@ -54,24 +54,18 @@ const coder = (routine, lex, startLine) => {
           break
 
         default:
-          throw error('{lex} makes no sense here.', routine.lexemes[lex])
+          throw error('Statement cannot begin with {lex}.', routine.lexemes[lex])
       }
       break
   }
 
-  // end of command check
-  if (routine.lexemes[result.lex]) {
-    // check for a colon or a new line, and move past any colons
-    if (routine.lexemes[result.lex].content !== ':') {
-      if (routine.lexemes[result.lex].line === routine.lexemes[result.lex - 1].line) {
-        if (routine.lexemes[result.lex].content !== 'ELSE') {
-          throw error('Command must be on a new line, or followed by a colon.', routine.lexemes[result.lex - 1])
-        }
-      }
+  // end of statement check
+  // bypass within oneLine IF...THEN...ELSE statement (check occurs at the end of the whole statement)
+  if (!oneLine && routine.lexemes[result.lex]) {
+    if (routine.lexemes[result.lex].content === ':' || routine.lexemes[result.lex].type === 'NEWLINE') {
+      result.lex += 1
     } else {
-      while (routine.lexemes[result.lex] && (routine.lexemes[result.lex].content === ':')) {
-        result.lex += 1
-      }
+      throw error('Statements must be separated by a colon or placed on different lines.', routine.lexemes[result.lex])
     }
   }
 
@@ -106,33 +100,36 @@ const compileIf = (routine, lex, startLine) => {
   }
   lex += 1
 
-  // expecting a command or a block of commands
+  // expecting a statement on the same line or a block of statements on a new line
   if (!routine.lexemes[lex]) {
-    throw error('No commands found after "IF".', routine.lexemes[lex])
+    throw error('No statements found after "IF ... THEN".', routine.lexemes[lex])
   }
-  if (routine.lexemes[lex].line > routine.lexemes[lex - 1].line) {
-    result = block(routine, lex, startLine + 1, 'IF')
+  if (routine.lexemes[lex].type === 'NEWLINE') {
+    result = block(routine, lex + 1, startLine + 1, 'IF')
     oneLine = false
   } else {
-    result = coder(routine, lex, startLine + 1)
     oneLine = true
+    result = coder(routine, lex, startLine + 1, oneLine)
   }
   lex = result.lex
   ifCode = result.pcode
 
   // happy with an "else" here (but it's optional)
   if (routine.lexemes[lex] && routine.lexemes[lex].content === 'ELSE') {
-    if (oneLine && routine.lexemes[lex].line > routine.lexemes[lex - 1].line) {
-      throw error('"ELSE" cannot be on a new line.', routine.lexemes[lex])
-    }
     lex += 1
     if (!routine.lexemes[lex]) {
-      throw error('No commands found after "ELSE".', routine.lexemes[lex])
+      throw error('No statements found after "ELSE".', routine.lexemes[lex])
     }
-    if (routine.lexemes[lex].line > routine.lexemes[lex - 1].line) {
-      result = block(routine, lex, startLine + ifCode.length + 2, 'ELSE')
+    if (oneLine) {
+      if (routine.lexemes[lex].type === 'NEWLINE') {
+        throw error('Statement following "ELSE" cannot be on a new line.', routine.lexemes[lex + 1])
+      }
+      result = coder(routine, lex, startLine + ifCode.length + 2, oneLine)
     } else {
-      result = coder(routine, lex, startLine + ifCode.length + 2)
+      if (routine.lexemes[lex].type !== 'NEWLINE') {
+        throw error('Statement following "ELSE" must be on a new line.', routine.lexemes[lex])
+      }
+      result = block(routine, lex + 1, startLine + ifCode.length + 2, 'ELSE')
     }
     lex = result.lex
     elseCode = result.pcode
@@ -227,12 +224,12 @@ const compileFor = (routine, lex, startLine) => {
     change = 'incr'
   }
 
-  // expecting a command or block of commands
+  // expecting a statement on the same line or a block of statements on a new line
   if (!routine.lexemes[lex]) {
-    throw error('No commands found after "FOR" loop initialisation.', routine.lexemes[lex])
+    throw error('No statements found after "FOR" loop initialisation.', routine.lexemes[lex])
   }
-  if (routine.lexemes[lex - 1].line < routine.lexemes[lex].line) {
-    result = block(routine, lex, startLine + 3, 'FOR')
+  if (routine.lexemes[lex].type === 'NEWLINE') {
+    result = block(routine, lex + 1, startLine + 3, 'FOR')
   } else {
     result = coder(routine, lex, startLine + 3)
   }
@@ -249,13 +246,21 @@ const compileFor = (routine, lex, startLine) => {
 // compile repeat loop
 const compileRepeat = (routine, lex, startLine) => {
   // values we need to generate the REPEAT code
-  let test, innerCode
+  let test
+  let innerCode
 
   // working variable
   let result
 
-  // expecting a block of code
-  result = block(routine, lex, startLine, 'REPEAT')
+  // expecting a statement on the same line or a block of statements on a new line
+  if (!routine.lexemes[lex]) {
+    throw error('No statements found after "REPEAT".', routine.lexemes[lex])
+  }
+  if (routine.lexemes[lex].type === 'NEWLINE') {
+    result = block(routine, lex + 1, startLine, 'REPEAT')
+  } else {
+    result = coder(routine, lex, startLine)
+  }
   lex = result.lex
   innerCode = result.pcode
 
@@ -287,12 +292,12 @@ const compileWhile = (routine, lex, startLine) => {
   lex = result.lex
   test = result.pcode[0]
 
-  // expecting a command or a block of commands
+  // expecting a statement on the same line or a block of statements on a new line
   if (!routine.lexemes[lex]) {
     throw error('No commands found after "WHILE ... DO".', routine.lexemes[lex])
   }
-  if (routine.lexemes[lex].line > routine.lexemes[lex - 1].line) {
-    result = block(routine, lex, startLine + 1, 'WHILE')
+  if (routine.lexemes[lex].type === 'NEWLINE') {
+    result = block(routine, lex + 1, startLine + 1, 'WHILE')
   } else {
     result = coder(routine, lex, startLine + 1)
   }
@@ -306,7 +311,7 @@ const compileWhile = (routine, lex, startLine) => {
 // generate the pcode for a block of commands
 const block = (routine, lex, startLine, startKeyword) => {
   let pcode = []
-  let pcodeTemp
+  let result
   let end = false
 
   // expecting something
@@ -322,14 +327,21 @@ const block = (routine, lex, startLine, startKeyword) => {
       if (routine.lexemes[lex].content !== 'ELSE') lex += 1
     } else {
       // compile the structure
-      pcodeTemp = pcode
-      ;({ lex, pcode } = coder(routine, lex, startLine + pcode.length))
-      pcode = pcodeTemp.concat(pcode)
+      result = coder(routine, lex, startLine + pcode.length)
+      pcode = pcode.concat(result.pcode)
+      lex = result.lex
     }
   }
 
-  // final check
+  // final checks
   if (!end) throw error(`Unterminated "${startKeyword}" statement.`, routine.lexemes[lex - 1])
+  /* if (routine.lexemes[lex + 1]) {
+    if (routine.lexemes[lex + 1].type === 'NEWLINE') {
+      while (routine.lexemes[lex + 1].type === 'NEWLINE') lex += 1
+    } else {
+      throw error('Statement must be on a new line.', routine.lexemes[lex])
+    }
+  } */
 
   // otherwise all good
   return { lex, pcode }

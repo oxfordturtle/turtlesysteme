@@ -22,26 +22,49 @@ const coder = (routine, lex, startLine) => {
   let result
 
   switch (routine.lexemes[lex].type) {
-    // identifiers (variable assignment or procedure call)
+    // identifiers (variable declaration, variable assignment, or procedure call)
     case 'turtle': // fallthrough
     case 'identifier':
-      // wrong assignment operator
-      if (routine.lexemes[lex + 1] && (routine.lexemes[lex + 1].content === '==')) {
-        throw error('Variable assignment in Python uses "=", not "==".', routine.lexemes[lex + 1])
+      if (routine.lexemes[lex + 1] && [':', '=', '=='].includes(routine.lexemes[lex + 1].content)) {
+        // looks like variable declaration and/or assignment
+        let varName = routine.lexemes[lex].content
+        lex += 1
+        // assignment with declaration
+        if (routine.lexemes[lex].content === ':') {
+          // N.B. relevant error checking has already been handled by the parser
+          result = { lex: lex + 2, pcode: [] }
+          lex = result.lex
+        }
+        // wrong assignment operator
+        if (routine.lexemes[lex].content === '==') {
+          throw error('Variable assignment in Python uses "=", not "==".', routine.lexemes[lex])
+        }
+
+        // right assignment operator
+        if (routine.lexemes[lex].content === '=') {
+          result = molecules.variableAssignment(routine, varName, lex + 1, 'Python')
+          lex = result.lex
+        }
+      } else {
+        // should be a procedure call
+        result = molecules.procedureCall(routine, lex, 'Python')
       }
 
-      // right assignment operator
-      if (routine.lexemes[lex + 1] && (routine.lexemes[lex + 1].content === '=')) {
-        result = molecules.variableAssignment(routine, routine.lexemes[lex].content, lex + 2, 'Python')
-        break
+      // end of statement check
+      if (routine.lexemes[result.lex]) {
+        if (routine.lexemes[result.lex].content === ';') {
+          result.lex += 1
+          if (routine.lexemes[result.lex].type === 'NEWLINE') result.lex += 1
+        } else if (routine.lexemes[result.lex].type === 'NEWLINE') {
+          result.lex += 1
+        } else {
+          throw error('Command must be separated by a semicolon or placed on a new line.', routine.lexemes[result.lex])
+        }
       }
-
-      // otherwise it should be a procedure call
-      result = molecules.procedureCall(routine, lex, 'Python')
       break
 
     // keywords
-    case 'keyword':
+    default:
       switch (routine.lexemes[lex].content) {
         // return (assign return variable of a function)
         case 'return':
@@ -53,6 +76,10 @@ const coder = (routine, lex, startLine) => {
           result = compileIf(routine, lex + 1, startLine)
           break
 
+        // else is an error
+        case 'else':
+          throw error('Statement cannot begin with "else". If you have an "if" above, this line may need to be indented more.', routine.lexemes[lex])
+
         // start of FOR structure
         case 'for':
           result = compileFor(routine, lex + 1, startLine)
@@ -63,19 +90,11 @@ const coder = (routine, lex, startLine) => {
           result = compileWhile(routine, lex + 1, startLine)
           break
 
+        // anything else is an error
         default:
-          throw error('{lex} makes no sense here.', routine.lexemes[lex])
+          throw error('Statement cannot begin with {lex}.', routine.lexemes[lex])
       }
       break
-
-    // any thing else is a mistake
-    default:
-      throw error('{lex} makes no sense here.', routine.lexemes[lex])
-  }
-
-  // end of command check
-  if (routine.lexemes[result.lex] && routine.lexemes[result.lex].line === routine.lexemes[result.lex - 1].line) {
-    throw error('Command must be on a new line.', routine.lexemes[result.lex])
   }
 
   // all good
@@ -92,68 +111,82 @@ const compileIf = (routine, lex, startLine) => {
   // working variable
   let result
 
-  // expecting a boolean expression on the same line
+  // expecting a boolean expression
   if (!routine.lexemes[lex]) {
-    throw error('if01', routine.lexemes[lex - 1])
-  }
-  if (!isSameLine(routine.lexemes, lex)) {
-    throw error('if02', routine.lexemes[lex])
+    throw error('"if" must be followed by a Boolean expression.', routine.lexemes[lex - 1])
   }
   result = molecules.expression(routine, lex, 'null', 'boolean', 'Python')
   lex = result.lex
   test = result.pcode[0]
 
-  // expecting a colon on the same line
+  // expecting a colon
   if (!routine.lexemes[lex]) {
-    throw error('if03', routine.lexemes[lex - 1])
-  }
-  if (!isSameLineContent(routine.lexemes, lex, ':')) {
-    throw error('if04', routine.lexemes[lex])
+    throw error('"if <expression>" must be followed by a colon.', routine.lexemes[lex - 1])
   }
   lex += 1
 
-  // expecting some commands indented on a new line
+  // expecting NEWLINE
   if (!routine.lexemes[lex]) {
-    throw error('if05', routine.lexemes[lex - 1])
+    throw error('No statements found after "if <expression>:".', routine.lexemes[lex - 1])
   }
-  if (isSameLine(routine.lexemes, lex)) {
-    throw error('if06', routine.lexemes[lex])
+  if (routine.lexemes[lex].type !== 'NEWLINE') {
+    throw error('Statements following "if <expression>:" must be on a new line.', routine.lexemes[lex])
   }
-  if (!isIndented(routine.lexemes, lex)) {
-    throw error('if07', routine.lexemes[lex])
+  lex += 1
+
+  // expecting INDENT
+  if (!routine.lexemes[lex]) {
+    throw error('No statements found after "if <expression>:".', routine.lexemes[lex - 1])
   }
-  result = block(routine, lex, startLine + 1, routine.lexemes[lex].offset)
+  if (routine.lexemes[lex].type !== 'INDENT') {
+    throw error('Statements following "if <expression>:" must be indented.', routine.lexemes[lex])
+  }
+  lex += 1
+
+  // expecting some statements
+  if (!routine.lexemes[lex]) {
+    throw error('No statements found after "if <expression>:".', routine.lexemes[lex - 1])
+  }
+  result = block(routine, lex, startLine + 1)
   lex = result.lex
   ifCode = result.pcode
 
   // happy with an "else" here (but it's optional)
   if (routine.lexemes[lex] && (routine.lexemes[lex].content === 'else')) {
-    // check we're on a new line
-    if (isSameLine(routine.lexemes, lex)) {
-      throw error('if08', routine.lexemes[lex])
+    lex += 1
+
+    // expecting a colon
+    if (!routine.lexemes[lex]) {
+      throw error('"else" must be followed by a colon.', routine.lexemes[lex - 1])
+    }
+    if (routine.lexemes[lex].content !== ':') {
+      throw error('"else" must be followed by a colon.', routine.lexemes[lex])
     }
     lex += 1
 
-    // expecting a colon on the same line
+    // expecting NEWLINE
     if (!routine.lexemes[lex]) {
-      throw error('if09', routine.lexemes[lex - 1])
+      throw error('No statements found after "else:".', routine.lexemes[lex - 1])
     }
-    if (!isSameLineContent(routine.lexemes, lex, ':')) {
-      throw error('if10', routine.lexemes[lex])
+    if (routine.lexemes[lex].type !== 'NEWLINE') {
+      throw error('Statements following "else:" must be on a new line.', routine.lexemes[lex])
     }
     lex += 1
 
-    // expecting some commands indented on a new line
+    // expecting INDENT
     if (!routine.lexemes[lex]) {
-      throw error('if11', routine.lexemes[lex - 1])
+      throw error('No statements found after "else:".', routine.lexemes[lex - 1])
     }
-    if (isSameLine(routine.lexemes, lex)) {
-      throw error('if12', routine.lexemes[lex])
+    if (routine.lexemes[lex].type !== 'INDENT') {
+      throw error('Statements following "else:" must be indented.', routine.lexemes[lex])
     }
-    if (!isIndented(routine.lexemes, lex)) {
-      throw error('if13', routine.lexemes[lex])
+    lex += 1
+
+    // expecting some statements
+    if (!routine.lexemes[lex]) {
+      throw error('No statements found after "else:".', routine.lexemes[lex - 1])
     }
-    result = block(routine, lex, startLine + ifCode.length + 2, routine.lexemes[lex].offset)
+    result = block(routine, lex, startLine + ifCode.length + 2)
     lex = result.lex
     elseCode = result.pcode
   }
@@ -164,7 +197,7 @@ const compileIf = (routine, lex, startLine) => {
 
 // generate the pcode for a FOR structure
 const compileFor = (routine, lex, startLine) => {
-  // values we need to generate the IF code
+  // values we need to generate the FOR code
   let variable, initial, final, compare, change, innerCode
 
   // working variable
@@ -172,56 +205,50 @@ const compileFor = (routine, lex, startLine) => {
 
   // expecting an integer variable
   if (!routine.lexemes[lex]) {
-    throw error('for01', routine.lexemes[lex - 1])
+    throw error('"for" must be followed by an integer variable.', routine.lexemes[lex - 1])
   }
-  if (routine.lexemes[lex].type === 'turtle') {
-    throw error('for02', routine.lexemes[lex])
-  }
-  if (!isSameLineType(routine.lexemes, lex, 'identifier')) {
-    throw error('for03', routine.lexemes[lex])
+  if (routine.lexemes[lex].type !== 'turtle' && routine.lexemes[lex].type !== 'identifier') {
+    throw error('{lex} is not a valid variable name.', routine.lexemes[lex])
   }
   variable = find.variable(routine, routine.lexemes[lex].content, 'Python')
   if (!variable) {
-    throw error('for04', routine.lexemes[lex])
+    throw error('Variable {lex} could not be found.', routine.lexemes[lex])
   }
-  if ((variable.fulltype.type !== 'integer') && (variable.fulltype.type !== 'boolint')) {
-    throw error('for05', routine.lexemes[lex])
+  if (variable.fulltype.type !== 'integer') {
+    throw error('Loop variable must be an integer.', routine.lexemes[lex])
   }
   lex += 1
 
   // expecting 'in'
   if (!routine.lexemes[lex]) {
-    throw error('for06', routine.lexemes[lex - 1])
+    throw error('"for <variable>" must be followed by "in".', routine.lexemes[lex - 1])
   }
-  if (!isSameLineContent(routine.lexemes, lex, 'in')) {
-    throw error('for07', routine.lexemes[lex])
+  if (routine.lexemes[lex].content !== 'in') {
+    throw error('"for <variable>" must be followed by "in".', routine.lexemes[lex])
   }
   lex += 1
 
   // expecting 'range'
   if (!routine.lexemes[lex]) {
-    throw error('for08', routine.lexemes[lex - 1])
+    throw error('"for <variable> in" must be followed by a range specification.', routine.lexemes[lex - 1])
   }
-  if (!isSameLineContent(routine.lexemes, lex, 'range')) {
-    throw error('for09', routine.lexemes[lex])
+  if (routine.lexemes[lex].content !== 'range') {
+    throw error('"for <variable> in" must be followed by a range specification.', routine.lexemes[lex])
   }
   lex += 1
 
   // expecting a left bracket
   if (!routine.lexemes[lex]) {
-    throw error('for10', routine.lexemes[lex - 1])
+    throw error('"range" must be followed by an opening bracket.', routine.lexemes[lex - 1])
   }
-  if (!isSameLineContent(routine.lexemes, lex, '(')) {
-    throw error('for11', routine.lexemes[lex])
+  if (routine.lexemes[lex].content !== '(') {
+    throw error('"range" must be followed by an opening bracket.', routine.lexemes[lex])
   }
   lex += 1
 
   // expecting an integer expression (for the initial value)
   if (!routine.lexemes[lex]) {
-    throw error('for12', routine.lexemes[lex - 1])
-  }
-  if (!isSameLine(routine.lexemes, lex)) {
-    throw error('for13', routine.lexemes[lex])
+    throw error('Missing first argument to the "range" function.', routine.lexemes[lex - 1])
   }
   result = molecules.expression(routine, lex, 'null', 'integer', 'Python')
   lex = result.lex
@@ -229,19 +256,19 @@ const compileFor = (routine, lex, startLine) => {
 
   // expecting a comma
   if (!routine.lexemes[lex]) {
-    throw error('for14', routine.lexemes[lex - 1])
+    throw error('Argument must be followed by a comma.', routine.lexemes[lex - 1])
   }
-  if (!isSameLineContent(routine.lexemes, lex, ',')) {
-    throw error('for15', routine.lexemes[lex])
+  if (routine.lexemes[lex].content === ')') {
+    throw error('Too few arguments for "range" function.', routine.lexemes[lex])
+  }
+  if (routine.lexemes[lex].content !== ',') {
+    throw error('Argument must be followed by a comma.', routine.lexemes[lex])
   }
   lex += 1
 
   // expecting an integer expression (for the final value)
   if (!routine.lexemes[lex]) {
-    throw error('for16', routine.lexemes[lex - 1])
-  }
-  if (!isSameLine(routine.lexemes, lex)) {
-    throw error('for17', routine.lexemes[lex])
+    throw error('Too few arguments for "range" function.', routine.lexemes[lex - 1])
   }
   result = molecules.expression(routine, lex, 'null', 'integer', 'Python')
   lex = result.lex
@@ -249,24 +276,24 @@ const compileFor = (routine, lex, startLine) => {
 
   // now expecting another comma
   if (!routine.lexemes[lex]) {
-    throw error('for18', routine.lexemes[lex - 1])
+    throw error('Argument must be followed by a comma.', routine.lexemes[lex - 1])
   }
-  if (!isSameLineContent(routine.lexemes, lex, ',')) {
-    throw error('for19', routine.lexemes[lex])
+  if (routine.lexemes[lex].content === ')') {
+    throw error('Too few arguments for "range" function.', routine.lexemes[lex])
+  }
+  if (routine.lexemes[lex].content !== ',') {
+    throw error('Argument must be followed by a comma.', routine.lexemes[lex])
   }
   lex += 1
 
   // expecting either '1' or '-1'
   if (!routine.lexemes[lex]) {
-    throw error('for20', routine.lexemes[lex - 1])
-  }
-  if (!isSameLine(routine.lexemes, lex)) {
-    throw error('for21', routine.lexemes[lex])
+    throw error('Too few arguments for "range" function.', routine.lexemes[lex - 1])
   }
   if (routine.lexemes[lex].type === 'integer') {
     // only 1 is allowed
     if (routine.lexemes[lex].value !== 1) {
-      throw error('for22', routine.lexemes[lex])
+      throw error('Step value for "range" function must be 1 or -1.', routine.lexemes[lex])
     }
     // otherwise ok
     compare = 'more'
@@ -275,50 +302,65 @@ const compileFor = (routine, lex, startLine) => {
     lex += 1
     // now expecting '1'
     if (!routine.lexemes[lex]) {
-      throw error('for23', routine.lexemes[lex - 1])
+      throw error('Step value for "range" function must be 1 or -1.', routine.lexemes[lex - 1])
     }
-    if (!isSameLineType(routine.lexemes, lex, 'integer')) {
-      throw error('for24', routine.lexemes[lex])
+    if (routine.lexemes[lex].type !== 'integer') {
+      throw error('Step value for "range" function must be 1 or -1.', routine.lexemes[lex])
     }
     if (routine.lexemes[lex].value !== 1) {
-      throw error('for25', routine.lexemes[lex])
+      throw error('Step value for "range" function must be 1 or -1.', routine.lexemes[lex])
     }
     compare = 'less'
     change = 'decr'
   } else {
-    throw error('for26', routine.lexemes[lex])
+    throw error('Step value for "range" function must be 1 or -1.', routine.lexemes[lex])
   }
   lex += 1
 
   // expecting a right bracket
   if (!routine.lexemes[lex]) {
-    throw error('for27', routine.lexemes[lex - 1])
+    throw error('Closing bracket needed after "range" function arguments.', routine.lexemes[lex - 1])
   }
-  if (!isSameLineContent(routine.lexemes, lex, ')')) {
-    throw error('for28', routine.lexemes[lex])
+  if (routine.lexemes[lex].content === ',') {
+    throw error('Too many arguments for "range" function.', routine.lexemes[lex])
+  }
+  if (routine.lexemes[lex].content !== ')') {
+    throw error('Closing bracket needed after "range" function arguments.', routine.lexemes[lex])
   }
   lex += 1
 
   // expecting a colon
   if (!routine.lexemes[lex]) {
-    throw error('for29', routine.lexemes[lex - 1])
+    throw error('"for <variable> in range(...)" must be followed by a colon.', routine.lexemes[lex - 1])
   }
-  if (!isSameLineContent(routine.lexemes, lex, ':')) {
-    throw error('for30', routine.lexemes[lex])
+  if (routine.lexemes[lex].content !== ':') {
+    throw error('"for <variable> in range(...)" must be followed by a colon.', routine.lexemes[lex])
   }
   lex += 1
 
-  // now expecting a block of code, indented on a new line
+  // expecting NEWLINE
   if (!routine.lexemes[lex]) {
-    throw error('for31', routine.lexemes[lex - 1])
+    throw error('No statements found after "for <variable> in range(...):".', routine.lexemes[lex - 1])
   }
-  if (isSameLine(routine.lexemes, lex)) {
-    throw error('for32', routine.lexemes[lex])
+  if (routine.lexemes[lex].type !== 'NEWLINE') {
+    throw error('Statements following "for <variable> in range(...):" must be on a new line.', routine.lexemes[lex])
   }
-  if (!isIndented(routine.lexemes, lex)) {
-    throw error('for33', routine.lexemes[lex])
+  lex += 1
+
+  // expecting INDENT
+  if (!routine.lexemes[lex]) {
+    throw error('No statements found after "for <variable> in range(...):".', routine.lexemes[lex - 1])
   }
-  result = block(routine, lex, startLine + 3, routine.lexemes[lex].offset)
+  if (routine.lexemes[lex].type !== 'INDENT') {
+    throw error('Statements following "for <variable> in range(...):" must be indented.', routine.lexemes[lex])
+  }
+  lex += 1
+
+  // now expecting a block of statements
+  if (!routine.lexemes[lex]) {
+    throw error('No statements found after "for <variable> in range(...):', routine.lexemes[lex - 1])
+  }
+  result = block(routine, lex, startLine + 3)
   lex = result.lex
   innerCode = result.pcode
 
@@ -337,35 +379,44 @@ const compileWhile = (routine, lex, startLine) => {
   // working variable
   let result
 
-  // expecting a boolean expression on the same line
+  // expecting a boolean expression
   if (!routine.lexemes[lex]) {
-    throw error('while01', routine.lexemes[lex - 1])
-  }
-  if (!isSameLine(routine.lexemes, lex)) {
-    throw error('while02', routine.lexemes[lex])
+    throw error('"while" must be followed by a Boolean expression.', routine.lexemes[lex - 1])
   }
   result = molecules.expression(routine, lex, 'null', 'boolean', 'Python')
   lex = result.lex
   test = result.pcode[0]
 
-  // expecting a colon on the same line
+  // expecting a colon
   if (!routine.lexemes[lex]) {
-    throw error('while03', routine.lexemes[lex - 1])
+    throw error('"while <expression>" must be followed by a colon.', routine.lexemes[lex - 1])
   }
-  if (!isSameLineContent(routine.lexemes, lex, ':')) {
-    throw error('while04', routine.lexemes[lex])
+  if (routine.lexemes[lex].content !== ':') {
+    throw error('"while <expression>" must be followed by a colon.', routine.lexemes[lex])
   }
   lex += 1
 
-  // expecting a block of code, indented on a new line
+  // expecting NEWLINE
   if (!routine.lexemes[lex]) {
-    throw error('while05', routine.lexemes[lex - 1])
+    throw error('No statements found after "while <expression>:".', routine.lexemes[lex - 1])
   }
-  if (isSameLine(routine.lexemes, lex)) {
-    throw error('while06', routine.lexemes[lex])
+  if (routine.lexemes[lex].type !== 'NEWLINE') {
+    throw error('Statements following "while <expression>:" must be on a new line.', routine.lexemes[lex])
   }
-  if (!isIndented(routine.lexemes, lex)) {
-    throw error('while07', routine.lexemes[lex])
+  lex += 1
+
+  // expecting INDENT
+  if (!routine.lexemes[lex]) {
+    throw error('No statements found after "while <expression>:".', routine.lexemes[lex - 1])
+  }
+  if (routine.lexemes[lex].type !== 'INDENT') {
+    throw error('Statements following "while <expression>:" must be indented.', routine.lexemes[lex])
+  }
+  lex += 1
+
+  // expecting a block of statements
+  if (!routine.lexemes[lex]) {
+    throw error('No statements found after "while <expression>:".', routine.lexemes[lex - 1])
   }
   result = block(routine, lex, startLine + 1, routine.lexemes[lex].offset)
   lex = result.lex
@@ -375,43 +426,20 @@ const compileWhile = (routine, lex, startLine) => {
   return { lex, pcode: pcoder.whileLoop(startLine, test, innerCode) }
 }
 
-// check lexeme is on the same line as previous
-const isSameLine = (lexemes, lex) =>
-  (lexemes[lex].line === lexemes[lex - 1].line)
-
-// check lexeme has a certain type and is on the same line as previous
-const isSameLineType = (lexemes, lex, type) =>
-  isSameLine(lexemes, lex) && (lexemes[lex].type === type)
-
-// check lexeme has a certain content and is on the same line as previous
-const isSameLineContent = (lexemes, lex, content) =>
-  isSameLine(lexemes, lex) && (lexemes[lex].content === content)
-
-// check lexeme is indented more than the previous one
-const isIndented = (lexemes, lex) =>
-  (lexemes[lex].offset > lexemes[lex - 1].offset)
-
 // generate the pcode for a block (i.e. a sequence of commands/structures)
-const block = (routine, lex, startLine, offset) => {
+const block = (routine, lex, startLine) => {
   let pcode = []
-  let pcodeTemp
-  let end = false
-
-  // expecting something
-  if (!routine.lexemes[lex]) {
-    throw error('blockNothing', routine.lexemes[lex - 1])
-  }
+  let result
 
   // loop through until the end of the block (or we run out of lexemes)
-  while (!end && (lex < routine.lexemes.length)) {
-    end = (routine.lexemes[lex].offset < offset)
-    if (!end) {
-      // compile the structure
-      pcodeTemp = pcode
-      ;({ lex, pcode } = coder(routine, lex, startLine + pcode.length))
-      pcode = pcodeTemp.concat(pcode)
-    }
+  while (routine.lexemes[lex] && routine.lexemes[lex].type !== 'DEDENT') {
+    result = coder(routine, lex, startLine + pcode.length)
+    pcode = pcode.concat(result.pcode)
+    lex = result.lex
   }
+
+  // move past DEDENT lexeme
+  if (routine.lexemes[lex]) lex += 1
 
   return { lex, pcode }
 }

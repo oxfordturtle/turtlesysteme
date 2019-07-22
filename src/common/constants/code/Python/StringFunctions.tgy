@@ -1,23 +1,16 @@
 # StringFunctions
 
 delay: int = 500
-s1: str
-s2: str
-s3: str
-s4: str
-s5: str
-posn: int
-n: int
 
 output(-1, cream, -1)
-s1 = 'Turtle Python'
-s2 = copy(s1, 1, 6)
+s1: str = 'Turtle Python'
+s2: str = copy(s1, 1, 6)
 writeline(s2 + ' is the name of a small animal.')
 pause(delay)
-s3 = copy(s1, 8, 6)
+s3: str = copy(s1, 8, 6)
 writeline(s3 + ' is a large snake.')
 pause(delay)
-s4 = insert(s3, 2, 'onty M')
+s4: str = insert(s3, 2, 'onty M')
 writeline('\'' + s4 + '\' is a silly name.')
 pause(delay)
 writeline('"' + s1 + '" has ' + str(len(s1)) + ' characters.')
@@ -25,14 +18,14 @@ pause(delay)
 writeline('In lower case it is "' + lower(s1) + '".')
 writeline('In upper case it is "' + upper(s1) + '".')
 pause(delay)
-posn = find(s1, s3)
+posn: int = find(s1, s3)
 if posn > 0:
   writeline('"' + s3 + '" occurs within "' + s1 + '" at position ' + str(posn) + '.')
 pause(delay)
-s5 = '3.14159'
+s5: str = '3.14159'
 writeline(s5 + ' times 100000 = ' + str(qval(s5, 100000, -1)) + '.')
 pause(delay)
-n = qval(s5, 100000, -1)
+n: int = qval(s5, 100000, -1)
 writeline(str(n) + ' divided by 100000 = ' + qstr(n, 100000, 5) + '.')
 writeline('')
 pause(delay * 5)

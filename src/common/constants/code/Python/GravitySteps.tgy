@@ -1,10 +1,7 @@
 # GravitySteps
 
-bounce: int
-
 def steps(s: int):
   size: int = 1000 / s
-  count: int
   setxy(0, 1000)
   thickness(1)
   for count in range(0, s * 2, 1):

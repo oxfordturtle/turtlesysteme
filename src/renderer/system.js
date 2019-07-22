@@ -6,8 +6,8 @@ import { create, show } from 'common/components/tabs'
 import controls from 'common/components/controls'
 import code from 'common/components/program/code'
 import * as pcode from 'common/components/program/pcode'
-import { nameInput } from 'common/components/program/file'
 import usage from 'common/components/program/usage'
+import lexemes from 'common/components/program/lexemes'
 import canvas from 'common/components/machine/canvas'
 import console from 'common/components/machine/console'
 import output from 'common/components/machine/output'
@@ -78,6 +78,7 @@ export default (tsx) => {
 const programTabs = create([
   { label: 'Code', active: true, content: [code] },
   { label: 'Usage', active: false, content: [usage] },
+  { label: 'Lexemes', active: false, content: [lexemes] },
   { label: 'PCode', active: false, content: [pcode.options, pcode.list] }
 ])
 

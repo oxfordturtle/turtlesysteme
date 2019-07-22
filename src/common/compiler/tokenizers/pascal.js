@@ -11,7 +11,7 @@ export default (code) => {
       spaces(code) ||
       comment(code) ||
       operator(code) ||
-      punctuation(code) ||
+      delimiter(code) ||
       string(code) ||
       boolean(code) ||
       binary(code) ||
@@ -60,9 +60,9 @@ const operator = (code) => {
 }
 
 // punctuation
-const punctuation = (code) => {
+const delimiter = (code) => {
   const test = code.match(/^(\(|\)|\[|\]|,|:|;|\.\.|\.)/)
-  return test ? { type: 'punctuation', content: test[0] } : false
+  return test ? { type: 'delimiter', content: test[0] } : false
 }
 
 // string literals

@@ -5,7 +5,6 @@ brushcolour: int
 
 def setbrushwidth(wdth: int):
   global brushwidth
-  count: int
   brushwidth = 0
   colour(black)
   for count in range(0, 5, 1):
@@ -26,12 +25,10 @@ def paintbrush(x: int, y: int):
   setxy(x, y)
   blot(brushwidth)
 
-def paintcan(x, y):
+def paintcan(x: int, y: int):
   recolour(x, y, brushcolour)
 
 def setup():
-  count: int
-
   def square(col: int):
     movexy(50, 0)
     movexy(0, 50)

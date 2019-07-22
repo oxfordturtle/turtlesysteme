@@ -17,11 +17,15 @@ export default categories.concat(
         level: 0
       },
       {
+        names: { BASIC: null, Pascal: null, Python: 'elif' },
+        level: 0
+      },
+      {
         names: { BASIC: 'FOR', Pascal: 'for', Python: 'for' },
         level: 0
       },
       {
-        names: { BASIC: 'REPEAT', Pascal: 'repeat', Python: 'repeat' },
+        names: { BASIC: 'REPEAT', Pascal: 'repeat', Python: null },
         level: 1
       },
       {

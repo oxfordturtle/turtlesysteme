@@ -1,7 +1,5 @@
 # ForLoop
 
-count: int
-
 for count in range(0, 200, 1):
   forward(count // 3)
   right(5)

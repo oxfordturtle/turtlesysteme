@@ -1,7 +1,5 @@
 # Circles
 
-count: int
-
 thickness(6)
 penup()
 blank(black)

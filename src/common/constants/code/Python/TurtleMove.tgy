@@ -1,7 +1,5 @@
 # TurtleMove
 
-count: int
-
 setxy(100, 700)
 for count in range(0, 100, 1):
   noupdate()

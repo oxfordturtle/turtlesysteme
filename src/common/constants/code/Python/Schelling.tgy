@@ -3,8 +3,6 @@
 width: int = 32
 height: int = 32
 empty: int = green
-i: int
-j: int
 test: int
 continue: bool
 tryi: int
@@ -12,9 +10,7 @@ tryj: int
 this: int
 
 def happy(x: int, y: int, c: int) -> bool:
-  i: int
-  j: int
-  neighbout: int
+  neighbour: int
   like: int = 0
   unlike: int = 0
   for i in range(-1, 2, 1):

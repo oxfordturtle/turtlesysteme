@@ -1,7 +1,5 @@
 # ParameterProcedure
 
-count: int
-
 def prong(length: int):
   forward(length)
   blot(length // 20)

@@ -23,7 +23,6 @@ dist: int
 prevdist: int
 prevdiff: int
 t: int
-explosion: int
 
 def drawrocket():
   noupdate()

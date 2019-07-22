@@ -2,8 +2,6 @@
 
 width: int = 32
 height: int = 32
-x: int
-y: int
 
 canvas(0, 0, width, height)
 resolution(width, height)

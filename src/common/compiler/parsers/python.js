@@ -4,19 +4,20 @@ array is the main PROGRAM object.
 
 Look at the factory module to see what the PROGRAM object (and its components) look like.
 
-this analyses the structure of the program, and builds up lists of all the constants, variables,
-and subroutines (with their variables and parameters) - lexemes for the program (and any
+this analyses the structure of the program, and builds up lists of all the variables and
+subroutines (with their variables and parameters) - lexemes for the program (and any
 subroutine) code themselves are just stored for subsequent handling by the pcoder
 */
 import error from '../tools/error'
-import * as find from '../tools/find'
 import * as factory from './factory/factory'
+import * as find from '../tools/find'
 
 export default (lexemes) => {
   const routines = [] // array of routines to be returned (0 being the main program)
   const routineStack = [] // stack of routines
   let lex = 0 // index of current lexeme
   let routine // the current routine
+  let result
   let state = 'crossroads'
 
   // setup program
@@ -28,92 +29,117 @@ export default (lexemes) => {
   while (lex < lexemes.length) {
     switch (state) {
       case 'crossroads':
-        // expecting 'global', 'nonlocal', 'def', or routine commands
-        if (!lexemes[lex]) return routines
-
-        if (!routine.indent) {
-          // set the base indent for this routine from the current lexeme
-          routine.indent = lexemes[lex].offset
+        if (lexemes[lex].type === 'identifier' || lexemes[lex].type === 'turtle') {
+          state = 'identifier'
+        } else if (lexemes[lex].type === 'INDENT') {
+          state = 'indent'
+        } else if (lexemes[lex].type === 'DEDENT') {
+          state = 'dedent'
+        } else if (lexemes[lex].content === 'def') {
+          state = 'def'
+        } else if (lexemes[lex].content === 'global') {
+          state = 'global'
+        } else if (lexemes[lex].content === 'nonlocal') {
+          state = 'nonlocal'
         } else {
-          // otherwise check it matches the base indent
-          if (lexemes[lex].offset < routine.indent) {
-            throw error('There are not enough spaces before {lex}.', lexemes[lex])
-          }
-          if (lexemes[lex].offset > routine.indent) {
-            throw error('There are too many spaces before {lex}.', lexemes[lex])
-          }
-        }
-
-        // do different things depending on the lexeme
-        switch (lexemes[lex].content) {
-          // global variable declarations
-          case 'global':
-            lex += 1
-            state = 'global'
-            break
-
-          // nonlocal variable definitions
-          case 'nonlocal':
-            lex += 1
-            state = 'nonlocal'
-            break
-
-          // subroutine definitions
-          case 'def':
-            lex += 1
-            state = 'def'
-            break
-
-          // anything else
-          default:
-            state = 'commands'
-            break
+          routine.lexemes.push(lexemes[lex])
+          lex += 1
         }
         break
 
-      case 'global':
-        // expecting comma separated list of global variables on the same line
-        // error checking
-        if (routine.index === 0) {
-          throw error('Global variables are only allowed in subroutines.', lexemes[lex])
+      case 'identifier':
+        if ((lexemes[lex + 1] && lexemes[lex + 1].content === ':') && (lexemes[lex + 2] && lexemes[lex + 2].type === 'identifier')) {
+          result = typedVariable(lexemes, lex, routine)
+          routine.variables.push(result.variable)
+          while (lex < result.lex) {
+            routine.lexemes.push(lexemes[lex])
+            lex += 1
+          }
+        } else if (lexemes[lex + 1] && lexemes[lex + 1].content === 'in') {
+          if (lexemes[lex].type === 'identifier') {
+            if (!declared(lexemes[lex].content, routine)) {
+              result = factory.variable(lexemes[lex], routine)
+              result.fulltype = factory.fulltype('integer')
+              routine.variables.push(result)
+            }
+            routine.lexemes.push(lexemes[lex])
+            lex += 1
+          }
+        } else {
+          routine.lexemes.push(lexemes[lex])
+          lex += 1
         }
-        if (routine.subroutines.length > 0) {
-          throw error('Global variables must be declared before any subroutine definitions.', lexemes[lex])
-        }
-        ({ lex, state } = globals(lexemes, lex, routine))
+        state = 'crossroads'
         break
 
-      case 'nonlocal':
-        // expecting comma separated list of nonlocal variables
-        // error checking
-        if (routine.index === 0) {
-          throw error('Nonlocal variables are only allowed in subroutines.', lexemes[lex])
+      case 'indent':
+        routine.lexemes.push(lexemes[lex])
+        lex += 1
+        state = 'crossroads'
+        break
+
+      case 'dedent':
+        const indents = routine.lexemes.filter(x => x.type === 'INDENT').length
+        const dedents = routine.lexemes.filter(x => x.type === 'DEDENT').length
+        if (indents === dedents) {
+          state = 'end'
+        } else {
+          routine.lexemes.push(lexemes[lex])
+          state = 'crossroads'
         }
-        if (routine.subroutines.length > 0) {
-          throw error('Nonlocal variables must be declared before any subroutine definitions.', lexemes[lex])
-        }
-        ({ lex, state } = nonlocals(lexemes, lex, routine))
+        lex += 1
         break
 
       case 'def':
-        // expecting subroutine name, followed by open bracket
-        ({ lex, routine, state } = def(lexemes, lex, routine))
-        routineStack.push(routine)
-        break
-
-      case 'parameters':
-        // expecting a comma separated list of parameters, then a closing bracket and a colon
-        ({ lex, state } = parameters(lexemes, lex, routine))
-        break
-
-      case 'commands':
-        // expecting routine commands
-        ({ lex, state } = commands(lexemes, lex, routine))
-        if (routine.index === null) {
-          routine.index = routines.length
-          routines.push(routineStack.pop())
-          routine = routineStack[routineStack.length - 1]
+        result = subroutine(lexemes, lex + 1, routine)
+        routine.subroutines.push(result.subroutine)
+        routineStack.push(result.subroutine)
+        routine = result.subroutine
+        lex = result.lex
+        if (!lexemes[lex]) {
+          throw error('No statements found after subroutine definition.', lexemes[lex - 1])
         }
+        if (lexemes[lex].type !== 'NEWLINE') {
+          throw error('Subroutine definition must be followed by a line break.', lexemes[lex])
+        }
+        lex += 1
+        if (!lexemes[lex]) {
+          throw error('No statements found after subroutine definition.', lexemes[lex - 1])
+        }
+        if (lexemes[lex].type !== 'INDENT') {
+          throw error('Indent needed after subroutine definition.', lexemes[lex])
+        }
+        lex += 1
+        state = 'crossroads'
+        break
+
+      case 'global': // fallthrough
+      case 'nonlocal':
+        const names = (state === 'global') ? routine.globals : routine.nonlocals
+        if (routine.index === 0) {
+          throw error('Main program cannot include any global/nonlocal statements.', lexemes[lex])
+        }
+        lex += 1
+        if (lexemes[lex].type === 'NEWLINE') {
+          throw error('Global/nonlocal statements must be on one line.', lexemes[lex - 1])
+        }
+        while (lexemes[lex] && lexemes[lex].type !== 'NEWLINE') {
+          if (lexemes[lex].type !== 'turtle' && lexemes[lex].type !== 'identifier') {
+            throw error('{lex} is not a valid variable name.', lexemes[lex])
+          }
+          names.push(lexemes[lex].content)
+          lex += 1
+          if (lexemes[lex].content === ',') lex += 1
+        }
+        if (lexemes[lex].type === 'NEWLINE') lex += 1
+        state = 'crossroads'
+        break
+
+      case 'end':
+        routine.index = routines.length
+        routines.push(routineStack.pop())
+        routine = routineStack[routineStack.length - 1]
+        state = 'crossroads'
         break
     }
   }
@@ -122,265 +148,184 @@ export default (lexemes) => {
   return routines
 }
 
-// globals (expecting comma separated list of globals on the same line)
-const globals = (lexemes, lex, routine) => {
-  // error checking
+// check if variable name has been declared as local, global, or nonlocal
+const declared = (name, routine) =>
+  (routine.globals && routine.globals.includes(name)) ||
+    (routine.nonlocals && routine.nonlocals.includes(name)) ||
+    routine.variables.some(x => x.name === name)
+
+// look for "def identifier[(pars)][-> return type]:"
+// return subroutine object and index of the next lexeme
+const subroutine = (lexemes, lex, parent) => {
+  // identifier error checking
   if (!lexemes[lex]) {
-    throw error('"global" must be followed by an identifier.', lexemes[lex - 1])
-  }
-  if (lexemes[lex].line !== lexemes[lex - 1].line) {
-    throw error('Global variable declarations must be on a single line.', lexemes[lex])
-  }
-
-  // loop through grabbing the variable names and creating the global variables as necessary
-  while (lexemes[lex] && lexemes[lex].line === lexemes[lex - 1].line) {
-    // error checking
-    if (lexemes[lex].type !== 'turtle' && lexemes[lex].type !== 'identifier') {
-      throw error('{lex} is not a valid variable name.', lexemes[lex])
-    }
-    if (routine.globals.indexOf(lexemes[lex].content) > -1) {
-      throw error('Global variable {lex} has already been declared.', lexemes[lex])
-    }
-
-    // add the variable name to the routine's array of globals
-    routine.globals.push(lexemes[lex].content)
-
-    // create the global variable if it doesn't already exist
-    const program = find.program(routine)
-    if (lexemes[lex].type !== 'turtle' && !program.variables.some(v => v.name === lexemes[lex].content)) {
-      program.variables.push(factory.variable(lexemes[lex], program))
-    }
-
-    // new line gets us out of here
-    if (lexemes[lex + 1].line > lexemes[lex].line) {
-      return { lex: lex + 1, state: 'crossroads' }
-    }
-
-    // otherwise check for a comma, increment past it, and continue with the loop
-    if (!lexemes[lex + 1] || lexemes[lex + 1].content !== ',') {
-      throw error('Comma missing after global variable declaration.', lexemes[lex])
-    }
-    if (!lexemes[lex + 2]) {
-      throw error('Expected more global variable declarations after comma.', lexemes[lex + 1])
-    }
-    if (lexemes[lex + 2].line > lexemes[lex + 1].line) {
-      throw error('Global variable declarations must be on a single line.', lexemes[lex + 2])
-    }
-    lex += 2
-  }
-
-  return { lex, state: 'crossroads' }
-}
-
-// nonlocals (expecting comma separated list of nonlocals on the same line
-const nonlocals = (lexemes, lex, routine) => {
-  // error checking
-  if (!lexemes[lex]) throw error('"local" must be followed by an identifier.', lexemes[lex - 1])
-  if (lexemes[lex].line > lexemes[lex - 1].line) {
-    throw error('Nonlocal variable definitions must be on a single line.', lexemes[lex])
-  }
-  if (routine.nonlocals.indexOf(lexemes[lex].content) > -1) {
-    throw error('Nonlocal variable {lex} has already been defined.', lexemes[lex])
-  }
-
-  // loop through grabbing the variable names
-  while (lexemes[lex] && lexemes[lex].line === lexemes[lex - 1].line) {
-    if (lexemes[lex].type === 'turtle') {
-      throw error('Turtle variables are global, not nonlocal.', lexemes[lex])
-    }
-    if (lexemes[lex].type !== 'identifier') {
-      throw error('{lex} is not a valid variable name.', lexemes[lex])
-    }
-    if (routine.nonlocals.indexOf(lexemes[lex].content) > -1) {
-      throw error('Nonlocal variable {lex} has already been declared.', lexemes[lex])
-    }
-
-    // add the variable name to the routine's array of nonlocals
-    routine.nonlocals.push(lexemes[lex].content)
-
-    // new line gets us out of here
-    if (lexemes[lex + 1].line > lexemes[lex].line) {
-      return { lex: lex + 1, state: 'crossroads' }
-    }
-
-    // otherwise check for a comma, increment past it, and continue with the loop
-    if (!lexemes[lex + 1] || lexemes[lex + 1].content !== ',') {
-      throw error('Comma missing after nonlocal variable declaration.', lexemes[lex])
-    }
-    if (!lexemes[lex + 2]) {
-      throw error('Expected more nonlocal variable declarations after comma.', lexemes[lex + 1])
-    }
-    if (lexemes[lex + 2].line > lexemes[lex + 1].line) {
-      throw error('Nonlocal variable declarations must be on a single line.', lexemes[lex + 2])
-    }
-    lex += 2
-  }
-
-  return { lex, state: 'crossroads' }
-}
-
-// def (expecting subroutine name)
-const def = (lexemes, lex, routine) => {
-  // error checking
-  if (!lexemes[lex]) throw error('"def" must be followed by an identifier.', lexemes[lex - 1])
-  if (lexemes[lex - 1].line !== lexemes[lex].line) {
-    throw error('Subroutine name must be on the same line as "def".', lexemes[lex])
+    throw error('"def" must be followed by an identifier.', lexemes[lex - 1])
   }
   if (lexemes[lex].type === 'turtle') {
-    throw error('Subroutine cannot have the name of a global Turtle variable.', lexemes[lex])
+    throw error('Subroutine cannot be given the name of a Turtle attribute.', lexemes[lex])
   }
   if (lexemes[lex].type !== 'identifier') {
     throw error('{lex} is not a valid subroutine name.', lexemes[lex])
   }
-  if (subroutineNameExists(lexemes[lex].content, routine)) {
-    throw error('{lex} is already the name of a subroutine or variable in the current scope.', lexemes[lex])
+  if (find.custom(parent, lexemes[lex].content, 'Python')) {
+    throw error('{lex} is already the name of a subroutine in the current scope.', lexemes[lex])
   }
 
-  // otherwise ok - create new routine with current routine as its parent
-  routine = factory.subroutine(lexemes[lex].content, 'procedure', routine)
-  routine.parent.subroutines.push(routine)
+  // define the subroutine
+  const subroutine = factory.subroutine(lexemes[lex].content, 'procedure', parent)
 
-  // expecting opening bracket on the same line next
+  // open bracket error checking
   if (!lexemes[lex + 1]) {
-    throw error('Subroutine definition must be followed by an open bracket.', lexemes[lex - 1])
+    throw error()
   }
   if (lexemes[lex + 1].content !== '(') {
-    throw error('Subroutine definition must be followed by an open bracket.', lexemes[lex])
-  }
-  if (lexemes[lex].line !== lexemes[lex + 1].line) {
-    throw error('Open bracket must be on the same line as the subroutine definition.', lexemes[lex])
+    throw error()
   }
 
-  return { lex: lex + 2, routine, state: 'parameters' }
-}
+  // parameters
+  const result = parameters(lexemes, lex + 2, subroutine)
+  lex = result.lex
+  subroutine.parameters.push(...result.parameters)
+  subroutine.variables.push(...result.parameters)
 
-// parameters
-const parameters = (lexemes, lex, routine) => {
-  // error checking
+  // closing bracket error checking
   if (!lexemes[lex]) {
-    throw error('Expecting parameter definition or closing bracket.', lexemes[lex - 1])
+    throw error()
   }
+  if (lexemes[lex].content !== ')') {
+    throw error()
+  }
+  lex += 1
 
-  // right bracket means the end of the list
-  if (lexemes[lex].content === ')') {
-    // error checking
-    if (lexemes[lex - 1].line !== lexemes[lex].line) {
-      throw error('Closing bracket after parameters cannot be on a new line.', lexemes[lex])
+  // check for return type
+  if (lexemes[lex] && lexemes[lex].content === '->') {
+    subroutine.type = 'function'
+    lex += 1
+    if (!lexemes[lex]) {
+      throw error()
     }
-    if (!lexemes[lex + 1]) {
-      throw error('Subroutine definition must be followed by a colon.', lexemes[lex])
-    }
-    if (lexemes[lex + 1].content !== ':') {
-      throw error('Subroutine definition must be followed by a colon.', lexemes[lex + 1])
-    }
-    if (lexemes[lex + 1].line > lexemes[lex].line) {
-      throw error('Colon following subroutine definition cannot be on a new line.', lexemes[lex + 1])
-    }
-    if (!lexemes[lex + 2]) {
-      throw error('No commands found following subroutine declaration.', lexemes[lex + 1])
-    }
-    if (lexemes[lex + 2].line === lexemes[lex + 1].line) {
-      throw error('Subroutine commands must be on a new line.', lexemes[lex])
-    }
-
-    return { lex: lex + 2, state: 'crossroads' }
-  }
-
-  // otherwise expecting a new identifier on the same line
-  if (lexemes[lex].type === 'turtle') {
-    throw error('{lex} is the name of a predefined global Turtle variable.', lexemes[lex])
-  }
-  if (lexemes[lex].type !== 'identifier') {
-    throw error('{lex} is not a valid identifier.', lexemes[lex])
-  }
-  if (lexemes[lex - 1].line !== lexemes[lex].line) {
-    throw error('Parameter declaration cannot be on a new line.', lexemes[lex])
-  }
-  if (routine.parameters.some(x => x.name === lexemes[lex].content)) {
-    throw error('{lex} is already the name of a parameter for this subroutine.', lexemes[lex])
-  }
-
-  // otherwise ok; create the parameter and add it to the current routine
-  let variable = factory.variable(lexemes[lex], routine)
-  routine.parameters.push(variable)
-  routine.variables.push(variable)
-
-  // now see where to go depending on what's next (expecting comma or closing bracket)
-  if (!lexemes[lex + 1]) {
-    throw error('Closing bracket missing after parameter declarations.', lexemes[lex])
-  }
-  if (lexemes[lex + 1].type === 'turtle' || lexemes[lex + 1].type === 'identifier') {
-    throw error('Comma missing between parameters.', lexemes[lex + 1])
-  }
-  if (lexemes[lex + 1].content === ',') {
-    if (!lexemes[lex + 2]) {
-      throw error('Expected parameter declaration after comma.', lexemes[lex + 1])
-    }
-    if (lexemes[lex + 2].content === ')') {
-      throw error('Parameter list cannot end with a comma.', lexemes[lex + 1])
-    }
-    return { lex: lex + 2, state: 'parameters' }
-  }
-  if (lexemes[lex + 1].content === ')') {
-    return { lex: lex + 1, state: 'parameters' }
-  }
-
-  throw error('py1parser43', 'parsNoCommaOrBracket', lexemes[lex])
-}
-
-// commands
-const commands = (lexemes, lex, routine) => {
-  let variable
-  while (lexemes[lex] && (lexemes[lex].offset >= routine.indent)) {
-    // maybe deal with return value
-    if (lexemes[lex].content === 'return') {
-      if (routine.index === 0) throw error('cmdMainReturn', lexemes[lex])
-      if (routine.name === 'main') throw error('cmdMainSubReturn', lexemes[lex])
-      if (routine.type === 'function') throw error('cmdRepeatReturn', lexemes[lex])
-      routine.type = 'function'
-      variable = factory.variable(lexemes[lex], routine, false)
-      routine.variables.unshift(variable)
-    }
-    // maybe add a variable
-    if (isNewLocalAssignment(routine, lexemes, lex)) {
-      // create the variable and add it to the appropriate routine
-      variable = factory.variable(lexemes[lex], routine, false)
-      routine.variables.push(variable)
-    }
-
-    // in any case, add the lexeme to the routine and move past it
-    routine.lexemes.push(lexemes[lex])
+    const variable = factory.variable({ content: 'return' }, subroutine)
+    variable.fulltype = fulltype(lexemes[lex])
+    subroutine.returns = variable.fulltype.type
+    subroutine.variables.unshift(variable)
     lex += 1
   }
-  return { lex, state: 'crossroads' }
-}
 
-// check if subroutine name has already been used
-const subroutineNameExists = (name, routine) => {
-  if (routine.index === 0) {
-    return routine.subroutines.some(x => x.name === name)
+  // check for colon
+  if (!lexemes[lex]) {
+    throw error()
   }
-  return routine.subroutines.some(x => x.name === name) ||
-    routine.globals.indexOf(name) > -1 ||
-    routine.nonlocals.indexOf(name) > -1
+  if (lexemes[lex].content !== ':') {
+    throw error()
+  }
+
+  // return the subroutine object and index of the next lexeme
+  return { lex: lex + 1, subroutine }
 }
 
-// check if lexeme is a new local variable assignment
-const isNewLocalAssignment = (routine, lexemes, lex) => {
-  // not even close
-  if (lexemes[lex].type !== 'identifier') return false
+// look for identifier: type
+// return a variable and the index of the next lexeme
+const typedVariable = (lexemes, lex, routine) => {
+  // expecting identifier
+  if (lexemes[lex].type === 'turtle') {
+    throw error()
+  }
+  if (lexemes[lex].type !== 'identifier') {
+    throw error()
+  }
 
-  // can't be an assignment
-  if (!lexemes[lex + 1]) return false
-  if ((lexemes[lex + 1].content !== '=') && (lexemes[lex + 1].content !== 'in')) return false
+  // check for duplicate
+  // ...
 
-  // is an assignent, but variable is declared global or nonlocal
-  if (routine.globals.indexOf(lexemes[lex].content) > -1) return false
-  if (routine.nonlocals.indexOf(lexemes[lex].content) > -1) return false
+  // ok, create the variable and move on
+  const variable = factory.variable(lexemes[lex], routine)
+  lex += 1
 
-  // is a local assignment, but variable has already been created
-  if (find.variable(routine, lexemes[lex].content, 'Python')) return false
+  // expecting colon
+  if (!lexemes[lex]) {
+    throw error()
+  }
+  if (lexemes[lex].content !== ':') {
+    throw error()
+  }
+  lex += 1
 
-  // otherwise yes
-  return true
+  // expecting bool|int|str
+  if (!lexemes[lex]) {
+    throw error()
+  }
+  variable.fulltype = fulltype(lexemes[lex])
+  lex += 1
+
+  // return the variable and the index of the next lexeme
+  return { lex, variable }
+}
+
+// look for "identifier: type[, identifier: type ...])"; return array of parameters and
+// index of the next lexeme
+const parameters = (lexemes, lex, routine) => {
+  const parameters = []
+  let parameter = {}
+
+  while (lexemes[lex] && lexemes[lex].content !== ')') {
+    // error checking
+    if (lexemes[lex].type === 'turtle') {
+      throw error('Parameter name cannot be a Turtle property.', lexemes[lex])
+    }
+    if (lexemes[lex].type !== 'identifier') {
+      throw error('{lex} is not a valid parameter name.', lexemes[lex])
+    }
+    if (parameters.some(x => x.name === lexemes[lex].content)) {
+      throw error('{lex} is the name of another parameter.', lexemes[lex])
+    }
+
+    // create the parameter
+    parameter = factory.variable(lexemes[lex], routine)
+
+    // check for type
+    lex += 1
+    if (!lexemes[lex]) {
+      throw error('Parameter name must be followed by ": <type>".', lexemes[lex - 1])
+    }
+    if (lexemes[lex].content !== ':') {
+      throw error('Parameter name must be followed by ": <type>".', lexemes[lex - 1])
+    }
+    lex += 1
+    if (!lexemes[lex]) {
+      throw error('Parameter name must be followed by ": <type>".', lexemes[lex - 2])
+    }
+    parameter.fulltype = fulltype(lexemes[lex])
+
+    // add the parameter
+    parameters.push(parameter)
+    lex += 1
+
+    // comma check
+    if (lexemes[lex]) {
+      if (lexemes[lex].type === 'turtle' || lexemes[lex].type === 'identifier') {
+        throw error('Comma missing between routine parameters.', lexemes[lex])
+      }
+      if (lexemes[lex].content === ',') lex += 1
+    }
+  }
+
+  // return the parameters and the index of the next lexeme
+  return { lex, parameters }
+}
+
+// get fulltype of variable
+const fulltype = (lexeme) => {
+  switch (lexeme.content) {
+    case 'bool':
+      return factory.fulltype('boolean')
+
+    case 'int':
+      return factory.fulltype('integer')
+
+    case 'str':
+      return factory.fulltype('string')
+
+    default:
+      throw error('{lex} is not a valid type specification (expecting "bool", "int", or "str").', lexeme)
+  }
 }

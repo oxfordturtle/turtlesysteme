@@ -4,6 +4,8 @@ hours: int = 0
 minutes: int = 0
 
 def showtime():
+  hstring: str
+  mstring: str
   setxy(300, 430)
   box(400, 130, white, False)
   if hours < 10:

@@ -5,7 +5,7 @@ denominator: int = 1000000
 a: int
 b: int
 
-def show(s: int, n: int):
+def show(s: str, n: int):
   writeline(s + '(' + str(a) + ' / ' + str(b) + ') = ' + qstr(n, denominator, decimals))
 
 def selectab():

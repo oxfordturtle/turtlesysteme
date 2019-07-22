@@ -1,7 +1,6 @@
 # SimpleDraw
 
 def palette():
-  col: int
   for col in range(1, 11, 1):
     setxy(col * 100 - 50, 950)
     colour(rgb(col))

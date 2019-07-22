@@ -4,13 +4,16 @@ tokenizer for Turtle Python
 splits code into lexemes and whitespace used by the code highlighting module and by the lexer
 */
 
+import colours from 'common/constants/colours'
+import commands from 'common/constants/commands'
+
 export default (code) => {
   let tokens = []
   while (code.length > 0) {
     let token = linebreak(code) ||
       spaces(code) ||
       comment(code) ||
-      punctuation(code) ||
+      delimiter(code) ||
       operator(code) ||
       string(code) ||
       boolean(code) ||
@@ -51,14 +54,14 @@ const comment = (code) => {
 }
 
 // punctuation
-const punctuation = (code) => {
-  const test = code.match(/^(\(|\)|,|:|->)/)
-  return test ? { type: 'punctuation', content: test[0] } : false
+const delimiter = (code) => {
+  const test = code.match(/^(\(|\)|,|;|:|->)/)
+  return test ? { type: 'delimiter', content: test[0] } : false
 }
 
 // operators
 const operator = (code) => {
-  const test = code.match(/^(\+|-|\*|\/\/|\/|%|==|!=|<=|>=|=|<|>|not\b|and\b|or\b|xor\b)/)
+  const test = code.match(/^(\+|-|\*|\/\/|\/|%|==|!=|<=|>=|=|<|>|~|&|\||\^|not\b|and\b|or\b)/)
   return test ? { type: 'operator', content: test[0] } : false
 }
 
@@ -116,13 +119,17 @@ const decimal = (code) => {
 
 // keywords
 const keyword = (code) => {
-  const test = code.match(/^(def|else|for|global|if|in|nonlocal|pass|range|return|while)\b/)
+  const test = code.match(/^(def|elif|else|for|global|if|in|nonlocal|pass|return|while)\b/)
   return test ? { type: 'keyword', content: test[0] } : false
 }
 
 // native turtle commands
 const command = (code) => {
-  const test = code.match(/^(abs|acos|angles|antilog|asin|atan|back|blank|blot|boolint|box|canvas|chr|circle|colou?r|console|copy|cos|cursor|dec|detect|direction|divmult|drawxy|dump|ellblot|ellipse|exp|fill|find|forget|forward|heapreset|hex|home|hypot|inc|input|insert|int|intdef|keybuffer|keyecho|keystatus|left|len|ln|log10|lower|max|maxint|min|mixcols|movexy|newturtle|noupdate|oldturtle|ord|output|pause|pendown|penup|pi|pixcol|pixset|polygon|polyline|power|print|qstr|qval|randcol|randint|read|readline|recolour|remember|reset|resolution|rgb|right|root|setx|setxy|sety|sign|sin|sqrt|str|tan|thickness|time|timeset|trace|turnxy|update|upper|watch|write|writeline)\b/)
+  const names = commands
+    .reduce((x, y) => y.names.Python ? `${x}|${y.names.Python}` : x, '')
+    .slice(1)
+  const regex = new RegExp(new RegExp(`^(${names}|range)\\b`)) // pretend "range" is a command
+  const test = code.match(regex)
   return test ? { type: 'command', content: test[0] } : false
 }
 
@@ -134,7 +141,11 @@ const turtle = (code) => {
 
 // native colour constants
 const colour = (code) => {
-  const test = code.match(/^(green|darkgreen|lightgreen|seagreen|greengrey|greengray|red|darkred|lightred|maroon|redgrey|redgray|blue|darkblue|lightblue|royal|bluegrey|yellow|ochre|cream|gold|yellowgrey|yellowgray|violet|indigo|lilac|purple|darkgrey|darkgray|lime|olive|yellowgreen|emerald|midgrey|midgray|orange|orangered|peach|salmon|lightgrey|lightgray|skyblue|teal|cyan|turquoise|silver|brown|darkbrown|lightbrown|coffee|white|pink|magenta|lightpink|rose|black)\b/)
+  const names = colours
+    .reduce((x, y) => `${x}|${y.names.Python}`, '')
+    .slice(1)
+  const regex = new RegExp(new RegExp(`^(${names})\\b`))
+  const test = code.match(regex)
   return test ? { type: 'colour', content: test[0] } : false
 }
 

@@ -1,15 +1,12 @@
 # NestedLoops
 
-countblot: int
-countcirc: int
-
 penup()
 for countblot in range(0, 10, 1):
   forward(260)
   colour(black)
   blot(150)
   colour(rgb(countblot + 1))
-  for countcirc in range(1, 26, 1):
-    circle(countcirc*8)
+  for countcirc in range(0, 25, 1):
+    circle((countcirc + 1) * 8)
   back(260)
   right(36)

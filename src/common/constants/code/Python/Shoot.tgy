@@ -6,7 +6,6 @@ facexspeed: int = 5
 faceyspeed: int = 0
 targets: int = 10
 hits: int = 0
-i: int
 
 def bottle(x: int, y: int):
   setxy(x, y)

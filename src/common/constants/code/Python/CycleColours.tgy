@@ -5,8 +5,8 @@ colcode: int = randint(1, 20)
 
 blank(black)
 colour(rgb(colcode))
-length = 0
 thickness(16)
+length: int = 0
 while not(length > 250):
   colcode = (colcode + colinc) % 20 + 1
   colour(rgb(colcode))

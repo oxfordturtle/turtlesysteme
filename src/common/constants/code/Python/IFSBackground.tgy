@@ -1,15 +1,13 @@
 # IFSBackground
 
-xleft = 0
-xright = 999
-ytop = 0
-ybottom = 999
-gridscale = 5
-gridthick = 64
+xleft : int = 0
+xright : int = 999
+ytop : int = 0
+ybottom : int = 999
+gridscale : int = 5
+gridthick : int = 64
 
 def background(rad: int):
-  x: int
-  y: int
   cx: int
   cy: int
   r: int

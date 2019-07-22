@@ -1,7 +1,6 @@
 # OlympicRings2
 
 ringsize: int = 130
-
 thickness(20)
 penup()
 forward(50)
