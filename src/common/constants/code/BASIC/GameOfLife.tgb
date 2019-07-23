@@ -10,6 +10,7 @@ FOR x% = 0 TO WIDTH% - 1
   NEXT
 NEXT
 WHILE ?KEY <> \ESCAPE
+  NOUPDATE
   FOR x% = 0 TO WIDTH% - 1
     FOR y% = 0 TO HEIGHT% - 1
       dn% = 0
@@ -30,5 +31,6 @@ WHILE ?KEY <> \ESCAPE
       ENDIF
     NEXT
   NEXT
+  UPDATE
 ENDWHILE
 END

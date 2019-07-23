@@ -15,10 +15,10 @@ def background(rad: int):
   b: int
   thickness(gridthick)
   colour(darkgrey)
-  for x in range(1, gridscale, 1):
+  for x in range(0, gridscale, 1):
     setxy(xleft + divmult(xright - xleft, gridscale, x), ytop)
     drawxy(0, ybottom - ytop)
-  for y in range(1, gridscale, 1):
+  for y in range(0, gridscale, 1):
     setxy(xleft + gridthick / 2, ytop + divmult(ybottom - ytop, gridscale, y))
     drawxy(xright - xleft - gridthick, 0)
   colour(black)
@@ -27,8 +27,8 @@ def background(rad: int):
   drawxy(0, ybottom - ytop)
   drawxy(xleft - xright, 0)
   drawxy(0, ytop - ybottom)
-  for x in range(1, gridscale, 1):
-    for y in range(1, gridscale, 1):
+  for x in range(0, gridscale, 1):
+    for y in range(0, gridscale, 1):
       cx = xleft + divmult(xright - xleft, gridscale, x) + gridthick
       cy = ytop + divmult(ybottom - ytop, gridscale, y) + gridthick
       r = divmult(255, gridscale - 1, x)

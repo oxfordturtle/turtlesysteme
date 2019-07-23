@@ -11,9 +11,11 @@ export const merge = (pcode1, pcode2) =>
     .concat(pcode2.slice(1))
 
 // merge two things with an operator at the end
-export const mergeWithOperator = (sofar, next, operator) => {
+export const mergeWithOperator = (sofar, next, operator, makeAbsolute = false) => {
   const pcode2 = merge(sofar, next.pcode)
-  const pcode3 = merge(pcode2, [[pc[operator]]])
+  const pcode3 = makeAbsolute
+    ? merge(pcode2, [[pc[operator], pc.abs]])
+    : merge(pcode2, [[pc[operator]]])
   return Object.assign(next, { pcode: pcode3 })
 }
 
@@ -101,8 +103,18 @@ export const loadFunctionReturnValue = routine =>
   [pc.ldvv, find.program(routine).resultAddress, 1]
 
 // pcode for an expression operator
-export const applyOperator = type =>
-  [pc[type]]
+export const applyOperator = (type) => {
+  switch (type) {
+    case 'subt':
+      return [pc.neg]
+
+    case 'not':
+      return [pc.not]
+
+    case 'bnot': // Python only
+      return [pc.ldin, 0, pc.eqal]
+  }
+}
 
 // pcode for a command call (applied after any arguments have been loaded onto the stack)
 export const callCommand = (command, routine, language) => {

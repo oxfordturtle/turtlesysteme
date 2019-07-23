@@ -11,6 +11,7 @@ BEGIN
         pixset(x, y, black);
   while ?key <> \escape do
     begin
+      noupdate;
       for x := 0 to width - 1 do
         for y := 0 to height - 1 do
           begin
@@ -25,6 +26,7 @@ BEGIN
       for x := 0 to width do
         for y := 0 to height do
           if (pixcol(x, y) and 3) mod 3 <> 0 then
-            pixset(x, y, pixcol(x, y) xor $FFFFFD)
+            pixset(x, y, pixcol(x, y) xor $FFFFFD);
+      update;
     end
 END.

@@ -1,7 +1,7 @@
 # Schelling
 
-width: int = 32
-height: int = 32
+width: int = 50
+height: int = 50
 empty: int = green
 test: int
 continue: bool

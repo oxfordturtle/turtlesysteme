@@ -58,7 +58,7 @@ const coder = (routine, lex, startLine) => {
         } else if (routine.lexemes[result.lex].type === 'NEWLINE') {
           result.lex += 1
         } else {
-          throw error('Command must be separated by a semicolon or placed on a new line.', routine.lexemes[result.lex])
+          throw error('Statement must be separated by a semicolon or placed on a new line.', routine.lexemes[result.lex])
         }
       }
       break
@@ -88,6 +88,11 @@ const coder = (routine, lex, startLine) => {
         // start of WHILE structure
         case 'while':
           result = compileWhile(routine, lex + 1, startLine)
+          break
+
+        // PASS
+        case 'pass':
+          result = compilePass(routine, lex + 1)
           break
 
         // anything else is an error
@@ -424,6 +429,16 @@ const compileWhile = (routine, lex, startLine) => {
 
   // now we have everything we need
   return { lex, pcode: pcoder.whileLoop(startLine, test, innerCode) }
+}
+
+// generate the pcode for a PASS statement
+const compilePass = (routine, lex) => {
+  // check for new line
+  if (routine.lexemes[lex] && routine.lexemes[lex].type !== 'NEWLINE') {
+    throw error('Statement must be on a new line.', routine.lexemes[lex])
+  }
+  // PASS is a dummy command, no pcode is necessary; just move past the NEWLINE lexeme
+  return { lex: lex + 1, pcode: [] }
 }
 
 // generate the pcode for a block (i.e. a sequence of commands/structures)

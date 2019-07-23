@@ -21,7 +21,8 @@ export const expression = (routine, lex, type, needed, language) => {
   while (routine.lexemes[result.lex] && (expTypes.indexOf(routine.lexemes[result.lex].value) > -1)) {
     let operator = unambiguousOperator(routine.lexemes[result.lex].value, result.type)
     let next = simple(routine, result.lex + 1, result.type, needed, language)
-    result = pcoder.mergeWithOperator(result.pcode, next, operator)
+    let makeAbsolute = (language === 'Python')
+    result = pcoder.mergeWithOperator(result.pcode, next, operator, makeAbsolute)
   }
 
   // return the whole thing
@@ -75,7 +76,7 @@ const unambiguousOperator = (operator, type) => {
 
 // handle a simple
 const simple = (routine, lex, type, needed, language) => {
-  const simpleTypes = ['plus', 'subt', 'or', 'xor']
+  const simpleTypes = ['plus', 'subt', 'or', 'bor', 'xor']
 
   // evaluate the first bit
   let result = term(routine, lex, type, needed, language)
@@ -84,7 +85,8 @@ const simple = (routine, lex, type, needed, language) => {
   while (routine.lexemes[result.lex] && (simpleTypes.indexOf(routine.lexemes[result.lex].value) > -1)) {
     let operator = unambiguousOperator(routine.lexemes[result.lex].value, result.type)
     let next = term(routine, result.lex + 1, result.type, needed, language)
-    result = pcoder.mergeWithOperator(result.pcode, next, operator)
+    let makeAbsolute = (language === 'Python' && operator === 'bor')
+    result = pcoder.mergeWithOperator(result.pcode, next, operator, makeAbsolute)
   }
 
   // return the whole thing
@@ -93,7 +95,7 @@ const simple = (routine, lex, type, needed, language) => {
 
 // handle a term
 const term = (routine, lex, type, needed, language) => {
-  const termTypes = ['and', 'div', 'divr', 'mod', 'mult']
+  const termTypes = ['and', 'band', 'div', 'divr', 'mod', 'mult']
 
   // evaluate the first bit
   let result = factor(routine, lex, type, needed, language)
@@ -102,7 +104,8 @@ const term = (routine, lex, type, needed, language) => {
   while (routine.lexemes[result.lex] && termTypes.indexOf(routine.lexemes[result.lex].value) > -1) {
     let operator = unambiguousOperator(routine.lexemes[result.lex].value, result.type)
     let next = factor(routine, result.lex + 1, result.type, needed, language)
-    result = pcoder.mergeWithOperator(result.pcode, next, operator)
+    let makeAbsolute = (language === 'Python' && operator === 'band')
+    result = pcoder.mergeWithOperator(result.pcode, next, operator, makeAbsolute)
   }
 
   // return the whole thing
@@ -149,12 +152,10 @@ const factor = (routine, lex, type, needed, language) => {
 // handle negation (integer or boolean)
 const negative = (routine, lex, needed, language) => {
   // check for a negation operator, and handle it if found
-  const negs = ['-', 'not', 'NOT']
-  if (negs.indexOf(routine.lexemes[lex].content) > -1) {
-    const found = routine.lexemes[lex].content === '-' ? 'integer' : 'boolint'
-    const operator = routine.lexemes[lex].content === '-'
-      ? [pcoder.applyOperator('neg')]
-      : [pcoder.applyOperator('not')]
+  const negs = ['subt', 'not', 'bnot']
+  if (negs.indexOf(routine.lexemes[lex].value) > -1) {
+    const found = (routine.lexemes[lex].value === 'subt') ? 'integer' : 'boolint'
+    const operator = routine.lexemes[lex].value
 
     // check the type is okay
     check(needed, 'integer', routine.lexemes[lex])
@@ -163,7 +164,7 @@ const negative = (routine, lex, needed, language) => {
     const result = factor(routine, lex + 1, found, needed, language)
 
     // return the result of the factor, with the negation operator appended
-    return Object.assign(result, { pcode: pcoder.merge(result.pcode, operator) })
+    return Object.assign(result, { pcode: pcoder.merge(result.pcode, [pcoder.applyOperator(operator)]) })
   }
 
   // return null if there's no negation operator
@@ -226,8 +227,11 @@ const commandNoParameters = (routine, lex, command, language) => {
     }
 
     // check for immediate closing bracket (no arguments)
-    if (!routine.lexemes[lex + 2] || (routine.lexemes[lex + 2].content !== ')')) {
-      throw error('Command {lex} takes no arguments.', routine.lexemes[lex - 1])
+    if (!routine.lexemes[lex + 2] || routine.lexemes[lex + 2].type === 'NEWLINE') {
+      throw error('Closing bracket missing after command call.', routine.lexemes[lex])
+    }
+    if (routine.lexemes[lex + 2].content !== ')') {
+      throw error('Command {lex} takes no arguments.', routine.lexemes[lex])
     }
 
     // return the command call and the index of the next lexeme
@@ -259,6 +263,7 @@ const commandWithParameters = (routine, lex, command, language) => {
 
 // pcode for loading arguments for a command call
 const args = (routine, lex, command, language) => {
+  const commandName = command.name || command.names[language]
   // handle the arguments
   const argsExpected = command.parameters.length
   let argsGiven = 0
@@ -269,7 +274,16 @@ const args = (routine, lex, command, language) => {
     lex = result.lex
     pcode = pcoder.merge(pcode, result.pcode)
     if (argsGiven < argsExpected) {
-      if (!routine.lexemes[lex] || (routine.lexemes[lex].content !== ',')) {
+      if (!routine.lexemes[lex]) {
+        throw error('Comma needed after parameter.', routine.lexemes[lex - 1])
+      }
+      if (routine.lexemes[lex].content === ')') {
+        throw error(`Not enough arguments given for command "${commandName}".`, routine.lexemes[lex])
+      }
+      if (routine.lexemes[lex].type === 'identifier' || routine.lexemes[lex].type === 'turtle') {
+        throw error('Comma missing between parameters.', routine.lexemes[lex])
+      }
+      if (routine.lexemes[lex].content !== ',') {
         throw error('Comma needed after parameter.', routine.lexemes[lex])
       }
       lex += 1
@@ -277,15 +291,14 @@ const args = (routine, lex, command, language) => {
   }
 
   // final error checking
-  const name = command.name || command.names[language]
   if (argsGiven < argsExpected) {
-    throw error(`Not enough arguments given for command "${name}".`, routine.lexemes[lex])
+    throw error(`Not enough arguments given for command "${commandName}".`, routine.lexemes[lex])
   }
   if (routine.lexemes[lex].content === ',') {
-    throw error(`Too many arguments given for command "${name}"`, routine.lexemes[lex])
+    throw error(`Too many arguments given for command "${commandName}".`, routine.lexemes[lex])
   }
   if (routine.lexemes[lex].content !== ')') {
-    throw error(`Closing bracket missing after command "${name}"`, routine.lexemes[lex - 1])
+    throw error(`Closing bracket missing after command "${commandName}".`, routine.lexemes[lex - 1])
   }
 
   // return the next lex index and the pcode

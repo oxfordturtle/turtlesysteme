@@ -8,12 +8,12 @@ def triangle(x1: int, y1: int, x2: int, y2: int, x3: int, y3: int):
   colour(black)
   polyline(4)
   if (hypot(x2 - x1, y2 - y1, 1) > 3):
-    x12 = (x1 + x2) / 2
-    y12 = (y1 + y2) / 2
-    x23 = (x2 + x3) / 2
-    y23 = (y2 + y3) / 2
-    x31 = (x3 + x1) / 2
-    y31 = (y3 + y1) / 2
+    x12: int = (x1 + x2) / 2
+    y12: int = (y1 + y2) / 2
+    x23: int = (x2 + x3) / 2
+    y23: int = (y2 + y3) / 2
+    x31: int = (x3 + x1) / 2
+    y31: int = (y3 + y1) / 2
     setxy(x12, y12)
     setxy(x23, y23)
     setxy(x31, y31)

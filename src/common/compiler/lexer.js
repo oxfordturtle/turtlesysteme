@@ -34,8 +34,9 @@ export default (code, language) => {
         line += 1
         // line breaks are significant in BASIC and Python
         if (language === 'BASIC' || language === 'Python') {
-          // create a NEWLINE lexeme, unless this is just blank lines at the start of the program
-          if (lexemes[lexemes.length - 1]) {
+          // create a NEWLINE lexeme, unless this is a blank line at the start f the program or
+          // there's a blank line previously (which can happen following a single-line comment)
+          if (lexemes[lexemes.length - 1] && lexemes[lexemes.length - 1].type !== 'NEWLINE') {
             lexemes.push({ type: 'NEWLINE', line: line - 1 })
           }
           // move past any additional line breaks, just incrementing the line number
@@ -201,16 +202,32 @@ const value = (type, content, language) => {
           return 'more'
 
         case 'not':
+          // 'not' is bitwise negation in BASIC and Pascal, but boolean in Python
+          return language === 'Python' ? 'bnot' : 'not'
+
+        case '~':
+          // in Python, '~' is bitwise negation
           return 'not'
 
         case 'and':
+          // 'and' is bitwise conjucntion in BASIC and Pascal, but boolean in Python
+          return language === 'Python' ? 'band' : 'and'
+
+        case '&':
+          // in Python, '&' is bitwise conjunction
           return 'and'
 
         case 'or':
+          // 'or' is bitwise disjunction in BASIC and Pascal, but boolean in Python
+          return language === 'Python' ? 'bor' : 'or'
+
+        case '|':
+          // in Python, '|' is bitwise disjunction
           return 'or'
 
         case 'xor': // fallthrough
-        case 'eor':
+        case 'eor': // fallthrough
+        case '^':
           return 'xor'
 
         default:
@@ -227,6 +244,7 @@ const value = (type, content, language) => {
 
     case 'boolean':
       // N.B. case sensitivity is already handled by the tokenizer
+      if (language === 'Python') return (content.toLowerCase() === 'true') ? 1 : 0
       return (content.toLowerCase() === 'true') ? -1 : 0
 
     case 'binary':

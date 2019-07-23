@@ -377,6 +377,18 @@ const execute = (pcode, line, code, options) => {
         stack.push(a ^ b)
         break
 
+      case pc.band:
+        b = stack.pop()
+        a = stack.pop()
+        stack.push(a && b)
+        break
+
+      case pc.bor:
+        b = stack.pop()
+        a = stack.pop()
+        stack.push(a || b)
+        break
+
       // 0x1 - integer operators
       case pc.neg:
         a = stack.pop()

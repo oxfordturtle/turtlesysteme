@@ -13,7 +13,7 @@ export const program = () =>
 export const subroutine = (lexemes, lex, parent) => {
   // identifier error checking
   if (!lexemes[lex]) {
-    throw error('\'def\' must be followed by an identifier.', lexemes[lex - 1])
+    throw error('"def" must be followed by an identifier.', lexemes[lex - 1])
   }
   if (lexemes[lex].type === 'turtle') {
     throw error('Subroutine cannot be given the name of a Turtle attribute.', lexemes[lex])
@@ -26,39 +26,41 @@ export const subroutine = (lexemes, lex, parent) => {
   }
 
   // define the subroutine
-  const subroutine = factory.subroutine(lexemes[lex], 'procedure', parent)
+  const subroutine = factory.subroutine(lexemes[lex].content, 'procedure', parent)
 
   // open bracket error checking
   if (!lexemes[lex + 1]) {
-    throw error()
+    throw error('Subroutine name must be followed by brackets.', lexemes[lex])
   }
   if (lexemes[lex + 1].content !== '(') {
-    throw error()
+    throw error('Subroutine name must be followed by brackets "()".', lexemes[lex + 1])
   }
 
   // parameters
-  const result = parameters(lexemes, lex + 2)
+  const result = parameters(lexemes, lex + 2, subroutine)
   lex = result.lex
-  subroutine.parameters = result.parameters
-  subroutine.variables = result.parameters
+  subroutine.parameters = subroutine.parameters.concat(result.parameters)
+  subroutine.variables = subroutine.variables.concat(result.parameters)
 
-  // closing bracket error checking
-  if (!lexemes[lex + 1]) {
-    throw error()
+  // parameters evaluation will stop at closing bracket or when we run out of lexemes;
+  // so here we should check it was the former
+  if (!lexemes[lex]) {
+    throw error('Subroutine parameters must be followed by a closing bracket ")".', lexemes[lex - 1])
   }
-  if (lexemes[lex + 1].content !== ')') {
-    throw error()
+  if (lexemes[lex].content !== ')') {
+    throw error('Subroutine parameters must be followed by a closing bracket ")".', lexemes[lex])
   }
+  lex += 1
 
   // check for return type
   if (lexemes[lex] && lexemes[lex].content === '->') {
     subroutine.type = 'function'
     lex += 1
     if (!lexemes[lex]) {
-      throw error()
+      throw error('Function arrow "->" must be followed by a return type specification.', lexemes[lex - 1])
     }
     const variable = factory.variable({ content: 'return' }, subroutine)
-    variable.fulltype = fulltype(lexemes[lex].content)
+    variable.fulltype = getFulltype(lexemes[lex])
     subroutine.returns = variable.fulltype.type
     subroutine.variables.unshift(variable)
     lex += 1
@@ -66,10 +68,10 @@ export const subroutine = (lexemes, lex, parent) => {
 
   // check for colon
   if (!lexemes[lex]) {
-    throw error()
+    throw error('Subroutine declaration must be followed by a colon ":".', lexemes[lex - 1])
   }
   if (lexemes[lex].content !== ':') {
-    throw error()
+    throw error('Subroutine declaration must be followed by a colon ":".', lexemes[lex])
   }
 
   // return the subroutine object and index of the next lexeme
@@ -77,22 +79,28 @@ export const subroutine = (lexemes, lex, parent) => {
 }
 
 // create a variable
-export const variable = (name, routine) =>
-  factory.variable(name, routine)
+export const variable = (lexeme, routine) =>
+  factory.variable(lexeme, routine)
+
+// create a variable full type
+export const fulltype = (type) =>
+  factory.fulltype(type)
 
 // look for identifier: type
 // return a variable and the index of the next lexeme
 export const typedVariable = (lexemes, lex, routine) => {
   // expecting identifier
   if (lexemes[lex].type === 'turtle') {
-    throw error()
+    throw error('{lex} is the name of a Turtle variable, and cannot be used as a custom variable name.', lexemes[lex])
   }
   if (lexemes[lex].type !== 'identifier') {
-    throw error()
+    throw error('{lex} is not a valid variable name.', lexemes[lex])
   }
 
   // check for duplicate
-  // ...
+  if (isDuplicate(routine, lexemes[lex].content)) {
+    throw error('{lex} is already the name of a variable in the current scope.', lexemes[lex])
+  }
 
   // ok, create the variable and move on
   const variable = factory.variable(lexemes[lex], routine)
@@ -100,33 +108,18 @@ export const typedVariable = (lexemes, lex, routine) => {
 
   // expecting colon
   if (!lexemes[lex]) {
-    throw error()
+    throw error('Variable must be followed by a colon ":" and a type specification.', lexemes[lex - 1])
   }
   if (lexemes[lex].content !== ':') {
-    throw error()
+    throw error('Variable must be followed by a colon ":" and a type specification.', lexemes[lex])
   }
   lex += 1
 
   // expecting bool|int|str
   if (!lexemes[lex]) {
-    throw error()
+    throw error('Variable must be given a type specification ("bool", "int", or "str").', lexemes[lex - 1])
   }
-  switch (lexemes[lex].content) {
-    case 'bool':
-      variable.fulltype = factory.fulltype('boolean')
-      break
-
-    case 'int':
-      variable.fulltype = factory.fulltype('integer')
-      break
-
-    case 'str':
-      variable.fulltype = factory.fulltype('string')
-      break
-
-    default:
-      throw error()
-  }
+  variable.fulltype = getFulltype(lexemes[lex])
   lex += 1
 
   // return the variable and the index of the next lexeme
@@ -137,40 +130,34 @@ export const typedVariable = (lexemes, lex, routine) => {
 // index of the next lexeme
 const parameters = (lexemes, lex, routine) => {
   const parameters = []
-  let parameter = {}
 
   while (lexemes[lex] && lexemes[lex].content !== ')') {
-    // error checking
-    if (lexemes[lex].type === 'turtle') {
-      throw error()
-    }
-    if (lexemes[lex].type !== 'identifier') {
-      throw error()
-    }
-    if (isDuplicate(routine, lexemes[lex].content)) {
-      throw error()
-    }
+    // check for parameter name and type
+    let result = typedVariable(lexemes, lex, routine)
 
-    // create the parameter
-    parameter = factory.variable(lexemes[lex].content, routine)
+    // add the parameter
+    parameters.push(result.variable)
+    lex = result.lex
 
-    // check for type
-    lex += 1
+    // check what's next
     if (!lexemes[lex]) {
-      throw error()
+      throw error('Parameter list must be followed by a closing bracket ")".', lexemes[lex - 1])
     }
-    if (lexemes[lex].content !== ':') {
-      throw error()
+    if (lexemes[lex].type === 'NEWLINE') {
+      throw error('Parameters must all be on one line.', lexemes[lex])
     }
-    lex += 1
-    if (!lexemes[lex]) {
-      throw error()
+    if (lexemes[lex].type === 'identifier' || lexemes[lex].type === 'turtle') {
+      throw error('Parameters must be separated by commas.', lexemes[lex])
     }
-    parameter.fulltype = fulltype(lexemes[lex].content)
-
-    // add the parameter and move on
-    parameters.push(parameter)
-    lex += 1
+    if (lexemes[lex].content === ',') {
+      lex += 1
+      if (!lexemes[lex]) {
+        throw error('Expected parameter name after comma.', lexemes[lex - 1])
+      }
+      if (lexemes[lex].type === 'NEWLINE') {
+        throw error('Parameters must all be on one line.', lexemes[lex])
+      }
+    }
   }
 
   // return the parameters and the index of the next lexeme
@@ -178,8 +165,8 @@ const parameters = (lexemes, lex, routine) => {
 }
 
 // get fulltype of variable
-const fulltype = (content) => {
-  switch (content) {
+const getFulltype = (lexeme) => {
+  switch (lexeme.content) {
     case 'bool':
       return factory.fulltype('boolean')
 
@@ -190,10 +177,10 @@ const fulltype = (content) => {
       return factory.fulltype('string')
 
     default:
-      throw error()
+      throw error('{lex} is not a valid type specification (expected "bool", "int", or "str")', lexeme)
   }
 }
 
 // check if a string is already the name of a variable or constant in a routine
-export const isDuplicate = (routine, name) =>
-  routine.variables.concat(routine.constants).some((x) => x.name === name)
+const isDuplicate = (routine, name) =>
+  routine.variables.some((x) => x.name === name)

@@ -33,4 +33,4 @@ for a in range(xstart, xfinish + 1, 1):
     else:
       pixset(a, b, rgb(iterations + 1))
   update()
-writeline('Resolution: ' + str(scale * 3) + ' Time taken: ' + qstr(time, 1000, 1) + ' seconds.')
+writeline('Resolution: ' + str(scale * 3) + ' Time taken: ' + qstr(time(), 1000, 1) + ' seconds.')

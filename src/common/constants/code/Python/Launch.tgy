@@ -44,20 +44,20 @@ def drawrocket():
   update()
 
 def report():
-  writeln('')
-  writeln('TIME = ' + str(t))
-  writeln(' Xposition = ' + str(x) + ' metres')
-  writeln(' Yposition = ' + str(y) + ' metres')
-  writeln(' Height = ' + qstr(dist - earthradius, 1000, 2) + ' km')
-  writeln(' Direction = ' + qstr(d, 3600, 1) + ' degrees')
-  writeln(' Thrust = ' + qstr(thrust, 1000, 1) + ' newtons per kg')
-  writeln('  Xthrust = ' + qstr(xthrust, 1000, 1) + ' newtons per kg')
-  writeln('  Ythrust = ' + qstr(ythrust, 1000, 1) + ' newtons per kg')
-  writeln(' Gravity = ' + qstr(gravity, 1000, 1) + ' newtons per kg')
-  writeln('  Xgravity = ' + qstr(xgravity, 1000, 1) + ' newtons per kg')
-  writeln('  Ygravity = ' + qstr(ygravity, 1000, 1) + ' newtons per kg')
-  writeln(' Xvelocity = ' + qstr(xvel, 1000, 1) + ' metres per s')
-  writeln(' Yvelocity = ' + qstr(yvel, 1000, 1) + ' metres per s')
+  writeline('')
+  writeline('TIME = ' + str(t))
+  writeline(' Xposition = ' + str(x) + ' metres')
+  writeline(' Yposition = ' + str(y) + ' metres')
+  writeline(' Height = ' + qstr(dist - earthradius, 1000, 2) + ' km')
+  writeline(' Direction = ' + qstr(d, 3600, 1) + ' degrees')
+  writeline(' Thrust = ' + qstr(thrust, 1000, 1) + ' newtons per kg')
+  writeline('  Xthrust = ' + qstr(xthrust, 1000, 1) + ' newtons per kg')
+  writeline('  Ythrust = ' + qstr(ythrust, 1000, 1) + ' newtons per kg')
+  writeline(' Gravity = ' + qstr(gravity, 1000, 1) + ' newtons per kg')
+  writeline('  Xgravity = ' + qstr(xgravity, 1000, 1) + ' newtons per kg')
+  writeline('  Ygravity = ' + qstr(ygravity, 1000, 1) + ' newtons per kg')
+  writeline(' Xvelocity = ' + qstr(xvel, 1000, 1) + ' metres per s')
+  writeline(' Yvelocity = ' + qstr(yvel, 1000, 1) + ' metres per s')
 
 canvas(-10000, -10000, 20000, 20000)
 angles(angleprecision)
@@ -87,9 +87,9 @@ while (earthradius < dist) and (dist < 40000000):
   y = y + yvel / 1000
   # report()
   if (yvel > 0):
-    d = angleprecision / 2 - arctan(xvel, yvel, 1)
+    d = angleprecision / 2 - atan(xvel, yvel, 1)
   else:
-    d = arctan(xvel, -yvel, 1)
+    d = atan(xvel, -yvel, 1)
   t = t + 1
   if (t == thrusttime):
     thrust = 0

@@ -1,6 +1,6 @@
 PROGRAM Schelling;
-CONST width = 32;
-      height = 32;
+CONST width = 50;
+      height = 50;
       empty = green;
 VAR test, tryi, tryj: integer;
     this, i, j: integer;

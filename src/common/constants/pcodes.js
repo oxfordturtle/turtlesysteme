@@ -15,8 +15,8 @@ export default [
   { code: 0x09, args: 0, str: 'AND' },
   { code: 0x0A, args: 0, str: 'OR' },
   { code: 0x0B, args: 0, str: 'XOR' },
-  undefined, // 0x0C
-  undefined, // 0x0D
+  { code: 0x0C, args: 0, str: 'BAND' },
+  { code: 0x0D, args: 0, str: 'BOR' },
   undefined, // 0x0E
   undefined, // 0x0F
   // 0x10s - integer operators
