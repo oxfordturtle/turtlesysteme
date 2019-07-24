@@ -11,6 +11,18 @@ export const windows = {
   about: null
 }
 
+// function to create a new browser window
+const browserWindow = (width, height) =>
+  new BrowserWindow({
+    width,
+    height,
+    minWidth: width,
+    minHeight: height,
+    useContentSize: true,
+    resizable: true,
+    webPreferences: { nodeIntegration: true }
+  })
+
 // function to create a window
 export const create = (id) => {
   const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -18,54 +30,22 @@ export const create = (id) => {
   switch (id) {
     // create the main system window
     case 'system':
-      windows.system = new BrowserWindow({
-        width: 1024,
-        height: 700,
-        minWidth: 1024,
-        minHeight: 700,
-        useContentSize: true,
-        resizable: true,
-        webPreferences: { nodeIntegration: true }
-      })
+      windows.system = browserWindow(1024, 700)
       break
 
     // create the settings window
     case 'settings':
-      windows.settings = new BrowserWindow({
-        width: 500,
-        height: 550,
-        minWidth: 500,
-        minHeight: 550,
-        useContentSize: true,
-        resizable: true,
-        webPreferences: { nodeIntegration: true }
-      })
+      windows.settings = browserWindow(500, 550)
       break
 
     // create the help window
     case 'help':
-      windows.help = new BrowserWindow({
-        width: 900,
-        height: 600,
-        minWidth: 800,
-        minHeight: 600,
-        useContentSize: true,
-        resizable: true,
-        webPreferences: { nodeIntegration: true }
-      })
+      windows.help = browserWindow(900, 600)
       break
 
     // create the about window
     case 'about':
-      windows.about = new BrowserWindow({
-        width: 900,
-        height: 600,
-        minWidth: 800,
-        minHeight: 600,
-        useContentSize: true,
-        resizable: true,
-        webPreferences: { nodeIntegration: true }
-      })
+      windows.about = browserWindow(900, 600)
       break
   }
 
@@ -83,6 +63,7 @@ export const create = (id) => {
   // set some page globals for use inside the renderer
   windows[id].page = id
   windows[id].electron = true
+  windows[id].version = process.env.npm_package_version
 
   // clenaup
   windows[id].on('closed', () => { windows[id] = null })

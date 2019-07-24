@@ -1,7 +1,9 @@
 {
   "name": "turtlesysteme",
   "productName": "Turtle System E",
-  "version": "19.4.1",
+  "version": "1.0.0",
+  "author": "University of Oxford",
+  "copyright": "Copyright © 2019 University of Oxford",
   "license": "MIT",
   "repository": {
     "type" : "git",
@@ -34,6 +36,12 @@
     },
     "renderer": {
       "webpackConfig": "webpack.electron.js"
+    }
+  },
+  "build": {
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
     }
   }
 }

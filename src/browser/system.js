@@ -54,6 +54,13 @@ export default (tse) => {
     }
     overlay.classList.add('tse-open')
   })
+
+  // register to show warnings on the modal dialog
+  on('warning', (warning) => {
+    overlay.querySelector('h2').innerHTML = warning.title
+    overlay.querySelector('p').innerHTML = warning.message
+    overlay.classList.add('tse-open')
+  })
 }
 
 // modal and overlay

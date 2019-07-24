@@ -52,6 +52,16 @@ export default (tse) => {
     remote.dialog.showMessageBox({ title, message, detail, buttons: ['OK'] })
   })
 
+  // register to show warnings as dialog boxes
+  on('warning', (warning) => {
+    remote.dialog.showMessageBox({
+      title: warning.title,
+      message: warning.title,
+      detail: warning.message,
+      buttons: ['OK']
+    })
+  })
+
   // register to tell the main process when certain things have changed (things that should trigger
   // menu changes)
   on('language-changed', (language) => {
