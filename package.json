@@ -13,7 +13,7 @@
     "dev-electron": "electron-webpack dev",
     "compile-electron": "electron-webpack",
     "dist-electron": "yarn compile-electron && electron-builder",
-    "dist-electron:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
+    "dist-electron:dir": "yarn dist-electron --dir -c.compression=store -c.mac.identity=null",
     "dev-browser": "webpack-dev-server --config webpack.browser.js --mode development --open",
     "compile-browser": "webpack --config webpack.browser.js --mode production"
   },
