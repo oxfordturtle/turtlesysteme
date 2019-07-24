@@ -9,11 +9,11 @@ export const stack = document.createElement('div')
 export const heap = document.createElement('div')
 
 // initialise the elements
-buttons.classList.add('tsx-buttons')
+buttons.classList.add('tse-buttons')
 buttons.innerHTML = `
   <button data-bind="dump">Show Current State</button>`
 
-stack.classList.add('tsx-memory-container')
+stack.classList.add('tse-memory-container')
 stack.innerHTML = `
   <table>
     <thead>
@@ -32,7 +32,7 @@ stack.innerHTML = `
     <tbody data-bind="stack"></tbody>
   </table>`
 
-heap.classList.add('tsx-memory-container')
+heap.classList.add('tse-memory-container')
 heap.innerHTML = `
   <table>
     <thead>

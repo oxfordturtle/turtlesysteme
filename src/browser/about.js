@@ -6,9 +6,9 @@ import canvas from 'common/components/about/canvas'
 import system from 'common/components/about/system'
 
 // setup the about page
-export default (tsx) => {
-  tsx.classList.add('tsx-help')
-  tsx.appendChild(about)
+export default (tse) => {
+  tse.classList.add('tse-help')
+  tse.appendChild(about)
 }
 
 const about = create([

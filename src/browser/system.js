@@ -16,16 +16,16 @@ import * as memory from 'common/components/machine/memory'
 import { on } from 'common/system/state'
 
 // setup the system page
-export default (tsx) => {
+export default (tse) => {
   // add the system class
-  tsx.classList.add('tsx-system')
+  tse.classList.add('tse-system')
 
   // add the popup overlay to the document body
   document.body.appendChild(overlay)
 
   // append the component divs (defined below)
-  tsx.appendChild(controls)
-  tsx.appendChild(tabs)
+  tse.appendChild(controls)
+  tse.appendChild(tabs)
 
   // register to switch tabs when called for
   on('file-changed', () => { show('Code') })
@@ -52,28 +52,28 @@ export default (tsx) => {
       title.innerHTML = 'System Error'
       message.innerHTML = 'An unexpected error has occured, suggesting there is a bug in the system. Please contact us with details of what you were doing when this message appeared, and we will do our best to locate and fix the bug.'
     }
-    overlay.classList.add('tsx-open')
+    overlay.classList.add('tse-open')
   })
 }
 
 // modal and overlay
 const overlay = document.createElement('div')
-overlay.classList.add('tsx')
-overlay.classList.add('tsx-overlay')
+overlay.classList.add('tse')
+overlay.classList.add('tse-overlay')
 overlay.innerHTML = `
-  <div class="tsx-modal">
-    <div class="tsx-modal-head">
+  <div class="tse-modal">
+    <div class="tse-modal-head">
       <h2></h2>
     </div>
-    <div class="tsx-modal-body">
+    <div class="tse-modal-body">
       <p></p>
-      <div class="tsx-modal-buttons">
+      <div class="tse-modal-buttons">
         <button>OK</button>
       </div>
     </div>
   </div>`
 overlay.querySelector('button').addEventListener('click', () => {
-  overlay.classList.remove('tsx-open')
+  overlay.classList.remove('tse-open')
 })
 
 // program tabs
@@ -87,7 +87,7 @@ const programTabs = create([
 
 // settings div
 const settingsDiv = document.createElement('div')
-settingsDiv.classList.add('tsx-settings')
+settingsDiv.classList.add('tse-settings')
 settingsDiv.appendChild(settings.buttons)
 settingsDiv.appendChild(settings.showOptions)
 settingsDiv.appendChild(settings.drawCountMax)
@@ -105,6 +105,6 @@ const machineTabs = create([
 
 // both tabs
 const tabs = document.createElement('div')
-tabs.classList.add('tsx-body')
+tabs.classList.add('tse-body')
 tabs.appendChild(programTabs)
 tabs.appendChild(machineTabs)

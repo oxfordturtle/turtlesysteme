@@ -19,7 +19,7 @@ on('language-changed', (language) => {
 const basicText = `
   <h3>Arithmetical Operators</h3>
   <p>The four main arithemetical operators are represented as:</p>
-  <table class="tsx-help-table">
+  <table class="tse-help-table">
     <tbody>
       <tr><td><code>${highlight('+', 'BASIC')}</code></td><td>addition (also used for string concatenation)</td></tr>
       <tr><td><code>${highlight('-', 'BASIC')}</code></td><td>subtraction</td></tr>
@@ -28,7 +28,7 @@ const basicText = `
     </tbody>
   </table>
   <p><code>${highlight('/', 'BASIC')}</code> is <em>integer</em> division, with the remainder discarded (e.g. <code>${highlight('14 / 3 = 4', 'BASIC')}</code>). Remainders are given by:</p>
-  <table class="tsx-help-table">
+  <table class="tse-help-table">
     <tbody>
       <tr><td><code>${highlight('MOD', 'BASIC')}</code></td><td>remainder</td></tr>
     </tbody>
@@ -39,7 +39,7 @@ const basicText = `
   <p>Thus to get the sine of 34.56 degrees to 6 decimal places, you could use <code>${highlight('n% = SIN(3456, 100, 1000000)', 'BASIC')}</code> – this makes <code>${highlight('n%', 'BASIC')}</code> equal to the sine of the angle 3456/100, multiplied by 1000000 (and rounded). <code>${highlight('WRITELN(QSTR$(n%, 1000000, 6))', 'BASIC')}</code> will then print n%/1000000 to six decimal places, i.e. <code>${highlight('"0.567269"', 'BASIC')}</code>. For more illustrations of this sort of decimal arithmetic, see the example program &lsquo;Mathematical functions&rsquo;.</p>
   <h3>Boolean Operators</h3>
   <p>The four main boolean operators are represented in the standard way:</p>
-  <table class="tsx-help-table">
+  <table class="tse-help-table">
     <tbody>
       <tr><td><code>${highlight('NOT', 'BASIC')}</code></td><td>negation</td></tr>
       <tr><td><code>${highlight('AND', 'BASIC')}</code></td><td>conjunction</td></tr>
@@ -50,7 +50,7 @@ const basicText = `
   <p>These are used between integers, where zero stands for false and any other number stands for true. <code>${highlight('FALSE', 'BASIC')}</code> stands for <code>${highlight('0', 'BASIC')}</code> and <code>${highlight('TRUE', 'BASIC')}</code> for <code>${highlight('-1', 'BASIC')}</code>. The Boolean operators can also be used in a bitwise fashion (i.e. each binary bit in the result is calculated as the result of the relevant boolean operation on the corresponding bits of the inputs, e.g. <code>${highlight('21 AND 6 = 4', 'BASIC')}</code> (binary <code>${highlight('10101 AND 00110 = 100', 'BASIC')}</code>); <code>${highlight('21 OR 6 = 23', 'BASIC')}</code> (<code>${highlight('10111', 'BASIC')}</code>); <code>${highlight('21 EOR 6 = 19', 'BASIC')}</code> (<code>${highlight('10011', 'BASIC')}</code>).</p>
   <h3>Comparison Operators</h3>
   <p>The six comparison operators are applicable to all types (with strings compared alphabetically):</p>
-  <table class="tsx-help-table">
+  <table class="tse-help-table">
     <tbody>
       <tr><td><code>${highlight('=', 'BASIC')}</code></td><td>equality</td></tr>
       <tr><td><code>${highlight('<>', 'BASIC')}</code></td><td>inequality</td></tr>
@@ -68,7 +68,7 @@ const basicText = `
 const pascalText = `
   <h3>Arithmetical Operators</h3>
   <p>The four main arithemetical operators are represented as:</p>
-  <table class="tsx-help-table">
+  <table class="tse-help-table">
     <tbody>
       <tr><td><code>${highlight('+', 'Pascal')}</code></td><td>addition (also used for string concatenation)</td></tr>
       <tr><td><code>${highlight('-', 'Pascal')}</code></td><td>subtraction</td></tr>
@@ -77,7 +77,7 @@ const pascalText = `
     </tbody>
   </table>
   <p><code>${highlight('/', 'Pascal')}</code> is <em>integer</em> division, with the remainder discarded (e.g. <code>${highlight('14 / 3 = 4', 'Pascal')}</code>). Remainders are given by:</p>
-  <table class="tsx-help-table">
+  <table class="tse-help-table">
     <tbody>
       <tr><td><code>${highlight('mod', 'Pascal')}</code></td><td>remainder</td></tr>
     </tbody>
@@ -88,7 +88,7 @@ const pascalText = `
   <p>Thus to get the sine of 34.56 degrees to six decimal places, you could use <code>${highlight('n := sin(3456, 100, 1000000)', 'Pascal')}</code> – this makes <code>${highlight('n', 'Pascal')}</code> equal to the sine of the angle 3456/100, multiplied by 1000000 (and rounded). <code>${highlight('writeln(qstr(n, 1000000, 6))', 'Pascal')}</code> will then print n/1000000 to six decimal places, i.e. <code>${highlight('"0.567269"', 'Pascal')}</code>. For more illustrations of this sort of decimal arithmetic, see the example program &lsquo;Mathematical functions&rsquo;.</p>
   <h3>Boolean Operators</h3>
   <p>The four main boolean operators are represented in the standard way:</p>
-  <table class="tsx-help-table">
+  <table class="tse-help-table">
     <tbody>
       <tr><td><code>${highlight('not', 'Pascal')}</code></td><td>negation</td></tr>
       <tr><td><code>${highlight('and', 'Pascal')}</code></td><td>conjunction</td></tr>
@@ -99,7 +99,7 @@ const pascalText = `
   <p>These can also be used between integers, in a <em>bitwise</em> fashion (i.e. each binary bit in the result is calculated as the result of the relevant boolean operation on the corresponding bits of the inputs), e.g. <code>${highlight('21 and 6 = 4', 'Pascal')}</code> (binary <code>${highlight('10101 and 00110 = 100', 'Pascal')}</code>); <code>${highlight('21 or 6 = 23', 'Pascal')}</code> (<code>${highlight('10111', 'Pascal')}</code>); <code>${highlight('21 xor 6 = 19', 'Pascal')}</code> (<code>${highlight('10011', 'Pascal')}</code>).</p>
   <h3>Comparison Operators</h3>
   <p>The six comparison operators are applicable to all types (with strings compared alphabetically):</p>
-  <table class="tsx-help-table">
+  <table class="tse-help-table">
     </tbody>
       <tr><td><code>${highlight('=', 'Pascal')}</code></td><td>equality</td></tr>
       <tr><td><code>${highlight('<>', 'Pascal')}</code></td><td>inequality</td></tr>
@@ -117,7 +117,7 @@ const pascalText = `
 const pythonText = `
   <h3>Arithmetical Operators</h3>
   <p>The four main arithemetical operators are represented as:</p>
-  <table class="tsx-help-table">
+  <table class="tse-help-table">
     <tbody>
       <tr><td><code>${highlight('+', 'Python')}</code></td><td>addition (also used for string concatenation)</td></tr>
       <tr><td><code>${highlight('-', 'Python')}</code></td><td>subtraction</td></tr>
@@ -126,7 +126,7 @@ const pythonText = `
     </tbody>
   </table>
   <p><code>${highlight('//', 'Python')}</code> is <em>integer</em> division, with the remainder discarded (e.g. <code>${highlight('14 // 3 = 4', 'Python')}</code>). Remainders are given by:</p>
-  <table class="tsx-help-table">
+  <table class="tse-help-table">
     <tbody>
       <tr><td><code>${highlight('mod', 'Python')}</code></td><td>remainder</td></tr>
     </tbody>
@@ -137,7 +137,7 @@ const pythonText = `
   <p>Thus to get the sine of 34.56 degrees to six decimal places, you could use <code>${highlight('n = sin(3456, 100, 1000000)', 'Python')}</code> – this makes <code>${highlight('n', 'Python')}</code> equal to the sine of the angle 3456/100, multiplied by 1000000 (and rounded). <code>${highlight('writeln(qstr(n, 1000000, 6))', 'Python')}</code> will then print n/1000000 to six decimal places, i.e. <code>${highlight(`'0.567269'`, 'Python')}</code>. For more illustrations of this sort of decimal arithmetic, see the example program &lsquo;Mathematical functions&rsquo;.</p>
   <h3>Boolean Operators</h3>
   <p>The four main boolean operators are represented in the standard way:</p>
-  <table class="tsx-help-table">
+  <table class="tse-help-table">
     <tbody>
       <tr><td><code>${highlight('not', 'Python')}</code></td><td>negation</td></tr>
       <tr><td><code>${highlight('and', 'Python')}</code></td><td>conjunction</td></tr>
@@ -148,7 +148,7 @@ const pythonText = `
   <p>These can also be used between integers, in a <em>bitwise</em> fashion (i.e. each binary bit in the result is calculated as the result of the relevant boolean operation on the corresponding bits of the inputs), e.g. <code>${highlight('21 and 6 = 4', 'Python')}</code> (binary <code>${highlight('10101 and 00110 = 100', 'Python')}</code>); <code>${highlight('21 or 6 = 23', 'Python')}</code> (<code>${highlight('10111', 'Python')}</code>); <code>${highlight('21 xor 6 = 19', 'Python')}</code> (<code>${highlight('10011', 'Python')}</code>).</p>
   <h3>Comparison Operators</h3>
   <p>The six comparison operators are applicable to all types (with strings compared alphabetically):</p>
-  <table class="tsx-help-table">
+  <table class="tse-help-table">
     <tbody>
       <tr><td><code>${highlight('==', 'Python')}</code></td><td>equality</td></tr>
       <tr><td><code>${highlight('!=', 'Python')}</code></td><td>inequality</td></tr>

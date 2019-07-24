@@ -1,4 +1,4 @@
-.tsx-overlay {
+.tse-overlay {
   display: none;
   position: fixed;
   z-index: 10;
@@ -8,15 +8,15 @@
   left: 0;
   right: 0;
   padding: .5em;
-  &.tsx-open {
+  &.tse-open {
     display: block;
   }
-  .tsx-modal {
+  .tse-modal {
     margin: 0 auto;
     margin-top: 8em;
     max-width: 30em;
     box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
-    .tsx-modal-head {
+    .tse-modal-head {
       background: $green;
       color: #fff;
       h2 {
@@ -25,14 +25,14 @@
         padding: .5em;
       }
     }
-    .tsx-modal-body {
+    .tse-modal-body {
       background: #fff;
       padding: 1em;
       p {
         margin: 0 0 1em;
       }
     }
-    .tsx-modal-buttons {
+    .tse-modal-buttons {
       text-align: right;
     }
   }

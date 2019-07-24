@@ -1,4 +1,4 @@
-.tsx-pcode {
+.tse-pcode {
   overflow: auto;
   border: 1px solid $gray;
   background: $lightgray;
@@ -17,8 +17,12 @@
     &::before {
       content: counter(pcode-table);
     }
-    &:not(:last-child) {
-      border-bottom: 1px solid $gray;
+    &:not(:first-child) {
+      border-top: 1px solid $gray;
+      &::before {
+        margin-top: -1px;
+        border-top: 1px solid $gray;
+      }
     }
     &::before {
       font-weight: bold;

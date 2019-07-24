@@ -1,20 +1,20 @@
-.tsx-body {
+.tse-body {
   display: flex;
   flex: 1;
-  .tsx-tabs:first-child {
+  .tse-tabs:first-child {
     flex: 1;
     border-right: $padding solid $darkgray;
   }
-  .tsx-tabs:last-child {
+  .tse-tabs:last-child {
     width: $padding + $canvas-coords-width + $canvas-width + $padding;
   }
 }
 
-.tsx-tabs {
+.tse-tabs {
   display: flex;
   flex-direction: column;
   height: 100%;
-  .tsx-tab-pane {
+  .tse-tab-pane {
     display: none;
     &.active {
       display: flex;
@@ -26,9 +26,9 @@
       color: $black;
     }
   }
-  .tsx-tab-list {
+  .tse-tab-list {
     display: flex;
-    .tsx-tab {
+    .tse-tab {
       display: block;
       cursor: pointer;
       padding: .625em .75em;

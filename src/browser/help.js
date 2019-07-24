@@ -13,10 +13,10 @@ import structures from 'common/components/help/structures'
 import controls from 'common/components/controls'
 
 // setup the help page
-export default (tsx) => {
-  tsx.classList.add('tsx-help')
-  tsx.appendChild(controls)
-  tsx.appendChild(help)
+export default (tse) => {
+  tse.classList.add('tse-help')
+  tse.appendChild(controls)
+  tse.appendChild(help)
 }
 
 const help = create([

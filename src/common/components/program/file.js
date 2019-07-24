@@ -16,30 +16,30 @@ const optgroup = (group) => `
     ${group.examples.map(x => `<option value="${x}">${examples.names[x]}</option>`).join('')}
   </optgroup>`
 
-newFile.classList.add('tsx-file-box')
+newFile.classList.add('tse-file-box')
 newFile.innerHTML = `
   <label>File</label>
-  <div class="tsx-buttons">
+  <div class="tse-buttons">
     <button data-bind="new-program">New Program</button>
     <button data-bind="new-skeleton-program">New Skeleton Program</button>
   </div>
-  <div class="tsx-buttons">
+  <div class="tse-buttons">
     <button data-bind="open-program">Open Program</button>
     <button data-bind="close-program">Close Program</button>
   </div>
-  <div class="tsx-buttons">
+  <div class="tse-buttons">
     <button data-bind="save-program">Save Program</button>
     <button data-bind="save-tgx-program">Save Export File</button>
   </div>`
 
-openHelp.classList.add('tsx-file-box')
+openHelp.classList.add('tse-file-box')
 openHelp.innerHTML = `
   <label>Example Programs</label>
   <select data-bind="help-examples">
     ${examples.help.map(optgroup)}
   </select>`
 
-openCSAC.classList.add('tsx-file-box')
+openCSAC.classList.add('tse-file-box')
 openCSAC.innerHTML = `
   <label>CSAC Book Programs</label>
   <select data-bind="csac-examples">

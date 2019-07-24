@@ -9,7 +9,7 @@ const code = document.createElement('div')
 export default code
 
 // initialise the code element
-code.classList.add('tsx-code')
+code.classList.add('tse-code')
 code.innerHTML = `
   <textarea data-bind="plain-code" wrap="off" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"></textarea>
   <ol data-bind="line-numbers"></ol>

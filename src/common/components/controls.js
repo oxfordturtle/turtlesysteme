@@ -12,28 +12,28 @@ const element = document.createElement('div')
 export default element
 
 // initialise the element
-element.classList.add('tsx-controls')
+element.classList.add('tse-controls')
 element.innerHTML = `
-  <div class="tsx-program-controls">
-    <select class="tsx-language-select" data-bind="language-select">${languages.map(x => `<option value="${x}">${x}</option>`).join('')}</select>
-    <input class="tsx-filename-input" data-bind="name-input" type="text" placeholder="filename">
+  <div class="tse-program-controls">
+    <select class="tse-language-select" data-bind="language-select">${languages.map(x => `<option value="${x}">${x}</option>`).join('')}</select>
+    <input class="tse-filename-input" data-bind="name-input" type="text" placeholder="filename">
   </div>
-  <div class="tsx-machine-controls">
-    <div class="tsx-machine-buttons">
-      <button class="tsx-run-halt-button" data-bind="run-halt">RUN</button>
-      <button class="tsx-play-pause-button" data-bind="play-pause">&#10074;&#10074;</button>
+  <div class="tse-machine-controls">
+    <div class="tse-machine-buttons">
+      <button class="tse-run-halt-button" data-bind="run-halt">RUN</button>
+      <button class="tse-play-pause-button" data-bind="play-pause">&#10074;&#10074;</button>
     </div>
-    <dl class="tsx-turtle-properties">
+    <dl class="tse-turtle-properties">
       <dt>X</dt>
-      <dd class="tsx-turtxy" data-bind="turtx">500</dd>
+      <dd class="tse-turtxy" data-bind="turtx">500</dd>
       <dt>Y</dt>
-      <dd class="tsx-turtxy" data-bind="turty">500</dd>
+      <dd class="tse-turtxy" data-bind="turty">500</dd>
       <dt>Direction</dt>
-      <dd class="tsx-turtd" data-bind="turtd">0</dd>
+      <dd class="tse-turtd" data-bind="turtd">0</dd>
       <dt>Thickness</dt>
-      <dd class="tsx-turttc" data-bind="turtt">2</dd>
+      <dd class="tse-turttc" data-bind="turtt">2</dd>
       <dt>Colour</dt>
-      <dd class="tsx-turttc" style="background:#000" data-bind="turtc"></dd>
+      <dd class="tse-turttc" style="background:#000" data-bind="turtc"></dd>
     </dl>
   </div>`
 

@@ -12,9 +12,9 @@ import operators from 'common/components/help/operators'
 import structures from 'common/components/help/structures'
 
 // setup the help page
-export default (tsx) => {
-  tsx.classList.add('tsx-help')
-  tsx.appendChild(help)
+export default (tse) => {
+  tse.classList.add('tse-help')
+  tse.appendChild(help)
 }
 
 const help = create([

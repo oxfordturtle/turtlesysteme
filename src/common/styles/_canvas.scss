@@ -1,6 +1,6 @@
-.tsx-canvas {
+.tse-canvas {
   display: flex;
-  .tsx-canvas-coords {
+  .tse-canvas-coords {
     flex: 1;
     display: flex;
     justify-content: space-between;
@@ -13,18 +13,18 @@
       text-align: right;
     }
   }
-  .tsx-canvas-left {
+  .tse-canvas-left {
     display: flex;
     flex-direction: column;
-    .tsx-canvas-coords {
+    .tse-canvas-coords {
       flex-direction: column;
       text-align: right;
       margin-top: $padding + 10px + $padding;
     }
   }
-  .tsx-canvas-right {
+  .tse-canvas-right {
     flex: 1;
-    .tsx-canvas-coords {
+    .tse-canvas-coords {
       span:nth-child(1), span:nth-child(2) {
         text-align: left;
       }
@@ -32,7 +32,7 @@
         text-align: center;
       }
     }
-    .tsx-canvas-wrapper {
+    .tse-canvas-wrapper {
       margin-bottom: $padding;
       canvas {
         display: block;

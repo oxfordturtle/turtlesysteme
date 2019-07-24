@@ -7,4 +7,4 @@ export default (code, language) =>
   tokenizer(code, language).map(style).join('')
 
 const style = token =>
-  `<span class="tsx-${token.type}">${token.content}</span>`
+  `<span class="tse-${token.type}">${token.content}</span>`

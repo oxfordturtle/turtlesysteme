@@ -1,4 +1,4 @@
-.tsx-usage {
+.tse-usage {
   flex: 1;
   border: 1px solid $gray;
   overflow-x: hidden;
@@ -6,13 +6,13 @@
   code {
     font-family: $monospace;
   }
-  .tsx-usage-table {
+  .tse-usage-table {
     td, th {
       &:first-child, &:last-child {
         text-align: left;
       }
     }
-    .tsx-category-heading th {
+    .tse-category-heading th {
       background: $green;
       color: white;
       font-style: italic;
@@ -20,5 +20,5 @@
       text-align: right;
     }
   }
-  .tsx-lexemes-table {}
+  .tse-lexemes-table {}
 }

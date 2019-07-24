@@ -15,13 +15,13 @@ import * as memory from 'common/components/machine/memory'
 import { on } from 'common/system/state'
 
 // setup the system page
-export default (tsx) => {
+export default (tse) => {
   // add the system class
-  tsx.classList.add('tsx-system')
+  tse.classList.add('tse-system')
 
   // append the system components (defined below)
-  tsx.appendChild(controls)
-  tsx.appendChild(tabs)
+  tse.appendChild(controls)
+  tse.appendChild(tabs)
 
   // register to switch tabs when called for
   on('file-changed', () => { show('Code') })
@@ -85,6 +85,6 @@ const machineTabs = create([
 
 // both tabs
 const tabs = document.createElement('div')
-tabs.classList.add('tsx-body')
+tabs.classList.add('tse-body')
 tabs.appendChild(programTabs)
 tabs.appendChild(machineTabs)

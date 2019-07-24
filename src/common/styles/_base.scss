@@ -1,4 +1,4 @@
-.tsx {
+.tse {
   font-family: $font-family;
   font-size: $font-size;
   line-height: 1;
@@ -51,54 +51,54 @@
     border: 1px solid $gray;
   }
   code {
-    .tsx-comment {
+    .tse-comment {
       color: gray;
     }
-    .tsx-string {
+    .tse-string {
       color: seagreen;
     }
-    .tsx-operator {
+    .tse-operator {
       color: steelblue;
     }
-    .tsx-punctuation {}
-    .tsx-binary,
-    .tsx-octal,
-    .tsx-decimal,
-    .tsx-hexadecimal {
+    .tse-punctuation {}
+    .tse-binary,
+    .tse-octal,
+    .tse-decimal,
+    .tse-hexadecimal {
       color: peru;
     }
-    .tsx-type {
+    .tse-type {
       color: firebrick;
     }
-    .tsx-keyword {
+    .tse-keyword {
       color: firebrick;
       font-weight: bold;
     }
-    .tsx-command,
-    .tsx-custom {
+    .tse-command,
+    .tse-custom {
       color: purple;
     }
-    .tsx-turtle,
-    .tsx-variable {
+    .tse-turtle,
+    .tse-variable {
       font-weight: bold;
     }
-    .tsx-constant {
+    .tse-constant {
       color: steelblue;
     }
-    .tsx-keycode {
+    .tse-keycode {
       color: steelblue;
     }
-    .tsx-query {
+    .tse-query {
       font-weight: bold;
     }
-    .tsx-identifier {}
-    .tsx-unterminated-comment,
-    .tsx-unterminated-string,
-    .tsx-bad-binary,
-    .tsx-bad-octal,
-    .tsx-bad-hexadecimal,
-    .tsx-bad-decimal,
-    .tsx-illegal {
+    .tse-identifier {}
+    .tse-unterminated-comment,
+    .tse-unterminated-string,
+    .tse-bad-binary,
+    .tse-bad-octal,
+    .tse-bad-hexadecimal,
+    .tse-bad-decimal,
+    .tse-illegal {
       background: rgba(200, 0, 0, .2);
     }
   }

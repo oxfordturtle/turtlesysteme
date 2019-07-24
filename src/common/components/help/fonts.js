@@ -21,7 +21,7 @@ const tr = font => `
 element.innerHTML = `
   <h3>Fonts</h3>
   <p>The Turtle System has 16 fonts for drawing text on the canvas, shown in the table below. The <code>print</code> command takes a font parameter, which must be an integer between 0 and 255. The integers in the range 0-15 correspond to plain versions of the 16 fonts. To render the text in italics, add 16 to this base; to render it in bold, add 32. This additions are cumulative; thus to render the text in italic and bold, add 16+32.</p>
-  <table class="tsx-help-table">
+  <table class="tse-help-table">
     <thead>
       <tr>
         <th>Font Family Name</th>

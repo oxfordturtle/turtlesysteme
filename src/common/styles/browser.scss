@@ -17,33 +17,33 @@
 @import '_settings';
 @import '_help';
 
-.tsx-system, .tsx-help {
+.tse-system, .tse-help {
   width: $system-width;
   height: $system-height;
   margin: 0 auto;
 }
 
-.tsx-help {
+.tse-help {
   display: flex;
   flex-direction: column;
-  .tsx-controls {
-    .tsx-program-controls {
+  .tse-controls {
+    .tse-program-controls {
       justify-content: flex-end;
       margin-right: 0;
-      .tsx-language-select {
+      .tse-language-select {
         margin-right: 0;
       }
-      .tsx-filename-input {
+      .tse-filename-input {
         display: none;
       }
     }
-    .tsx-machine-controls {
+    .tse-machine-controls {
       display: none;
     }
   }
-  .tsx-tabs {
+  .tse-tabs {
     flex: 1;
-    .tsx-tab-pane {
+    .tse-tab-pane {
       height: 100%;
     }
   }

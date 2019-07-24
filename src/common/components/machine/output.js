@@ -7,4 +7,4 @@ const element = document.createElement('pre')
 export default element
 
 // initialise the element
-element.classList.add('tsx-output')
+element.classList.add('tse-output')

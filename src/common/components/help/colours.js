@@ -12,7 +12,7 @@ export default element
 element.innerHTML = `
   <h3>Colours</h3>
   <p>The Turtle System has 50 predefined colour constants, shown in the table below. Every command that takes a colour argument (e.g. the <code>colour</code> command, which sets the Turtle&lsquo;s current drawing colour) can be given an RGB value, or one of the predefined colour names below. The compiler will translate this name into the corresponding RGB value. Alternatively, you can also use the corresponding number between 1 and 50, which the Turtle Machine will translate into the RGB value when your program runs.</p>
-  <table class="tsx-help-table">
+  <table class="tse-help-table">
     <thead>
       <tr>
         <th>No.</th>

@@ -10,26 +10,26 @@ import signals from 'common/constants/signals'
 import { send } from 'common/system/state'
 import 'common/styles/electron.scss'
 
-// grab the #tsx element and add style classes
-const tsx = document.getElementById('app')
-tsx.classList.add('tsx')
+// grab the #tse element and add style classes
+const tse = document.getElementById('app')
+tse.classList.add('tse')
 
 // setup the page
 switch (remote.getCurrentWindow().page) {
   case 'system':
-    system(tsx)
+    system(tse)
     break
 
   case 'settings':
-    settings(tsx)
+    settings(tse)
     break
 
   case 'help':
-    help(tsx)
+    help(tse)
     break
 
   case 'about':
-    about(tsx)
+    about(tse)
     break
 }
 

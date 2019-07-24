@@ -14,8 +14,8 @@ let $output
 
 // store the HTML elements in the module globals
 export const init = ({ canvas, console, output }) => {
-  $xcoords = Array.from(canvas.querySelectorAll('.tsx-canvas-right span'))
-  $ycoords = Array.from(canvas.querySelectorAll('.tsx-canvas-left span'))
+  $xcoords = Array.from(canvas.querySelectorAll('.tse-canvas-right span'))
+  $ycoords = Array.from(canvas.querySelectorAll('.tse-canvas-left span'))
   $canvas = canvas.querySelector('canvas')
   $context = $canvas.getContext('2d')
   $console = console

@@ -7,22 +7,31 @@ import about from './about'
 import { send } from 'common/system/state'
 import 'common/styles/browser.scss'
 
-// grab the #tsx element and add style classes
-const tsx = document.getElementById('app')
-tsx.classList.add('tsx')
-document.body.parentElement.classList.add('tsx-browser')
+// grab the #tse element and add style classes
+const tse = document.getElementById('app')
+tse.classList.add('tse')
+document.body.parentElement.classList.add('tse-browser')
 
-switch (tsx.dataset.page) {
+// maybe setup state variables based on the app's data properties
+if (tse.dataset.language) {
+  send('set-language', tse.dataset.language)
+}
+if (tse.dataset.example) {
+  send('set-example', tse.dataset.example)
+}
+
+// initialise the app
+switch (tse.dataset.page) {
   case 'system':
-    system(tsx)
+    system(tse)
     break
 
   case 'help':
-    help(tsx)
+    help(tse)
     break
 
   case 'about':
-    about(tsx)
+    about(tse)
     break
 }
 

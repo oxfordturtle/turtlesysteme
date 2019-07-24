@@ -9,9 +9,9 @@ const lexemes = document.createElement('div')
 export default lexemes
 
 // initialise the element
-lexemes.classList.add('tsx-usage')
+lexemes.classList.add('tse-usage')
 lexemes.innerHTML = `
-  <table class="tsx-lexemes-table">
+  <table class="tse-lexemes-table">
     <thead>
       <tr>
         <th>Lex</th>

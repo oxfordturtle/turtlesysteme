@@ -15,7 +15,7 @@ const tds = cursor =>
 element.innerHTML = `
   <h3>Cursors</h3>
   <p>The native <code>cursor</code> command sets which cursor to display when the mouse is over the canvas. Setting it to 0 makes the mouse invisible. Values in the range 1-15 set it to the cursor shown in the table below (move your mouse over each box to preview the cursor). Any other value will reset to the default cursor. Note that the actual cursor displayed depends on your operating system, and may vary from computer to computer.</p>
-  <table class="tsx-help-table">
+  <table class="tse-help-table">
     <thead>
       <tr>
         <th>No.</th>

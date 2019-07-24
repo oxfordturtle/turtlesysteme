@@ -23,7 +23,7 @@ const basicText = `
   <p>The x- and y-coordinates of the mouse&rsquo;s current position can be found at any time by using the special global variables <code>${highlight('?MOUSEX', 'BASIC')}</code> and <code>${highlight('?MOUSEY', 'BASIC')}</code> – these do not require the mouse to be clicked.</p>
   <h4>Mouse Click Detection</h4>
   <p>When a mouse click is performed, the x- and y-coordinates of the click position are remembered by the variables <code>${highlight('?CLICKX', 'BASIC')}</code> and <code>${highlight('?CLICKY', 'BASIC')}</code>. However to identify the type of click, use the variable <code>${highlight('?CLICK', 'BASIC')}</code>, which is initially set to a value of -1, but after any click has taken place is set to a numerical value of 128 plus additions as follows:</p>
-  <table class="tsx-help-table">
+  <table class="tse-help-table">
     <tbody>
       <tr><td>1</td><td>if the click was with the left mouse button</td></tr>
       <tr><td>2</td><td>if the click was with the right mouse button</td></tr>
@@ -55,7 +55,7 @@ const pascalText = `
   <p>The x- and y-coordinates of the mouse&rsquo;s current position can be found at any time by using the special global variables <code>${highlight('?mousex', 'Pascal')}</code> and <code>${highlight('?mousey', 'Pascal')}</code> – these do not require the mouse to be clicked.</p>
   <h4>Mouse Click Detection</h4>
   <p>When a mouse click is performed, the x- and y-coordinates of the click position are remembered by the variables <code>${highlight('?clickx', 'Pascal')}</code> and <code>${highlight('?clicky', 'Pascal')}</code>. However to identify the type of click, use the variable <code>${highlight('?click', 'Pascal')}</code>, which is initially set to a value of -1, but after any click has taken place is set to a numerical value of 128 plus additions as follows:</p>
-  <table class="tsx-help-table">
+  <table class="tse-help-table">
     <tbody>
       <tr><td>1</td><td>if the click was with the left mouse button</td></tr>
       <tr><td>2</td><td>if the click was with the right mouse button</td></tr>
@@ -87,7 +87,7 @@ const pythonText = `
   <p>The x- and y-coordinates of the mouse&rsquo;s current position can be found at any time by using the special global variables <code>${highlight('?mousex', 'Python')}</code> and <code>${highlight('?mousey', 'Python')}</code> – these do not require the mouse to be clicked.</p>
   <h4>Mouse Click Detection</h4>
   <p>When a mouse click is performed, the x- and y-coordinates of the click position are remembered by the variables <code>${highlight('?clickx', 'Python')}</code> and <code>${highlight('?clicky', 'Python')}</code>. However to identify the type of click, use the variable <code>${highlight('?click', 'Python')}</code>, which is initially set to a value of -1, but after any click has taken place is set to a numerical value of 128 plus additions as follows:</p>
-  <table class="tsx-help-table">
+  <table class="tse-help-table">
     <tbody>
       <tr><td>1</td><td>if the click was with the left mouse button</td></tr>
       <tr><td>2</td><td>if the click was with the right mouse button</td></tr>

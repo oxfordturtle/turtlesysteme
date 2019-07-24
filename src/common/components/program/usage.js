@@ -8,9 +8,9 @@ const usage = document.createElement('div')
 export default usage
 
 // initialise the element
-usage.classList.add('tsx-usage')
+usage.classList.add('tse-usage')
 usage.innerHTML = `
-  <table class="tsx-usage-table">
+  <table class="tse-usage-table">
     <thead>
       <tr>
         <th>Expression</th>
@@ -30,7 +30,7 @@ on('usage-changed', (usage) => {
   usageBody.innerHTML = ''
   usage.forEach((category) => {
     usageBody.innerHTML += `
-      <tr class="tsx-category-heading">
+      <tr class="tse-category-heading">
         <th colspan="4">${category.title}</th>
       </tr>`
     category.expressions.forEach((expression) => {

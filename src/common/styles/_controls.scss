@@ -1,37 +1,37 @@
-.tsx-controls {
+.tse-controls {
   display: flex;
   margin-bottom: $padding;
-  .tsx-program-controls, .tsx-machine-controls {
+  .tse-program-controls, .tse-machine-controls {
     display: flex;
     background: #fff;
     color: $black;
     padding: $padding;
   }
-  .tsx-program-controls {
+  .tse-program-controls {
     flex: 1;
     margin-right: $padding;
-    .tsx-language-select {
+    .tse-language-select {
       margin-right: $padding;
     }
-    .tsx-filename-input {
+    .tse-filename-input {
       flex: 1;
       text-align: center;
     }
   }
-  .tsx-machine-controls {
+  .tse-machine-controls {
     width: $padding + $canvas-coords-width + $canvas-width + $padding;
     display: flex;
     justify-content: space-between;
-    .tsx-machine-buttons  {
-      .tsx-run-halt-button {
+    .tse-machine-buttons  {
+      .tse-run-halt-button {
         width: 4em;
         font-weight: bold;
       }
-      .tsx-play-pause-button {
+      .tse-play-pause-button {
         width: 2.5em;
       }
     }
-    .tsx-turtle-properties {
+    .tse-turtle-properties {
       display: flex;
       font-size: .8em;
       dd, dt {
@@ -40,13 +40,13 @@
       }
       dd {
         background: $lightgray;
-        &.tsx-turtxy {
+        &.tse-turtxy {
           width: 3.2em;
         }
-        &.tsx-turtd {
+        &.tse-turtd {
           width: 2.25em;
         }
-        &.tsx-turttc {
+        &.tse-turttc {
           width: 2.5em;
         }
       }

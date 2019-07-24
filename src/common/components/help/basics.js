@@ -32,7 +32,7 @@ const basicText = `
   <h4>Reserved Words, Declarations, Types, and Variables</h4>
   <p>The words <code>${highlight('REM', 'BASIC')}</code>, <code>${highlight('END', 'BASIC')}</code>, <code>${highlight('DEF', 'BASIC')}</code>, etc. are all capitalized to emphasise the program structure. BASIC takes notice of capitalization. These three words are also in red here (or gray for comments) – this is to indicate that they are special &lsquo;reserved&rsquo; words that cannot be used for other purposes (so you can&rsquo;t call a procedure or variable &lsquo;END&rsquo;).</p>
   <p>Variables all end with either a &lsquo;%&rsquo; or a &lsquo;$&rsquo; – Turtle will tell you if you forget! Turtle BASIC allows two types of variables:</p>
-  <table class="tsx-help-table">
+  <table class="tse-help-table">
     <tbody>
       <tr><th>integer</th><td>whole number (name ends in &lsquo;%&rsquo;)</td></tr>
       <tr><th>string</th><td>sequence of characters (name ends in &lsquo;$&rsquo;)</td></tr>
@@ -41,7 +41,7 @@ const basicText = `
   <p>Most of your variables are likely to be integer variables, like a transparent box that stores a number. You can look at the box to see which number it contains at any time, and you can change the number by assigning a new value. In the &lsquo;Olympic rings 2&rsquo; example program, <code>${highlight('ringsize%', 'BASIC')}</code> is declared by assigning the value <code>${highlight('130', 'BASIC')}</code> using the command:</p>
   <pre><code>${highlight('ringsize% = 130', 'BASIC')}</code></pre>
   <p>Five special integer variables are &lsquo;built in&rsquo; from the start, and these are called the Turtle&rsquo;s fields:</p>
-  <table class="tsx-help-table">
+  <table class="tse-help-table">
     <tbody>
       <tr><th><code>${highlight('TURTX%', 'BASIC')}</code></th><td>The Turtle&rsquo;s x-coordinate</td></tr>
       <tr><th><code>${highlight('TURTY%', 'BASIC')}</code></th><td>The Turtle&rsquo;s y-coordinate</td></tr>
@@ -67,7 +67,7 @@ const pascalText = `
   <p>The words <code>${highlight('PROGRAM', 'Pascal')}</code>, <code>${highlight('BEGIN', 'Pascal')}</code> and <code>${highlight('END', 'Pascal')}</code> are often capitalized to emphasise the program structure, but Pascal actually takes no notice of capitalization (so you could write <code>${highlight('program', 'Pascal')}</code>, <code>${highlight('Program', 'Pascal')}</code> or even <code>${highlight('PrOgRaM', 'Pascal')}</code>!). These three words are also in red here – this is to indicate that they are special &lsquo;reserved&rsquo; words that cannot be used for other purposes (so you can&rsquo;t call a procedure or variable &lsquo;begin&rsquo;). As well as variables, a program can use constants to give a convenient name to a particular value. Any constants must be &lsquo;declared&rsquo; even before the variables, like this:</p>
   <pre><code>${highlight('PROGRAM myprog;\nCONST limit = 4;\nVAR global1: integer;\n{and so on}', 'Pascal')}</code></pre>
   <p>Notice that variable and constant declarations must all end with a semicolon – Turtle will tell you if you forget! Notice also that while constants are given a value when declared (e.g. <code>${highlight('limit', 'Pascal')}</code> is given the value <code>${highlight('4', 'Pascal')}</code> above), variables are given a <em>type</em>, to indicate the sort of data that they can store. Turtle Pascal allows four main types of variables:</p>
-  <table class="tsx-help-table">
+  <table class="tse-help-table">
     <tbody>
       <tr><th>integer</th><td>whole number</td></tr>
       <tr><th>boolean</th><td>true or false</td></tr>
@@ -80,7 +80,7 @@ const pascalText = `
   <p>is declared in the &lsquo;Olympic rings 2&rsquo; example program, and <code>${highlight('ringsize', 'Pascal')}</code> is later assigned the value <code>${highlight('130', 'Pascal')}</code> using the command:</p>
   <pre><code>${highlight('ringsize := 130;', 'Pascal')}</code></pre>
   <p>Five special integer variables are &lsquo;built in&rsquo; from the start, and these are called the Turtle&rsquo;s fields:</p>
-  <table class="tsx-help-table">
+  <table class="tse-help-table">
     <tbody>
       <tr><th><code>${highlight('turtx', 'Pascal')}</code></th><td>The Turtle’s x-coordinate</td></tr>
       <tr><th><code>${highlight('turty', 'Pascal')}</code></th><td>The Turtle’s y-coordinate</td></tr>
@@ -107,7 +107,7 @@ const pythonText = `
   <p>A function can also have parameters (or &lsquo;arguments&rsquo;) that are values sent into the subroutine when it is called from the program, and given a name within the subroutine (e.g. <code>${highlight('par1', 'Python')}</code> above).</p>
   <h4>Reserved Words, Declarations, Types, and Variables</h4>
   <p>The words <code>${highlight('def', 'Python')}</code>, <code>${highlight('return', 'Python')}</code>, <code>${highlight('global', 'Python')}</code>, etc. must all be in lower case; Python takes notice of capitalisation! These three words are also in red here – this is to indicate that they are special &lsquo;reserved&rsquo; words that cannot be used for other purposes (so you can&rsquo;t call a procedure or variable &lsquo;return&rsquo;). Variables are of two types, depending on the sort of data that they can store. Turtle Python allows two main types of variables:</p>
-  <table class="tsx-help-table">
+  <table class="tse-help-table">
     <tbody>
       <tr><th>integer</th><td>whole number</td></tr>
       <tr><th>string</th><td>sequence of character(s)</td></tr>
@@ -117,7 +117,7 @@ const pythonText = `
   <pre><code>${highlight('ringsize = 130', 'Python')}</code></pre>
   <p>Note that sometimes Python cannot automatically determine what type a variable is meant to be. If this occurs an error message will be generated. To solve these cases the type of the variable can be forced into an integer by adding zero, e.g. <code>${highlight('varname + 0', 'Python')}</code>, or forced into a string by adding the null string, e.g. <code>${highlight('varname + \'\'', 'Python')}</code>.</p>
   <p>Five special global integer variables are &lsquo;built in&rsquo; from the start, and these are called the Turtle&rsquo;s fields:</p>
-  <table class="tsx-help-table">
+  <table class="tse-help-table">
     <tbody>
       <tr><th><code>${highlight('turtx', 'Python')}</code></th><td>The Turtle&rsquo;s x-coordinate</td></tr>
       <tr><th><code>${highlight('turty', 'Python')}</code></th><td>The Turtle&rsquo;s y-coordinate</td></tr>
