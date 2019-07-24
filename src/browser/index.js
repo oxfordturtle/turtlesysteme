@@ -8,7 +8,7 @@ import { send } from 'common/system/state'
 import 'common/styles/browser.scss'
 
 // grab the #tse element and add style classes
-const tse = document.getElementById('app')
+const tse = document.getElementById('tse')
 tse.classList.add('tse')
 document.body.parentElement.classList.add('tse-browser')
 

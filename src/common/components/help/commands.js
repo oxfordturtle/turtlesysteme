@@ -3,6 +3,7 @@ The help component.
 */
 import categories from 'common/constants/categories'
 import commands from 'common/constants/commands'
+import highlight from 'common/compiler/highlight'
 import { on, send } from 'common/system/state'
 
 // the div for commands help
@@ -40,6 +41,36 @@ const intermediateInput = element.querySelector('[data-bind="intermediate"]')
 const advancedInput = element.querySelector('[data-bind="advanced"]')
 const commandsTable = element.querySelector('[data-bind="commands"]')
 
+// command display
+const display = (command, language) => {
+  let result = command.names[language]
+  switch (language) {
+    case 'BASIC':
+      if (command.parameters.length) {
+        result += '('
+        result += command.parameters.map(x => x.name).join(', ')
+        result += ')'
+      }
+      break
+
+    case 'Pascal':
+      if (command.parameters.length) {
+        result += '('
+        result += command.parameters.map(x => x.name).join(', ')
+        result += ')'
+      }
+      result += ';'
+      break
+
+    case 'Python':
+      result += '('
+      result += command.parameters.map(x => x.name).join(', ')
+      result += ')'
+      break
+  }
+  return highlight(result, language)
+}
+
 // setup event listeners on interactive elements
 groupSelect.addEventListener('change', (e) => { send('set-group', parseInt(groupSelect.value)) })
 simpleInput.addEventListener('change', (e) => { send('toggle-simple') })
@@ -59,7 +90,7 @@ on('help-options-changed', ({ language, group, simple, intermediate, advanced })
   commandsTable.innerHTML = ''
   comm.forEach(x => {
     if (x.names[language]) {
-      commandsTable.innerHTML += `<tr><td><code>${x.names[language]}</code></td><td>${x.description}</td></tr>`
+      commandsTable.innerHTML += `<tr><td><code>${display(x, language)}</code></td><td>${x.description}</td></tr>`
     }
   })
 })
