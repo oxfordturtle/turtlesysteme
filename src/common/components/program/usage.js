@@ -10,7 +10,7 @@ export default usage
 // initialise the element
 usage.classList.add('tsx-usage')
 usage.innerHTML = `
-  <table>
+  <table class="tsx-usage-table">
     <thead>
       <tr>
         <th>Expression</th>

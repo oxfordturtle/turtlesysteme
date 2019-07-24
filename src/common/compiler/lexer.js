@@ -37,7 +37,7 @@ export default (code, language) => {
           // create a NEWLINE lexeme, unless this is a blank line at the start f the program or
           // there's a blank line previously (which can happen following a single-line comment)
           if (lexemes[lexemes.length - 1] && lexemes[lexemes.length - 1].type !== 'NEWLINE') {
-            lexemes.push({ type: 'NEWLINE', line: line - 1 })
+            lexemes.push({ content: 'NEWLINE', type: 'NEWLINE', line: line - 1 })
           }
           // move past any additional line breaks, just incrementing the line number
           while (tokens[index + 1].type === 'linebreak') {
@@ -51,11 +51,11 @@ export default (code, language) => {
           indent = tokens[index + 1].type === 'spaces' ? tokens[index + 1].content.length : 0
           if (indent > indents[indents.length - 1]) {
             indents.push(indent)
-            lexemes.push({ type: 'INDENT', line })
+            lexemes.push({ content: 'INDENT', type: 'INDENT', line })
           } else {
             while (indent < indents[indents.length - 1]) {
               indents.pop()
-              lexemes.push({ type: 'DEDENT', line })
+              lexemes.push({ content: 'INDENT', type: 'DEDENT', line })
             }
             if (indent !== indents[indents.length - 1]) {
               throw error(`Inconsistent indentation at line ${line}.`)
@@ -102,7 +102,7 @@ export default (code, language) => {
   }
 
   // return the array of lexemes (give NEWLINE, INDENT, and DEDENT some content for error messages)
-  return lexemes.map(x => (x.content === undefined) ? Object.assign(x, { content: x.type }) : x)
+  return lexemes
 }
 
 // error messages

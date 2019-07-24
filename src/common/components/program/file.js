@@ -2,7 +2,7 @@
 The program file component.
 */
 import * as examples from 'common/constants/examples'
-import { on, send } from 'common/system/state'
+import { send } from 'common/system/state'
 
 // the file elements
 export const newFile = document.createElement('div')
@@ -25,7 +25,11 @@ newFile.innerHTML = `
   </div>
   <div class="tsx-buttons">
     <button data-bind="open-program">Open Program</button>
+    <button data-bind="close-program">Close Program</button>
+  </div>
+  <div class="tsx-buttons">
     <button data-bind="save-program">Save Program</button>
+    <button data-bind="save-tgx-program">Save Export File</button>
   </div>`
 
 openHelp.classList.add('tsx-file-box')
@@ -48,7 +52,9 @@ fileInput.type = 'file'
 const newButton = newFile.querySelector('[data-bind="new-program"]')
 const skeletonButton = newFile.querySelector('[data-bind="new-skeleton-program"]')
 const openButton = newFile.querySelector('[data-bind="open-program"]')
+const closeButton = newFile.querySelector('[data-bind="close-program"]')
 const saveButton = newFile.querySelector('[data-bind="save-program"]')
+const saveTgxButton = newFile.querySelector('[data-bind="save-tgx-program"]')
 const helpExamples = openHelp.querySelector('[data-bind="help-examples"]')
 const csacExamples = openCSAC.querySelector('[data-bind="csac-examples"]')
 
@@ -65,8 +71,16 @@ openButton.addEventListener('click', () => {
   fileInput.click()
 })
 
+closeButton.addEventListener('click', () => {
+  send('new-program')
+})
+
 saveButton.addEventListener('click', () => {
   send('save-program')
+})
+
+saveTgxButton.addEventListener('click', () => {
+  send('save-tgx-program')
 })
 
 helpExamples.addEventListener('focus', () => {
@@ -83,9 +97,14 @@ csacExamples.addEventListener('change', () => {
   send('set-example', csacExamples.value)
 })
 
-fileInput.addEventListener('click', () => {
+fileInput.addEventListener('change', () => {
   const file = fileInput.files[0]
   const fr = new window.FileReader()
-  fr.onload = () => { send('set-file', { filename: file.name, content: fr.result }) }
+  fr.onload = () => {
+    send('set-file', { filename: file.name, content: fr.result })
+    // reset the file input so that the change event definitely triggers next time
+    fileInput.type = ''
+    fileInput.type = 'file'
+  }
   fr.readAsText(file)
 })

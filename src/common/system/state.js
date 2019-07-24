@@ -20,6 +20,7 @@ import * as examples from 'common/constants/examples'
 import extensions from 'common/constants/extensions'
 import languages from 'common/constants/languages'
 import compile from 'common/compiler/compile'
+import lexer from 'common/compiler/lexer'
 import * as machine from './machine'
 
 // function for "sending" signals to this module, asking it to update the state
@@ -84,7 +85,19 @@ export const send = (signal, data) => {
 
       case 'save-tgx-program':
         maybeCompile()
-        const json = JSON.stringify(get('file'))
+        const date = new Date()
+        const json = JSON.stringify({
+          format: 1,
+          language: get('language'),
+          version: 12,
+          name: get('name'),
+          author: 'unknown', // TODO: could get OS username in Electron, or make user editable
+          date: `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`,
+          time: `${date.getSeconds()}:${date.getMinutes()}:${date.getSeconds()}`,
+          code: get('code'),
+          usage: get('usage'),
+          pcode: get('pcode')
+        }, null, 2)
         const tgx = new window.Blob([json], { type: 'text/plain;charset=utf-8' })
         const a2 = document.createElement('a')
         a2.setAttribute('href', URL.createObjectURL(tgx))
@@ -145,18 +158,14 @@ export const send = (signal, data) => {
             break
 
           case 'tgx':
-            try {
-              const result = JSON.parse(data.content)
-              set('language', result.language)
-              set(`name-${result.language}`, result.name)
-              set(`compiled-${result.language}`, true)
-              set(`code-${result.language}`, result.code.trim())
-              set(`usage-${result.language}`, result.usage)
-              set(`lexemes-${result.language}`, result.lexemes || [])
-              set(`pcode-${result.language}`, result.pcode)
-            } catch (ignore) {
-              throw error('Invalid TGX file.')
-            }
+            const result = validateTGX(data.content)
+            set('language', result.language)
+            set('name', result.name)
+            set('compiled', true)
+            set('code', result.code.trim())
+            set('usage', result.usage)
+            set('lexemes', lexer(result.code.trim(), get('language')))
+            set('pcode', result.pcode)
             break
 
           default:
@@ -244,7 +253,6 @@ export const send = (signal, data) => {
 
       case 'set-group':
         set('group', data)
-        console.log(data)
         reply('help-options-changed', get('help-options'))
         break
 
@@ -404,6 +412,19 @@ const maybeCompile = () => {
     reply('usage-changed', result.usage)
     reply('lexemes-changed', { lexemes: result.lexemes, language: get('language') })
     reply('pcode-changed', { pcode: result.pcode, assembler: get('assembler'), decimal: get('decimal') })
+  }
+}
+
+// validate file input as TGX
+const validateTGX = (data) => {
+  try {
+    const json = JSON.parse(data)
+    if (json.language && json.name && json.code && json.usage && json.pcode) {
+      return json
+    }
+    throw error('Invalid TGX file.')
+  } catch (ignore) {
+    throw error('Invalid TGX file.')
   }
 }
 

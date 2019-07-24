@@ -74,6 +74,10 @@ const fileMenu = {
       click: () => windows.system.webContents.send('new-program')
     },
     {
+      label: 'New skeleton program',
+      click: () => windows.system.webContents.send('new-skeleton-program')
+    },
+    {
       label: 'Open program',
       click: openProgram
     },
@@ -83,8 +87,8 @@ const fileMenu = {
       click: () => windows.system.webContents.send('save-program')
     },
     {
-      label: 'Save as...',
-      click: () => windows.system.webContents.send('save-program-as')
+      label: 'Save export file',
+      click: () => windows.system.webContents.send('save-tgx-program')
     },
     { type: 'separator' },
     {

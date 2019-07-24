@@ -11,13 +11,13 @@ export default lexemes
 // initialise the element
 lexemes.classList.add('tsx-usage')
 lexemes.innerHTML = `
-  <table>
+  <table class="tsx-lexemes-table">
     <thead>
       <tr>
-        <th></th>
+        <th>Lex</th>
         <th>Line</th>
-        <th>Type</th>
-        <th>Content</th>
+        <th style="width:50%">String</th>
+        <th style="width:50%">Type</th>
       </tr>
     </thead>
     <tbody data-bind="lexemes"></tbody>
@@ -34,8 +34,8 @@ on('lexemes-changed', ({ lexemes, language }) => {
       <tr>
         <td>${index + 1}</td>
         <td>${lexeme.line}</td>
-        <td>${lexeme.type}</td>
         <td><code>${lexeme.content ? highlight(lexeme.content, language) : ''}</code></td>
+        <td>${lexeme.type}</td>
       </tr>`
   })
 })

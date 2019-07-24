@@ -3,19 +3,22 @@
   border: 1px solid $gray;
   overflow-x: hidden;
   overflow-y: auto;
-  td, th {
-    &:first-child, &:last-child {
-      text-align: left;
-    }
-  }
   code {
     font-family: $monospace;
   }
-  .tsx-category-heading th {
-    background: $green;
-    color: white;
-    font-style: italic;
-    font-weight: bold;
-    text-align: right;
+  .tsx-usage-table {
+    td, th {
+      &:first-child, &:last-child {
+        text-align: left;
+      }
+    }
+    .tsx-category-heading th {
+      background: $green;
+      color: white;
+      font-style: italic;
+      font-weight: bold;
+      text-align: right;
+    }
   }
+  .tsx-lexemes-table {}
 }
