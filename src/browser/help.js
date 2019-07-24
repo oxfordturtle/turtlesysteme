@@ -10,18 +10,14 @@ import fonts from 'common/components/help/fonts'
 import input from 'common/components/help/input'
 import operators from 'common/components/help/operators'
 import structures from 'common/components/help/structures'
-import { languageSelect } from 'common/components/program/file'
+import controls from 'common/components/controls'
 
 // setup the help page
 export default (tsx) => {
   tsx.classList.add('tsx-help')
-  tsx.appendChild(language)
+  tsx.appendChild(controls)
   tsx.appendChild(help)
 }
-
-const language = document.createElement('div')
-language.classList.add('tsx-controls')
-language.appendChild(languageSelect)
 
 const help = create([
   { label: 'Commands', active: true, content: [commands] },

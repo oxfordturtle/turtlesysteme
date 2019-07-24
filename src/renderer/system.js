@@ -12,8 +12,7 @@ import canvas from 'common/components/machine/canvas'
 import console from 'common/components/machine/console'
 import output from 'common/components/machine/output'
 import * as memory from 'common/components/machine/memory'
-import signals from 'common/constants/signals'
-import { on, send } from 'common/system/state'
+import { on } from 'common/system/state'
 
 // setup the system page
 export default (tsx) => {
@@ -30,11 +29,6 @@ export default (tsx) => {
   on('show-canvas', () => { show('Canvas') })
   on('show-output', () => { show('Output') })
   on('show-memory', () => { show('Memory') })
-
-  // register to pass ipcRenderer messages (from menu item clicks) onto the state module
-  signals.forEach((signal) => {
-    ipcRenderer.on(signal, (event, data) => send(signal, data))
-  })
 
   // register to show errors as dialog boxes
   on('error', (error) => {

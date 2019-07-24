@@ -13,6 +13,7 @@
 .tsx-tabs {
   display: flex;
   flex-direction: column;
+  height: 100%;
   .tsx-tab-pane {
     display: none;
     &.active {

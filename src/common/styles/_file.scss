@@ -1,0 +1,23 @@
+.tsx-file-box {
+  background: $lightgray;
+  border: 1px solid $gray;
+  padding: $padding;
+  &:not(:last-child) {
+    margin-bottom: $padding;
+  }
+  button {
+    flex: 1;
+    &:not(:last-child) {
+      margin-right: $padding;
+    }
+  }
+  label {
+    font-weight: bold;
+    display: block;
+    padding: $padding;
+    margin-bottom: $padding;
+  }
+  select {
+    width: 100%;
+  }
+}

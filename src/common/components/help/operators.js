@@ -116,7 +116,7 @@ const pascalText = `
 // help text for Turtle Python
 const pythonText = `
   <h3>Arithmetical Operators</h3>
-  <p>The four main arithemetical operators are represented as:' }),
+  <p>The four main arithemetical operators are represented as:</p>
   <table class="tsx-help-table">
     <tbody>
       <tr><td><code>${highlight('+', 'Python')}</code></td><td>addition (also used for string concatenation)</td></tr>

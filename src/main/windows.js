@@ -24,7 +24,8 @@ export const create = (id) => {
         minWidth: 1024,
         minHeight: 700,
         useContentSize: true,
-        resizable: true
+        resizable: true,
+        webPreferences: { nodeIntegration: true }
       })
       break
 
@@ -36,31 +37,34 @@ export const create = (id) => {
         minWidth: 500,
         minHeight: 550,
         useContentSize: true,
-        resizable: true
+        resizable: true,
+        webPreferences: { nodeIntegration: true }
       })
       break
 
     // create the help window
     case 'help':
       windows.help = new BrowserWindow({
-        width: 800,
+        width: 900,
         height: 600,
         minWidth: 800,
         minHeight: 600,
         useContentSize: true,
-        resizable: true
+        resizable: true,
+        webPreferences: { nodeIntegration: true }
       })
       break
 
     // create the about window
     case 'about':
       windows.about = new BrowserWindow({
-        width: 800,
+        width: 900,
         height: 600,
         minWidth: 800,
         minHeight: 600,
         useContentSize: true,
-        resizable: true
+        resizable: true,
+        webPreferences: { nodeIntegration: true }
       })
       break
   }

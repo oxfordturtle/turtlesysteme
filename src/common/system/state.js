@@ -47,6 +47,7 @@ export const send = (signal, data) => {
         set('compiled', false)
         set('code', '')
         set('usage', [])
+        set('lexemes', [])
         set('pcode', [])
         reply('file-changed')
         break
@@ -55,6 +56,7 @@ export const send = (signal, data) => {
         set('name', 'Skeleton program')
         set('compiled', false)
         set('usage', [])
+        set('lexemes', [])
         set('pcode', [])
         switch (get('language')) {
           case 'BASIC':
@@ -101,6 +103,7 @@ export const send = (signal, data) => {
           set(`compiled-${language}`, false)
           set(`code-${language}`, examples.code[language][data].trim())
           set(`usage-${language}`, [])
+          set(`lexemes-${language}`, [])
           set(`pcode-${language}`, [])
           reply('file-changed')
         })
@@ -117,6 +120,7 @@ export const send = (signal, data) => {
             set('compiled-BASIC', false)
             set('code-BASIC', data.content.trim())
             set('usage-BASIC', [])
+            set('lexemes-BASIC', [])
             set('pcode-BASIC', [])
             break
 
@@ -126,6 +130,7 @@ export const send = (signal, data) => {
             set('compiled-Pascal', false)
             set('code-Pascal', data.content.trim())
             set('usage-Pascal', [])
+            set('lexemes-Pascal', [])
             set('pcode-Pascal', [])
             break
 
@@ -135,6 +140,7 @@ export const send = (signal, data) => {
             set('compiled-Python', false)
             set('code-Python', data.content.trim())
             set('usage-Python', [])
+            set('lexemes-Python', [])
             set('pcode-Python', [])
             break
 
@@ -146,6 +152,7 @@ export const send = (signal, data) => {
               set(`compiled-${result.language}`, true)
               set(`code-${result.language}`, result.code.trim())
               set(`usage-${result.language}`, result.usage)
+              set(`lexemes-${result.language}`, result.lexemes || [])
               set(`pcode-${result.language}`, result.pcode)
             } catch (ignore) {
               throw error('Invalid TGX file.')
@@ -319,7 +326,7 @@ const reply = (message, data) => {
     reply('name-changed', get('name'))
     reply('code-changed', { code: get('code'), language: get('language') })
     reply('usage-changed', get('usage'))
-    reply('lexemes-changed', get('lexemes'))
+    reply('lexemes-changed', { lexemes: get('lexemes'), language: get('language') })
     reply('pcode-changed', { pcode: get('pcode'), assembler: get('assembler'), decimal: get('decimal') })
   }
 }
@@ -395,7 +402,7 @@ const maybeCompile = () => {
     set('pcode', result.pcode)
     set('compiled', true)
     reply('usage-changed', result.usage)
-    reply('lexemes-changed', result.lexemes)
+    reply('lexemes-changed', { lexemes: result.lexemes, language: get('language') })
     reply('pcode-changed', { pcode: result.pcode, assembler: get('assembler'), decimal: get('decimal') })
   }
 }

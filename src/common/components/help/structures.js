@@ -82,10 +82,10 @@ const pascalText = `
 
 // help text for Turtle Python
 const pythonText = `
-  <h3>Command Structures' }),
-  <p>Selection and ordering of commands is done by <em>sequencing</em>, <em>conditional selection</em>, and <em>looping</em>.' }),
-  <h4>Sequencing of Commands' }),
-  <p>Commands to be performed in sequence are usually placed in the appropriate order within the program, with the same indent, e.g.:' }),
+  <h3>Command Structures</h3>
+  <p>Selection and ordering of commands is done by <em>sequencing</em>, <em>conditional selection</em>, and <em>looping</em>.</p>
+  <h4>Sequencing of Commands</h4>
+  <p>Commands to be performed in sequence are usually placed in the appropriate order within the program, with the same indent, e.g.:</p>
   <pre><code>${highlight('colour(green)\nblot(100)\npause(1000) # etc.', 'Python')}</code></pre>
   <p>(From the first example program in the Help menu.)</p>
   <h4>Conditional Selection of Commands</h4>

@@ -190,7 +190,7 @@ const next = (lexemes, lex, compulsory = false) => {
 
     // ... and it must be a semicolon
     if (lexemes[lex].content !== ';') {
-      throw error('Semicolon needed after statement.', lexemes[lex])
+      throw error('Semicolon needed after statement.', lexemes[lex - 1])
     }
   }
 

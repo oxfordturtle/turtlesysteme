@@ -2,3 +2,49 @@
 @import '_base';
 @import '_overlay';
 @import '_system';
+@import '_controls';
+@import '_tabs';
+@import '_file';
+@import '_code';
+@import '_usage';
+@import '_checkboxes';
+@import '_pcode';
+@import '_canvas';
+@import '_console';
+@import '_output';
+@import '_buttons';
+@import '_memory';
+@import '_settings';
+@import '_help';
+
+.tsx-system, .tsx-help {
+  width: $system-width;
+  height: $system-height;
+  margin: 0 auto;
+}
+
+.tsx-help {
+  display: flex;
+  flex-direction: column;
+  .tsx-controls {
+    .tsx-program-controls {
+      justify-content: flex-end;
+      margin-right: 0;
+      .tsx-language-select {
+        margin-right: 0;
+      }
+      .tsx-filename-input {
+        display: none;
+      }
+    }
+    .tsx-machine-controls {
+      display: none;
+    }
+  }
+  .tsx-tabs {
+    flex: 1;
+    .tsx-tab-pane {
+      height: 100%;
+    }
+  }
+}

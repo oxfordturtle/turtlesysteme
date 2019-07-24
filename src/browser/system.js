@@ -6,24 +6,26 @@ import code from 'common/components/program/code'
 import * as pcode from 'common/components/program/pcode'
 import * as file from 'common/components/program/file'
 import usage from 'common/components/program/usage'
+import lexemes from 'common/components/program/lexemes'
 import * as settings from 'common/components/machine/settings'
 import canvas from 'common/components/machine/canvas'
 import console from 'common/components/machine/console'
-import controls from 'common/components/machine/controls'
+import controls from 'common/components/controls'
 import output from 'common/components/machine/output'
 import * as memory from 'common/components/machine/memory'
 import { on } from 'common/system/state'
 
 // setup the system page
 export default (tsx) => {
+  // add the system class
+  tsx.classList.add('tsx-system')
+
   // add the popup overlay to the document body
   document.body.appendChild(overlay)
 
   // append the component divs (defined below)
-  tsx.appendChild(programControls)
-  tsx.appendChild(machineControls)
-  tsx.appendChild(programTabs)
-  tsx.appendChild(machineTabs)
+  tsx.appendChild(controls)
+  tsx.appendChild(tabs)
 
   // register to switch tabs when called for
   on('file-changed', () => { show('Code') })
@@ -36,8 +38,8 @@ export default (tsx) => {
   on('error', (error) => {
     const title = overlay.querySelector('h2')
     const message = overlay.querySelector('p')
-    console.log(error) // for debugging
-    if (error.lexeme) console.log(error.lexeme) // for debugging
+    window.console.log(error) // for debugging
+    if (error.lexeme) window.console.log(error.lexeme) // for debugging
     if (error.type) {
       // custom error
       title.innerHTML = `${error.type} Error`
@@ -56,6 +58,7 @@ export default (tsx) => {
 
 // modal and overlay
 const overlay = document.createElement('div')
+overlay.classList.add('tsx')
 overlay.classList.add('tsx-overlay')
 overlay.innerHTML = `
   <div class="tsx-modal">
@@ -73,27 +76,35 @@ overlay.querySelector('button').addEventListener('click', () => {
   overlay.classList.remove('tsx-open')
 })
 
-// program controls
-const programControls = document.createElement('div')
-programControls.classList.add('tsx-controls')
-programControls.appendChild(file.nameInput)
-programControls.appendChild(file.languageSelect)
-
 // program tabs
 const programTabs = create([
   { label: 'File', active: false, content: [file.newFile, file.openHelp, file.openCSAC] },
   { label: 'Code', active: true, content: [code] },
   { label: 'Usage', active: false, content: [usage] },
+  { label: 'Lexemes', active: false, content: [lexemes] },
   { label: 'PCode', active: false, content: [pcode.options, pcode.list] }
 ])
 
+// settings div
+const settingsDiv = document.createElement('div')
+settingsDiv.classList.add('tsx-settings')
+settingsDiv.appendChild(settings.buttons)
+settingsDiv.appendChild(settings.showOptions)
+settingsDiv.appendChild(settings.drawCountMax)
+settingsDiv.appendChild(settings.codeCountMax)
+settingsDiv.appendChild(settings.smallSize)
+settingsDiv.appendChild(settings.stackSize)
+
 // machine tabs
 const machineTabs = create([
-  { label: 'Settings', active: false, content: [settings.buttons, settings.showOptions, settings.drawCountMax, settings.codeCountMax, settings.smallSize, settings.stackSize] },
+  { label: 'Settings', active: false, content: [settingsDiv] },
   { label: 'Canvas', active: true, content: [canvas, console] },
   { label: 'Output', active: false, content: [output] },
   { label: 'Memory', active: false, content: [memory.buttons, memory.stack, memory.heap] }
 ])
 
-// system tabs (program and machine)
-const machineControls = controls
+// both tabs
+const tabs = document.createElement('div')
+tabs.classList.add('tsx-body')
+tabs.appendChild(programTabs)
+tabs.appendChild(machineTabs)

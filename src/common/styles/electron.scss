@@ -12,8 +12,8 @@ html {
 @import '_controls';
 @import '_tabs';
 @import '_code';
-@import '_checkboxes';
 @import '_usage';
+@import '_checkboxes';
 @import '_pcode';
 @import '_canvas';
 @import '_console';
@@ -22,3 +22,8 @@ html {
 @import '_memory';
 @import '_settings';
 @import '_help';
+
+.tsx-settings {
+  padding: $padding;
+  border: $padding solid $darkgray;
+}

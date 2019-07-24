@@ -8,6 +8,9 @@
       text-align: left;
     }
   }
+  code {
+    font-family: $monospace;
+  }
   .tsx-category-heading th {
     background: $green;
     color: white;

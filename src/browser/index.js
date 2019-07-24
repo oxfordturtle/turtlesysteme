@@ -5,7 +5,7 @@ import system from './system'
 import help from './help'
 import about from './about'
 import { send } from 'common/system/state'
-import 'common/styles/tsx.scss'
+import 'common/styles/browser.scss'
 
 // grab the #tsx element and add style classes
 const tsx = document.getElementById('app')

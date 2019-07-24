@@ -17,14 +17,16 @@ element.innerHTML = `
     <label>
       Select group
       <select data-bind="group">
-        ${categories.map(x => `<option value="{x.index}">${x.index + 1}. ${x.title}</option>`).join('')}
+        ${categories.map(x => `<option value="${x.index}">${x.index + 1}. ${x.title}</option>`).join('')}
       </select>
     </label>
-    <label><input type="checkbox" data-bind="simple">Simple</label>
-    <label><input type="checkbox" data-bind="intermediate">Intermediate</label>
-    <label><input type="checkbox" data-bind="advanced">Advanced</label>
+    <div>
+      <label><input type="checkbox" data-bind="simple">Simple</label>
+      <label><input type="checkbox" data-bind="intermediate">Intermediate</label>
+      <label><input type="checkbox" data-bind="advanced">Advanced</label>
+    </div>
   </div>
-  <table class="tsx-help-table">
+  <table class="tsx-commands-table">
     <thead>
       <tr><th>Command</th><th>Description</th></tr>
     </thead>
@@ -57,7 +59,7 @@ on('help-options-changed', ({ language, group, simple, intermediate, advanced })
   commandsTable.innerHTML = ''
   comm.forEach(x => {
     if (x.names[language]) {
-      commandsTable.innerHTML += `<tr><td>${x.names[language]}</td><td>${x.description}</td></tr>`
+      commandsTable.innerHTML += `<tr><td><code>${x.names[language]}</code></td><td>${x.description}</td></tr>`
     }
   })
 })
