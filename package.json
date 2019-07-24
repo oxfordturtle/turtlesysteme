@@ -39,9 +39,16 @@
     }
   },
   "build": {
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
     "win": {
       "target": "nsis",
-      "icon": "assets/icon.ico"
+      "icon": "assets/win/turtle.ico"
+    },
+    "mac": {
+      "icon": "assets/mac/turtle.icns"
     }
   }
 }

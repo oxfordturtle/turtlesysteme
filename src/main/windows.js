@@ -2,6 +2,7 @@
 Required by main/index.js; handles window related things.
 */
 import { BrowserWindow } from 'electron'
+import path from 'path'
 
 // windows objects
 export const windows = {
@@ -20,7 +21,8 @@ const browserWindow = (width, height) =>
     minHeight: height,
     useContentSize: true,
     resizable: true,
-    webPreferences: { nodeIntegration: true }
+    webPreferences: { nodeIntegration: true },
+    icon: path.join(__dirname, 'assets/png/64x64.png')
   })
 
 // function to create a window
