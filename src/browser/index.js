@@ -12,14 +12,6 @@ const tse = document.getElementById('tse')
 tse.classList.add('tse')
 document.body.parentElement.classList.add('tse-browser')
 
-// maybe setup state variables based on the app's data properties
-if (tse.dataset.language) {
-  send('set-language', tse.dataset.language)
-}
-if (tse.dataset.example) {
-  send('set-example', tse.dataset.example)
-}
-
 // initialise the app
 switch (tse.dataset.page) {
   case 'system':
@@ -33,6 +25,17 @@ switch (tse.dataset.page) {
   case 'about':
     about(tse)
     break
+}
+
+// maybe setup state variables based on the app's data properties
+if (tse.dataset.language) {
+  send('set-language', tse.dataset.language)
+}
+if (tse.dataset.example) {
+  send('set-example', tse.dataset.example)
+}
+if (tse.dataset.file) {
+  send('load-remote-file', tse.dataset.file)
 }
 
 // send the page ready signal (which will update the components to reflect the initial state)

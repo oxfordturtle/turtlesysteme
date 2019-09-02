@@ -111,11 +111,17 @@ export const send = (signal, data) => {
         break
 
       case 'set-language':
+        if (!languages.includes(data)) {
+          throw error(`Unknown language "${data}".`)
+        }
         set('language', data)
         reply('language-changed', get('language'))
         break
 
       case 'set-example':
+        if (!examples.names[data]) {
+          throw error(`Unknown example "${data}".`)
+        }
         languages.forEach((language) => {
           set(`name-${language}`, examples.names[data])
           set(`compiled-${language}`, false)
@@ -124,6 +130,20 @@ export const send = (signal, data) => {
           set(`lexemes-${language}`, [])
           set(`pcode-${language}`, [])
           reply('file-changed')
+        })
+        break
+
+      case 'load-remote-file':
+        const filename = data.split('/').pop()
+        window.fetch(data).then((response) => {
+          if (response.ok) {
+            response.text().then((content) => {
+              send('set-file', { filename, content })
+            })
+          } else {
+            // reply instead of throwing error, because it won't be caught in this promise
+            reply('error', error(`Couldn't retrieve file at "${data}".`))
+          }
         })
         break
 

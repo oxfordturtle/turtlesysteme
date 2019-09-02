@@ -58,13 +58,13 @@ languageSelect.addEventListener('change', (e) => {
 })
 
 runHalt.addEventListener('click', (e) => {
-  send('machine-run-halt', { canvas, console, output })
   runHalt.blur()
+  send('machine-run-halt', { canvas, console, output })
 })
 
 playPause.addEventListener('click', (e) => {
-  send('machine-play-pause')
   playPause.blur()
+  send('machine-play-pause')
 })
 
 // subscribe to keep in sync with system state

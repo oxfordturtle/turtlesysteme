@@ -1,21 +1,28 @@
 .tse-overlay {
-  display: none;
   position: fixed;
-  z-index: 10;
-  background: rgba(0, 0, 0, .3);
+  padding: 0.5rem;
   top: 0;
+  right: 0;
   bottom: 0;
   left: 0;
-  right: 0;
-  padding: .5em;
+  overflow: auto;
+  background: rgba(50, 50, 50, 0.5);
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.3s linear;
+  pointer-events: none;
   &.tse-open {
-    display: block;
+    opacity: 1;
+    pointer-events: auto;
+    & .tse-modal {
+      margin-top: 8rem;
+    }
   }
   .tse-modal {
-    margin: 0 auto;
-    margin-top: 8em;
+    margin: 2rem auto 0;
+    box-shadow: 0 0.25rem 1rem 0 rgba(0, 0, 0, 0.5);
+    transition: margin-top 0.3s ease-in-out;
     max-width: 30em;
-    box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
     .tse-modal-head {
       background: $green;
       color: #fff;
