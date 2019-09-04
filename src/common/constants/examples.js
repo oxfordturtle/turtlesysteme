@@ -29,7 +29,7 @@ export const names = {
   // examples 2
   SimpleProc: 'Simple procedure',
   ParameterProc: 'Procedure with parameter',
-  ResizableFace: 'Resizable face (nested procedures)',
+  ResizableFace: 'Resizable face',
   Polygons: 'Polygons (two parameters)',
   Stars: 'Stars (using ANGLES and FORGET)',
   PolygonRings: 'Polygon rings (three parameters)',
@@ -45,7 +45,7 @@ export const names = {
   Clock: 'Analogue clock (using REPEAT)',
   DigitalClock: 'Digital clock (using IF and WHILE)',
   Flashlights: 'Flashlights (using Booleans)',
-  RefParams: 'Reference parameters (using VAR)',
+  RefParams: 'Reference parameters',
   Balls3D: '3D colour effects',
   StringFunctions: 'String functions',
   MathFunctions: 'Mathematical functions',

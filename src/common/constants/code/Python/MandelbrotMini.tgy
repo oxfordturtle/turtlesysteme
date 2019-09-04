@@ -13,7 +13,6 @@ x: int
 y: int
 iterations: int
 temp: int
-
 canvas(xstart, ystart, pixels, pixels)
 resolution(pixels, pixels)
 timeset(0)

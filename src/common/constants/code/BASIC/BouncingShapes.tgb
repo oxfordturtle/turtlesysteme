@@ -12,7 +12,6 @@ DIM colr%(6)
 MINSIZE% = 70
 MAXSIZE% = 130
 SHAPES% = 6
-
 FOR n% = 1 TO SHAPES%
   sides%(n%) = n% + 2
   size%(n%) = MINSIZE% + RND(MAXSIZE% - MINSIZE%)

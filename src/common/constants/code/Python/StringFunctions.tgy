@@ -1,7 +1,6 @@
 # StringFunctions
 
 delay: int = 500
-
 output(-1, cream, -1)
 s1: str = 'Turtle Python'
 s2: str = copy(s1, 1, 6)

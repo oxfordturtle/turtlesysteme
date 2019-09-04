@@ -8,7 +8,7 @@ GRIDSCALE% = 5
 GRIDTHICK% = 64
 CANVAS(XLEFT%, YTOP%, XRIGHT% - XLEFT% + 1, YBOTTOM% - YTOP% + 1)
 RESOLUTION(XRIGHT% - XLEFT% + 1, YBOTTOM% - YTOP% + 1)
-PROCBackground(6)
+PROCbackground(6)
 END
 
 DEF PROCbackground(rad%)

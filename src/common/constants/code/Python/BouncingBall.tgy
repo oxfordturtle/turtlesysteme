@@ -4,7 +4,6 @@ x: int = 100
 y: int = 700
 xvel: int = 8
 yvel: int = -4
-
 while 0 < 1:
   noupdate()
   colour(white)

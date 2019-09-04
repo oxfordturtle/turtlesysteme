@@ -16,6 +16,7 @@ IF seedpixel% THEN
   PIXSET(seedx%, seedy%, live%)
 ELSE
   BLANK(live%)
+ENDIF
 iteration% = 0
 TIMESET(0)
 REPEAT
@@ -40,6 +41,7 @@ UNTIL numborn% + numkilled% = 0
 WRITELN("FINISH - fixed point of iterative mapping has been reached")
 FOR count% = 1 TO mappings%
   PROCdomap(count%)
+NEXT
 END
 
 DEF PROCsetsierpinski
@@ -205,10 +207,10 @@ LOCAL x%, y%, newx%, newy%
   NOUPDATE
   FOR y% = yt% TO yb%
     FOR x% = xl% TO xr%
-      IF PIXCOL(x%, y%) < >WHITE THEN
+      IF PIXCOL(x%, y%) <> WHITE THEN
         PROCmap(mapnum%, x%, y%, newx%, newy%)
         IF PIXCOL(newx%, newy%) = WHITE THEN INC(numborn%)
-        IF uniform THEN
+        IF uniform% THEN
           PIXSET(newx%, newy%, copied%)
         ELSE
           PIXSET(newx%, newy%, RGB(mapnum%))

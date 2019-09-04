@@ -1,23 +1,23 @@
 REM RecursionFactory
 
-NUMSIDES%=6
-INITSIZE%=240
-SHRINK%=40
-RANGLE%=180
-POLYGAP%=0
-LEVELS%=5
-SLOWDRAW%=3
-MODE%=1
-FIRSTCOL%=1
-COLINC%=2
-MINTHICK%=2
-ADDTHICK%=6
-CIRCSIZE%=60
+NUMSIDES% = 6
+INITSIZE% = 240
+SHRINK% = 40
+RANGLE% = 180
+POLYGAP% = 0
+LEVELS% = 5
+SLOWDRAW% = 3
+MODE% = 1
+FIRSTCOL% = 1
+COLINC% = 2
+MINTHICK% = 2
+ADDTHICK% = 6
+CIRCSIZE% = 60
 BLANK(BLACK)
 IF 180 MOD NUMSIDES% = 0 THEN
   halfangle% = 90 - (180 / NUMSIDES%)
   slowlev% = LEVELS% + 1 - SLOWDRAW%
-  IF slowlev% > levels - 1 THEN slowlev% = LEVELS% - 1
+  IF slowlev% > LEVELS% - 1 THEN slowlev% = LEVELS% - 1
   MOVEXY(0, INITSIZE%)
   PROCrecurse(1, INITSIZE%, LEVELS%, FIRSTCOL%)
 ENDIF
@@ -46,7 +46,7 @@ DEF PROCrecurse(flag%, size%, depth%, col%)
         ELSE
           IF MODE% = 2 THEN
             BLOT(size% * CIRCSIZE% / 120)
-          else
+          ELSE
             CIRCLE(size% * CIRCSIZE% / 120)
           ENDIF
         ENDIF

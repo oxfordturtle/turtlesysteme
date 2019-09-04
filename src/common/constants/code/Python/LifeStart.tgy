@@ -2,7 +2,6 @@
 
 width: int = 32
 height: int = 32
-
 canvas(0, 0, width, height)
 resolution(width, height)
 for x in range(0, width, 1):

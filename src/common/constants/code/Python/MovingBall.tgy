@@ -2,7 +2,6 @@
 
 x: int = 100
 y: int = 700
-
 for count in range(0, 100, 1):
   noupdate()
   colour(white)

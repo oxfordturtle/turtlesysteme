@@ -2,7 +2,6 @@
 
 xvel: int = 3
 yvel: int = -2
-
 while (0 < 1):
   colour(white)
   blot(51)

@@ -2,7 +2,6 @@
 
 colinc: int = randint(0, 4)
 colcode: int = randint(1, 20)
-
 blank(black)
 colour(rgb(colcode))
 thickness(16)

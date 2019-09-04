@@ -14,7 +14,7 @@ DEF PROCkdraw(dist%, level%)
   IF level% = 0 THEN
     FORWARD(dist%)
   ELSE
-    PROCkdraw(dist% / 3, level - 1)
+    PROCkdraw(dist% / 3, level% - 1)
     LEFT(60)
     PROCkdraw(dist% / 3, level% - 1)
     RIGHT(120)
