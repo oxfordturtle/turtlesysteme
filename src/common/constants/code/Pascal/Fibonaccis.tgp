@@ -1,0 +1,36 @@
+PROGRAM Fibonaccis;
+CONST lastnum = 25;
+VAR count: integer;
+    fibsave: array[1..lastnum] of integer;
+
+  Function fibrec(n: integer): integer;
+  Begin
+    if (n = 1) or (n = 2) then
+      result := 1
+    else
+      result := fibrec(n - 1) + fibrec(n - 2)
+  End;
+
+  Function fibiter(n: integer): integer;
+  Begin
+    if (n = 1) or (n = 2) then
+      fibsave[n] := 1
+    else
+      fibsave[n] := fibsave[n - 1] + fibsave[n - 2];
+    result := fibsave[n]
+  End;
+
+BEGIN
+  output(true, cream, true);
+  writeln('First, by recursion:');
+  timeset(0);
+  for count := 1 to lastnum do
+    writeln('fib(' + str(count) + ') = ' + str(fibrec(count)));
+  writeln('Time taken: ' + qstr(time, 1000, 2) + ' seconds');
+  writeln('');
+  writeln('Then, by iteration:');
+  timeset(0);
+  for count := 1 to lastnum do
+    writeln('fib(' + str(count) + ') = ' + str(fibiter(count)));
+  writeln('Time taken: ' + qstr(time, 1000, 2) + ' seconds')
+END.

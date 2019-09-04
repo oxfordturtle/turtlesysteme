@@ -1,0 +1,14 @@
+REM SimpleProc
+
+REPEAT
+  RNDCOL(10)
+  PROCprong
+  RIGHT(61)
+UNTIL TURTD% = 0
+END
+
+DEF PROCprong
+  FORWARD(400)
+  BLOT(20)
+  BACK(400)
+ENDPROC

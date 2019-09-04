@@ -122,7 +122,7 @@ const compileIf = (routine, lex, startLine) => {
   }
   result = molecules.expression(routine, lex, 'null', 'boolean', 'Python')
   lex = result.lex
-  test = result.pcode[0]
+  test = result.pcode
 
   // expecting a colon
   if (!routine.lexemes[lex]) {
@@ -390,7 +390,7 @@ const compileWhile = (routine, lex, startLine) => {
   }
   result = molecules.expression(routine, lex, 'null', 'boolean', 'Python')
   lex = result.lex
-  test = result.pcode[0]
+  test = result.pcode
 
   // expecting a colon
   if (!routine.lexemes[lex]) {

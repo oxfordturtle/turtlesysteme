@@ -89,7 +89,7 @@ const compileIf = (routine, lex, startLine) => {
   }
   result = molecules.expression(routine, lex, 'null', 'boolean', 'BASIC')
   lex = result.lex
-  test = result.pcode[0]
+  test = result.pcode
 
   // expecting "then"
   if (!routine.lexemes[lex]) {
@@ -290,7 +290,7 @@ const compileWhile = (routine, lex, startLine) => {
   }
   result = molecules.expression(routine, lex, 'null', 'boolean', 'BASIC')
   lex = result.lex
-  test = result.pcode[0]
+  test = result.pcode
 
   // expecting a statement on the same line or a block of statements on a new line
   if (!routine.lexemes[lex]) {

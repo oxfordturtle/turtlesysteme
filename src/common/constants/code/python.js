@@ -1,151 +1,199 @@
-import AimCannon from './Python/AimCannon.tgy'
-import AskInput from './Python/AskInput.tgy'
-import AutoCannon from './Python/AutoCannon.tgy'
-import Automata from './Python/Automata.tgy'
-import Balls3D from './Python/Balls3D.tgy'
-import BarnsleyColour from './Python/BarnsleyColour.tgy'
-import BarnsleyIFS from './Python/BarnsleyIFS.tgy'
-import BouncingBall from './Python/BouncingBall.tgy'
-import BrownianMotion from './Python/BrownianMotion.tgy'
-import Cheetahs from './Python/Cheetahs.tgy'
-import Circles from './Python/Circles.tgy'
-import Clock from './Python/Clock.tgy'
-import ColourSpiral from './Python/ColourSpiral.tgy'
-import CycleColours from './Python/CycleColours.tgy'
-import Diffusion from './Python/Diffusion.tgy'
-import DigitalClock from './Python/DigitalClock.tgy'
-import Disease from './Python/Disease.tgy'
-import DragonColour from './Python/DragonColour.tgy'
-import DragonIFS from './Python/DragonIFS.tgy'
 import DrawPause from './Python/DrawPause.tgy'
-import FiveTurtles from './Python/FiveTurtles.tgy'
-import Flashlights from './Python/Flashlights.tgy'
-import Flocking from './Python/Flocking.tgy'
+import SmileyFace from './Python/SmileyFace.tgy'
+import ThePlough from './Python/ThePlough.tgy'
+import OlympicRings from './Python/OlympicRings.tgy'
 import ForLoop from './Python/ForLoop.tgy'
-import GameOfLife from './Python/GameOfLife.tgy'
+import TriangleSpin from './Python/TriangleSpin.tgy'
+import Circles from './Python/Circles.tgy'
+import NestedLoops from './Python/NestedLoops.tgy'
+import RandomLines from './Python/RandomLines.tgy'
+import RandomEllipses from './Python/RandomEllipses.tgy'
+import ColourSpiral from './Python/ColourSpiral.tgy'
+import SimpleProc from './Python/SimpleProc.tgy'
+import ParameterProc from './Python/ParameterProc.tgy'
+import ResizableFace from './Python/ResizableFace.tgy'
+import Polygons from './Python/Polygons.tgy'
+import Stars from './Python/Stars.tgy'
+import PolygonRings from './Python/PolygonRings.tgy'
+import Triangle1 from './Python/Triangle1.tgy'
+import Triangle2 from './Python/Triangle2.tgy'
+import Triangle3 from './Python/Triangle3.tgy'
+import Triangles from './Python/Triangles.tgy'
+import Factorials from './Python/Factorials.tgy'
+import Fibonaccis from './Python/Fibonaccis.tgy'
+import YouAreHere from './Python/YouAreHere.tgy'
+import CycleColours from './Python/CycleColours.tgy'
+import Clock from './Python/Clock.tgy'
+import DigitalClock from './Python/DigitalClock.tgy'
+import Flashlights from './Python/Flashlights.tgy'
+import RefParams from './Python/RefParams.tgy'
+import Balls3D from './Python/Balls3D.tgy'
+import StringFunctions from './Python/StringFunctions.tgy'
+import MathFunctions from './Python/MathFunctions.tgy'
+import TrigGraphs from './Python/TrigGraphs.tgy'
+import MovingBall from './Python/MovingBall.tgy'
+import BouncingBall from './Python/BouncingBall.tgy'
+import TurtleMove from './Python/TurtleMove.tgy'
+import TurtleBounce from './Python/TurtleBounce.tgy'
+import BouncingFace from './Python/BouncingFace.tgy'
+import MultiBounce from './Python/MultiBounce.tgy'
+import BouncingTriangle from './Python/BouncingTriangle.tgy'
+import BouncingShapes from './Python/BouncingShapes.tgy'
 import GravitySteps from './Python/GravitySteps.tgy'
-import IFSBackground from './Python/IFSBackground.tgy'
-import Interference from './Python/Interference.tgy'
-import IteratedPD from './Python/IteratedPD.tgy'
-import KnightsTour from './Python/KnightsTour.tgy'
+import SolarSystem from './Python/SolarSystem.tgy'
+import AskInput from './Python/AskInput.tgy'
+import QuickClick from './Python/QuickClick.tgy'
+import TypingTest from './Python/TypingTest.tgy'
+import TypingTestKeys from './Python/TypingTestKeys.tgy'
+import SpongeThrow from './Python/SpongeThrow.tgy'
+import Arcade from './Python/Arcade.tgy'
+import SnakeGame from './Python/SnakeGame.tgy'
+import NoughtsAndCrosses from './Python/NoughtsAndCrosses.tgy'
+import SimpleDraw from './Python/SimpleDraw.tgy'
+import PaintApp from './Python/PaintApp.tgy'
+import FiveTurtles from './Python/FiveTurtles.tgy'
+import AimCannon from './Python/AimCannon.tgy'
+import AutoCannon from './Python/AutoCannon.tgy'
 import Launch from './Python/Launch.tgy'
-import LifeStart from './Python/LifeStart.tgy'
+import Disease from './Python/Disease.tgy'
+import GameOfLife from './Python/GameOfLife.tgy'
+import Automata from './Python/Automata.tgy'
+import BrownianMotion from './Python/BrownianMotion.tgy'
+import Dendrites from './Python/Dendrites.tgy'
+import Cheetahs from './Python/Cheetahs.tgy'
+import SexRatio from './Python/SexRatio.tgy'
+import Flocking from './Python/Flocking.tgy'
+import Schelling from './Python/Schelling.tgy'
+import IteratedPD from './Python/IteratedPD.tgy'
+import RecursionFactory from './Python/RecursionFactory.tgy'
+import RecursiveTree from './Python/RecursiveTree.tgy'
+import KochSnowflake from './Python/KochSnowflake.tgy'
+import SquareKoch from './Python/SquareKoch.tgy'
+import Sierpinski from './Python/Sierpinski.tgy'
+import SierpinskiDots from './Python/SierpinskiDots.tgy'
+import IFSBackground from './Python/IFSBackground.tgy'
+import IFSColour from './Python/IFSColour.tgy'
+import IFSDemonstrator from './Python/IFSDemonstrator.tgy'
 import Logistic from './Python/Logistic.tgy'
 import LogisticSpider from './Python/LogisticSpider.tgy'
+import MandelbrotDemo from './Python/MandelbrotDemo.tgy'
+import MandelbrotSpectrumDemo from './Python/MandelbrotSpectrumDemo.tgy'
+import LifeStart from './Python/LifeStart.tgy'
+import Diffusion from './Python/Diffusion.tgy'
 import Mandelbrot from './Python/Mandelbrot.tgy'
 import MandelbrotMini from './Python/MandelbrotMini.tgy'
-import MandelbrotMiniSpectrum from './Python/MandelbrotMiniSpectrum.tgy'
 import MandelbrotSpectrum from './Python/MandelbrotSpectrum.tgy'
-import MathFunctions from './Python/MathFunctions.tgy'
-import MovingBall from './Python/MovingBall.tgy'
-import MultiBounce from './Python/MultiBounce.tgy'
-import NestedLoops from './Python/NestedLoops.tgy'
-import Nim from './Python/Nim.tgy'
-import NoughtsAndCrosses from './Python/NoughtsAndCrosses.tgy'
-import OlympicRings1 from './Python/OlympicRings1.tgy'
-import OlympicRings2 from './Python/OlympicRings2.tgy'
-import PaintApp from './Python/PaintApp.tgy'
-import ParameterProcedure from './Python/ParameterProcedure.tgy'
-import PolygonRings from './Python/PolygonRings.tgy'
-import Polygons from './Python/Polygons.tgy'
-import Quine from './Python/Quine.tgy'
-import RefParams from './Python/RefParams.tgy'
-import Schelling from './Python/Schelling.tgy'
-import SexRatio from './Python/SexRatio.tgy'
-import Shoot from './Python/Shoot.tgy'
-import Sierpinski from './Python/Sierpinski.tgy'
+import MandelbrotMiniSpectrum from './Python/MandelbrotMiniSpectrum.tgy'
 import SierpinskiColour from './Python/SierpinskiColour.tgy'
-import SierpinskiDots from './Python/SierpinskiDots.tgy'
 import SierpinskiIFS from './Python/SierpinskiIFS.tgy'
-import SimpleDraw from './Python/SimpleDraw.tgy'
-import SimpleProcedure from './Python/SimpleProcedure.tgy'
-import SnakeGame from './Python/SnakeGame.tgy'
-import SolarSystem from './Python/SolarSystem.tgy'
-import Stars from './Python/Stars.tgy'
-import StringFunctions from './Python/StringFunctions.tgy'
-import ThePlough from './Python/ThePlough.tgy'
+import BarnsleyColour from './Python/BarnsleyColour.tgy'
+import BarnsleyIFS from './Python/BarnsleyIFS.tgy'
+import DragonColour from './Python/DragonColour.tgy'
+import DragonIFS from './Python/DragonIFS.tgy'
 import TreeIFS from './Python/TreeIFS.tgy'
-import Triangles from './Python/Triangles.tgy'
-import TrigonometricGraphs from './Python/TrigonometricGraphs.tgy'
-import TurtleBounce from './Python/TurtleBounce.tgy'
-import TurtleMove from './Python/TurtleMove.tgy'
-import TwoSlits from './Python/TwoSlits.tgy'
+import Interference from './Python/Interference.tgy'
 import WaveSuperposer from './Python/WaveSuperposer.tgy'
-import YouAreHere from './Python/YouAreHere.tgy'
+import TwoSlits from './Python/TwoSlits.tgy'
+import KnightsTour from './Python/KnightsTour.tgy'
+import Nim from './Python/Nim.tgy'
 
 export default {
-  AimCannon,
-  AskInput,
-  AutoCannon,
-  Automata,
-  Balls3D,
-  BarnsleyColour,
-  BarnsleyIFS,
-  BouncingBall,
-  BrownianMotion,
-  Cheetahs,
-  Circles,
-  Clock,
-  ColourSpiral,
-  CycleColours,
-  Diffusion,
-  DigitalClock,
-  Disease,
-  DragonColour,
-  DragonIFS,
   DrawPause,
-  FiveTurtles,
-  Flashlights,
-  Flocking,
+  SmileyFace,
+  ThePlough,
+  OlympicRings,
   ForLoop,
-  GameOfLife,
+  TriangleSpin,
+  Circles,
+  NestedLoops,
+  RandomLines,
+  RandomEllipses,
+  ColourSpiral,
+  SimpleProc,
+  ParameterProc,
+  ResizableFace,
+  Polygons,
+  Stars,
+  PolygonRings,
+  Triangle1,
+  Triangle2,
+  Triangle3,
+  Triangles,
+  Factorials,
+  Fibonaccis,
+  YouAreHere,
+  CycleColours,
+  Clock,
+  DigitalClock,
+  Flashlights,
+  RefParams,
+  Balls3D,
+  StringFunctions,
+  MathFunctions,
+  TrigGraphs,
+  MovingBall,
+  BouncingBall,
+  TurtleMove,
+  TurtleBounce,
+  BouncingFace,
+  MultiBounce,
+  BouncingTriangle,
+  BouncingShapes,
   GravitySteps,
-  IFSBackground,
-  Interference,
-  IteratedPD,
-  KnightsTour,
+  SolarSystem,
+  AskInput,
+  QuickClick,
+  TypingTest,
+  TypingTestKeys,
+  SpongeThrow,
+  Arcade,
+  SnakeGame,
+  NoughtsAndCrosses,
+  SimpleDraw,
+  PaintApp,
+  FiveTurtles,
+  AimCannon,
+  AutoCannon,
   Launch,
-  LifeStart,
+  Disease,
+  GameOfLife,
+  Automata,
+  BrownianMotion,
+  Dendrites,
+  Cheetahs,
+  SexRatio,
+  Flocking,
+  Schelling,
+  IteratedPD,
+  RecursionFactory,
+  RecursiveTree,
+  KochSnowflake,
+  SquareKoch,
+  Sierpinski,
+  SierpinskiDots,
+  IFSBackground,
+  IFSColour,
+  IFSDemonstrator,
   Logistic,
   LogisticSpider,
+  MandelbrotDemo,
+  MandelbrotSpectrumDemo,
+  LifeStart,
+  Diffusion,
   Mandelbrot,
   MandelbrotMini,
-  MandelbrotMiniSpectrum,
   MandelbrotSpectrum,
-  MathFunctions,
-  MovingBall,
-  MultiBounce,
-  NestedLoops,
-  Nim,
-  NoughtsAndCrosses,
-  OlympicRings1,
-  OlympicRings2,
-  PaintApp,
-  ParameterProcedure,
-  PolygonRings,
-  Polygons,
-  Quine,
-  RefParams,
-  Schelling,
-  SexRatio,
-  Shoot,
-  Sierpinski,
+  MandelbrotMiniSpectrum,
   SierpinskiColour,
-  SierpinskiDots,
   SierpinskiIFS,
-  SimpleDraw,
-  SimpleProcedure,
-  SnakeGame,
-  SolarSystem,
-  Stars,
-  StringFunctions,
-  ThePlough,
+  BarnsleyColour,
+  BarnsleyIFS,
+  DragonColour,
+  DragonIFS,
   TreeIFS,
-  Triangles,
-  TrigonometricGraphs,
-  TurtleBounce,
-  TurtleMove,
-  TwoSlits,
+  Interference,
   WaveSuperposer,
-  YouAreHere
+  TwoSlits,
+  KnightsTour,
+  Nim
 }

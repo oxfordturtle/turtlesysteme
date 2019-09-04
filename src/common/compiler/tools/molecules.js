@@ -33,7 +33,9 @@ export const expression = (routine, lex, type, needed, language) => {
 export const variableAssignment = (routine, name, lex, language) => {
   // search for the variable and check it exists
   const variable = find.variable(routine, name, language)
-  if (!variable) throw error(`Variable "${name}" is not defined.`, routine.lexemes[lex])
+  if (!variable) {
+    throw error(`Variable "${name}" is not defined.`, routine.lexemes[lex])
+  }
 
   // check there is some value assignment, and if so evaluate it
   if (!routine.lexemes[lex]) {
@@ -51,7 +53,7 @@ export const variableAssignment = (routine, name, lex, language) => {
 export const procedureCall = (routine, lex, language, procedureCheck = true) => {
   // look for the command
   const command = find.command(routine, routine.lexemes[lex].content, language)
-  if (!command) throw error('{lex} is not defined.', routine.lexemes[lex])
+  if (!command) throw error('Command "{lex}" not found.', routine.lexemes[lex])
 
   // check it is a procedure; N.B. this function is also used below for handling functions, where
   // the procedureCheck argument is false

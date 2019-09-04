@@ -64,14 +64,14 @@ const delimiter = (code) => {
 
 // string literals
 const string = (code) => {
-  const start1 = code[0] === '\''
-  const start2 = code[0] === '"'
-  const end1 = code.match(/[^\\](')/)
-  const end2 = code.match(/[^\\](")/)
-  if (start1 && end1) return { type: 'string', content: code.slice(0, end1.index + 2) }
-  if (start1) return { type: 'unterminated-string', content: code.split('\n')[0] }
-  if (start2 && end2) return { type: 'string', content: code.slice(0, end2.index + 2) }
-  if (start2) return { type: 'unterminated-string', content: code.split('\n')[0] }
+  // awkward cases
+  if (code.match(/^""""/)) return { type: 'string', content: '""""' }
+  if (code.match(/^""[^"]/)) return { type: 'string', content: '""' }
+  // normal cases
+  const start = code[0] === '"'
+  const end = code.match(/[^"](")/)
+  if (start && end) return { type: 'string', content: code.slice(0, end.index + 2) }
+  if (start) return { type: 'unterminated-string', content: code.split('\n')[0] }
   return false
 }
 

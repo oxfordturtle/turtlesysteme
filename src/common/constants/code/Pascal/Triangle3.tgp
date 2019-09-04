@@ -1,0 +1,19 @@
+PROGRAM Triangle3;
+
+  Procedure triangle(size: integer);
+  Begin
+    if size > 1 then
+      begin
+        forward(size);
+        right(120);
+        forward(size);
+        right(120);
+        forward(size);
+        right(120)
+      end
+  End;
+
+BEGIN
+  movexy(-100, 150);
+  triangle(256)
+END.

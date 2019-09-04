@@ -1,0 +1,111 @@
+PROGRAM Dendrites;
+CONST half = 100;
+      crystal = cyan;
+      molecule = white;
+      solution = teal;
+      initrandomradius = 10;
+      maxdistance = 75;
+      cyclemod = 5;
+      moddelay = 0;
+VAR whole, randomradius, maxsofar: integer;
+    cycle: integer;
+    numattached: integer;
+
+  Function attached(x, y: integer): boolean;
+  Begin
+    result := false;
+    if (pixcol(x - 1, y) = crystal)
+      or (pixcol(x + 1, y) = crystal)
+      or (pixcol(x, y - 1) = crystal)
+      or (pixcol(x, y + 1) = crystal) then
+      begin
+        result := true;
+        pixset(x, y, crystal);
+        inc(numattached);
+        if hypot(x, y, 1) >= maxsofar then
+          maxsofar := hypot(x, y, 1)
+      end
+  End;
+
+  Procedure randomwalk;
+  Var n: integer;
+  Begin
+    repeat
+      n := random(4) * 2 + 1;
+      turtx := turtx + n div 3 - 1;
+      turty := turty + n mod 3 - 1;
+      if pixcol(turtx, turty) = black then
+        begin
+          turtx := turtx - 2 * (n div 3 - 1);
+          turty := turty - 2 * (n mod 3 - 1)
+        end
+    until pixcol(turtx, turty) = solution
+  End;
+
+  Procedure biasedwalk;
+  Var distance, turn, range: integer;
+  Begin
+    turnxy(-turtx, -turty);
+    distance := hypot(turtx, turty, 1);
+    if distance < randomradius then
+      direction(random(360))
+    else
+      begin
+        range := divmult(half - distance, half - randomradius, 180);
+        turn := random(range * 2) - range;
+        right(turn)
+      end;
+    repeat
+      forward(1)
+    until pixcol(turtx, turty) = solution
+  End;
+
+BEGIN
+  whole := half * 2 + 3;
+  canvas(-half, -half, whole, whole);
+  resolution(whole, whole);
+  penup;
+  setxy(-half, -half);
+  box(whole, whole, solution, true);
+  randomradius := initrandomradius;
+  writeln('Initial randomradius = ' + str(randomradius));
+  pixset(0, 0, crystal);
+  numattached := 1;
+  writeln('Counting molecules within growing crystal:');
+  write('1 ');
+  maxsofar := 1;
+  timeset(0);
+  repeat
+    home;
+    direction(random(360));
+    forward(half);
+    if pixcol(turtx, turty) <> solution then
+      randomwalk;
+    cycle := 0;
+    while not(attached(turtx, turty)) do
+      begin
+        pixset(turtx, turty, molecule);
+        if cycle mod cyclemod = 0 then
+          begin
+            update;
+            if moddelay > 0 then
+              pause(moddelay);
+            noupdate
+          end;
+        inc(cycle);
+        pixset(turtx, turty, solution);
+        biasedwalk
+      end;
+    if numattached mod 10 = 0 then
+      writeln(str(numattached))
+    else
+      write(str(numattached) + ' ');
+    if maxsofar > randomradius then
+      begin
+        randomradius := maxsofar;
+        writeln('');
+        writeln('randomradius = ' + str(randomradius))
+      end
+  until maxsofar >= maxdistance;
+  writeln('Simulation finished (' + qstr(time, 1000, 2) + ' seconds)')
+END.

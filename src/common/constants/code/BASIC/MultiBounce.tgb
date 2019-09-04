@@ -1,30 +1,39 @@
 REM MultiBounce
 
-xpos1% = 20
-xvel1% = 2
-ypos1% = 200
-yvel1% = -3
-xpos2% = 400
-xvel2% = -4
-ypos2% = 800
-yvel2% = 1
+DIM x%(10)
+DIM y%(10)
+DIM xvel%(10)
+DIM yvel%(10)
+DIM size%(10)
+DIM colr%(10)
+MINSIZE% = 70
+MAXSIZE% = 130
+BALLS% = 10
+FOR n% = 1 TO BALLS%
+  size%(n%) = MINSIZE% + RND(MAXSIZE% - MINSIZE%)
+  colr%(n%) = RGB(n%)
+  x%(n%) = RND(1000 - 2 * size%(n%)) + size%(n%)
+  y%(n%) = RND(1000 - 2 * size%(n%)) + size%(n%)
+  xvel%(n%) = RND(15) - 7
+  yvel%(n%) = RND(15) - 7
+NEXT
 REPEAT
-  PROCball(20, BLUE, xpos1%, xvel1%, ypos1%, yvel1%)
-  PROCball(30, RED, xpos2%, xvel2%, ypos2%, yvel2%)
+  NOUPDATE
+  BLANK(WHITE)
+  FOR n% = 1 TO BALLS%
+    x%(n%) = x%(n%) + xvel%(n%)
+    y%(n%) = y%(n%) + yvel%(n%)
+    SETXY(x%(n%), y%(n%))
+    COLOUR(colr%(n%))
+    BLOT(size%(n%))
+    IF (x%(n%) < size%(n%)) OR (x%(n%) > 1000 - size%(n%)) THEN
+      xvel%(n%) = -xvel%(n%)
+    ENDIF
+    IF (y%(n%) < size%(n%)) OR (y%(n%) > 1000 - size%(n%)) THEN
+      yvel%(n%) = -yvel%(n%)
+    ENDIF
+  NEXT
+  UPDATE
+  PAUSE(5)
 UNTIL 1 = 0
 END
-
-DEF PROCball(size%, col%, RETURN xp%, RETURN xv%, RETURN yp%, RETURN yv%)
-  SETXY(xp%, yp%)
-  COLOUR(WHITE)
-  BLOT(size% + 1)
-  xp% = xp% + xv%
-  yp% = yp% + yv%
-  SETXY(xp%, yp%)
-  COLOUR(col%)
-  BLOT(size%)
-  UPDATE
-  NOUPDATE
-  IF (xp% < size%) OR (xp% > 1000 - size%) THEN xv% = -xv%
-  IF (yp% < size%) OR (yp% > 1000 - size%) THEN yv% = -yv%
-ENDPROC

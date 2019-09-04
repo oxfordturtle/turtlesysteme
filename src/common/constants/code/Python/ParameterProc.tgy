@@ -1,0 +1,11 @@
+# ParameterProc
+
+def prong(length: int):
+  forward(length)
+  blot(length // 20)
+  back(length)
+
+for count in range(360, 0, -1):
+  randcol(10)
+  prong(count + 100)
+  right(61)

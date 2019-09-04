@@ -1,5 +1,5 @@
 /*
-Example programs: their code, their names, and their groups (for the example menus).
+Example programs.
 */
 import BASIC from './code/basic'
 import Pascal from './code/pascal'
@@ -14,264 +14,236 @@ export const code = {
 
 // names for the example programs
 export const names = {
-  AimCannon: 'Firing a cannon (manual)',
-  AskInput: 'Asking for typed input',
-  AutoCannon: 'Firing a cannon (automatic)',
-  Automata: 'One-dimensional cellular automata',
-  Balls3D: '3D colour effects',
-  BarnsleyColour: 'Barnsley colour',
-  BarnsleyIFS: 'Barnsley IFS',
-  BouncingBall: 'Bouncing ball (using variables)',
-  BrownianMotion: 'Brownian motion',
-  Cheetahs: 'Cheetahs and gazelles',
-  Circles: 'Circling circles',
-  Clock: 'Analogue clock (using REPEAT)',
-  ColourSpiral: 'Spiral of colours',
-  CycleColours: 'Cycling colours (using MOD)',
-  Diffusion: 'A model of diffusion',
-  DigitalClock: 'Digital clock (using IF and WHILE)',
-  Disease: 'Spread of disease',
-  DragonColour: 'Dragon colour',
-  DragonIFS: 'Dragon IFS',
+  // examples 1
   DrawPause: 'Simple drawing with pauses',
-  FiveTurtles: 'Five turtles moving to the mouse',
-  Flashlights: 'Using Booleans',
-  Flocking: 'Flocking behaviour',
+  SmileyFace: 'Smily face (using PENUP and ELLBLOT)',
+  ThePlough: 'The plough (using SETXY and POLYLINE)',
+  OlympicRings: 'Olympic rings (using variable)',
   ForLoop: 'FOR (counting) loop',
-  GameOfLife: 'Conway\'s Game of Life',
+  TriangleSpin: 'Spinning triangle pattern',
+  Circles: 'Circling circles',
+  NestedLoops: 'Nested FOR loops',
+  RandomLines: 'Random lines pattern',
+  RandomEllipses: 'Random ellipses pattern',
+  ColourSpiral: 'Spiral of colours (simple PCODE)',
+  // examples 2
+  SimpleProc: 'Simple procedure',
+  ParameterProc: 'Procedure with parameter',
+  ResizableFace: 'Resizable face (nested procedures)',
+  Polygons: 'Polygons (two parameters)',
+  Stars: 'Stars (using ANGLES and FORGET)',
+  PolygonRings: 'Polygon rings (three parameters)',
+  Triangle1: 'Simple triangle',
+  Triangle2: 'Triangle procedure',
+  Triangle3: 'Triangle procedure with limit',
+  Triangles: 'Recursive triangles',
+  Factorials: 'Recursive factorials',
+  Fibonaccis: 'Fibonaccis (using ARRAY and TIME)',
+  // examples 3
+  YouAreHere: 'Text and arrow (using PRINT)',
+  CycleColours: 'Cycling colours (using MOD)',
+  Clock: 'Analogue clock (using REPEAT)',
+  DigitalClock: 'Digital clock (using IF and WHILE)',
+  Flashlights: 'Flashlights (using Booleans)',
+  RefParams: 'Reference parameters (using VAR)',
+  Balls3D: '3D colour effects',
+  StringFunctions: 'String functions',
+  MathFunctions: 'Mathematical functions',
+  TrigGraphs: 'Trigonometric graphs',
+  // examples 4
+  MovingBall: 'Moving ball (using variables)',
+  BouncingBall: 'Bouncing ball (using variables)',
+  TurtleMove: 'Moving ball (using Turtle)',
+  TurtleBounce: 'Bouncing ball (using Turtle)',
+  BouncingFace: 'Bouncing face',
+  MultiBounce: 'Multiple bouncing balls',
+  BouncingTriangle: 'Bouncing triangle',
+  BouncingShapes: 'Multiple bouncing shapes',
   GravitySteps: 'Movement under gravity',
-  IFSBackground: 'Iterated function systems (IFS) background',
-  Interference: 'Interference',
-  IteratedPD: 'Iterated Prisoner\'s Dilemma',
-  KnightsTour: 'Knight\'s tour',
+  SolarSystem: 'Solar system',
+  // examples 5
+  AskInput: 'Asking for typed input',
+  QuickClick: 'Mouse reaction game',
+  TypingTest: 'Typing test (checking characters)',
+  TypingTestKeys: 'Typing test (checking keys)',
+  SpongeThrow: 'Throwing sponges at a moving face',
+  Arcade: 'Arcade shooting game',
+  SnakeGame: 'Snake (classic game)',
+  NoughtsAndCrosses: 'Noughts and crosses',
+  SimpleDraw: 'Drawing to the mouse',
+  PaintApp: 'Painting application',
+  FiveTurtles: 'Five turtles moving to the mouse',
+  // examples 6
+  AimCannon: 'Firing a cannon (manual)',
+  AutoCannon: 'Firing a cannon (automatic)',
   Launch: 'Launching a rocket into orbit',
-  LifeStart: 'Initialising Conway\'s Game of Life',
+  Disease: 'Spread of disease',
+  GameOfLife: 'Conway’s Game of Life',
+  Automata: 'One-dimensional cellular automata',
+  BrownianMotion: 'Brownian motion',
+  Dendrites: 'Dendritic crystal growth',
+  Cheetahs: 'Cheetahs and gazelles',
+  SexRatio: 'The sex ratio',
+  Flocking: 'Flocking behaviour',
+  Schelling: 'Schelling’s segregation model',
+  IteratedPD: 'Iterated Prisoner’s Dilemma',
+  // examples 7
+  RecursionFactory: 'Recursion factory',
+  RecursiveTree: 'Recursive tree',
+  KochSnowflake: 'Koch snowflake',
+  SquareKoch: 'Square Koch fractal curves',
+  Sierpinski: 'Sierpinski triangle (by deletion)',
+  SierpinskiDots: 'Sierpinski triangle (by random dots)',
+  IFSBackground: 'Iterated function systems (IFS) background',
+  IFSColour: 'IFS mappings on coloured background',
+  IFSDemonstrator: 'IFS demonstrator program',
   Logistic: 'Logistic equation',
   LogisticSpider: 'Logistic spider',
+  MandelbrotDemo: 'Mandelbrot multi-colour',
+  MandelbrotSpectrumDemo: 'Mandelbrot spectral colours',
+  // other CSAC examples not in the system menu
+  LifeStart: 'Initialising Conway’s Game of Life',
+  Diffusion: 'A model of diffusion',
   Mandelbrot: 'Mandelbrot set',
   MandelbrotMini: 'Mandelbrot mini',
-  MandelbrotMiniSpectrum: 'Mandelbrot mini spectrum',
   MandelbrotSpectrum: 'Mandelbrot spectrum',
-  MathFunctions: 'Mathematical functions',
-  MovingBall: 'Moving ball (using variables)',
-  MultiBounce: 'Multiple bouncing balls',
-  NestedLoops: 'Nested FOR loops',
-  Nim: 'Nim',
-  NoughtsAndCrosses: 'Noughts and crosses',
-  OlympicRings1: 'Olympic rings 1 (using PENUP)',
-  OlympicRings2: 'Olympic rings 2 (with variable)',
-  PaintApp: 'Painting application',
-  ParameterProcedure: 'Procedure with parameter',
-  PolygonRings: 'Polygon rings',
-  Polygons: 'POLYGON and POLYLINE',
-  Quine: 'Quine (self-replicating) program',
-  RefParams: 'Reference parameters',
-  Schelling: 'Schelling\'s segregation model',
-  SexRatio: 'The sex ratio',
-  Shoot: 'Arcade shooting game',
-  Sierpinski: 'Sierpinski triangle',
+  MandelbrotMiniSpectrum: 'Mandelbrot mini spectrum',
   SierpinskiColour: 'Sierpinski colour',
-  SierpinskiDots: 'Sierpinski dots',
   SierpinskiIFS: 'Sierpinski IFS',
-  SimpleDraw: 'Drawing to the mouse',
-  SimpleProcedure: 'Simple procedure',
-  SnakeGame: 'Snake (classic game)',
-  SolarSystem: 'Solar system (using ARRAY)',
-  Stars: 'Stars (using ANGLES and FORGET)',
-  StringFunctions: 'String functions',
-  ThePlough: 'The plough constellation',
+  BarnsleyColour: 'Barnsley colour',
+  BarnsleyIFS: 'Barnsley IFS',
+  DragonColour: 'Dragon colour',
+  DragonIFS: 'Dragon IFS',
   TreeIFS: 'Tree IFS',
-  Triangles: 'Recursive triangles',
-  TrigonometricGraphs: 'Trigonometric graphs',
-  TurtleBounce: 'Bouncing ball (using the Turtle)',
-  TurtleMove: 'Moving ball (using the Turtle)',
-  TwoSlits: 'Young\'s two-slit experiment',
+  Interference: 'Interference',
   WaveSuperposer: 'Wave superposer',
-  YouAreHere: 'Text and arrow (using PRINT)'
+  TwoSlits: 'Young’s two-slit experiment',
+  KnightsTour: 'Knight’s tour',
+  Nim: 'Nim'
 }
 
-// help example groups
-export const help = [
+// array of menu items
+export const menu = [
   {
     index: 1,
-    title: 'Drawing, counting, and procedures/methods',
+    title: 'drawing and counting loops',
     examples: [
       'DrawPause',
-      'OlympicRings1',
-      'OlympicRings2',
+      'SmileyFace',
       'ThePlough',
+      'OlympicRings',
       'ForLoop',
+      'TriangleSpin',
       'Circles',
       'NestedLoops',
-      'SimpleProcedure',
-      'ColourSpiral',
-      'ParameterProcedure',
-      'Polygons',
-      'YouAreHere'
-    ]
-  },
-  {
-    index: 2,
-    title: 'Further commands and structures',
-    examples: [
-      'Stars',
-      'PolygonRings',
-      'Clock',
-      'DigitalClock',
-      'CycleColours',
-      'Triangles',
-      'Flashlights',
-      'RefParams',
-      'Balls3D',
-      'AskInput',
-      'StringFunctions',
-      'MathFunctions',
-      'TrigonometricGraphs'
-    ]
-  },
-  {
-    index: 3,
-    title: 'Smooth movement and interaction',
-    examples: [
-      'MovingBall',
-      'BouncingBall',
-      'TurtleMove',
-      'TurtleBounce',
-      'MultiBounce',
-      'GravitySteps',
-      'SolarSystem',
-      'SimpleDraw',
-      'FiveTurtles'
-    ]
-  },
-  {
-    index: 4,
-    title: 'Complex applications',
-    examples: [
-      'PaintApp',
-      'SnakeGame',
-      'Shoot',
-      'Mandelbrot',
-      'Quine',
-      'NoughtsAndCrosses'
-    ]
-  },
-  {
-    index: 5,
-    title: 'Artificial life and social models',
-    examples: [
-      'GameOfLife',
-      'Schelling',
-      'IteratedPD'
-    ]
-  }
-]
-
-// csac book examples
-export const csac = [
-  {
-    index: 1,
-    title: 'Introduction, Computer Science for Fun, and Turtling',
-    examples: [
-      'DrawPause',
+      'RandomLines',
+      'RandomEllipses',
       'ColourSpiral'
     ]
   },
   {
     index: 2,
-    title: 'Animation and Movement',
+    title: 'procedures and simple recursion',
+    examples: [
+      'SimpleProc',
+      'ParameterProc',
+      'ResizableFace',
+      'Polygons',
+      'Stars',
+      'PolygonRings',
+      'Triangle1',
+      'Triangle2',
+      'Triangle3',
+      'Triangles',
+      'Factorials',
+      'Fibonaccis'
+    ]
+  },
+  {
+    index: 3,
+    title: 'further commands and structures',
+    examples: [
+      'YouAreHere',
+      'CycleColours',
+      'Clock',
+      'DigitalClock',
+      'Flashlights',
+      'RefParams',
+      'Balls3D',
+      'StringFunctions',
+      'MathFunctions',
+      'TrigGraphs'
+    ]
+  },
+  {
+    index: 4,
+    title: 'smooth movement and bouncing',
     examples: [
       'MovingBall',
       'BouncingBall',
       'TurtleMove',
       'TurtleBounce',
-      'AskInput'
-    ]
-  },
-  {
-    index: 3,
-    title: 'Computing in Physics: Cannons and Rockets',
-    examples: [
+      'BouncingFace',
+      'MultiBounce',
+      'BouncingTriangle',
+      'BouncingShapes',
       'GravitySteps',
-      'AimCannon',
-      'AutoCannon',
-      'Launch'
-    ]
-  },
-  {
-    index: 4,
-    title: 'Cellular Automata: Modelling Disease, \'Life\', and Shell Patterns',
-    examples: [
-      'LifeStart',
-      'Disease',
-      'GameOfLife',
-      'Automata'
+      'SolarSystem'
     ]
   },
   {
     index: 5,
-    title: 'Computing in Chemistry: Diffusion and Brownian Motion',
+    title: 'user input and interaction',
     examples: [
-      'Diffusion',
-      'BrownianMotion'
+      'AskInput',
+      'QuickClick',
+      'TypingTest',
+      'TypingTestKeys',
+      'SpongeThrow',
+      'Arcade',
+      'SnakeGame',
+      'NoughtsAndCrosses',
+      'SimpleDraw',
+      'PaintApp',
+      'FiveTurtles'
     ]
   },
   {
     index: 6,
-    title: 'Computing in Biology: Evolution and Behaviour',
+    title: 'interdisciplinary models',
     examples: [
+      'AimCannon',
+      'AutoCannon',
+      'Launch',
+      'Disease',
+      'GameOfLife',
+      'Automata',
+      'BrownianMotion',
+      'Dendrites',
       'Cheetahs',
       'SexRatio',
-      'Flocking'
+      'Flocking',
+      'Schelling',
+      'IteratedPD'
     ]
   },
   {
     index: 7,
-    title: 'Chaos and Self-Similarity',
+    title: 'self-similarity and chaos',
     examples: [
-      'Logistic',
-      'LogisticSpider',
-      'Mandelbrot',
-      'MandelbrotMini',
-      'MandelbrotSpectrum',
-      'MandelbrotMiniSpectrum',
-      'Triangles',
+      'RecursionFactory',
+      'RecursiveTree',
+      'KochSnowflake',
+      'SquareKoch',
       'Sierpinski',
       'SierpinskiDots',
       'IFSBackground',
-      'SierpinskiColour',
-      'SierpinskiIFS',
-      'BarnsleyIFS',
-      'BarnsleyColour',
-      'TreeIFS',
-      'DragonIFS',
-      'DragonColour'
-    ]
-  },
-  {
-    index: 8,
-    title: 'Waves and Quantum Mechanics',
-    examples: [
-      'Interference',
-      'WaveSuperposer',
-      'TwoSlits'
-    ]
-  },
-  {
-    index: 9,
-    title: 'Games and Computer Science',
-    examples: [
-      'KnightsTour',
-      'Nim',
-      'NoughtsAndCrosses'
-    ]
-  },
-  {
-    index: 10,
-    title: 'Philosophy and Social Science',
-    examples: [
-      'Schelling',
-      'IteratedPD'
+      'IFSColour',
+      'IFSDemonstrator',
+      'Logistic',
+      'LogisticSpider',
+      'MandelbrotDemo',
+      'MandelbrotSpectrumDemo'
     ]
   }
 ]

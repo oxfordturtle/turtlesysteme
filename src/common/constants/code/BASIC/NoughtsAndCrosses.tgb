@@ -1,4 +1,105 @@
 REM NoughtsAndCrosses
 
-REM this program is unavailable in Turtle BASIC
-REM because arrays are not yet implemented
+DIM board%(11)
+DIM b2%(11)
+CROSS% = 33
+NOUGHT% = 2
+numgames% = 0
+REPEAT
+  numgames% = numgames% + 1
+  randfirst% = (numgames% MOD 2 = 1)
+  BLANK(LIGHTGREEN)
+  THICKNESS(10)
+  COLOUR(BLACK)
+  SETXY(375, 50)
+  DRAWXY(0, 750)
+  SETXY(625, 50)
+  DRAWXY(0, 750)
+  SETXY(125, 300)
+  DRAWXY(750, 0)
+  SETXY(125, 550)
+  DRAWXY(750, 0)
+  FOR i% = 0 TO 10
+    board%(i%) = 0
+  NEXT
+  board%(11) = 8
+  REPEAT
+    IF (randfirst%) THEN
+      board%(10) = RND(8)
+      randfirst% = FALSE
+    ELSE
+      CURSOR(2)
+      REPEAT
+        REPEAT
+          REPEAT
+          UNTIL ?LMOUSE > 0
+          PAUSE(200)
+        UNTIL ((?CLICKX >= 125) AND (?CLICKX <= 875) AND (?CLICKY >= 50) AND (?CLICKY <= 800))
+        column% = (?CLICKX-125) DIV 250
+        row% = (?CLICKY-50) DIV 250
+      UNTIL board%(column% + row% * 3) = 0
+      PROCdoblot(column%, row%, CROSS%)
+      board%(column% + row% * 3) = CROSS%
+      CURSOR(11)
+      PROCevaluate(board%, CROSS%, 0)
+    ENDIF
+    IF (board%(10) <> -1) THEN
+      PROCdoblot(board%(10) MOD 3, board%(10) DIV 3, NOUGHT%)
+      board%(board%(10)) = NOUGHT%
+    ENDIF
+  UNTIL (board%(11) <= 1)
+  SETXY(350, 850)
+  COLOUR(BLACK)
+  IF (board%(9) = 0) THEN
+    PRINT("  Draw!  ", 4, 60)
+  ELSE
+    PRINT("  I win!  ", 4, 60)
+  ENDIF
+  PAUSE(2500)
+UNTIL (1 <> 1)
+END
+
+DEF PROCdoblot(x%, y%, col%)
+  SETXY(x% * 250 + 250, y% * 250 + 175)
+  COLOUR(RGB(col%))
+  BLOT(70)
+ENDPROC
+
+DEF PROCcopy(RETURN fromarray%(), RETURN toarray%())
+  FOR i% = 0 TO 11
+    toarray%(i%) = fromarray%(i%)
+  NEXT
+ENDPROC
+
+DEF PROCevaluate(RETURN b1%(), jm%, depth%)
+  mover% = CROSS% + NOUGHT% - jm%
+  replyscore% = -2
+  b1%(9) = 0
+  b1%(10) = -1
+  b1%(11) = depth%
+  IF ((b1%(0) = jm%) AND (b1%(1) = jm%) AND (b1%(2) = jm%)) THEN b1%(9) = 1
+  IF ((b1%(3) = jm%) AND (b1%(4) = jm%) AND (b1%(5) = jm%)) THEN b1%(9) = 1
+  IF ((b1%(6) = jm%) AND (b1%(7) = jm%) AND (b1%(8) = jm%)) THEN b1%(9) = 1
+  IF ((b1%(0) = jm%) AND (b1%(3) = jm%) AND (b1%(6) = jm%)) THEN b1%(9) = 1
+  IF ((b1%(1) = jm%) AND (b1%(4) = jm%) AND (b1%(7) = jm%)) THEN b1%(9) = 1
+  IF ((b1%(2) = jm%) AND (b1%(5) = jm%) AND (b1%(8) = jm%)) THEN b1%(9) = 1
+  IF ((b1%(0) = jm%) AND (b1%(4) = jm%) AND (b1%(8) = jm%)) THEN b1%(9) = 1
+  IF ((b1%(2) = jm%) AND (b1%(4) = jm%) AND (b1%(6) = jm%)) THEN b1%(9) = 1
+  IF b1%(9) = 0 THEN
+    m% = 0
+    REPEAT
+      IF (b1%(m%) = 0) THEN
+        PROCcopy(b1%, b2%)
+        b2%(m%) = mover%
+        PROCevaluate(b2%, mover%, depth% + 1)
+        IF (b2%(9) > replyscore%) THEN
+          replyscore% = b2%(9)
+          b1%(10) = m%
+          b1%(11) = b2%(11)
+        ENDIF
+      ENDIF
+      m% = m% + 1
+    UNTIL (m% > 8) OR (replyscore% > 0)
+    IF (replyscore% <> -2) THEN b1%(9) = -replyscore%
+  ENDIF
+ENDPROC

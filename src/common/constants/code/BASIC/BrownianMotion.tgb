@@ -1,4 +1,95 @@
 REM BrownianMotion
 
-REM this program is unavailable in Turtle BASIC
-REM because arrays are not yet implemented
+DIM mx%(400)
+DIM my%(400)
+DIM ms%(400)
+DIM md%(400)
+POLRADIUS% = 80 REM pollen
+MOLRADIUS% = 10
+HITRADIUS% = 90 REM POLRADIUS% + MOLRADIUS%
+MOLECULES% = 400
+SLOWSPEED% = 30
+HIGHSPEED% = 50
+SPEEDRATIO% = 10
+POLCOLOUR% = BLUE
+MOLCOLOUR% = RED
+HALOCOLOUR% = &FFFFFE
+DELAY% = 50
+NOUPDATE
+PROCsetup
+BLANK(WHITE)
+PROCdraw(TRUE)
+REPEAT
+  NOUPDATE
+  PROCdraw(FALSE)
+  FOR n% = 0 TO MOLECULES%
+    PROCmove(n%)
+  NEXT
+  px% = px% + pxvel% / SPEEDRATIO%
+  py% = py% + pyvel% / SPEEDRATIO%
+  PROCdraw(TRUE)
+  UPDATE
+  PAUSE(DELAY%)
+UNTIL (ABS(px% - 500) > 490) OR (ABS(py% - 500) > 480)
+END
+
+DEF PROCsetup
+  PENUP
+  px% = 500
+  py% = 500
+  pxvel% = 0
+  pyvel% = 0
+  SETXY(px%, py%)
+  COLOUR(HALOCOLOUR%)
+  BLOT(HITRADIUS%)
+  FOR n% = 0 TO MOLECULES%
+    REPEAT
+      mx%(n%) = RND(1000 - 1 * MOLRADIUS%) + MOLRADIUS%
+      my%(n%) = RND(1000 - 1 * MOLRADIUS%) + MOLRADIUS%
+    UNTIL PIXCOL(mx%(n%), my%(n%)) = WHITE
+    ms%(n%) = RND(HIGHSPEED% - SLOWSPEED%) + SLOWSPEED%
+    md%(n%) = RND(360) - 1
+    SETXY(mx%(n%), my%(n%))
+    BLOT(2 * MOLRADIUS%)
+  NEXT
+ENDPROC
+
+DEF PROCdraw(positive%)
+  IF positive% THEN
+    COLOUR(MOLCOLOUR%)
+    radius% = MOLRADIUS%
+  ELSE
+    COLOUR(WHITE)
+    radius% = MOLRADIUS% + 1
+  ENDIF
+  FOR n% = 0 TO MOLECULES%
+    SETXY(mx%(n%), my%(n%))
+    BLOT(radius%)
+  NEXT
+  SETXY(px%, py%)
+  IF positive% THEN
+    COLOUR(POLCOLOUR%)
+    BLOT(POLRADIUS%)
+  ELSE
+    BLOT(POLRADIUS% + 1)
+  ENDIF
+ENDPROC
+
+DEF PROCmove(m%)
+  SETXY(mx%(m%), my%(m%))
+  DIRECTION(md%(m%))
+  FORWARD(ms%(m%))
+  IF HYPOT(TURTX% - px%, TURTY% - py%, 1) <= HITRADIUS% THEN
+    WHILE HYPOT(TURTX% - px%, TURTY% - py%, 1) < HITRADIUS%
+      BACK(1)
+    ENDWHILE
+    TURNXY(px% - TURTX%, py% - TURTY%)
+    degturn% = TURTD% - md%(m%)
+    md%(m%) = (180 + (TURTD% + degturn%)) MOD 360
+    impact% = COS(degturn%, 1, ms%(m%))
+    pxvel% = pxvel% + SIN(TURTD%, 1, impact%)
+    pyvel% = pyvel% - COS(TURTD%, 1, impact%)
+  ENDIF
+  mx%(m%) = (TURTX% + 1000) MOD 1000
+  my%(m%) = (TURTY% + 1000) MOD 1000
+ENDPROC

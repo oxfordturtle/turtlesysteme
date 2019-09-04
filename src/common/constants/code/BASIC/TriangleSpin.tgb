@@ -1,0 +1,8 @@
+REM TriangleSpin
+
+MOVEXY(30, 20)
+FOR i% = 1 TO 300
+  FORWARD(i% * 3)
+  RIGHT(121)
+NEXT
+END

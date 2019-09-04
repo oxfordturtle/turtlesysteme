@@ -50,12 +50,6 @@ VAR brushwidth: integer;
       polygon(4)
     end;
 
-    procedure text(input: string[40]);
-    begin
-      colour(black);
-      print(input, 0, 20)
-    end;
-
   Begin
     colour(lightred);
     setxy(0, 850);
@@ -66,12 +60,13 @@ VAR brushwidth: integer;
     drawxy(0, 50);
     setxy(850, 850);
     drawxy(0, 50);
+    colour(black);
     setxy(10, 858);
-    text('Left-click to draw, right-click to fill');
+    print('Left-click to draw, right-click to fill', 0, 20);
     setxy(450 + 10, 858);
-    text('Brush width:');
+    print('Brush width:', 0, 20);
     setxy(850 + 10, 858);
-    text('Colour:');
+    print('Colour:', 0, 20);
     setxy(0, 900);
     for count := 1 to 20 do
       begin

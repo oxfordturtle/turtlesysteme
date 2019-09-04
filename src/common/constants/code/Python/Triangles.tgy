@@ -1,7 +1,7 @@
 # Triangles
 
 def triangle(size: int):
-  if size >= 2:
+  if (size > 1):
     forward(size)
     triangle(size // 2)
     right(120)

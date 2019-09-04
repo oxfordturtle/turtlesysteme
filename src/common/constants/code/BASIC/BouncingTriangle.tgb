@@ -1,0 +1,49 @@
+REM BouncingTriangle
+
+SIZE% = 100
+x% = 100
+y% = 700
+d% = 0
+xvel% = 8
+yvel% = -4
+dvel% = 5
+WHILE 0 < 1
+  NOUPDATE
+  BLANK(WHITE)
+  x% =x% + xvel%
+  y% =y% + yvel%
+  d% = (d% + dvel%) MOD 360
+  PROCtriangle(RED)
+  UPDATE
+  PAUSE(10)
+  IF bouncex% THEN
+    xvel% = -xvel%
+    dvel% = -dvel%
+  ENDIF
+  IF bouncey% THEN
+    yvel% = -yvel%
+    dvel% = -dvel%
+  ENDIF
+ENDWHILE
+END
+
+DEF PROCtriangle(col%)
+  bouncex% = FALSE
+  bouncey% = FALSE
+  SETXY(x%, y%)
+  DIRECTION(d%)
+  COLOUR(col%)
+  FOR count% = 1 TO 3
+    FORWARD(SIZE%)
+    IF ABS(TURTX% - 500) > 495 THEN
+      bouncex% = TRUE
+    ENDIF
+    IF ABS(TURTY% - 500) > 495 THEN
+      bouncey% = TRUE
+    ENDIF
+    BACK(SIZE%)
+    FORGET(1)
+    RIGHT(120)
+  NEXT
+  POLYGON(3)
+ENDPROC

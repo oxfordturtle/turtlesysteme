@@ -1,0 +1,22 @@
+REM RecursiveTree
+
+BLANK(BLACK)
+MOVEXY(0, 400)
+COLOUR(EMERALD)
+PROCrdraw(180, 10)
+END
+
+DEF PROCrdraw(dist%, level%)
+  THICKNESS(level% * 2)
+  FORWARD(dist%)
+  LEFT(30)
+  IF level% > 0 THEN PROCrdraw(3 * dist% / 4, level% - 1)
+  RIGHT(30)
+  THICKNESS(level% * 2)
+  FORWARD(dist% / 3)
+  RIGHT(20)
+  IF level% > 0 THEN PROCrdraw(3 * dist% / 4, level% - 1)
+  LEFT(20)
+  BACK(dist% / 3)
+  BACK(dist%)
+ENDPROC

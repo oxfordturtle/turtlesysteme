@@ -1,0 +1,16 @@
+PROGRAM Factorials;
+VAR count: integer;
+
+  Function fact(n: integer): integer;
+  Begin
+    if n = 0 then
+      result := 1
+    else
+      result := n * fact(n - 1)
+  End;
+
+BEGIN
+  output(true, cream, true);
+  for count := 1 to 10 do
+    writeln(str(count) + '! = ' + str(fact(count)))
+END.

@@ -1,0 +1,57 @@
+PROGRAM BouncingTriangle;
+CONST size = 100;
+VAR x, y, d: integer;
+    xvel, yvel, dvel: integer;
+    bouncex, bouncey: boolean;
+
+  Procedure triangle(col: integer);
+  Var count: integer;
+  Begin
+    bouncex := false;
+    bouncey := false;
+    setxy(x, y);
+    direction(d);
+    colour(col);
+    for count := 1 to 3 do
+      begin
+        forward(size);
+        if abs(turtx - 500) > 495 then
+          bouncex := true;
+        if abs(turty - 500) > 495 then
+          bouncey := true;
+        back(size);
+        forget(1);
+        right(120)
+      end;
+    polygon(3)
+  End;
+
+BEGIN
+  x := 100;
+  y := 700;
+  d := 0;
+  xvel := 8;
+  yvel := -4;
+  dvel := 5;
+  while 0 < 1 do
+    begin
+      noupdate;
+      blank(white);
+      x := x + xvel;
+      y := y + yvel;
+      d := (d + dvel) mod 360;
+      triangle(red);
+      update;
+      pause(10);
+      if bouncex then
+        begin
+          xvel := -xvel;
+          dvel := -dvel
+        end;
+      if bouncey then
+        begin
+          yvel := -yvel;
+          dvel := -dvel
+        end
+   end
+END.

@@ -1,0 +1,27 @@
+PROGRAM RecursiveTree;
+VAR count: integer;
+
+ Procedure rdraw(dist,level: integer);
+ Begin
+  thickness(level*2);
+  forward(dist);
+  left(30);
+  if level>0 then
+   rdraw(3*dist/4,level-1);
+  right(30);
+  thickness(level*2);
+  forward(dist/3);
+  right(20);
+  if level>0 then
+   rdraw(3*dist/4,level-1);
+  left(20);
+  back(dist/3);
+  back(dist)
+ End;
+
+BEGIN
+ blank(black);
+ movexy(0,400);
+ colour(emerald);
+ rdraw(180,10)
+END.

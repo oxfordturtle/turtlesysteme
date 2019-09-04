@@ -1,0 +1,12 @@
+# Triangle2
+
+def triangle(size: int):
+  forward(size)
+  right(120)
+  forward(size)
+  right(120)
+  forward(size)
+  right(120)
+
+movexy(-100, 150)
+triangle(256)

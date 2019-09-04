@@ -1,0 +1,104 @@
+REM TrigGraphs
+
+XORIGIN% = 500
+YORIGIN% = 500
+HALFWIDTH% = 400
+YSCALE% = 200
+RADIANS% = FALSE
+PROCaxes
+NOUPDATE
+THICKNESS(4)
+COLOUR(RED)
+SETXY(20, 700)
+PRINT("cosine", 16, 40)
+PROCcosinecurve
+COLOUR(GREEN)
+SETXY(100, 810)
+PRINT("sine", 16, 40)
+SETXY(205, 820)
+DRAWXY(70, -110)
+DRAWXY(0, 20)
+MOVEXY(0, -20)
+DRAWXY(-18, 11)
+PROCsinecurve
+COLOUR(BLUE)
+SETXY(140, 920)
+PRINT("tangent", 16, 40)
+PROCtancurve
+END
+
+DEF PROCaxes
+  THICKNESS(3)
+  SETXY(XORIGIN% - HALFWIDTH%, YORIGIN%)
+  DRAWXY(HALFWIDTH% * 2, 0)
+  SETXY(XORIGIN%, 0)
+  DRAWXY(0, 1000)
+  SETXY(XORIGIN%, YORIGIN%)
+  CIRCLE(15)
+  THICKNESS(2)
+  SETXY(XORIGIN% - HALFWIDTH%, YORIGIN% - YSCALE%)
+  DRAWXY(HALFWIDTH% * 2, 0)
+  SETXY(XORIGIN% - HALFWIDTH%, YORIGIN% + YSCALE%)
+  DRAWXY(HALFWIDTH% * 2, 0)
+  SETXY(XORIGIN% + HALFWIDTH% + 10, YORIGIN% - YSCALE% - 18)
+  PRINT("+1", 0, 20)
+  SETXY(XORIGIN% + HALFWIDTH% + 10, YORIGIN% + YSCALE% - 18)
+  PRINT("-1", 0, 20)
+  IF RADIANS% THEN
+    SETXY(XORIGIN% - HALFWIDTH% - 44, YORIGIN% - 4)
+    PRINT("-p", 29, 28)
+    SETXY(XORIGIN% - HALFWIDTH% DIV 2 - 2, YORIGIN% - 4)
+    PRINT("-p/2", 29, 28)
+    SETXY(XORIGIN% + HALFWIDTH% DIV 2 - 50, YORIGIN% - 4)
+    PRINT("p/2", 29, 28)
+    SETXY(XORIGIN% + HALFWIDTH%, YORIGIN% - 4)
+    PRINT("p", 29, 28)
+  ELSE
+    SETXY(XORIGIN% - HALFWIDTH% - 60, YORIGIN%)
+    PRINT("-180", 0, 20)
+    SETXY(XORIGIN% - HALFWIDTH% / 2, YORIGIN%)
+    PRINT("-90", 0, 20)
+    SETXY(XORIGIN% + HALFWIDTH% / 2 - 30, YORIGIN%)
+    PRINT("90", 0, 20)
+    SETXY(XORIGIN% + HALFWIDTH%, YORIGIN%)
+    PRINT("180", 0, 20)
+  ENDIF
+ENDPROC
+
+DEF PROCsinecurve
+  LOCAL degrees%, x%, y%
+  FOR degrees% = -180 TO 180
+    x% = XORIGIN% + DIVMULT(degrees%, 180, HALFWIDTH%)
+    y% = YORIGIN% - SIN(degrees%, 1, YSCALE%)
+    SETXY(x%, y%)
+  NEXT
+  POLYLINE(361)
+ENDPROC
+
+DEF PROCcosinecurve
+  LOCAL degrees%, x%, y%
+  FOR degrees% = -180 TO 180
+    x% = XORIGIN% + DIVMULT(degrees%, 180, HALFWIDTH%)
+    y% = YORIGIN% - COS(degrees%, 1, YSCALE%)
+    SETXY(x%, y%)
+  NEXT
+  POLYLINE(361)
+ENDPROC
+
+DEF PROCtancurve
+  LOCAL degrees%, x%, y%
+  FOR degrees% = -180 TO 180
+    IF degrees% = -90 THEN
+      POLYLINE(90)
+    ELSE
+      IF degrees% = 90 THEN
+        POLYLINE(179)
+      ELSE
+        x% = XORIGIN% + DIVMULT(degrees%, 180, HALFWIDTH%)
+        y% = YORIGIN% - TAN(degrees%, 1, YSCALE%)
+        SETXY(x%, y%)
+      ENDIF
+    ENDIF
+  NEXT
+  POLYLINE(90)
+ENDPROC

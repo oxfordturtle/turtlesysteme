@@ -1,4 +1,68 @@
 REM SolarSystem
 
-REM this program is unavailable in Turtle BASIC
-REM because arrays are not yet implemented
+DIM radius%(7)
+DIM distancefromsun%(7)
+DIM design%(7)
+DIM rotation%(7)
+DIM speed%(7)
+SUNRADIUS% = 50000
+radius%(0) = 2433
+distancefromsun%(0) = 5795
+speed%(0) = 1607
+design%(0) = WHITE
+radius%(1) = 6053
+distancefromsun%(1) = 10811
+speed%(1) = 1174
+design%(1) = OCHRE
+radius%(2) = 6371
+distancefromsun%(2) = 14957
+speed%(2) = 1000
+design%(2) = BLUE
+radius%(3) = 3380
+distancefromsun%(3) = 22784
+speed%(3) = 802
+design%(3) = ORANGERED
+radius%(4) = 71492
+distancefromsun%(4) = 77814
+speed%(4) = 434
+design%(4) = LIGHTRED
+radius%(5) = 58219
+distancefromsun%(5) = 142700
+speed%(5) = 323
+design%(5) = CREAM
+radius%(6) = 23470
+distancefromsun%(6) = 287030
+speed%(6) = 182
+design%(6) = CYAN
+radius%(7) = 23716
+distancefromsun%(7) = 449990
+speed%(7) = 159
+design%(7) = ROYAL
+ANGLES(360000)
+CANVAS(0, 0, 1000000, 1000000)
+RESOLUTION(500, 500)
+THICKNESS(1)
+PENUP
+WHILE TRUE
+  BLANK(BLACK)
+  HOME
+  COLOUR(YELLOW)
+  BLOT(SUNRADIUS%)
+  FOR i% = 0 TO 7
+    HOME
+    COLOUR(WHITE)
+    CIRCLE(distancefromsun%(i%) + SUNRADIUS%)
+    RIGHT(rotation%(i%))
+    FORWARD(distancefromsun%(i%) + SUNRADIUS%)
+    rotation%(i%) = (rotation%(i%) + speed%(i%)) MOD 360000
+    COLOUR(design%(i%))
+    IF i% < 4 THEN
+      BLOT(radius%(i%) * 2)
+    ELSE
+      BLOT(radius%(i%) DIV 2)
+    ENDIF
+  NEXT
+  UPDATE
+  NOUPDATE
+ENDWHILE
+END

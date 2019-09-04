@@ -1,4 +1,98 @@
 REM IteratedPD
 
-REM this program is unavailable in Turtle BASIC
-REM because arrays are not yet implemented
+DIM util%(13)
+WIDTH% = 32
+HEIGHT% = 32
+N% = 10
+CANVAS(0, 0, WIDTH%, HEIGHT%)
+RESOLUTION(WIDTH%, HEIGHT%)
+PROCsetutilities
+NOUPDATE
+FOR i% = 0 TO WIDTH% - 1
+  FOR j% = 0 TO HEIGHT% - 1
+    IF RND(50) = 1 THEN
+      PIXSET(i%, j%, &0000FC)
+    ELSE
+      IF RND(7) = 1 THEN
+        PIXSET(i%, j%, &00FF02)
+      ELSE
+        PIXSET(i%, j%, &FF0001)
+      ENDIF
+    ENDIF
+  NEXT
+NEXT
+PAUSE(1000)
+WHILE ?KEY <> \ESCAPE
+  TIMESET(0)
+  NOUPDATE
+  FOR i% = 0 TO WIDTH% - 1
+    FOR j% = 0 TO HEIGHT% - 1
+      PROCutility(i%, j%)
+    NEXT
+  NEXT
+  FOR i% = 0 TO WIDTH% - 1
+    FOR j% = 0 TO HEIGHT% - 1
+      PROCpickbest(i%, j%)
+    NEXT
+  NEXT
+  FOR i% = 0 TO WIDTH% - 1
+    FOR j% = 0 TO HEIGHT% - 1
+      PROCfixbest(i%, j%)
+    NEXT
+  NEXT
+  UPDATE
+  NOUPDATE
+ENDWHILE
+END
+
+DEF PROCutility(x%, y%)
+  this% = PIXCOL(x%, y%) AND &7
+  utot% = 0
+  FOR i% = -1 TO 1
+    FOR j% = -1 TO 1
+      IF (i% <> 0) OR (j% <> 0) THEN
+        flag% = this% OR (PIXCOL((x% + WIDTH% + i%) MOD WIDTH%, (y% + HEIGHT% + j%) MOD HEIGHT%)) AND &F
+        utot% = utot% + util%(flag% - 1)
+      ENDIF
+    NEXT
+  NEXT
+  PIXSET(x%, y%, utot% * &100 + PIXCOL(x%, y%) AND &F)
+ENDPROC
+
+DEF PROCpickbest(x%, y%)
+  bestsofar% = PIXCOL(x%, y%)
+  IF RND(5) >= 0 THEN
+    FOR i% = -1 TO 1
+      FOR j% = -1 TO 1
+        thispix% = PIXCOL((x% + WIDTH% + i%) MOD WIDTH%, (y% + HEIGHT% + j%) MOD HEIGHT%)
+        IF (thispix% AND &FFFF00) > (bestsofar% AND &FFFF00) THEN
+          bestsofar% = thispix%
+        ENDIF
+      NEXT
+    NEXT
+  ENDIF
+  PIXSET(x%, y%, (PIXCOL(x%, y%) AND &FFFF0F) + (bestsofar% AND &F) * &10)
+ENDPROC
+
+DEF PROCfixbest(x%, y%)
+  IF (PIXCOL(x%, y%) AND &10) > 0 THEN
+    PIXSET(x%, y%, &FF0001)
+  ELSE
+    IF (PIXCOL(x%, y%) AND &20) > 0 THEN
+      PIXSET(x%, y%, &00FF02)
+    ELSE
+      PIXSET(x%, y%, &0000FC)
+    ENDIF
+  ENDIF
+ENDPROC
+
+DEF PROCsetutilities
+  util%(0) = 3 * N%
+  util%(1) = 3 * N%
+  util%(2) = 3 * N%
+  util%(4) = 5 * N%
+  util%(5) = N% + 4
+  util%(11) = N%
+  util%(12) = 0
+  util%(13) = N% - 1
+ENDPROC

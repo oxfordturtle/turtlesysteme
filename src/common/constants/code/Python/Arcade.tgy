@@ -1,0 +1,140 @@
+# Arcade
+
+facex: int = -100
+facey: int = 625
+facexspeed: int = 5
+faceyspeed: int = 0
+targets: int = 10
+hits: int = 0
+
+def bottle(x: int, y: int):
+  setxy(x, y)
+  colour(cyan)
+  movexy(0, -15)
+  thickness(40)
+  drawxy(0, -50)
+  thickness(10)
+  drawxy(0, -40)
+  thickness(2)
+  movexy(-20, 90)
+  movexy(40, 0)
+  movexy(0, -20)
+  movexy(-40, 0)
+  colour(purple)
+  polygon(4)
+  movexy(20, 35)
+
+def addhat():
+  setxy(facex, facey - 80)
+  colour(darkgrey)
+  ellblot(90, 30)
+  thickness(2)
+  colour(black)
+  ellipse(90, 30)
+  movexy(-70, 0)
+  thickness(4)
+  drawxy(35, -70)
+  drawxy(70, 0)
+  drawxy(35, 70)
+  colour(darkgrey)
+  thickness(1)
+  polygon(4)
+
+def face():
+  thickness(1)
+  colour(0xFF8899)
+  blot(100)
+  colour(white)
+  setxy(facex - 20, facey - 20)
+  blot(10)
+  colour(black)
+  blot(4)
+  thickness(4)
+  movexy(0, -22)
+  colour(0x663300)
+  drawxy(15, 15)
+  thickness(1)
+  colour(white)
+  setxy(facex + 20, facey - 20)
+  blot(10)
+  colour(black)
+  blot(4)
+  thickness(4)
+  movexy(0, -22)
+  colour(0x663300)
+  drawxy(-15, 15)
+  addhat()
+  setxy(facex, facey + 13)
+  colour(red)
+  blot(10)
+  movexy(0, 32)
+  ellblot(30, 6)
+  colour(white)
+  ellblot(20, 4)
+
+def background():
+  blank(coffee)
+  bottle(100, 500)
+  bottle(200, 500)
+  bottle(450, 500)
+  bottle(500, 500)
+  bottle(565, 500)
+  bottle(865, 500)
+  colour(darkbrown)
+  thickness(20)
+  setxy(0, 125)
+  drawxy(1000, 0)
+  setxy(0, 325)
+  drawxy(1000, 0)
+  setxy(0, 525)
+  drawxy(1000, 0)
+  colour(brown)
+  thickness(30)
+  setxy(0, 100)
+  drawxy(1000, 0)
+  setxy(0, 300)
+  drawxy(1000, 0)
+  setxy(0, 500)
+  drawxy(1000, 0)
+
+def gunsight():
+  colour(black)
+  thickness(6)
+  setxy(?mousex - 50, ?mousey)
+  drawxy(100, 0)
+  setxy(?mousex, ?mousey - 50)
+  drawxy(0, 100)
+
+cursor(0)
+while (hits < targets):
+  noupdate()
+  background()
+  setxy(facex,facey)
+  face()
+  for i in range(0, hits, 1):
+    bottle(50 * i + 15, 740)
+  colour(brown)
+  thickness(272)
+  setxy(0, 863)
+  drawxy(1000, 0)
+  gunsight()
+  thickness(2)
+  update()
+  facex = facex + facexspeed
+  facey = facey + faceyspeed
+  if facex > 1100:
+    facex = -100
+  if facex < -100:
+    facex = 1100
+  if (facey < 100) or (facey > 625):
+    faceyspeed = faceyspeed * -1
+  if ((?lmouse > 0) and (((?mousex - facex) * (?mousex - facex)) + ((?mousey - facey) * (?mousey - facey)) < 10000)):
+    facex = -100
+    facexspeed = randint(2, 6)
+    faceyspeed = randint(-4, 4)
+    facey = randint(50, 599)
+    hits = hits + 1
+blank(black)
+setxy(200, 450)
+colour(green)
+print('  Well done!  ', 4, 75)

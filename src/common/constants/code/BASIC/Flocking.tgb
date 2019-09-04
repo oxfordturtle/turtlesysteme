@@ -1,4 +1,117 @@
 REM Flocking
 
-REM this program is unavailable in Turtle BASIC
-REM because arrays are not yet implemented
+DIM boidx%(30)
+DIM boidy%(30)
+DIM boidvx%(30)
+DIM boidvy%(30)
+NUMBOIDS% = 30
+BOIDRADIUS% = 20
+MAXSPEED% = 50
+BOIDCOLOUR% = LIGHTBROWN
+HALOCOLOUR% = &FFFFFE
+DELAY% = 50
+POSFACTOR% = 50
+VELFACTOR% = 50
+NEARD% = 200
+NEARFACTOR% = 10
+TGTRADIUS% = 2000
+CANVAS(-2500, -2500, 5000, 5000)
+NOUPDATE
+PROCsetup
+BLANK(WHITE)
+PROCdraw(TRUE)
+cycle% = 0
+REPEAT
+  PROCaverages
+  PROCsettarget
+  NOUPDATE
+  PROCdraw(FALSE)
+  FOR n% = 0 TO NUMBOIDS%
+    PROCmove(n%)
+  NEXT
+  PROCdraw(TRUE)
+  UPDATE
+  PAUSE(DELAY%)
+UNTIL 0 = 1
+END
+
+DEF PROCsetup
+  PENUP
+  COLOUR(HALOCOLOUR%)
+  FOR n% = 0 TO NUMBOIDS%
+    REPEAT
+      boidx%(n%) = RND(5000 - 2 * BOIDRADIUS%) + BOIDRADIUS% - 1
+      boidy%(n%) = RND(5000 - 2 * BOIDRADIUS%) + BOIDRADIUS% - 1
+    UNTIL PIXCOL(boidx%(n%), boidy%(n%)) = WHITE
+    boidvx%(n%) = RND(MAXSPEED% * 2 + 1) - MAXSPEED% - 1
+    boidvy%(n%) = RND(MAXSPEED% * 2 + 1) - MAXSPEED% - 1
+    SETXY(boidx%(n%), boidy%(n%))
+    BLOT(2 * BOIDRADIUS%)
+  NEXT
+ENDPROC
+
+DEF PROCdraw(positive%)
+  IF positive% THEN
+    COLOUR(BOIDCOLOUR%)
+    radius% = BOIDRADIUS%
+  ELSE
+    COLOUR(WHITE)
+    radius% = BOIDRADIUS% + 10
+  ENDIF
+  FOR n% = 0 TO NUMBOIDS%
+    SETXY(boidx%(n%), boidy%(n%))
+    BLOT(radius%)
+  NEXT
+ENDPROC
+
+DEF PROCaverages
+  totalx% = 0
+  totaly% = 0
+  totalvx% = 0
+  totalvy% = 0
+  FOR n% = 0 TO NUMBOIDS%
+    totalx% = totalx% + boidx%(n%)
+    totaly% = totaly% + boidy%(n%)
+    totalvx% = totalvx% + boidvx%(n%)
+    totalvy% = totalvy% + boidvy%(n%)
+  NEXT
+  avgx% = totalx% / NUMBOIDS%
+  avgy% = totaly% / NUMBOIDS%
+  avgvx% = totalvx% / NUMBOIDS%
+  avgvy% = totalvy% / NUMBOIDS%
+ENDPROC
+
+DEF PROCsettarget
+  IF cycle% MOD 100 = 0 THEN
+    tgtangvel% = RND(7) - 2
+  ENDIF
+  tgtx% = DIVMULT(SIN(cycle% * tgtangvel%, 1, 1000), 1000, TGTRADIUS%)
+  tgty% = -DIVMULT(COS(cycle% * tgtangvel%, 1, 1000), 1000, TGTRADIUS%)
+  INC(cycle%)
+ENDPROC
+
+DEF PROCmove(b%)
+  boidvx%(b%) = boidvx%(b%) + (avgx% - boidx%(b%)) / POSFACTOR% + (avgvx% - boidvx%(b%)) / VELFACTOR%
+  boidvy%(b%) = boidvy%(b%) + (avgy% - boidy%(b%)) / POSFACTOR% + (avgvy% - boidvy%(b%)) / VELFACTOR%
+  FOR n% = 0 TO NUMBOIDS%
+    IF n% <> b% THEN
+      distx% = boidx%(n%) - boidx%(b%)
+      disty% = boidy%(n%) - boidy%(b%)
+      IF HYPOT(distx%, disty%, 1) < NEARD% THEN
+        boidvx%(b%) = boidvx%(b%) - SGN(distx%) * (NEARD% - ABS(distx%)) / NEARFACTOR%
+        boidvy%(b%) = boidvy%(b%) - SGN(disty%) * (NEARD% - ABS(disty%)) / NEARFACTOR%
+      ENDIF
+    ENDIF
+  NEXT
+  IF RND(10) = 1 THEN
+    boidvx%(b%) = tgtx% - boidx%(b%)
+    boidvy%(b%) = tgty% - boidy%(b%)
+  ENDIF
+  speed% = HYPOT(boidvx%(b%), boidvy%(b%), 1)
+  IF speed% > MAXSPEED% THEN
+    boidvx%(b%) = DIVMULT(boidvx%(b%), speed%, MAXSPEED%)
+    boidvy%(b%) = DIVMULT(boidvy%(b%), speed%, MAXSPEED%)
+  ENDIF
+  boidx%(b%) = boidx%(b%) + boidvx%(b%)
+  boidy%(b%) = boidy%(b%) + boidvy%(b%)
+ENDPROC

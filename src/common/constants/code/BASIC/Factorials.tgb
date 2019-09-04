@@ -1,0 +1,15 @@
+REM Factorials
+
+OUTPUT(TRUE, CREAM, TRUE)
+FOR count% = 1 TO 10
+  WRITELN(STR$(count%) + "! = " + STR$(FNfact(count%)))
+NEXT
+END
+
+DEF FNfact(n%)
+  IF n% = 0 THEN
+    result% = 1
+  ELSE
+    result% = n% * FNfact(n% - 1)
+  ENDIF
+= result%

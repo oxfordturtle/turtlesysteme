@@ -207,9 +207,9 @@ export const callCommand = (command, routine, language) => {
 }
 
 // pcode for a conditional structure
-export const conditional = (startLine, test, ifCode, elseCode = []) => {
+export const conditional = (startLine, testCode, ifCode, elseCode = []) => {
   const offset = (elseCode.length > 0) ? 2 : 1
-  const startCode = [test.concat([pc.ifno, ifCode.length + startLine + offset])]
+  const startCode = merge(testCode, [[pc.ifno, ifCode.length + startLine + offset]])
   const middleCode = [[pc.jump, ifCode.length + elseCode.length + startLine + offset]]
 
   return elseCode.length > 0
@@ -240,8 +240,8 @@ export const repeatLoop = (startLine, testCode, innerCode) => {
 }
 
 // pcode for a WHILE loop structure
-export const whileLoop = (startLine, test, innerCode) => {
-  const startCode = [test.concat([pc.ifno, innerCode.length + startLine + 2])]
+export const whileLoop = (startLine, testCode, innerCode) => {
+  const startCode = merge(testCode, [[pc.ifno, innerCode.length + startLine + 2]])
   const endCode = [[pc.jump, startLine]]
 
   return startCode.concat(innerCode).concat(endCode)

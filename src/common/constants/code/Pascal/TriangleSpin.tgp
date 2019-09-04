@@ -1,0 +1,10 @@
+PROGRAM TriangleSpin;
+VAR i: integer;
+BEGIN
+  movexy(30, 20);
+  for i := 1 to 300 do
+    begin
+      forward(i * 3);
+      right(121)
+    end
+END.

@@ -1,0 +1,12 @@
+# Factorials
+
+def fact(n: int) -> int:
+  if (n == 0):
+    result: int = 1
+  else:
+    result = n * fact(n - 1)
+  return result
+
+output(True, cream, True)
+for count in range(1, 10, 1):
+  writeline(str(count) + '! = ' + str(fact(count)))

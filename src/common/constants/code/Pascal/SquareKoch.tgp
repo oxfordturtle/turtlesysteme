@@ -1,0 +1,40 @@
+PROGRAM SquareKoch;
+CONST maxlevel=5;
+VAR count: integer;
+
+ Procedure kdraw(dist,level: integer);
+ Begin
+  if level=0 then
+   forward(dist)
+  else
+   begin
+    kdraw(dist/3,level-1);
+    left(90);
+    kdraw(dist/3,level-1);
+    right(90);
+    kdraw(dist/3,level-1);
+    right(90);
+    kdraw(dist/3,level-1);
+    left(90);
+    kdraw(dist/3,level-1)
+   end
+ End;
+
+BEGIN
+ blank(black);
+ movexy(0,486);
+ left(45);
+ for count:=1 to 4 do
+  begin
+   colour(rgb(count+20));
+   kdraw(729,maxlevel);
+   right(90)
+  end;
+ movexy(0,-323);
+ for count:=1 to 4 do
+  begin
+   colour(rgb(count+20));
+   kdraw(243,maxlevel-1);
+   right(90)
+  end
+END.

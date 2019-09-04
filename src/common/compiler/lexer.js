@@ -40,7 +40,7 @@ export default (code, language) => {
             lexemes.push({ content: 'NEWLINE', type: 'NEWLINE', line: line - 1 })
           }
           // move past any additional line breaks, just incrementing the line number
-          while (tokens[index + 1].type === 'linebreak') {
+          while (tokens[index + 1] && tokens[index + 1].type === 'linebreak') {
             index += 1
             line += 1
           }
@@ -48,7 +48,9 @@ export default (code, language) => {
 
         // indents are significant in Python
         if (language === 'Python') {
-          indent = tokens[index + 1].type === 'spaces' ? tokens[index + 1].content.length : 0
+          indent = (tokens[index + 1] && tokens[index + 1].type === 'spaces')
+            ? tokens[index + 1].content.length
+            : 0
           if (indent > indents[indents.length - 1]) {
             indents.push(indent)
             lexemes.push({ content: 'INDENT', type: 'INDENT', line })
@@ -235,12 +237,16 @@ const value = (type, content, language) => {
       }
 
     case 'string':
-      if (language === 'Pascal') {
-        if (content[0] === '\'') return content.slice(1, -1).replace(/''/g, '\'')
-        return content.slice(1, -1).replace(/""/g, '"')
-      } else {
-        return content.slice(1, -1).replace(/\\('|")/g, '$1')
+      switch (language) {
+        case 'BASIC':
+          return content.slice(1, -1).replace(/""/g, '"')
+        case 'Pascal':
+          if (content[0] === '\'') return content.slice(1, -1).replace(/''/g, '\'')
+          return content.slice(1, -1).replace(/""/g, '"')
+        case 'Python':
+          return content.slice(1, -1).replace(/\\('|")/g, '$1')
       }
+      break
 
     case 'boolean':
       // N.B. case sensitivity is already handled by the tokenizer

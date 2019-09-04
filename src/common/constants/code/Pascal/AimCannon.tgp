@@ -79,7 +79,7 @@ VAR n: integer;
       if pixcol(turtx, turty) = black then
         begin
           colour(white);
-          blot(80)
+          blot(100)
         end;
       movexy(xvel, yvel);
       yvel := yvel + gravity;

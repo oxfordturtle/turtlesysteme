@@ -1,0 +1,16 @@
+REM Triangle3
+
+MOVEXY(-100, 150)
+PROCtriangle(256)
+END
+
+DEF PROCtriangle(size%)
+  IF size% > 1 THEN
+    FORWARD(size%)
+    RIGHT(120)
+    FORWARD(size%)
+    RIGHT(120)
+    FORWARD(size%)
+    RIGHT(120)
+  ENDIF
+ENDPROC

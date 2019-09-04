@@ -1,0 +1,21 @@
+PROGRAM RandomLines;
+VAR count: integer;
+    x, y: integer;
+BEGIN
+  for count := 1 to 30 do
+    begin
+      x := random(1000);
+      y := random(1000);
+      setxy(x, y);
+      turtd := random(360);
+      forward(1500);
+      back(3000)
+    end;
+  for count := 1 to 10000 do
+    begin
+      x := random(1000);
+      y := random(1000);
+      if pixcol(x, y) = white then
+        recolour(x, y, rgb(random(20) + 1))
+    end
+END.

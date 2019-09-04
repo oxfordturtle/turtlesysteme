@@ -1,0 +1,53 @@
+REM TypingTestKeys
+
+DIM letters%(26)
+BLANK(CREAM)
+SETXY(15, 200)
+PRINT("In this typing test, you will be shown the", 4, 36)
+SETXY(20, 270)
+PRINT("letters of the alphabet in a random order,", 4, 36)
+SETXY(20, 340)
+PRINT("and in a mixture of upper- and lower-case.", 4, 36)
+SETXY(20, 410)
+PRINT("Type them as fast as you can, and see how", 4, 36)
+SETXY(20, 480)
+PRINT("quickly you can finish the entire alphabet.", 4, 36)
+SETXY(100, 620)
+PRINT("Now press the ""Esc"" key to start ...", 4, 36)
+KEYECHO(FALSE)
+REPEAT
+UNTIL (ABS(?KEY) = \ESCAPE)
+FOR count% = 1 TO 26
+  letters%(count%) = count% + 64
+NEXT
+FOR count% = 1 TO 50
+  m% = RND(26)
+  n% = RND(26)
+  IF m% <> n% THEN
+    temp% = letters%(m%)
+    letters%(m%) = letters%(n%)
+    letters%(n%) = temp%
+  ENDIF
+NEXT
+TIMESET(0)
+FOR count% = 1 TO 26
+  c% = letters%(count%)
+  lowcase% = (RND(2) = 1)
+  BLANK(BLACK)
+  SETXY(100 + RND(300), RND(250))
+  COLOUR(YELLOW)
+  IF lowcase% THEN
+    PRINT(CHR$(c% + 32), 3, 450)
+  ELSE
+    PRINT(CHR$(c%), 3, 450)
+  ENDIF
+  REPEAT
+    shiftok% = ((ABS(?KSHIFT) AND 8) > 0) EOR lowcase%
+  UNTIL (ABS(?KEY) = c%) AND shiftok%
+  RESET(?KSHIFT)
+NEXT
+BLANK(LIGHTBLUE)
+SETXY(60, 460)
+COLOUR(LIGHTRED)
+PRINT("Your time was " + QSTR$(TIME, 1000, 2) + " seconds", 4, 50)
+END

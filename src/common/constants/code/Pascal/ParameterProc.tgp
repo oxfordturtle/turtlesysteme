@@ -1,0 +1,18 @@
+PROGRAM ParameterProc;
+VAR count: integer;
+
+  Procedure prong(len: integer);
+  Begin
+    forward(len);
+    blot(len div 20);
+    back(len)
+  End;
+
+BEGIN
+  for count := 360 downto 1 do
+    begin
+      randcol(10);
+      prong(count + 100);
+      right(61)
+    end
+END.

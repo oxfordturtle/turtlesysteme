@@ -1,4 +1,241 @@
 REM Cheetahs
 
-REM this program is unavailable in Turtle BASIC
-REM because arrays are not yet implemented
+DIM cspeed%(500)
+DIM gspeed%(500)
+DIM cgenspeed%(500)
+DIM ggenspeed%(500)
+DIM cage%(500)
+DIM gage%(500)
+DIM cfood%(500)
+DIM cspeednum%(1000)
+DIM gspeednum%(1000)
+MAXANIMALS% = 500
+MNGAZELLES% = 10
+STARTCHEETAHS% = 50
+STARTGAZELLES% = 50
+MAXSPEED% = 1000
+STARTSLOW% = 30
+STARTFAST% = 70
+RANDMARGINC% = 10
+RANDMARGING% = 10
+HUNTINGTRIES% = 100
+CATCHMARGIN% = 5
+CFOODADD% = 40
+CBREEDFOOD% = 10
+CMATINGRATIO% = 2
+GMATINGRATIO% = 1
+CHUNTINGRATIO% = 1
+SLOWAGE% = 100 REM speed starts declining
+AGEFACTOR% = 0
+GRAPHLEFT% = 60
+GRAPHWIDTH% = 900
+GRAPHHEIGHT% = 400
+CGRAPHBASE% = 450
+GGRAPHBASE% = 950
+YMAX% = 20
+PROCsetup
+PROCgraph
+gen% = 0
+REPEAT
+  INC(gen%)
+  PROCgeneration
+  PROCgraph
+UNTIL 0 = 1
+END
+
+DEF PROCsetup
+  FOR n% = 0 TO MAXSPEED%
+    cspeednum%(n%) = 0
+    gspeednum%(n%) = 0
+  NEXT
+  cnum% = STARTCHEETAHS% - 1
+  gnum% = STARTGAZELLES% - 1
+  FOR n% = 0 TO cnum%
+    cgenspeed%(n%) = RND(STARTFAST% - STARTSLOW%) + STARTSLOW%
+    cspeed%(n%) = cgenspeed%(n%)
+    cage%(n%) = RND(SLOWAGE%) - 1
+    cfood%(n%) = RND(CFOODADD%)
+    INC(cspeednum%(cspeed%(n%)))
+  NEXT
+  FOR n% = cnum% TO MAXANIMALS%
+    cspeed%(n%) = 0 REM i.e. not alive
+  NEXT
+  FOR n% = 0 TO gnum%
+    ggenspeed%(n%) = RND(STARTFAST% - STARTSLOW%) + STARTSLOW%
+    gspeed%(n%) = ggenspeed%(n%)
+    gage%(n%) = RND(SLOWAGE%) - 1
+    INC(gspeednum%(gspeed%(n%)))
+  NEXT
+  FOR n% = gnum% TO MAXANIMALS%
+    gspeed%(n%) = 0 REM i.e. not alive
+  NEXT
+ENDPROC
+
+DEF PROCaxes(graphbase%)
+  COLOUR(BLACK)
+  SETXY(GRAPHLEFT%, graphbase% - GRAPHHEIGHT%)
+  DRAWXY(0, GRAPHHEIGHT%)
+  DRAWXY(GRAPHWIDTH%, 0)
+  FOR n% = 0 TO 10
+    SETXY(20, graphbase% - n% * GRAPHHEIGHT% / 10 - 19)
+    PRINT(STR$(n% * YMAX% / 10), 0, 20)
+  NEXT
+  FOR n% = 1 TO 10
+    SETXY(GRAPHLEFT% + n% * GRAPHWIDTH% / 10 - 20, graphbase%)
+    PRINT(STR$(n% * MAXSPEED% / 10), 0, 20)
+  NEXT
+ENDPROC
+
+DEF PROCgraph
+  NOUPDATE
+  BLANK(WHITE)
+  PROCaxes(450)
+  PROCaxes(950)
+  SETXY(200, 20)
+  COLOUR(RED)
+  PRINT("Speed Distribution of Cheetahs", 4, 25)
+  SETXY(750, 20)
+  PRINT(STR$(cnum%), 4, 25)
+  ctotal% = 0
+  FOR n% = 1 TO MAXSPEED%
+    SETXY(GRAPHLEFT% + n% * GRAPHWIDTH% / MAXSPEED%, 450)
+    DRAWXY(0, -GRAPHHEIGHT% * cspeednum%(n%) / YMAX%)
+    ctotal% = ctotal% + n% * cspeednum%(n%)
+  NEXT
+  SETXY(200, 520)
+  COLOUR(GREEN)
+  PRINT("Speed Distribution of Gazelles", 4, 25)
+  SETXY(750, 520)
+  PRINT(STR$(gnum%), 4, 25)
+  gtotal% = 0
+  FOR n% = 1 TO MAXSPEED%
+    SETXY(GRAPHLEFT% + n% * GRAPHWIDTH% / MAXSPEED%, 950)
+    DRAWXY(0, -GRAPHHEIGHT% * gspeednum%(n%) / YMAX%)
+    gtotal% = gtotal% + n% * gspeednum%(n%)
+  NEXT
+  SETXY(850, 20)
+  IF cnum% < 1 THEN
+    SETXY(150, 200)
+    COLOUR(MAGENTA)
+    PRINT("All Cheetahs Have Died", 4, 50)
+    HALT
+  ENDIF
+  PRINT(QSTR$(ctotal%, cnum%, 2), 4, 25)
+  SETXY(850, 520)
+  PRINT(QSTR$(gtotal%, gnum%, 2), 4, 25)
+  UPDATE
+  WRITE(STR$(gen%))
+  WRITE(" - c=")
+  WRITE(STR$(cnum%))
+  WRITE(" (av=")
+  WRITE(QSTR$(ctotal%, cnum%, 2))
+  WRITELN(")")
+  UPDATE
+  NOUPDATE
+  WRITE("     g=")
+  WRITE(STR$(gnum%))
+  WRITE(" (av=")
+  WRITE(QSTR$(gtotal%, gnum%, 2))
+  WRITELN(")")
+ENDPROC
+
+DEF PROCdeadcheetah(c%)
+  DEC(cspeednum%(cspeed%(c%)))
+  cspeed%(c%) = 0
+  DEC(cnum%)
+ENDPROC
+
+DEF PROCdeadgazelle(g%)
+  DEC(gspeednum%(gspeed%(g%)))
+  gspeed%(g%) = 0
+  DEC(gnum%)
+ENDPROC
+
+DEF PROCbabycheetah(speed%)
+  b% = 0
+  REPEAT
+    INC(b%)
+  UNTIL (cspeed%(b%) = 0) OR (b% = MAXANIMALS%) REM find empty space
+  IF cspeed%(b%) = 0 THEN
+    INC(cnum%)
+    cgenspeed%(b%) = speed% + RND(2 * RANDMARGINC%) - RANDMARGINC%
+    cgenspeed%(b%) = MAX(1, MIN(MAXSPEED%, cgenspeed%(b%)))
+    cspeed%(b%) = cgenspeed%(b%)
+    cage%(b%) = 0
+    cfood%(b%) = CFOODADD%
+    INC(cspeednum%(cspeed%(b%)))
+  ENDIF
+ENDPROC
+
+DEF PROCbabygazelle(speed%)
+  b% = 0
+  REPEAT
+    INC(b%)
+  UNTIL (gspeed%(b%) = 0) OR (b% = MAXANIMALS%) REM find empty space
+  IF gspeed%(b%) = 0 THEN
+    INC(gnum%)
+    ggenspeed%(b%) = speed% + RND(2 * RANDMARGING%) - RANDMARGING%
+    ggenspeed%(b%) = MAX(1, MIN(MAXSPEED%, ggenspeed%(b%)))
+    gspeed%(b%) = ggenspeed%(b%)
+    gage%(b%) = 0
+    INC(gspeednum%(gspeed%(b%)))
+  ENDIF
+ENDPROC
+
+DEF PROCgeneration
+  FOR c% = 0 TO cnum% / CHUNTINGRATIO% REM cheetahs hunt gazelles
+    c% = RND(MAXANIMALS%)
+    IF (cspeed%(c%) > 0) AND (gnum% > MNGAZELLES%) THEN
+      tries% = 0
+      REPEAT
+        INC(tries%)
+        g% = RND(MAXANIMALS%)
+      UNTIL (gspeed%(g%) > 0) OR (tries% = HUNTINGTRIES%)
+      IF (gspeed%(g%) > 0) AND (cspeed%(c%) >= gspeed%(g%) + CATCHMARGIN%) THEN
+        PROCdeadgazelle(g%)
+        cfood%(c%) = cfood%(c%) + CFOODADD%
+      ENDIF
+    ENDIF
+  NEXT
+  FOR n% = 0 TO cnum% / CMATINGRATIO% REM cheetahs try mating
+    c% = RND(MAXANIMALS%)
+    IF (cnum% < MAXANIMALS%) AND (cspeed%(c%) > 0) AND (cfood%(c%) >= CBREEDFOOD%) THEN
+      PROCbabycheetah(cgenspeed%(c%))
+      cfood%(c%) = cfood%(c%) - CBREEDFOOD%
+    ENDIF
+  NEXT
+  FOR n% = 0 TO gnum% / GMATINGRATIO% REM gazelles try mating
+    g% = RND(MAXANIMALS%)
+    IF (gnum% < MAXANIMALS%) AND (gspeed%(g%) > 0) THEN
+      PROCbabygazelle(ggenspeed%(g%))
+    ENDIF
+  NEXT
+  FOR n% = 0 TO MAXANIMALS%
+    IF cspeed%(n%) > 0 THEN REM live cheetah
+      INC(cage%(n%))
+      IF cage%(n%) > SLOWAGE% THEN
+        DEC(cspeednum%(cspeed%(n%)))
+        cspeed%(n%) = cspeed%(n%) * AGEFACTOR% / 100
+        INC(cspeednum%(cspeed%(n%)))
+        IF cspeed%(n%) = 0 THEN
+          PROCdeadcheetah(n%)
+        ENDIF
+      ENDIF
+      DEC(cfood%(n%))
+      IF cfood%(n%) < 0 THEN
+        PROCdeadcheetah(n%)
+      ENDIF
+    ENDIF
+    IF gspeed%(n%) > 0 THEN REM live gazelle
+      INC(gage%(n%))
+      IF gage%(n%) > SLOWAGE% THEN
+        DEC(gspeednum%(gspeed%(n%)))
+        gspeed%(n%) = gspeed%(n%) * AGEFACTOR% / 100
+        INC(gspeednum%(gspeed%(n%)))
+        IF gspeed%(n%) = 0 THEN
+          PROCdeadgazelle(n%)
+        ENDIF
+      ENDIF
+    ENDIF
+  NEXT
+ENDPROC

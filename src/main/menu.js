@@ -148,20 +148,14 @@ const exampleMenuItem = example =>
 // example group menu item
 const exampleGroupMenuItem = exampleGroup =>
   ({
-    label: `${exampleGroup.index}. ${exampleGroup.title}`,
+    label: `Examples ${exampleGroup.index} - ${exampleGroup.title}`,
     submenu: exampleGroup.examples.map(exampleMenuItem)
   })
 
 // examples menu
 const examplesMenu = {
   label: 'Examples',
-  submenu: examples.help.map(exampleGroupMenuItem)
-}
-
-// CSAC examples menu
-const csacMenu = {
-  label: 'CSAC',
-  submenu: examples.csac.map(exampleGroupMenuItem)
+  submenu: examples.menu.map(exampleGroupMenuItem)
 }
 
 // the full menu bar
@@ -170,8 +164,7 @@ const menu = Menu.buildFromTemplate([
   fileMenu,
   editMenu,
   optionsMenu,
-  examplesMenu,
-  csacMenu
+  examplesMenu
 ])
 
 // set the full menu bar as the application menu

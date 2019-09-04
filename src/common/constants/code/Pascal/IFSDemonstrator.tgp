@@ -1,0 +1,254 @@
+PROGRAM IFSDemonstrator;
+CONST maxmappings = 4;
+      pauseval = 2000;
+VAR xleft, xright, ytop, ybottom: integer;
+    scaledown, mappings: integer;
+    live, copied: integer;
+    uniform, seedpixel: boolean;
+    seedx, seedy: integer;
+    xl, xr, yt, yb: integer;
+    coeffdiv: integer;
+    mapxx, mapxy, mapxc: array[1..maxmappings] of integer;
+    mapyx, mapyy, mapyc: array[1..maxmappings] of integer;
+    iteration, starttime: integer;
+    count, numborn, numkilled: integer;
+
+  Procedure setsierpinski;
+  Begin
+    xleft := 0;
+    xright := 999;
+    ytop := 0;
+    ybottom := 999;
+    scaledown := 2;
+    mappings := 3;
+    live := black;
+    copied := darkgrey;
+    seedx := 250;
+    seedy := 0;
+    coeffdiv := 100;
+    mapxx[1] := 50;
+    mapyx[1] := 0;
+    mapxy[1] := 0;
+    mapyy[1] := 50;
+    mapxc[1] := 250;
+    mapyc[1] := 0;
+    mapxx[2] := 50;
+    mapyx[2] := 0;
+    mapxy[2] := 0;
+    mapyy[2] := 50;
+    mapxc[2] := 0;
+    mapyc[2] := 500;
+    mapxx[3] := 50;
+    mapyx[3] := 0;
+    mapxy[3] := 0;
+    mapyy[3] := 50;
+    mapxc[3] := 500;
+    mapyc[3] := 500
+  End;
+
+  Procedure setbarnsley;
+  Begin
+    xleft := -236;
+    xright := 263;
+    ytop := 1;
+    ybottom := 1000;
+    scaledown := 2;
+    mappings := 4;
+    live := seagreen;
+    copied := emerald;
+    seedx := 1;
+    seedy := 1;
+    coeffdiv := 100;
+    mapxx[1] := 0;
+    mapyx[1] := 0;
+    mapxy[1] := 0;
+    mapyy[1] := 16;
+    mapxc[1] := 0;
+    mapyc[1] := 0;
+    mapxx[2] := 85;
+    mapyx[2] := -4;
+    mapxy[2] := 4;
+    mapyy[2] := 85;
+    mapxc[2] := 0;
+    mapyc[2] := 160;
+    mapxx[3] := 20;
+    mapyx[3] := 23;
+    mapxy[3] := -26;
+    mapyy[3] := 22;
+    mapxc[3] := 0;
+    mapyc[3] := 160;
+    mapxx[4] := -15;
+    mapyx[4] := 26;
+    mapxy[4] := 28;
+    mapyy[4] := 24;
+    mapxc[4] := 0;
+    mapyc[4] := 44
+  End;
+
+  Procedure setdragon;
+  Begin
+    xleft := 0;
+    xright := 999;
+    ytop := 0;
+    ybottom := 999;
+    scaledown := 4;
+    mappings := 3;
+    live := black;
+    copied := silver;
+    seedx := 1;
+    seedy := 1;
+    coeffdiv := 1000;
+    mapxx[1] := 0;
+    mapyx[1] := -577;
+    mapxy[1] := 577;
+    mapyy[1] := 0;
+    mapxc[1] := 95;
+    mapyc[1] := 589;
+    mapxx[2] := 0;
+    mapyx[2] := -577;
+    mapxy[2] := 577;
+    mapyy[2] := 0;
+    mapxc[2] := 441;
+    mapyc[2] := 789;
+    mapxx[3] := 0;
+    mapyx[3] := -577;
+    mapxy[3] := 577;
+    mapyy[3] := 0;
+    mapxc[3] := 95;
+    mapyc[3] := 989
+  End;
+
+  Procedure startprompt;
+  Begin
+    output(true, cream, true);
+    keyecho(false);
+    writeln('ITERATED FUNCTION SYSTEMS DEMONSTRATOR PROGRAM');
+    writeln('');
+    write('Select Barnsley fern, Sierpinski, or Dragon curve? (B/S/D) ');
+    keyecho(false);
+    repeat
+    until (abs(?key) = \b) or (abs(?key) = \s) or (abs(?key) = \d);
+    writeln(chr(abs(?key)));
+    if abs(?key) = \b then
+      begin
+        writeln('Barnsley fern mappings will be used');
+        setbarnsley
+      end
+    else
+    if abs(?key) = \s then
+      begin
+        writeln('Sierpinski mappings will be used');
+        setsierpinski
+      end
+    else
+      begin
+        writeln('Dragon curve mappings will be used');
+        setdragon
+      end;
+    writeln('');
+    write('Start with single Pixel or entire Canvas? (P/C) ');
+    keyecho(false);
+    repeat
+    until (abs(?key) = \p) or (abs(?key) = \c);
+    writeln(chr(abs(?key)));
+    seedpixel := (abs(?key) = \p);
+    writeln('');
+    write('Use Uniform or Different colours for mappings? (U/D) ');
+    keyecho(false);
+    repeat
+    until (abs(?key) = \u) or (abs(?key) = \d);
+    writeln(chr(abs(?key)));
+    uniform := (abs(?key) = \u);
+    output(false, white, false)
+  End;
+
+  Procedure setscale;
+  Var i: integer;
+  Begin
+    xl := xleft / scaledown;
+    xr := xright / scaledown;
+    yt := ytop / scaledown;
+    yb := ybottom / scaledown;
+    for i := 1 to mappings do
+      begin
+        mapxc[i] := mapxc[i] / scaledown;
+        mapyc[i] := mapyc[i] / scaledown
+      end
+  End;
+
+  Procedure map(a,x,y: integer;var newx,newy: integer);
+  Begin
+    newx := divmult(x, coeffdiv, mapxx[a]) + divmult(y, coeffdiv, mapxy[a]) + mapxc[a];
+    newy := divmult(x, coeffdiv, mapyx[a]) + divmult(y, coeffdiv, mapyy[a]) + mapyc[a]
+  End;
+
+  Procedure domap(mapnum: integer);
+  Var x,y,newx,newy: integer;
+  Begin
+    noupdate;
+    for y := yt to yb do
+      for x := xl to xr do
+        if pixcol(x, y) <> white then
+          begin
+            map(mapnum, x, y, newx, newy);
+            if pixcol(newx, newy) = white then
+              inc(numborn);
+            if uniform then
+              pixset(newx, newy, copied)
+            else
+              pixset(newx, newy, rgb(mapnum))
+          end;
+    update
+  End;
+
+  Procedure cleanup;
+  Var x,y: integer;
+  Begin
+    noupdate;
+    for y := yt to yb do
+      for x := xl to xr do
+        if pixcol(x, y) = live then
+          begin
+            pixset(x, y, white);
+            inc(numkilled)
+          end
+        else
+        if pixcol(x, y) <> white then
+          pixset(x, y, live);
+    update
+  End;
+
+BEGIN
+  startprompt;
+  setscale;
+  canvas(xl, yt, xr - xl + 1, yb - yt + 1);
+  resolution(xr - xl + 1, yb - yt + 1);
+  if seedpixel then
+    pixset(seedx, seedy, live)
+  else
+    blank(live);
+  iteration := 0;
+  timeset(0);
+  repeat
+    starttime := time;
+    inc(iteration);
+    writeln('');
+    writeln('Iteration ' + str(iteration) + ':');
+    numborn := 0;
+    for count := 1 to mappings do
+      domap(count);
+    numkilled := 0;
+    cleanup;
+    writeln('  ' + str(numborn) + ' pixels born; ' + str(numkilled) + ' pixels killed');
+    writeln('  (took ' + str((time - starttime) / 1000) + ' seconds - total ' + str(time / 1000) + ' seconds so far)');
+    if (numborn + numkilled > 0) and (pauseval >= 1000) then
+      begin
+        write('  (now pausing ' + qstr(pauseval, 1000, 1) + ' seconds to allow halting if desired ...)');
+        pause(pauseval);
+        writeln('')
+      end
+  until numborn + numkilled = 0;
+  writeln('FINISH - fixed point of iterative mapping has been reached');
+  for count := 1 to mappings do
+    domap(count)
+END.

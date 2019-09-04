@@ -1,0 +1,16 @@
+PROGRAM SimpleProc;
+
+  Procedure prong;
+  Begin
+    forward(400);
+    blot(20);
+    back(400)
+  End;
+
+BEGIN
+  repeat
+    randcol(10);
+    prong;
+    right(61)
+  until turtd = 0
+END.

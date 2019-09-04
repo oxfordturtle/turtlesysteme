@@ -1,0 +1,18 @@
+REM RandomLines
+
+FOR count% = 1 TO 30
+  x% = RND(1000)
+  y% = RND(1000)
+  SETXY(x%, y%)
+  TURTD% = RND(360)
+  FORWARD(1500)
+  BACK(3000)
+NEXT
+FOR count% = 1 TO 10000
+  x% = RND(1000)
+  y% = RND(1000)
+  IF PIXCOL(x%, y%)= WHITE THEN
+    RECOLOUR(x%, y%, RGB(RND(20) + 1))
+  ENDIF
+NEXT
+END

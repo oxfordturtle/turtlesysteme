@@ -1,0 +1,44 @@
+# BouncingTriangle
+
+def triangle(col: int):
+  global bouncex, bouncey
+  bouncex = False
+  bouncey = False
+  setxy(x, y)
+  direction(d)
+  colour(col)
+  for count in range(0, 3, 1):
+    forward(size)
+    if abs(turtx - 500) > 495:
+      bouncex = True
+    if abs(turty - 500) > 495:
+      bouncey = True
+    back(size)
+    forget(1)
+    right(120)
+  polygon(3)
+
+bouncex: bool
+bouncey: bool
+size: int = 100
+x: int = 100
+y: int = 700
+d: int = 0
+xvel: int = 8
+yvel: int = -4
+dvel: int = 5
+while 0 < 1:
+  noupdate()
+  blank(white)
+  x = x + xvel
+  y = y + yvel
+  d = (d + dvel) % 360
+  triangle(red)
+  update()
+  pause(10)
+  if bouncex:
+    xvel = -xvel;
+    dvel = -dvel
+  if bouncey:
+    yvel = -yvel
+    dvel = -dvel

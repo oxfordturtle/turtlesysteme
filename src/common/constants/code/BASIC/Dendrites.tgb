@@ -1,0 +1,96 @@
+REM Dendrites
+
+HALF% = 100
+CRYSTAL% = cyan
+MOLECULE% = white
+SOLUTION% = teal
+INITRANDOMRADIUS% = 10
+MAXDISTANCE% = 75
+CYCLEMOD% = 5
+MODDELAY% = 0
+whole% = HALF% * 2 + 3
+CANVAS(-HALF%, -HALF%, whole%, whole%)
+RESOLUTION(whole%, whole%)
+PENUP
+SETXY(-HALF%, -HALF%)
+BOX(whole%, whole%, SOLUTION%, TRUE)
+randomradius% = INITRANDOMRADIUS%
+WRITELN("Initial randomradius = " + str(randomradius))
+PIXSET(0, 0, CRYSTAL%)
+numattached% = 1
+WRITELN("Counting molecules within growing crystal:")
+WRITE("1 ")
+maxsofar% = 1
+TIMESET(0)
+REPEAT
+  HOME
+  DIRECTION(RND(360))
+  FORWARD(HALF%)
+  IF PIXCOL(TURTX%, TURTY%) <> SOLUTION% THEN
+    PROCrandomwalk
+  cycle% = 0
+  WHILE NOT(RNattached(TURTX%, TURTY%))
+    PIXSET(TURTX%, TURTY%, MOLECULE%)
+    IF cycle% MOD CYCLEMOD% = 0 THEN
+      UPDATE
+      IF MODDELAY% > 0 THEN
+        PAUSE(MODDELAY%)
+      ENDIF
+      NOUPDATE
+    ENDIF
+    INC(cycle%)
+    PIXSET(TURTX%, TURTY%, SOLUTION%)
+    PROCbiasedwalk
+  ENDWHILE
+  IF numattached% MOD 10 = 0 THEN
+    WRITELN(STR$(numattached))
+  ELSE
+    WRITE(STR$(numattached%) + " ")
+  ENDIF
+  IF maxsofar% > randomradius% THEN
+    randomradius% = maxsofar%
+    WRITELN("")
+    WRITELN("randomradius = " + STR$(randomradius%))
+  ENDIF
+UNTIL maxsofar% >= MAXDISTANCE%
+WRITELN("Simulation finished (" + QSTR$(TIME, 1000, 2) + " seconds)")
+END
+
+DEF FNattached(x%, y%)
+  result% = FALSE
+  IF (PIXCOL(x% - 1, y%) = CRYSTAL%) OR (PIXCOL(x% + 1, y%) = CRYSTAL%) OR (PIXCOL(x%, y% - 1) = CRYSTAL%) OR (PIXCOL(x%, y% + 1) = CRYSTAL%) THEN
+    result% = TRUE
+    PIXSET(x%, y%, CRYSTAL%)
+    INC(numattached%)
+    IF HYPOT(x%, y%, 1) >= maxsofar% THEN
+      maxsofar% = HYPOT(x%, y%, 1)
+    ENDIF
+  ENDIF
+= result%
+
+DEF PROCrandomwalk
+  REPEAT
+    n% = RND(4) * 2
+    TURTX% = TURTX% + n% DIV 3 - 1
+    TURTY% = TURTY% + n% MOD  3 -1
+    IF PIXCOL(TURTX%, TURTY%) = BLACK THEN
+      TURTX% = TURTX% - 2 * (n% DIV 3 - 1)
+      TURTY% = TURTY% - 2 * (n% MOD 3 - 1)
+    ENDIF
+  UNTIL PIXCOL(TURTX%, TURTY%)=SOLUTION%
+ENDPROC
+
+DEF PROCbiasedwalk
+  TURNXY(-TURTX%, -TURTY%)
+  distance% = HYPOT(TURTX%, TURTY%, 1)
+  IF distance% < randomradius% THEN
+    DIRECTION(RND(360))
+  ELSE
+    range% = DIVMULT(HALF% - distance%, HALF% - randomradius%, 180)
+    turn% = RND(range% * 2) - range%
+    RIGHT(turn%)
+  ENDIF
+  REPEAT
+    FORWARD(1)
+  UNTIL PIXCOL(TURTX%, TURTY%) = SOLUTION%
+ENDPROC

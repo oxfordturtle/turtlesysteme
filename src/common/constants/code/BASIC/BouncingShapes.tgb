@@ -1,0 +1,70 @@
+REM BouncingShapes
+
+DIM x%(6)
+DIM y%(6)
+DIM d%(6)
+DIM xvel%(6)
+DIM yvel%(6)
+DIM dvel%(6)
+DIM sides%(6)
+DIM size%(6)
+DIM colr%(6)
+MINSIZE% = 70
+MAXSIZE% = 130
+SHAPES% = 6
+
+FOR n% = 1 TO SHAPES%
+  sides%(n%) = n% + 2
+  size%(n%) = MINSIZE% + RND(MAXSIZE% - MINSIZE%)
+  colr%(n%) = RGB(n%)
+  x%(n%) = RND(1000 - 2 * size%(n%)) + size%(n%)
+  y%(n%) = RND(1000 - 2 * size%(n%)) + size%(n%)
+  d%(n%) = RND(360)
+  xvel%(n%) = RND(15) - 7
+  yvel%(n%) = RND(15) - 7
+  dvel%(n%) = RND(4) + 3
+NEXT
+WHILE 0 < 1
+  NOUPDATE
+  FOR n% = 1 TO SHAPES%
+    SETXY(x%(n%), y%(n%))
+    DIRECTION(d%(n%))
+    PROCdrawshape(sides%(n%), size%(n%), WHITE)
+    x%(n%) = x%(n%) + xvel%(n%)
+    y%(n%) = y%(n%) + yvel%(n%)
+    d%(n%) = (d%(n%) + dvel%(n%)) MOD 360
+    SETXY(x%(n%), y%(n%))
+    DIRECTION(d%(n%))
+    PROCdrawshape(sides%(n%), size%(n%), colr%(n%))
+    IF bouncex% THEN
+      xvel%(n%) = -xvel%(n%)
+      dvel%(n%) = -dvel%(n%)
+    ENDIF
+    IF bouncey% THEN
+      yvel%(n%) = -yvel%(n%)
+      dvel%(n%) = -dvel%(n%)
+    ENDIF
+  NEXT
+  UPDATE
+  PAUSE(5)
+ENDWHILE
+END
+
+DEF PROCdrawshape(sid%, siz%, col%)
+  bouncex% = FALSE
+  bouncey% = FALSE
+  COLOUR(col%)
+  FOR count% = 1 TO sid%
+    FORWARD(siz%)
+    IF ABS(TURTX% - 500) > 495 THEN
+      bouncex% = TRUE
+    ENDIF
+    IF ABS(TURTY% - 500) > 495 THEN
+      bouncey% = TRUE
+    ENDIF
+    BACK(siz%)
+    FORGET(1)
+    RIGHT(360/sid%)
+  NEXT
+  POLYGON(sid%)
+ENDPROC

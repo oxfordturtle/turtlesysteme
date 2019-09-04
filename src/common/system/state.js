@@ -17,6 +17,7 @@ than a state change); messages are things sent by this module indicating a succe
 including also the new values of any relevant state variables.
 */
 import * as examples from 'common/constants/examples'
+import pcode from 'common/constants/pcode/pcode'
 import extensions from 'common/constants/extensions'
 import languages from 'common/constants/languages'
 import compile from 'common/compiler/compile'
@@ -129,6 +130,11 @@ export const send = (signal, data) => {
           set(`usage-${language}`, [])
           set(`lexemes-${language}`, [])
           set(`pcode-${language}`, [])
+          // load precompiled pcode for examples this system can't compile yet
+          if (pcode[data] && pcode[data][language]) {
+            set(`pcode-${language}`, pcode[data][language])
+            set(`compiled-${language}`, true)
+          }
           reply('file-changed')
         })
         break

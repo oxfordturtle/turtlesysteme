@@ -1,0 +1,72 @@
+PROGRAM BouncingShapes;
+CONST minsize = 70;
+      maxsize = 130;
+      shapes = 6;
+VAR x, y, d: array[1..shapes] of integer;
+    xvel, yvel, dvel: array[1..shapes] of integer;
+    sides, size, colr: array[1..shapes] of integer;
+    bouncex, bouncey: boolean;
+    n: integer;
+
+ Procedure drawshape(sid, siz, col: integer);
+ Var count: integer;
+ Begin
+  bouncex := false;
+  bouncey := false;
+  colour(col);
+  for count := 1 to sid do
+   begin
+    forward(siz);
+    if abs(turtx - 500) > 495 then
+     bouncex := true;
+    if abs(turty - 500) > 495 then
+     bouncey := true;
+    back(siz);
+    forget(1);
+    right(360 / sid)
+   end;
+  polygon(sid)
+ End;
+
+BEGIN
+ for n:=1 to shapes do
+  begin
+   sides[n] := n + 2;
+   size[n] := minsize + random(maxsize - minsize);
+   colr[n] := rgb(n);
+   x[n] := random(1000 - 2 * size[n]) + size[n];
+   y[n] := random(1000 - 2 * size[n]) + size[n];
+   d[n] := random(360);
+   xvel[n] := random(15) - 7;
+   yvel[n] := random(15) - 7;
+   dvel[n] := random(4) + 3
+  end;
+ while 0 < 1 do
+  begin
+   noupdate;
+   for n := 1 to shapes do
+    begin
+     setxy(x[n], y[n]);
+     direction(d[n]);
+     drawshape(sides[n], size[n], white);
+     x[n] := x[n] + xvel[n];
+     y[n] := y[n] + yvel[n];
+     d[n] := (d[n] + dvel[n]) mod 360;
+     setxy(x[n], y[n]);
+     direction(d[n]);
+     drawshape(sides[n], size[n], colr[n]);
+     if bouncex then
+      begin
+       xvel[n] := -xvel[n];
+       dvel[n] := -dvel[n]
+      end;
+     if bouncey then
+      begin
+       yvel[n] := -yvel[n];
+       dvel[n] := -dvel[n]
+      end
+    end;
+   update;
+   pause(5)
+  end
+END.

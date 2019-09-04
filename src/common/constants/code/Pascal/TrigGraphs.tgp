@@ -1,0 +1,112 @@
+PROGRAM TrigGraphs;
+CONST xorigin = 500;
+      yorigin = 500;
+      halfwidth = 400;
+      yscale = 200;
+      radians = false;
+VAR degrees: integer;
+    x, y: integer;
+
+  Procedure axes;
+  Begin
+    thickness(3);
+    setxy(xorigin - halfwidth, yorigin);
+    drawxy(halfwidth * 2, 0);
+    setxy(xorigin, 0);
+    drawxy(0, 1000);
+    setxy(xorigin, yorigin);
+    circle(15);
+    thickness(2);
+    setxy(xorigin - halfwidth, yorigin - yscale);
+    drawxy(halfwidth * 2, 0);
+    setxy(xorigin - halfwidth, yorigin + yscale);
+    drawxy(halfwidth * 2, 0);
+    setxy(xorigin + halfwidth + 10, yorigin - yscale - 18);
+    print('+1', 0, 20);
+    setxy(xorigin + halfwidth + 10, yorigin + yscale - 18);
+    print('-1', 0, 20);
+    if radians then
+      begin
+        setxy(xorigin - halfwidth - 44, yorigin - 4);
+        print('-p', 29, 28);
+        setxy(xorigin - halfwidth div 2 - 2, yorigin - 4);
+        print('-p/2', 29, 28);
+        setxy(xorigin + halfwidth div 2 - 50, yorigin - 4);
+        print('p/2', 29, 28);
+        setxy(xorigin + halfwidth, yorigin - 4);
+        print('p', 29, 28)
+      end
+    else
+      begin
+        setxy(xorigin - halfwidth - 64, yorigin + 2);
+        print('-180', 0, 24);
+        setxy(xorigin - halfwidth div 2 - 2, yorigin + 2);
+        print('-90', 0, 24);
+        setxy(xorigin + halfwidth div 2 - 36, yorigin + 2);
+        print('90', 0, 24);
+        setxy(xorigin + halfwidth, yorigin + 2);
+        print('180', 0, 24)
+      end
+  End;
+
+  Procedure sinecurve;
+  Begin
+    for degrees := -180 to 180 do
+      begin
+        x := xorigin + divmult(degrees, 180, halfwidth);
+        y := yorigin - sin(degrees, 1, yscale);
+        setxy(x, y)
+      end;
+    polyline(361)
+  End;
+
+  Procedure cosinecurve;
+  Begin
+    for degrees := -180 to 180 do
+      begin
+        x := xorigin + divmult(degrees, 180, halfwidth);
+        y := yorigin - cos(degrees, 1, yscale);
+        setxy(x, y)
+      end;
+    polyline(361)
+  End;
+
+  Procedure tancurve;
+  Begin
+    for degrees := -180 to 180 do
+      if degrees = -90 then
+        polyline(90)
+      else
+      if degrees = 90 then
+        polyline(179)
+      else
+        begin
+          x := xorigin + divmult(degrees, 180, halfwidth);
+          y := yorigin - tan(degrees, 1, yscale);
+          setxy(x, y)
+        end;
+    polyline(90)
+  End;
+
+BEGIN
+  axes;
+  noupdate;
+  thickness(4);
+  colour(red);
+  setxy(20, 700);
+  print('cosine', 16, 40);
+  cosinecurve;
+  colour(green);
+  setxy(100, 810);
+  print('sine', 16, 40);
+  setxy(205, 820);
+  drawxy(70, -110);
+  drawxy(0, 20);
+  movexy(0, -20);
+  drawxy(-18, 11);
+  sinecurve;
+  colour(blue);
+  setxy(140, 920);
+  print('tangent', 16, 40);
+  tancurve
+END.

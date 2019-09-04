@@ -1,0 +1,34 @@
+REM SquareKoch
+
+MAXLEVEL% = 5
+BLANK(BLACK)
+MOVEXY(0, 486)
+LEFT(45)
+FOR count% = 1 TO 4
+  COLOUR(RGB(count% + 20))
+  PROCkdraw(729, MAXLEVEL%)
+  RIGHT(90)
+NEXT
+MOVEXY(0, -323)
+FOR count% = 1 TO 4
+  COLOUR(RGB(count% + 20))
+  PROCkdraw(243, MAXLEVEL% - 1)
+  RIGHT(90)
+NEXT
+END
+
+DEF PROCkdraw(dist%, level%)
+  IF level% = 0 THEN
+    FORWARD(dist%)
+  ELSE
+    PROCkdraw(dist% / 3, level% - 1)
+    LEFT(90)
+    PROCkdraw(dist% / 3, level% - 1)
+    RIGHT(90)
+    PROCkdraw(dist% / 3, level% - 1)
+    RIGHT(90)
+    PROCkdraw(dist% / 3, level% - 1)
+    LEFT(90)
+    PROCkdraw(dist% / 3, level% - 1)
+  ENDIF
+ENDPROC

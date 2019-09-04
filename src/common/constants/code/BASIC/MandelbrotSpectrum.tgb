@@ -1,4 +1,63 @@
 REM MandelbrotSpectrum
 
-REM this program is unavailable in Turtle BASIC
-REM because arrays are not yet implemented
+DIM spectcol%(7)
+DIM boundary%(7)
+MAXCOL% = 40
+SCALE% = 250
+PIXELS% = 750
+XCENTRE% = -500000 REM millionths
+YCENTRE% = 0 REM millionths
+SPECTRUM% = 7
+
+PROCcolsetup
+xstart% = DIVMULT(XCENTRE%, 1000000, SCALE%) - PIXELS% / 2
+ystart% = DIVMULT(YCENTRE%, 1000000, SCALE%) - PIXELS% / 2
+xfinish% = xstart% + PIXELS% - 1
+yfinish% = ystart% + PIXELS% - 1
+CANVAS(xstart%, ystart%, PIXELS%, PIXELS%)
+RESOLUTION(PIXELS%, PIXELS%)
+TIMESET(0)
+FOR a% = xstart% TO xfinish%
+  NOUPDATE
+  FOR b% = ystart% TO yfinish%
+    x% = a%
+    y% = b%
+    iterations% = 0
+    WHILE (HYPOT(x%, y%, 1) < 2 * SCALE%) AND (iterations% <= MAXCOL%)
+      temp% = DIVMULT(x% + y%, SCALE%, x% - y%)
+      y% = DIVMULT(2 * x%, SCALE%, y%) + b%
+      x% = temp% + a%
+      INC(iterations%)
+    ENDWHILE
+    IF iterations% > MAXCOL% THEN
+      PIXSET(a%, b%, BLACK)
+    ELSE
+      PIXSET(a%, b%, FNmixcolour(iterations%))
+    ENDIF
+  NEXT
+  UPDATE
+NEXT
+WRITELN("Resolution: " + STR$(SCALE% * 3) + " Time taken: " + QSTR$(TIME, 1000, 1) + " seconds.")
+END
+
+DEF PROCcolsetup
+  spectcol%(0) = VIOLET
+  spectcol%(1) = BLUE
+  spectcol%(2) = CYAN
+  spectcol%(3) = LIME
+  spectcol%(4) = YELLOW
+  spectcol%(5) = ORANGE
+  spectcol%(6) = RED
+  spectcol%(7) = VIOLET
+  FOR n% = 0 TO SPECTRUM%
+    boundary%(n%) = DIVMULT(MAXCOL%, SPECTRUM%, n%)
+  NEXT
+ENDPROC
+
+DEF FNmixcolour(n%)
+  col2% = 0
+  REPEAT
+    INC(col2%)
+  UNTIL (boundary%(col2%) >= n%) OR (col2% = SPECTRUM%)
+  col1% = col2% - 1
+= MIXCOLS(spectcol%(col1%), spectcol%(col2%), boundary%(col2%) - n%, n% - boundary%(col1%))

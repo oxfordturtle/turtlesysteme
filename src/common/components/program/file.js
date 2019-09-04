@@ -36,14 +36,7 @@ openHelp.classList.add('tse-file-box')
 openHelp.innerHTML = `
   <label>Example Programs</label>
   <select data-bind="help-examples">
-    ${examples.help.map(optgroup)}
-  </select>`
-
-openCSAC.classList.add('tse-file-box')
-openCSAC.innerHTML = `
-  <label>CSAC Book Programs</label>
-  <select data-bind="csac-examples">
-    ${examples.csac.map(optgroup)}
+    ${examples.menu.map(optgroup)}
   </select>`
 
 fileInput.type = 'file'
@@ -56,7 +49,6 @@ const closeButton = newFile.querySelector('[data-bind="close-program"]')
 const saveButton = newFile.querySelector('[data-bind="save-program"]')
 const saveTgxButton = newFile.querySelector('[data-bind="save-tgx-program"]')
 const helpExamples = openHelp.querySelector('[data-bind="help-examples"]')
-const csacExamples = openCSAC.querySelector('[data-bind="csac-examples"]')
 
 // setup event listeners on interactive elements
 newButton.addEventListener('click', () => {
@@ -88,13 +80,6 @@ helpExamples.addEventListener('focus', () => {
 })
 helpExamples.addEventListener('change', () => {
   send('set-example', helpExamples.value)
-})
-
-csacExamples.addEventListener('focus', () => {
-  csacExamples.selectedIndex = -1
-})
-csacExamples.addEventListener('change', () => {
-  send('set-example', csacExamples.value)
 })
 
 fileInput.addEventListener('change', () => {

@@ -1,0 +1,13 @@
+# Triangle3
+
+def triangle(size: int):
+  if (size > 1):
+    forward(size)
+    right(120)
+    forward(size)
+    right(120)
+    forward(size)
+    right(120)
+
+movexy(-100, 150)
+triangle(256)

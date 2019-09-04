@@ -1,0 +1,35 @@
+REM Fibonaccis
+
+DIM fibsave%(25)
+LASTNUM% = 25
+OUTPUT(TRUE, CREAM, TRUE)
+WRITELN("First, by recursion:")
+TIMESET(0)
+FOR count% = 1 TO LASTNUM%
+  WRITELN("fib(" + STR$(count%) + ") = " + STR$(FNfibrec(count%)))
+NEXT
+WRITELN("Time taken: " + QSTR$(TIME, 1000, 2) + " seconds")
+WRITELN("")
+WRITELN("Then, by iteration:")
+TIMESET(0)
+FOR count% = 1 TO LASTNUM%
+  WRITELN("fib(" + STR$(count%) + ") = " + STR$(FNfibiter(count%)))
+NEXT
+WRITELN("Time taken: " + QSTR$(TIME, 1000, 2) + " seconds")
+END
+
+DEF FNfibrec(n%)
+  IF (n% = 1) OR (n% = 2) THEN
+    result% = 1
+  ELSE
+    result% = FNfibrec(n% - 1) + FNfibrec(n% - 2)
+  ENDIF
+= result%
+
+DEF FNfibiter(n%)
+  IF (n% = 1) OR (n% = 2) THEN
+    fibsave%(n%) = 1
+  ELSE
+    fibsave%(n%) = fibsave%(n% - 1) + fibsave%(n% - 2)
+  ENDIF
+= fibsave%(n%)

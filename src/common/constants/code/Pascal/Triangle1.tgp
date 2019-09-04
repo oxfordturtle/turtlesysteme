@@ -1,0 +1,10 @@
+PROGRAM Triangle1;
+BEGIN
+  movexy(-100, 150);
+  forward(256);
+  right(120);
+  forward(256);
+  right(120);
+  forward(256);
+  right(120)
+END.

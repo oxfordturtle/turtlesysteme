@@ -5,7 +5,7 @@ PROCtriangle(256)
 END
 
 DEF PROCtriangle(size%)
-  IF size% >= 2 THEN
+  IF size% > 1 THEN
     FORWARD(size%)
     PROCtriangle(size% / 2)
     RIGHT(120)

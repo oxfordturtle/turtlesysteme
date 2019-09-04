@@ -1,4 +1,65 @@
 REM FiveTurtles
 
-REM this program is unavailable in Turtle BASIC
-REM because arrays are not yet implemented
+DIM a%(4)
+DIM b%(4)
+DIM c%(4)
+DIM d%(4)
+DIM e%(4)
+FOR i% = 0 TO 2
+  a%(i%) = RND(601) + 199
+  b%(i%) = RND(601) + 199
+  c%(i%) = RND(601) + 199
+  d%(i%) = RND(601) + 199
+  e%(i%) = RND(601) + 199
+NEXT
+a%(3) = 2
+b%(3) = 4
+c%(3) = 6
+d%(3) = 8
+e%(3) = 10
+a%(4) = PURPLE
+b%(4) = RED
+c%(4) = SKYBLUE
+d%(4) = EMERALD
+e%(4) = GOLD
+REPEAT
+  NEWTURTLE(a%)
+  DRAWXY(RND(11) - 6, RND(11) - 6)
+  NEWTURTLE(b%)
+  DRAWXY(RND(21) - 11, RND(21) - 11)
+  NEWTURTLE(c%)
+  DRAWXY(RND(31) - 16, RND(31) - 16)
+  NEWTURTLE(d%)
+  DRAWXY(RND(41) - 21, RND(41) - 21)
+  NEWTURTLE(e%)
+  DRAWXY(RND(51) - 26, RND(51) - 26)
+  IF ?CLICK > 128 THEN
+    i% = RND(5)
+    IF i% = 1 THEN
+      a%(0) = ?MOUSEX
+      a%(1) = ?MOUSEY
+    ELSE
+      IF i% = 2 THEN
+        b%(0) = ?MOUSEX
+        b%(1) = ?MOUSEY
+      ELSE
+        IF i% = 3 THEN
+          c%(0) = ?MOUSEX
+          c%(1) = ?MOUSEY
+        ELSE
+          IF i% = 4 THEN
+            d%(0) = ?MOUSEX
+            d%(1) = ?MOUSEY
+          ELSE
+            IF i% = 5 THEN
+              e%(0) = ?MOUSEX
+              e%(1) = ?MOUSEY
+            ENDIF
+          ENDIF
+        ENDIF
+      ENDIF
+    ENDIF
+    PAUSE(200)
+  ENDIF
+UNTIL ?KEY = \ESCAPE
+END

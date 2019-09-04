@@ -1,0 +1,25 @@
+REM KochSnowflake
+
+BLANK(BLACK)
+MOVEXY(0, 430)
+LEFT(30)
+FOR count% = 1 TO 3
+  COLOUR(RGB(count% + 20))
+  PROCkdraw(729, 4)
+  RIGHT(120)
+NEXT
+END
+
+DEF PROCkdraw(dist%, level%)
+  IF level% = 0 THEN
+    FORWARD(dist%)
+  ELSE
+    PROCkdraw(dist% / 3, level - 1)
+    LEFT(60)
+    PROCkdraw(dist% / 3, level% - 1)
+    RIGHT(120)
+    PROCkdraw(dist% / 3, level% - 1)
+    LEFT(60)
+    PROCkdraw(dist% / 3, level% - 1)
+  ENDIF
+ENDPROC

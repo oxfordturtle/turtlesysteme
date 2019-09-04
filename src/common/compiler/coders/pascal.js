@@ -17,6 +17,11 @@ const coder = (routine, lex, startLine) => {
     // identifiers (variable assignment or procedure call)
     case 'turtle': // fallthrough
     case 'identifier':
+      // array index
+      if (routine.lexemes[lex + 1] && routine.lexemes[lex + 1].content === '[') {
+        throw error('The Turtle System E does not yet support arrays. This feature will be added soon. In the meantime, please use the Turtle System D to compile this program.', routine.lexemes[lex])
+      }
+
       // wrong assignment operator
       if (routine.lexemes[lex + 1] && (routine.lexemes[lex + 1].content === '=')) {
         throw error('Variable assignment in Pascal uses ":=", not "=".', routine.lexemes[lex + 1])
@@ -100,7 +105,7 @@ const compileIf = (routine, lex, startLine) => {
   }
   result = molecules.expression(routine, lex, 'null', 'boolean', 'Pascal')
   lex = result.lex
-  test = result.pcode[0]
+  test = result.pcode
 
   // expecting "then"
   if (!routine.lexemes[lex]) {
@@ -282,8 +287,10 @@ const compileWhile = (routine, lex, startLine) => {
     throw error('"WHILE" must be followed by a boolean expression.', routine.lexemes[lex - 1])
   }
   result = molecules.expression(routine, lex, 'null', 'boolean', 'Pascal')
+  console.log('result of compiling WHILE condition:')
+  console.log(result)
   lex = result.lex
-  test = result.pcode[0]
+  test = result.pcode
 
   // expecting "DO"
   if (!routine.lexemes[lex]) {

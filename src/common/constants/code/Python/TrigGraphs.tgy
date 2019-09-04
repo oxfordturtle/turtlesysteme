@@ -1,0 +1,91 @@
+# TrigGraphs
+
+xorigin: int = 500
+yorigin: int = 500
+halfwidth: int = 400
+yscale: int = 200
+radians: bool = False
+
+def axes():
+  thickness(3)
+  setxy(xorigin - halfwidth, yorigin)
+  drawxy(halfwidth * 2, 0)
+  setxy(xorigin, 0)
+  drawxy(0, 1000)
+  setxy(xorigin, yorigin)
+  circle(15)
+  thickness(2)
+  setxy(xorigin - halfwidth, yorigin - yscale)
+  drawxy(halfwidth * 2, 0)
+  setxy(xorigin - halfwidth, yorigin + yscale)
+  drawxy(halfwidth * 2, 0)
+  setxy(xorigin + halfwidth + 10, yorigin - yscale - 18)
+  print('+1', 0, 20)
+  setxy(xorigin + halfwidth + 10, yorigin + yscale - 18)
+  print('-1', 0, 20)
+  if radians:
+    setxy(xorigin - halfwidth - 44, yorigin - 4)
+    print('-p', 29, 28)
+    setxy(xorigin - halfwidth // 2 - 2, yorigin - 4)
+    print('-p/2', 29, 28)
+    setxy(xorigin + halfwidth // 2 - 50, yorigin - 4)
+    print('p/2', 29, 28)
+    setxy(xorigin + halfwidth, yorigin - 4)
+    print('p', 29, 28)
+  else:
+    setxy(xorigin - halfwidth - 60, yorigin)
+    print('-180', 0, 20)
+    setxy(xorigin - halfwidth // 2, yorigin)
+    print('-90', 0, 20)
+    setxy(xorigin + halfwidth // 2 - 30, yorigin)
+    print('90', 0, 20)
+    setxy(xorigin + halfwidth, yorigin)
+    print('180', 0, 20)
+
+def sinecurve():
+  for degrees in range(-180, 181, 1):
+    x: int = xorigin + divmult(degrees, 180, halfwidth)
+    y: int = yorigin - sin(degrees, 1, yscale)
+    setxy(x, y)
+  polyline(361)
+
+def cosinecurve():
+  for degrees in range(-180, 181, 1):
+    x: int = xorigin + divmult(degrees, 180, halfwidth)
+    y: int = yorigin - cos(degrees, 1, yscale)
+    setxy(x, y)
+  polyline(361)
+
+def tancurve():
+  for degrees in range(-180, 181, 1):
+    if degrees == -90:
+      polyline(90)
+    else:
+      if degrees == 90:
+        polyline(179)
+      else:
+        x: int = xorigin + divmult(degrees, 180, halfwidth)
+        y: int = yorigin - tan(degrees, 1, yscale)
+        setxy(x, y)
+  polyline(90)
+
+axes()
+noupdate()
+thickness(4)
+colour(red)
+setxy(20, 700)
+print('cosine', 16, 40)
+cosinecurve()
+colour(green)
+setxy(100, 810)
+print('sine', 16, 40)
+setxy(205, 820)
+drawxy(70, -110)
+drawxy(0, 20)
+movexy(0, -20)
+drawxy(-18, 11)
+sinecurve()
+colour(blue)
+setxy(140, 920)
+print('tangent', 16, 40)
+tancurve()

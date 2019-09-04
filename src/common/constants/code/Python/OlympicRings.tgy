@@ -1,0 +1,23 @@
+# OlympicRings
+
+ringsize: int = 130
+thickness(20)
+penup()
+forward(50)
+circle(ringsize)
+left(90)
+forward(300)
+colour(blue)
+circle(ringsize)
+back(600)
+colour(red)
+circle(ringsize)
+forward(150)
+right(90)
+back(125)
+colour(lime)
+circle(ringsize)
+left(90)
+forward(300)
+colour(yellow)
+circle(ringsize)

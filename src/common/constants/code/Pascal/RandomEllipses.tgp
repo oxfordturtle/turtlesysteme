@@ -1,0 +1,26 @@
+PROGRAM RandomEllipses;
+VAR count: integer;
+    x, y, rx, ry: integer;
+    nextcol: integer;
+BEGIN
+  for count := 1 to 10 do
+    begin
+      x := random(1500) - 250;
+      y := random(1500) - 250;
+      rx := random(500) + 500;
+      ry := random(500) + 500;
+      setxy(x, y);
+      ellipse(rx, ry)
+    end;
+  nextcol := 0;
+  for count := 1 to 10000 do
+    begin
+      x := random(1000);
+      y := random(1000);
+      if pixcol(x, y) = white then
+        begin
+          nextcol := nextcol mod 20 + 1;
+          recolour(x, y, rgb(nextcol))
+        end
+    end
+END.

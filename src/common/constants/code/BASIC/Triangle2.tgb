@@ -1,0 +1,14 @@
+REM Triangle2
+
+MOVEXY(-100, 150)
+PROCtriangle(256)
+END
+
+DEF PROCtriangle(size%)
+  FORWARD(size%)
+  RIGHT(120)
+  FORWARD(size%)
+  RIGHT(120)
+  FORWARD(size%)
+  RIGHT(120)
+ENDPROC

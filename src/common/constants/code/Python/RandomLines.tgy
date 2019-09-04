@@ -1,0 +1,14 @@
+# RandomLines
+
+for count in range(1, 30, 1):
+  x: int = randint(0, 1000)
+  y: int = randint(0, 1000)
+  setxy(x, y)
+  turtd = randint(0, 360)
+  forward(1500)
+  back(3000)
+for count in range(1, 10000, 1):
+  x = randint(0, 1000)
+  y = randint(0, 1000)
+  if pixcol(x, y) == white:
+    recolour(x, y, rgb(randint(0, 20) + 1))

@@ -1,0 +1,78 @@
+PROGRAM RecursionFactory;
+CONST numsides=6;
+      initsize=240;
+      shrink=40;
+      rangle=180;
+      polygap=0;
+      levels=5;
+      slowdraw=3;
+      mode=1;
+      firstcol=1;
+      colinc=2;
+      minthick=2;
+      addthick=6;
+      circsize=60;
+VAR halfangle: integer;
+    slowlev: integer;
+
+ Procedure recurse(flag,size,depth,col: integer);
+ Var storex,storey: integer;
+     sides: integer;
+ Begin
+  if depth>0 then
+   begin
+    if depth<slowlev then
+     noupdate
+    else
+     update;
+    if flag=1 then
+     for flag:=2 to 3 do
+      begin
+       storex:=turtx;
+       storey:=turty;
+       for sides:=1 to numsides do
+        recurse(flag,size,depth,col);
+       turtx:=storex;
+       turty:=storey
+      end
+    else
+     begin
+      penup;
+      if flag=2 then
+       begin
+        colour(rgb(col));
+        thickness(minthick+((depth-1)*addthick)/12);
+        if mode=1 then
+         pendown
+        else
+        if mode=2 then
+         blot(size*circsize/120)
+        else
+         circle(size*circsize/120)
+       end;
+      left(halfangle);
+      forward(size);
+      right(180-halfangle+rangle);
+      if flag=3 then
+       begin
+        forward(size*polygap/120);
+        recurse(1,(size*shrink)/120,depth-1,((col+colinc-1) mod 7)+1);
+        back(size*polygap/120)
+       end;
+      left(rangle)
+     end
+   end
+ End;
+
+BEGIN
+ blank(black);
+ if 180 mod numsides=0 then
+  begin
+   halfangle:=90-(180/numsides);
+   slowlev:=levels+1-slowdraw;
+   if slowlev>levels-1 then
+    slowlev:=levels-1;
+   movexy(0,initsize);
+   recurse(1,initsize,levels,firstcol)
+  end
+END.

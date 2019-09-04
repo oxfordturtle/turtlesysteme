@@ -1,0 +1,88 @@
+REM Mandelbrot
+
+MAXCOL% = 40
+PROCstartprompt
+xstart% = DIVMULT(xcentre%, 1000000, scale%) - pixels% / 2
+ystart% = DIVMULT(ycentre%, 1000000, scale%) - pixels% / 2
+xfinish% = xstart% + pixels% - 1
+yfinish% = ystart% + pixels% - 1
+WRITELN("Mandelbrot will be plotted over the following real range:")
+WRITE(QSTR$(xstart%, scale%, 4) + " < x < " + QSTR$(xfinish%, scale%, 4) + "    ")
+WRITELN(QSTR$(ystart%, scale%, 4) + " < y < " + QSTR$(yfinish%, scale%, 4))
+WRITELN("Scaling factor: " + STR$(scale%) + "    Image resolution: " + STR$(pixels%) + "x" + STR$(pixels%))
+CANVAS(xstart%, ystart%, pixels%, pixels%)
+RESOLUTION(pixels%, pixels%)
+TIMESET(0)
+FOR a% = xstart% TO xfinish%
+  NOUPDATE
+  FOR b% = ystart% TO yfinish%
+    x% = a%
+    y% = b%
+    iterations% = 0
+    WHILE (HYPOT(x%, y%, 1) < 2 * scale%) AND (iterations% <= MAXCOL%)
+      temp% = DIVMULT(x% + y%, scale%, x% - y%)
+      y% = DIVMULT(2 * x%, scale%, y%) + b%
+      x% = temp% + a%
+      INC(iterations%)
+    ENDWHILE
+    IF iterations% > MAXCOL% THEN
+      PIXSET(a%, b%, BLACK)
+    ELSE
+      PIXSET(a%, b%, RGB(iterations% + 1))
+    ENDIF
+  NEXT
+  UPDATE
+NEXT
+WRITELN("Time taken: " + QSTR$(TIME, 1000, 1) + " seconds.")
+END
+
+DEF PROCstartprompt
+  OUTPUT(TRUE, CREAM, TRUE)
+  KEYECHO(FALSE)
+  WRITELN("MANDELBROT SET DISPLAY PROGRAM")
+  WRITELN("")
+  WRITE("Select Whole set, or Zoom on mini ""lake"" at -0.1592,-1.0330 (W/Z)")
+  REPEAT
+  UNTIL (ABS(?KEY) = \w) OR (ABS(?KEY) = \z)
+  WRITELN(CHR$(ABS(?KEY)))
+  IF ABS(?KEY) = \w THEN
+    xcentre% = -500000
+    ycentre% = 0
+  ELSE
+    xcentre% = -159200
+    ycentre% = -1033000
+  ENDIF
+  WRITELN("")
+  IF ycentre% = 0 THEN
+    WRITE("Select Fast/Medium/Slow, giving resolution 300/750/1500: (F/M/S) ")
+  ELSE
+    WRITE("Select Fast/Medium/Slow, giving resolution 300/600/1200: (F/M/S) ")
+  ENDIF
+  REPEAT
+  UNTIL (ABS(?KEY) = \f) OR (ABS(?KEY) = \m) OR (ABS(?KEY) = \s)
+  WRITELN(CHR$(ABS(?KEY)))
+  IF ycentre% = 0 THEN
+    IF ABS(?KEY) = \f THEN
+      scale% = 100
+    ELSE
+      IF ABS(?KEY) = \m THEN
+        scale% = 250
+      ELSE
+        scale% = 500
+      ENDIF
+    ENDIF
+    pixels% = scale% * 3
+  ELSE
+    IF ABS(?KEY) = \f THEN
+      scale% = 10000
+    ELSE
+      IF ABS(?KEY) = \m THEN
+        scale% = 20000
+      ELSE
+        scale% = 40000
+      ENDIF
+    ENDIF
+    pixels% = scale% / 100 * 3
+  ENDIF
+  OUTPUT(FALSE, WHITE, FALSE)
+ENDPROC

@@ -41,7 +41,7 @@ export default (lexemes) => {
       case 'dim':
         // expecting global array declarations
         // TODO
-        throw error('The BASIC cmpiler does not yet support DIM variables.', lexemes[lex])
+        throw error('The Turtle System E does not yet support arrays. This feature will be added soon. In the meantime, please use the Turtle System D to compile your program.', lexemes[lex])
 
       case 'prog':
         // expecting program commands or "END"

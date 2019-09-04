@@ -1,6 +1,6 @@
 PROGRAM NoughtsAndCrosses;
-CONST cross = royal;
-      nought = red;
+CONST cross = 33;
+      nought = 2;
 VAR board: array[0..11] of integer;
     numgames: integer;
     randfirst: boolean;
@@ -9,7 +9,7 @@ VAR board: array[0..11] of integer;
   Procedure doblot(x, y, col: integer);
   Begin
     setxy(x * 250 + 250, y * 250 + 175);
-    colour(col);
+    colour(rgb(col));
     blot(70)
   End;
 
@@ -31,10 +31,14 @@ VAR board: array[0..11] of integer;
     b1[9] := 0;
     b1[10] := -1;
     b1[11] := depth;
-    if (((b1[0] = jm) and (b1[1] = jm) and (b1[2] = jm)) or ((b1[3] = jm) and (b1[4] = jm) and (b1[5] = jm)) or ((b1[6] = jm)
-       and (b1[7] = jm) and (b1[8] = jm)) or ((b1[0] = jm) and (b1[3] = jm) and (b1[6] = jm)) or ((b1[1] = jm) and (b1[4] = jm)
-       and (b1[7] = jm)) or ((b1[2] = jm) and (b1[5] = jm) and (b1[8] = jm)) or ((b1[0] = jm) and (b1[4] = jm) and (b1[8] = jm))
-       or ((b1[2] = jm) and (b1[4] = jm) and (b1[6] = jm))) then
+    if (((b1[0] = jm) and (b1[1] = jm) and (b1[2] = jm))
+        or ((b1[3] = jm) and (b1[4] = jm) and (b1[5] = jm))
+        or ((b1[6] = jm) and (b1[7] = jm) and (b1[8] = jm))
+        or ((b1[0] = jm) and (b1[3] = jm) and (b1[6] = jm))
+        or ((b1[1] = jm) and (b1[4] = jm) and (b1[7] = jm))
+        or ((b1[2] = jm) and (b1[5] = jm) and (b1[8] = jm))
+        or ((b1[0] = jm) and (b1[4] = jm) and (b1[8] = jm))
+        or ((b1[2] = jm) and (b1[4] = jm) and (b1[6] = jm))) then
       b1[9] := 1
     else
       begin
@@ -55,7 +59,7 @@ VAR board: array[0..11] of integer;
           m := m + 1
         until (m > 8) or (replyscore > 0);
         if (replyscore <> -2) then
-          b1[9] := -replyscore
+         b1[9] := -replyscore
       end
   End;
 
@@ -81,8 +85,7 @@ BEGIN
     repeat
       if (randfirst) then
         begin
-          randcol(9);
-          board[10] := turtc - 1;
+          board[10] := random(9);
           randfirst := false
         end
       else
@@ -98,7 +101,7 @@ BEGIN
             row := (?clicky - 50) div 250
           until board[column + row * 3] = 0;
           doblot(column, row, cross);
-          board[column + row * 3] := cross;
+          board[column + row * 3] : =cross;
           cursor(11);
           evaluate(board, cross, 0)
         end;

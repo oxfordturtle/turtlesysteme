@@ -1,0 +1,37 @@
+PROGRAM ResizableFace;
+
+  Procedure face(size: integer);
+
+    procedure eye;
+    begin
+      colour(white);
+      ellblot(size * 3 / 20, size / 10);
+      colour(emerald);
+      blot(size * 9 / 100);
+      colour(black);
+      blot(size / 25)
+    end;
+
+  Begin
+    colour(peach);
+    blot(size);
+    colour(darkred);
+    blot(size * 7 / 10);
+    forward(size * 3 / 20);
+    colour(peach);
+    blot(size * 3 / 4);
+    back(size * 3 / 10);
+    colour(royal);
+    blot(size * 3 / 20);
+    penup;
+    forward(size * 9 / 20);
+    left(90);
+    forward(size * 2 / 5);
+    eye;
+    back(size * 4 / 5);
+    eye
+  End;
+
+BEGIN
+  face(400)
+END.

@@ -1,0 +1,16 @@
+PROGRAM Triangle2;
+
+  Procedure triangle(size: integer);
+  Begin
+    forward(size);
+    right(120);
+    forward(size);
+    right(120);
+    forward(size);
+    right(120)
+  End;
+
+BEGIN
+  movexy(-100, 150);
+  triangle(256)
+END.

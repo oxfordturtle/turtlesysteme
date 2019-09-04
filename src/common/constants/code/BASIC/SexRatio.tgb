@@ -1,4 +1,74 @@
 REM SexRatio
 
-REM this program is unavailable in Turtle BASIC
-REM because arrays are not yet implemented
+DIM female%(1000)
+DIM fop%(1000)
+POPULATION% = 1000
+MATEPERGEN% = 400
+RANDOMVAR% = 1 REM %
+LEFTMARGIN% = 70
+TOPMARGIN% = 20
+PROCaxes
+FOR n% = 0 TO POPULATION%
+  female%(n%) = (RND(2) = 1)
+  fop%(n%) = 900 + RND(100) REM 900/1000 minimum
+NEXT
+generation% = 0
+REPEAT
+  PROCgraph
+  INC(generation%)
+  FOR n% = 0 TO MATEPERGEN%
+    PROCdomating
+  NEXT
+UNTIL generation% = 900
+END
+
+DEF PROCaxes
+  FOR i% = 1 TO 9
+    SETXY(LEFTMARGIN% + i% * 100 - 25, TOPMARGIN% + 800)
+    PRINT(STR$(i% * 100), 4, 20)
+  NEXT
+  FOR i% = 2 TO 10
+    SETXY(0, 1000 - i% * 100)
+    COLOUR(BLACK)
+    PRINT(STR$(i% * 10) + "%", 4, 20)
+    MOVEXY(LEFTMARGIN%, TOPMARGIN%)
+    COLOUR(LIGHTGREY)
+    DRAWXY(1000 - LEFTMARGIN%, 0)
+  NEXT
+  SETXY(LEFTMARGIN%, TOPMARGIN%)
+  COLOUR(BLACK)
+  DRAWXY(0, 800)
+  DRAWXY(1000 - LEFTMARGIN%, 0)
+  COLOUR(RED)
+  SETXY(50, 880)
+  PRINT("Proportion of Females in Population, over 900 Generations", 4, 25)
+  SETXY(50, 930)
+  PRINT("with Female Offspring Probability genes initially set 90%+", 4, 25)
+ENDPROC
+
+DEF PROCgraph
+  females% = 0
+  FOR n% = 0 TO POPULATION%
+    IF female%(n%) THEN INC(females%)
+  NEXT
+  COLOUR(RED)
+  SETXY(LEFTMARGIN% + generation%, TOPMARGIN% + 1000 - females%)
+  IF generation% > 0 THEN POLYLINE(2)
+ENDPROC
+
+DEF PROCdomating
+  REPEAT
+    a% = RND(POPULATION%)
+    b% = RND(POPULATION%)
+  UNTIL female%(a%) <> female%(b%)
+  inheritA% = (RND(2) = 1)
+  replace% = RND(POPULATION%)
+  IF inheritA% THEN
+    fop%(replace%) = fop%(a%)
+  ELSE
+    fop%(replace%) = fop%(b%)
+  ENDIF
+  female%(replace%) = fop%(replace%) > RND(1000) - 1
+  fop%(replace%) = fop%(replace%) + RND(RANDOMVAR% * 20) - RANDOMVAR% * 10
+  fop%(replace%) = MAX(0, MIN(1000, fop%(replace%)))
+ENDPROC

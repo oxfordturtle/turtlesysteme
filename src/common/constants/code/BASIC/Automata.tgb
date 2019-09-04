@@ -1,4 +1,48 @@
 REM Automata
 
-REM this program is unavailable in Turtle BASIC
-REM because arrays are not yet implemented
+DIM cellcol%(1)
+DIM nextstate%(7)
+WIDTH% = 100
+HEIGHT% = 100
+CANVAS(0, 0, WIDTH%, HEIGHT%)
+RESOLUTION(WIDTH%, HEIGHT%)
+cellcol%(0) = &FFFFFE
+cellcol%(1) = &000001
+FOR n% = 4 TO 45
+  rule% = n% * 4 + 2
+  PROCsetup(rule%)
+  NOUPDATE
+  BLANK(WHITE)
+  FOR x% = 0 TO WIDTH% - 1
+    PIXSET(x%, 0, cellcol%(RND(2) - 1))
+  NEXT
+  FOR generation% = 1 TO HEIGHT% - 1
+    PROCnextgen(generation%)
+  NEXT
+  SETXY(0, HEIGHT% - 15)
+  BOX(25 + LEN(STR$(rule%)) * 7, 14, CREAM, FALSE)
+  PRINT("Rule " + STR$(rule%), 4, 8)
+  UPDATE
+  PAUSE(500)
+NEXT
+END
+
+DEF PROCsetup(rulecode%)
+  FOR nhood% = 0 TO 7
+    nextstate%(nhood%) = rulecode% MOD 2
+    rulecode% = rulecode% DIV 2
+  NEXT
+ENDPROC
+
+DEF PROCnextgen(g%)
+  FOR x% = -1 TO WIDTH%
+    xmod% = (x% + WIDTH%) MOD WIDTH%
+    thispix% = PIXCOL(xmod%, g% - 1) AND 1
+    n3% = n2% * 2 + thispix%
+    n2% = n1% * 2 + thispix%
+    n1% = thispix%
+    IF x% > 0 THEN
+      PIXSET(x% - 1, g%, cellcol%(nextstate%(n3%)))
+    ENDIF
+  NEXT
+ENDPROC

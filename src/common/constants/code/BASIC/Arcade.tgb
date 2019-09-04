@@ -1,0 +1,145 @@
+REM Arcade
+
+TARGETS% = 10
+FaceX% = -100
+FaceY% = 625
+facexspeed% = 5
+faceyspeed% = 0
+hits% = 0
+CURSOR(0)
+WHILE hits% < TARGETS%
+  NOUPDATE
+  PROCbackground
+  SETXY(FaceX%, FaceY%)
+  PROCface
+  FOR i% = 1 TO hits%
+    PROCbottle(50 * i% - 35, 740)
+  NEXT
+  COLOUR(BROWN)
+  THICKNESS(272)
+  SETXY(0, 863)
+  DRAWXY(1000, 0)
+  PROCgunsight
+  THICKNESS(2)
+  UPDATE
+  FaceX% = FaceX% + facexspeed%
+  FaceY% = FaceY% + faceyspeed%
+  IF FaceX% > 1100 THEN FaceX% = -100
+  IF FaceX% < -100 THEN FaceX% = 1100
+  IF (FaceY% < 100) OR (FaceY% > 625) THEN faceyspeed% = faceyspeed% * -1
+  IF ((?LMOUSE > 0) AND (((?MOUSEX - FaceX%) * (?MOUSEX - FaceX%)) + ((?MOUSEY - FaceY%) * (?MOUSEY - FaceY%)) < 10000)) THEN
+    FaceX% = -100
+    facexspeed% = RND(5) + 1
+    faceyspeed% = RND(9) - 5
+    FaceY% = RND(550) + 49
+    INC(hits%)
+  ENDIF
+ENDWHILE
+BLANK(BLACK)
+SETXY(200, 450)
+COLOUR(GREEN)
+PRINT("  Well done!  ", 4, 75)
+END
+
+DEF PROCbottle(x%, y%)
+  SETXY(x%, y%)
+  COLOUR(CYAN)
+  MOVEXY(0, -15)
+  THICKNESS(40)
+  DRAWXY(0, -50)
+  THICKNESS(10)
+  DRAWXY(0, -40)
+  THICKNESS(2)
+  MOVEXY(-20, 90)
+  MOVEXY(40, 0)
+  MOVEXY(0, -20)
+  MOVEXY(-40, 0)
+  COLOUR(PURPLE)
+  POLYGON(4)
+  MOVEXY(20, 35)
+ENDPROC
+
+DEF PROCaddhat
+  SETXY(FaceX%, FaceY% - 80)
+  COLOUR(DARKGREY)
+  ELLBLOT(90, 30)
+  THICKNESS(2)
+  COLOUR(BLACK)
+  ELLIPSE(90, 30)
+  MOVEXY(-70, 0)
+  THICKNESS(4)
+  DRAWXY(35, -70)
+  DRAWXY(70, 0)
+  DRAWXY(35, 70)
+  COLOUR(DARKGREY)
+  THICKNESS(1)
+  POLYGON(4)
+ENDPROC
+
+DEF PROCface
+  THICKNESS(1)
+  COLOUR(&FF8899)
+  BLOT(100)
+  COLOUR(WHITE)
+  SETXY(FaceX% - 20, FaceY% - 20)
+  BLOT(10)
+  COLOUR(BLACK)
+  BLOT(4)
+  THICKNESS(4)
+  MOVEXY(0, -22)
+  COLOUR(&663300)
+  DRAWXY(15, 15)
+  THICKNESS(1)
+  COLOUR(WHITE)
+  SETXY(FaceX% + 20, FaceY% - 20)
+  BLOT(10)
+  COLOUR(BLACK)
+  BLOT(4)
+  THICKNESS(4)
+  MOVEXY(0, -22)
+  COLOUR(&663300)
+  DRAWXY(-15, 15)
+  PROCaddhat
+  SETXY(FaceX%, FaceY% + 13)
+  COLOUR(RED)
+  BLOT(10)
+  MOVEXY(0, 32)
+  ELLBLOT(30, 6)
+  COLOUR(WHITE)
+  ELLBLOT(20, 4)
+ENDPROC
+
+DEF PROCbackground
+  BLANK(COFFEE)
+  PROCbottle(100, 500)
+  PROCbottle(200, 500)
+  PROCbottle(450, 500)
+  PROCbottle(500, 500)
+  PROCbottle(565, 500)
+  PROCbottle(865, 500)
+  COLOUR(DARKBROWN)
+  THICKNESS(20)
+  SETXY(0, 125)
+  DRAWXY(1000, 0)
+  SETXY(0, 325)
+  DRAWXY(1000, 0)
+  SETXY(0, 525)
+  DRAWXY(1000, 0)
+  COLOUR(BROWN)
+  THICKNESS(30)
+  SETXY(0, 100)
+  DRAWXY(1000, 0)
+  SETXY(0, 300)
+  DRAWXY(1000, 0)
+  SETXY(0, 500)
+  DRAWXY(1000, 0)
+ENDPROC
+
+DEF PROCgunsight
+  COLOUR(BLACK)
+  THICKNESS(6)
+  SETXY(?MOUSEX - 50, ?MOUSEY)
+  DRAWXY(100, 0)
+  SETXY(?MOUSEX, ?MOUSEY - 50)
+  DRAWXY(0, 100)
+ENDPROC
