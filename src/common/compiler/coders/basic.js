@@ -17,6 +17,9 @@ const coder = (routine, lex, startLine, oneLine = false) => {
     case 'identifier':
       // variable assignment
       if (routine.lexemes[lex + 1] && (routine.lexemes[lex + 1].content === '=')) {
+        if (find.program(routine).constants.some(x => x.name === routine.lexemes[lex].content)) {
+          throw error('Constant {lex} cannot be assigned a new value.', routine.lexemes[lex])
+        }
         result = molecules.variableAssignment(routine, routine.lexemes[lex].content, lex + 2, 'BASIC')
         break
       }

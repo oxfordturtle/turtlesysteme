@@ -1,8 +1,8 @@
 REM AimCannon
 
-GUNLENGTH% = 1000
-DISTANCECOL% = GREEN
-TIMECOL% = RED
+CONST GUNLENGTH% = 1000
+CONST DISTANCECOL% = GREEN
+CONST TIMECOL% = RED
 CANVAS(0, 0, 10500, 10000)
 PROCgraphaxes
 TURTD% = 45
@@ -86,7 +86,7 @@ DEF PROCfire(xvel%, yvel%, gravity%, floor%)
     INC(steps%)
     IF PIXCOL(TURTX%, TURTY%) = BLACK THEN
       COLOUR(WHITE)
-      BLOT(80)
+      BLOT(90)
     ENDIF
     MOVEXY(xvel%, yvel%)
     yvel% = yvel% + gravity%

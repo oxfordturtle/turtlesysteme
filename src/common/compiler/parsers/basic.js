@@ -9,13 +9,14 @@ and subroutines (with their variables and parameters) - lexemes for the program 
 subroutine) code themselves are just stored for subsequent handling by the pcoder
 */
 import error from '../tools/error'
-import * as factory from './factory/factory'
+import * as factory from './factory/basic'
 
 export default (lexemes) => {
   const routines = [] // array of routines (0 being the main program)
   let lex = 0 // index of the current lexeme
   let routine = {} // reference to the current routine
   let variable = {} // reference to the current variable
+  let result = {} // reference to result of any factory functions
   let inProgram = true // whether we are currently parsing the main program code
   let inProcedure = false // whether we are currently parsing a procedure subroutine
   let inFunction = false // whether we are currently parsing a function subroutine
@@ -31,11 +32,37 @@ export default (lexemes) => {
   while (lex < lexemes.length) {
     switch (state) {
       case 'start':
-        // expecting either global array declarations or the main program commands
+        // expecting either constant definitions, global array declarations, or program commands
         if (lexemes[lex].content === 'DEF') {
           throw error('Subroutines must be defined after program "END".', lexemes[lex])
         }
-        state = (lexemes[lex].content === 'DIM') ? 'dim' : 'prog'
+        if (lexemes[lex].content === 'CONST') {
+          lex += 1
+          state = 'const'
+        } else if (lexemes[lex].content === 'DIM') {
+          lex += 1
+          state = 'dim'
+        } else {
+          state = 'prog'
+        }
+        break
+
+      case 'const':
+        if (routine.variables.length > 0) {
+          throw error('Constants must be defined before any DIM statements.', lexemes[lex])
+        }
+        // expecting "<identifier> = <value>"
+        result = factory.constant(lexemes, lex, routine)
+        // add the constant to the routine
+        routine.constants.push(result.constant)
+        // newline check
+        lex = next(lexemes, result.lex)
+        // sanity check
+        if (!lexemes[lex]) {
+          throw error('No program text found after constant definition.', lexemes[lex - 1])
+        }
+        // back to the start
+        state = 'start'
         break
 
       case 'dim':
@@ -349,9 +376,13 @@ const next = (lexemes, lex) => {
   return lex + 2
 }
 
-// check if a routine contains a variable of a given name
-const exists = (routine, string) =>
-  routine.variables.some((x) => ((x.name || x.names.basic) === string))
+// check if a routine contains a variable or constant of a given name
+const exists = (routine, string) => {
+  const haystack = routine.constants
+    ? routine.constants.concat(routine.variables)
+    : routine.variables
+  return haystack.some((x) => ((x.name || x.names.basic) === string))
+}
 
 // get the fulltype of a variable from its name
 const varFulltype = string => {

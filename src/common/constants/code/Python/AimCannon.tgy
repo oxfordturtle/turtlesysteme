@@ -64,7 +64,7 @@ def fire(xvel: int, yvel: int, gravity: int, floor: int):
     steps = steps + 1
     if (pixcol(turtx, turty) == black):
       colour(white)
-      blot(80)
+      blot(90)
     movexy(xvel, yvel)
     yvel = yvel + gravity
     if (turty > floor):

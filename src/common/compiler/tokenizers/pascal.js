@@ -108,8 +108,8 @@ const octal = (code) => {
 }
 
 const hexadecimal = (code) => {
-  const bad = code.match(/^((&|#|(0x))[A-Fa-f0-9]+)\b/)
-  const good = code.match(/^(\$[A-Fa-f0-9]+)\b/)
+  const bad = code.match(/^((&|(0x))[A-Fa-f0-9]+)\b/)
+  const good = code.match(/^((\$|#)[A-Fa-f0-9]+)\b/)
   if (bad) return { type: 'bad-hexadecimal', content: bad[0] }
   if (good) return { type: 'hexadecimal', content: good[0] }
   return false

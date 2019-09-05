@@ -1,4 +1,4 @@
 /*
 An associative array of file extensions.
 */
-export default { BASIC: 'tgb', Pascal: 'tgp', Python: 'tgy' }
+export default { BASIC: 'tbas', Pascal: 'tpas', Python: 'tpy' }

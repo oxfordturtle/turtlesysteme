@@ -91,8 +91,8 @@ const binary = (code) => {
 }
 
 const hexadecimal = (code) => {
-  const bad = code.match(/^((\$|#|(0x))[A-Fa-f0-9]+)\b/)
-  const good = code.match(/^(&[A-Fa-f0-9]+)\b/)
+  const bad = code.match(/^((\$|(0x))[A-Fa-f0-9]+)\b/)
+  const good = code.match(/^((&|#)[A-Fa-f0-9]+)\b/)
   if (bad) return { type: 'bad-hexadecimal', content: bad[0] }
   if (good) return { type: 'hexadecimal', content: good[0] }
   return false
@@ -108,7 +108,7 @@ const decimal = (code) => {
 
 // keywords
 const keyword = (code) => {
-  const test = code.match(/^(DEF|DIM|ELSE|END|ENDIF|ENDPROC|ENDWHILE|FOR|IF|LOCAL|NEXT|PRIVATE|REPEAT|RETURN|STEP|THEN|TO|UNTIL|WHILE)\b/)
+  const test = code.match(/^(CONST|DEF|DIM|ELSE|END|ENDIF|ENDPROC|ENDWHILE|FOR|IF|LOCAL|NEXT|PRIVATE|REPEAT|RETURN|STEP|THEN|TO|UNTIL|WHILE)\b/)
   return test ? { type: 'keyword', content: test[0] } : false
 }
 

@@ -1,6 +1,6 @@
 REM Arcade
 
-TARGETS% = 10
+CONST TARGETS% = 10
 FaceX% = -100
 FaceY% = 625
 facexspeed% = 5

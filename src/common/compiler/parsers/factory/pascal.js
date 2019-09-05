@@ -44,8 +44,8 @@ export const constant = (lexemes, lex, routine) => {
   if (identifier.content === find.program(routine).name) {
     throw error('Constant name {lex} is already the name of the program.', identifier)
   }
-  if (isDuplicate(routine, identifier.content)) {
-    throw error('{lex} is already the name of a constant in the current scope.', identifier)
+  if (find.program(routine).constants.some(x => x.name === identifier.content)) {
+    throw error('{lex} is already the name of a constant.', identifier)
   }
   if (!assignment) {
     throw error('Constant must be assigned a value.', identifier)
@@ -137,8 +137,11 @@ export const variables = (lexemes, lex, routine, parameter = false, byref = fals
     if (lexemes[lex].content === find.program(routine).name) {
       throw error('Variable name {lex} is already the name of the program.', lexemes[lex])
     }
-    if (isDuplicate(routine, lexemes[lex].content)) {
-      throw error('{lex} is already the name of a constant or variable in the current scope.', lexemes[lex])
+    if (find.program(routine).constants.some(x => x.name === lexemes[lex].content)) {
+      throw error('Variable name {lex} is already the name of a constant.', lexemes[lex])
+    }
+    if (routine.variables.some(x => x.name === lexemes[lex].content)) {
+      throw error('Duplicate variable name {lex}.', lexemes[lex])
     }
 
     // create the variable and add it to the array of variables
@@ -432,7 +435,3 @@ const parameters = (lexemes, lex, routine) => {
 
   return { lex, parameters }
 }
-
-// check if a string is already the name of a variable or constant in a routine
-const isDuplicate = (routine, name) =>
-  routine.variables.concat(routine.constants).some((x) => x.name === name)

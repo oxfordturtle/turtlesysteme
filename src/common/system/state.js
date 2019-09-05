@@ -158,7 +158,8 @@ export const send = (signal, data) => {
         const ext = bits.pop()
         const name = bits.join('.')
         switch (ext) {
-          case 'tgb':
+          case 'tbas': // fallthrough
+          case 'tgb': // support old file extension
             set('language', 'BASIC')
             set('name-BASIC', name)
             set('compiled-BASIC', false)
@@ -168,7 +169,8 @@ export const send = (signal, data) => {
             set('pcode-BASIC', [])
             break
 
-          case 'tgp':
+          case 'tpas': // fallthrough
+          case 'tgp': // support old file extension
             set('language', 'Pascal')
             set('name-Pascal', name)
             set('compiled-Pascal', false)
@@ -178,7 +180,8 @@ export const send = (signal, data) => {
             set('pcode-Pascal', [])
             break
 
-          case 'tgy':
+          case 'tpy': // fallthrough
+          case 'tgy': // support old file extension
             set('language', 'Python')
             set('name-Python', name)
             set('compiled-Python', false)
