@@ -4,6 +4,7 @@ The entry point for the browser version.
 import system from './system'
 import help from './help'
 import about from './about'
+import examples from './examples'
 import { send } from 'common/system/state'
 import 'common/styles/browser.scss'
 
@@ -24,6 +25,10 @@ switch (tse.dataset.page) {
 
   case 'about':
     about(tse)
+    break
+
+  case 'examples':
+    examples(tse)
     break
 }
 

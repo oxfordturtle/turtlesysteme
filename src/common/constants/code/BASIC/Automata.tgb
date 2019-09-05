@@ -28,6 +28,7 @@ NEXT
 END
 
 DEF PROCsetup(rulecode%)
+  LOCAL nhood%
   FOR nhood% = 0 TO 7
     nextstate%(nhood%) = rulecode% MOD 2
     rulecode% = rulecode% DIV 2
@@ -35,6 +36,8 @@ DEF PROCsetup(rulecode%)
 ENDPROC
 
 DEF PROCnextgen(g%)
+  LOCAL x%, xmod%, thispix%
+  LOCAL n1%, n2%, n3%
   FOR x% = -1 TO WIDTH%
     xmod% = (x% + WIDTH%) MOD WIDTH%
     thispix% = PIXCOL(xmod%, g% - 1) AND 1

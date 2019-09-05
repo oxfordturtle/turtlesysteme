@@ -34,6 +34,7 @@ UNTIL (ABS(px% - 500) > 490) OR (ABS(py% - 500) > 480)
 END
 
 DEF PROCsetup
+  LOCAL n%
   PENUP
   px% = 500
   py% = 500
@@ -55,6 +56,7 @@ DEF PROCsetup
 ENDPROC
 
 DEF PROCdraw(positive%)
+  LOCAL n%
   IF positive% THEN
     COLOUR(MOLCOLOUR%)
     radius% = MOLRADIUS%
@@ -76,6 +78,7 @@ DEF PROCdraw(positive%)
 ENDPROC
 
 DEF PROCmove(m%)
+  LOCAL degturn%, impact%
   SETXY(mx%(m%), my%(m%))
   DIRECTION(md%(m%))
   FORWARD(ms%(m%))

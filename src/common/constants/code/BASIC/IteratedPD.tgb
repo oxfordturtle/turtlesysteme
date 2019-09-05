@@ -1,8 +1,8 @@
 REM IteratedPD
 
 DIM util%(13)
-WIDTH% = 32
-HEIGHT% = 32
+WIDTH% = 50
+HEIGHT% = 50
 N% = 10
 CANVAS(0, 0, WIDTH%, HEIGHT%)
 RESOLUTION(WIDTH%, HEIGHT%)
@@ -46,6 +46,7 @@ ENDWHILE
 END
 
 DEF PROCutility(x%, y%)
+  LOCAL this%, utot%, i%, j%, flag%
   this% = PIXCOL(x%, y%) AND &7
   utot% = 0
   FOR i% = -1 TO 1
@@ -60,6 +61,7 @@ DEF PROCutility(x%, y%)
 ENDPROC
 
 DEF PROCpickbest(x%, y%)
+  LOCAL i%, j%, bestsofar%
   bestsofar% = PIXCOL(x%, y%)
   IF RND(5) >= 0 THEN
     FOR i% = -1 TO 1

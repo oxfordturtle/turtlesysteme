@@ -28,6 +28,7 @@ ENDWHILE
 END
 
 DEF PROCtriangle(col%)
+  LOCAL count%
   bouncex% = FALSE
   bouncey% = FALSE
   SETXY(x%, y%)

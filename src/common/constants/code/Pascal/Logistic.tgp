@@ -42,7 +42,7 @@ VAR gen, pop: integer;
     print('Set r:', 4, 25);
     for i := 21 to 40 do
       begin
-        setxy(((i - 1) mod 10) * 90 + 130,((i - 1) div 10) * 50 - 100 - tmargin);
+        setxy(((i - 1) mod 10) * 90 + 130, ((i - 1) div 10) * 50 - 100 - tmargin);
         if i = r then
           box(90, 50, red, true)
         else

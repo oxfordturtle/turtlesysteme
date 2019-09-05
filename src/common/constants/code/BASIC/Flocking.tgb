@@ -36,6 +36,7 @@ UNTIL 0 = 1
 END
 
 DEF PROCsetup
+  LOCAL n%
   PENUP
   COLOUR(HALOCOLOUR%)
   FOR n% = 0 TO NUMBOIDS%
@@ -51,6 +52,7 @@ DEF PROCsetup
 ENDPROC
 
 DEF PROCdraw(positive%)
+  LOCAL n%
   IF positive% THEN
     COLOUR(BOIDCOLOUR%)
     radius% = BOIDRADIUS%
@@ -65,6 +67,8 @@ DEF PROCdraw(positive%)
 ENDPROC
 
 DEF PROCaverages
+  LOCAL totalx%, totaly%, totalxv%, totalyv%
+  LOCAL n%
   totalx% = 0
   totaly% = 0
   totalvx% = 0
@@ -91,6 +95,8 @@ DEF PROCsettarget
 ENDPROC
 
 DEF PROCmove(b%)
+  LOCAL n%
+  LOCAL distx%, disty%, speed%
   boidvx%(b%) = boidvx%(b%) + (avgx% - boidx%(b%)) / POSFACTOR% + (avgvx% - boidvx%(b%)) / VELFACTOR%
   boidvy%(b%) = boidvy%(b%) + (avgy% - boidy%(b%)) / POSFACTOR% + (avgvy% - boidvy%(b%)) / VELFACTOR%
   FOR n% = 0 TO NUMBOIDS%

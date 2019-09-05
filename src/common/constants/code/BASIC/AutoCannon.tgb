@@ -19,6 +19,7 @@ NEXT
 END
 
 DEF PROCgraphaxes
+  LOCAL n%
   THICKNESS(5)
   SETXY(9700, 600)
   DRAWXY(0, 3900)

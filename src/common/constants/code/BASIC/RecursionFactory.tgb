@@ -24,6 +24,7 @@ ENDIF
 END
 
 DEF PROCrecurse(flag%, size%, depth%, col%)
+  LOCAL storex%, storey%, sides%
   IF depth% > 0 THEN
     IF depth% < slowlev% THEN NOUPDATE ELSE UPDATE
     IF flag% = 1 THEN

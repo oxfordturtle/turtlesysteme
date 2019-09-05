@@ -1,7 +1,7 @@
 REM NoughtsAndCrosses
 
 DIM board%(11)
-DIM b2%(11)
+DIM b2%(9, 11)
 CROSS% = 33
 NOUGHT% = 2
 numgames% = 0
@@ -35,8 +35,8 @@ REPEAT
           UNTIL ?LMOUSE > 0
           PAUSE(200)
         UNTIL ((?CLICKX >= 125) AND (?CLICKX <= 875) AND (?CLICKY >= 50) AND (?CLICKY <= 800))
-        column% = (?CLICKX-125) DIV 250
-        row% = (?CLICKY-50) DIV 250
+        column% = (?CLICKX - 125) DIV 250
+        row% = (?CLICKY - 50) DIV 250
       UNTIL board%(column% + row% * 3) = 0
       PROCdoblot(column%, row%, CROSS%)
       board%(column% + row% * 3) = CROSS%
@@ -72,6 +72,7 @@ DEF PROCcopy(RETURN fromarray%(), RETURN toarray%())
 ENDPROC
 
 DEF PROCevaluate(RETURN b1%(), jm%, depth%)
+  LOCAL mover%, replyscore%, m%
   mover% = CROSS% + NOUGHT% - jm%
   replyscore% = -2
   b1%(9) = 0
@@ -89,14 +90,14 @@ DEF PROCevaluate(RETURN b1%(), jm%, depth%)
     m% = 0
     REPEAT
       IF (b1%(m%) = 0) THEN
-        PROCcopy(b1%, b2%)
-        b2%(m%) = mover%
-        PROCevaluate(b2%, mover%, depth% + 1)
-        IF (b2%(9) > replyscore%) THEN
-          replyscore% = b2%(9)
-          b1%(10) = m%
-          b1%(11) = b2%(11)
-        ENDIF
+       PROCcopy(b1%, b2%(depth%))
+       b2%(depth%, m%) = mover%
+       PROCevaluate(b2%(depth%), mover%, depth% + 1)
+       IF (b2%(depth%, 9) > replyscore%) THEN
+         replyscore% = b2%(depth%, 9)
+         b1%(10) = m%
+         b1%(11) = b2%(depth%, 11)
+       ENDIF
       ENDIF
       m% = m% + 1
     UNTIL (m% > 8) OR (replyscore% > 0)

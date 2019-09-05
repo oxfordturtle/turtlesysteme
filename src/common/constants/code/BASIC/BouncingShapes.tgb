@@ -25,10 +25,10 @@ FOR n% = 1 TO SHAPES%
 NEXT
 WHILE 0 < 1
   NOUPDATE
+  BLANK(WHITE)
   FOR n% = 1 TO SHAPES%
     SETXY(x%(n%), y%(n%))
     DIRECTION(d%(n%))
-    PROCdrawshape(sides%(n%), size%(n%), WHITE)
     x%(n%) = x%(n%) + xvel%(n%)
     y%(n%) = y%(n%) + yvel%(n%)
     d%(n%) = (d%(n%) + dvel%(n%)) MOD 360
@@ -50,6 +50,7 @@ ENDWHILE
 END
 
 DEF PROCdrawshape(sid%, siz%, col%)
+  LOCAL count%
   bouncex% = FALSE
   bouncey% = FALSE
   COLOUR(col%)

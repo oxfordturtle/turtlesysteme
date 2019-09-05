@@ -44,6 +44,7 @@ UNTIL 0 = 1
 END
 
 DEF PROCsetup
+  LOCAL n%
   FOR n% = 0 TO MAXSPEED%
     cspeednum%(n%) = 0
     gspeednum%(n%) = 0
@@ -72,6 +73,7 @@ DEF PROCsetup
 ENDPROC
 
 DEF PROCaxes(graphbase%)
+  LOCAL n%, scale%
   COLOUR(BLACK)
   SETXY(GRAPHLEFT%, graphbase% - GRAPHHEIGHT%)
   DRAWXY(0, GRAPHHEIGHT%)
@@ -87,6 +89,7 @@ DEF PROCaxes(graphbase%)
 ENDPROC
 
 DEF PROCgraph
+  LOCAL n%, ctotal%, gtotal%
   NOUPDATE
   BLANK(WHITE)
   PROCaxes(450)
@@ -152,6 +155,7 @@ DEF PROCdeadgazelle(g%)
 ENDPROC
 
 DEF PROCbabycheetah(speed%)
+  LOCAL b%
   b% = 0
   REPEAT
     INC(b%)
@@ -168,6 +172,7 @@ DEF PROCbabycheetah(speed%)
 ENDPROC
 
 DEF PROCbabygazelle(speed%)
+  LOCAL b%
   b% = 0
   REPEAT
     INC(b%)
@@ -183,6 +188,8 @@ DEF PROCbabygazelle(speed%)
 ENDPROC
 
 DEF PROCgeneration
+  LOCAL n%, tries%
+  LOCAL c%, g%, s%, b%
   FOR c% = 0 TO cnum% / CHUNTINGRATIO% REM cheetahs hunt gazelles
     c% = RND(MAXANIMALS%)
     IF (cspeed%(c%) > 0) AND (gnum% > MNGAZELLES%) THEN

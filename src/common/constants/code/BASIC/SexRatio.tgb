@@ -23,6 +23,7 @@ UNTIL generation% = 900
 END
 
 DEF PROCaxes
+  LOCAL i%
   FOR i% = 1 TO 9
     SETXY(LEFTMARGIN% + i% * 100 - 25, TOPMARGIN% + 800)
     PRINT(STR$(i% * 100), 4, 20)
@@ -47,6 +48,7 @@ DEF PROCaxes
 ENDPROC
 
 DEF PROCgraph
+  LOCAL females%, n%
   females% = 0
   FOR n% = 0 TO POPULATION%
     IF female%(n%) THEN INC(females%)
@@ -57,6 +59,8 @@ DEF PROCgraph
 ENDPROC
 
 DEF PROCdomating
+  LOCAL a%, b%, replace%
+  LOCAL inheritA%
   REPEAT
     a% = RND(POPULATION%)
     b% = RND(POPULATION%)

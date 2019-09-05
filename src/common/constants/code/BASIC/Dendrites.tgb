@@ -1,9 +1,9 @@
 REM Dendrites
 
 HALF% = 100
-CRYSTAL% = cyan
-MOLECULE% = white
-SOLUTION% = teal
+CRYSTAL% = CYAN
+MOLECULE% = WHITE
+SOLUTION% = TEAL
 INITRANDOMRADIUS% = 10
 MAXDISTANCE% = 75
 CYCLEMOD% = 5
@@ -15,7 +15,7 @@ PENUP
 SETXY(-HALF%, -HALF%)
 BOX(whole%, whole%, SOLUTION%, TRUE)
 randomradius% = INITRANDOMRADIUS%
-WRITELN("Initial randomradius = " + str(randomradius))
+WRITELN("Initial randomradius = " + STR$(randomradius%))
 PIXSET(0, 0, CRYSTAL%)
 numattached% = 1
 WRITELN("Counting molecules within growing crystal:")
@@ -28,8 +28,9 @@ REPEAT
   FORWARD(HALF%)
   IF PIXCOL(TURTX%, TURTY%) <> SOLUTION% THEN
     PROCrandomwalk
+  ENDIF
   cycle% = 0
-  WHILE NOT(RNattached(TURTX%, TURTY%))
+  WHILE NOT(FNattached(TURTX%, TURTY%))
     PIXSET(TURTX%, TURTY%, MOLECULE%)
     IF cycle% MOD CYCLEMOD% = 0 THEN
       UPDATE
@@ -43,7 +44,7 @@ REPEAT
     PROCbiasedwalk
   ENDWHILE
   IF numattached% MOD 10 = 0 THEN
-    WRITELN(STR$(numattached))
+    WRITELN(STR$(numattached%))
   ELSE
     WRITE(STR$(numattached%) + " ")
   ENDIF
@@ -69,6 +70,7 @@ DEF FNattached(x%, y%)
 = result%
 
 DEF PROCrandomwalk
+  LOCAL n%
   REPEAT
     n% = RND(4) * 2
     TURTX% = TURTX% + n% DIV 3 - 1
@@ -81,6 +83,7 @@ DEF PROCrandomwalk
 ENDPROC
 
 DEF PROCbiasedwalk
+  LOCAL distance%, turn%, range%
   TURNXY(-TURTX%, -TURTY%)
   distance% = HYPOT(TURTX%, TURTY%, 1)
   IF distance% < randomradius% THEN
