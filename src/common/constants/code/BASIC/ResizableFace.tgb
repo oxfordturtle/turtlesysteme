@@ -3,15 +3,6 @@ REM ResizableFace
 PROCface(400)
 END
 
-DEF PROCeye(size%)
-  COLOUR(WHITE)
-  ELLBLOT(size% * 3 / 20, size% / 10)
-  COLOUR(EMERALD)
-  BLOT(size% * 9 / 100)
-  COLOUR(BLACK)
-  BLOT(size% / 25)
-ENDPROC
-
 DEF PROCface(size%)
   COLOUR(PEACH)
   BLOT(size%)
@@ -30,4 +21,13 @@ DEF PROCface(size%)
   PROCeye(size%)
   BACK(size% * 4 / 5)
   PROCeye(size%)
+ENDPROC
+
+DEF PROCeye(size%)
+  COLOUR(WHITE)
+  ELLBLOT(size% * 3 / 20, size% / 10)
+  COLOUR(EMERALD)
+  BLOT(size% * 9 / 100)
+  COLOUR(BLACK)
+  BLOT(size% / 25)
 ENDPROC

@@ -68,7 +68,7 @@ DEF PROCmenu
   SETXY(10, -TMARGIN% + 20)
   PRINT("Set k:", 4, 25)
   FOR i% = 21 TO 40
-    SETXY(((i% - 1) MOD 10) * 90 + 130,((i% - 1) DIV 10) * 50 - 100 - TMARGIN%)
+    SETXY(((i% - 1) MOD 10) * 90 + 130, ((i% - 1) DIV 10) * 50 - 100 - TMARGIN%)
     IF i% = r% THEN
       BOX(90, 50, RED, TRUE)
     ELSE

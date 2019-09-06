@@ -1,7 +1,7 @@
 /*
 The machine settings component.
 */
-import { show } from '../tabs'
+import { showTab } from '../dom'
 import { send, on } from 'common/system/state'
 
 // the exported elements
@@ -88,7 +88,7 @@ stackSizeInput.addEventListener('change', (e) => {
 })
 
 // register to keep in sync with system state
-on('show-settings', () => { show('Settings') })
+on('show-settings', () => { showTab('Settings') })
 on('show-canvas-changed', (value) => { showCanvasInput.checked = value })
 on('show-output-changed', (value) => { showOutputInput.checked = value })
 on('show-memory-changed', (value) => { showMemoryInput.checked = value })

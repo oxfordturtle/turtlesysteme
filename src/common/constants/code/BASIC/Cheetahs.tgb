@@ -25,7 +25,7 @@ CBREEDFOOD% = 10
 CMATINGRATIO% = 2
 GMATINGRATIO% = 1
 CHUNTINGRATIO% = 1
-SLOWAGE% = 100 REM speed starts declining
+SLOWAGE% = 100
 AGEFACTOR% = 0
 GRAPHLEFT% = 60
 GRAPHWIDTH% = 900
@@ -59,7 +59,7 @@ DEF PROCsetup
     INC(cspeednum%(cspeed%(n%)))
   NEXT
   FOR n% = cnum% TO MAXANIMALS%
-    cspeed%(n%) = 0 REM i.e. not alive
+    cspeed%(n%) = 0
   NEXT
   FOR n% = 0 TO gnum%
     ggenspeed%(n%) = RND(STARTFAST% - STARTSLOW%) + STARTSLOW%
@@ -68,7 +68,7 @@ DEF PROCsetup
     INC(gspeednum%(gspeed%(n%)))
   NEXT
   FOR n% = gnum% TO MAXANIMALS%
-    gspeed%(n%) = 0 REM i.e. not alive
+    gspeed%(n%) = 0
   NEXT
 ENDPROC
 
@@ -159,8 +159,7 @@ DEF PROCbabycheetah(speed%)
   b% = 0
   REPEAT
     INC(b%)
-  UNTIL (cspeed%(b%) = 0) OR (b% = MAXANIMALS%) REM find empty space
-  IF cspeed%(b%) = 0 THEN
+  UNTIL (cspeed%(b%) = 0) OR (b% = MAXANIMALS%)
     INC(cnum%)
     cgenspeed%(b%) = speed% + RND(2 * RANDMARGINC%) - RANDMARGINC%
     cgenspeed%(b%) = MAX(1, MIN(MAXSPEED%, cgenspeed%(b%)))
@@ -176,7 +175,7 @@ DEF PROCbabygazelle(speed%)
   b% = 0
   REPEAT
     INC(b%)
-  UNTIL (gspeed%(b%) = 0) OR (b% = MAXANIMALS%) REM find empty space
+  UNTIL (gspeed%(b%) = 0) OR (b% = MAXANIMALS%)
   IF gspeed%(b%) = 0 THEN
     INC(gnum%)
     ggenspeed%(b%) = speed% + RND(2 * RANDMARGING%) - RANDMARGING%
@@ -190,7 +189,7 @@ ENDPROC
 DEF PROCgeneration
   LOCAL n%, tries%
   LOCAL c%, g%, s%, b%
-  FOR c% = 0 TO cnum% / CHUNTINGRATIO% REM cheetahs hunt gazelles
+  FOR c% = 0 TO cnum% / CHUNTINGRATIO%
     c% = RND(MAXANIMALS%)
     IF (cspeed%(c%) > 0) AND (gnum% > MNGAZELLES%) THEN
       tries% = 0
@@ -204,21 +203,21 @@ DEF PROCgeneration
       ENDIF
     ENDIF
   NEXT
-  FOR n% = 0 TO cnum% / CMATINGRATIO% REM cheetahs try mating
+  FOR n% = 0 TO cnum% / CMATINGRATIO%
     c% = RND(MAXANIMALS%)
     IF (cnum% < MAXANIMALS%) AND (cspeed%(c%) > 0) AND (cfood%(c%) >= CBREEDFOOD%) THEN
       PROCbabycheetah(cgenspeed%(c%))
       cfood%(c%) = cfood%(c%) - CBREEDFOOD%
     ENDIF
   NEXT
-  FOR n% = 0 TO gnum% / GMATINGRATIO% REM gazelles try mating
+  FOR n% = 0 TO gnum% / GMATINGRATIO%
     g% = RND(MAXANIMALS%)
     IF (gnum% < MAXANIMALS%) AND (gspeed%(g%) > 0) THEN
       PROCbabygazelle(ggenspeed%(g%))
     ENDIF
   NEXT
   FOR n% = 0 TO MAXANIMALS%
-    IF cspeed%(n%) > 0 THEN REM live cheetah
+    IF cspeed%(n%) > 0 THEN
       INC(cage%(n%))
       IF cage%(n%) > SLOWAGE% THEN
         DEC(cspeednum%(cspeed%(n%)))
@@ -233,7 +232,7 @@ DEF PROCgeneration
         PROCdeadcheetah(n%)
       ENDIF
     ENDIF
-    IF gspeed%(n%) > 0 THEN REM live gazelle
+    IF gspeed%(n%) > 0 THEN
       INC(gage%(n%))
       IF gage%(n%) > SLOWAGE% THEN
         DEC(gspeednum%(gspeed%(n%)))

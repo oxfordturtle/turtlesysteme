@@ -1,4 +1,4 @@
-PROGRAM MandelbrotSpectrum;
+PROGRAM MandelbrotSpectrumDemo;
 CONST maxcol = 40;
       spectrum = 7;
 VAR xcentre, ycentre: integer;

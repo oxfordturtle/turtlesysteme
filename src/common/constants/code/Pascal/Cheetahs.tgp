@@ -15,7 +15,7 @@ CONST maxanimals = 500;
       cmatingratio = 2;
       gmatingratio = 1;
       chuntingratio = 1;
-      slowage = 100; {speed starts declining}
+      slowage = 100;
       agefactor = 0;
       graphleft = 60;
       graphwidth = 900;
@@ -46,7 +46,7 @@ VAR gen, cnum, gnum: integer;
         inc(cspeednum[cspeed[n]])
       end;
     for n := cnum + 1 to maxanimals do
-      cspeed[n] := 0; {i.e. not alive}
+      cspeed[n] := 0;
     for n := 1 to gnum do
       begin
         ggenspeed[n] := random(startfast + 1 - startslow) + startslow;
@@ -55,7 +55,7 @@ VAR gen, cnum, gnum: integer;
         inc(gspeednum[gspeed[n]])
       end;
     for n := gnum + 1 to maxanimals do
-      gspeed[n] := 0 {i.e. not alive}
+      gspeed[n] := 0
   End;
 
   Procedure axes(graphbase: integer);
@@ -156,7 +156,7 @@ VAR gen, cnum, gnum: integer;
     b := 0;
     repeat
       inc(b)
-    until (cspeed[b] = 0) or (b = maxanimals); {find empty space}
+    until (cspeed[b] = 0) or (b = maxanimals);
     if cspeed[b] = 0 then
       begin
         inc(cnum);
@@ -175,7 +175,7 @@ VAR gen, cnum, gnum: integer;
     b := 0;
     repeat
       inc(b)
-    until (gspeed[b] = 0) or (b = maxanimals); {find empty space}
+    until (gspeed[b] = 0) or (b = maxanimals);
     if gspeed[b] = 0 then
       begin
         inc(gnum);
@@ -192,7 +192,7 @@ VAR gen, cnum, gnum: integer;
       c, g, s, b: integer;
       tries: integer;
   Begin
-    for c := 1 to cnum / chuntingratio do {cheetahs hunt gazelles}
+    for c := 1 to cnum / chuntingratio do
       begin
         c := random(maxanimals) + 1;
         if (cspeed[c] > 0) and (gnum > mingazelles) then
@@ -209,7 +209,7 @@ VAR gen, cnum, gnum: integer;
               end
           end
       end;
-    for n := 1 to cnum / cmatingratio do {cheetahs try mating}
+    for n := 1 to cnum / cmatingratio do
       begin
         c := random(maxanimals) + 1;
         if (cnum < maxanimals) and (cspeed[c] > 0) and (cfood[c] >= cbreedfood) then
@@ -218,7 +218,7 @@ VAR gen, cnum, gnum: integer;
             cfood[c] := cfood[c] - cbreedfood
           end
       end;
-    for n := 1 to gnum / gmatingratio do {gazelles try mating}
+    for n := 1 to gnum / gmatingratio do
       begin
         g := random(maxanimals) + 1;
         if (gnum < maxanimals) and (gspeed[g] > 0) then
@@ -226,7 +226,7 @@ VAR gen, cnum, gnum: integer;
       end;
     for n := 1 to maxanimals do
       begin
-        if cspeed[n] > 0 then {live cheetah}
+        if cspeed[n] > 0 then
           begin
             inc(cage[n]);
             if cage[n] > slowage then
@@ -241,7 +241,7 @@ VAR gen, cnum, gnum: integer;
             if cfood[n] < 0 then
               deadcheetah(n)
           end;
-        if gspeed[n] > 0 then {live gazelle}
+        if gspeed[n] > 0 then
           begin
             inc(gage[n]);
             if gage[n] > slowage then

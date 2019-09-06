@@ -27,7 +27,7 @@ import * as machine from './machine'
 // current version (should match the value in the package.json file)
 // this is used at the end of this module to check against github repository, and advise the user
 // if their version is out of date
-const version = '1.0.0'
+const version = '1.0.1'
 
 // function for "sending" signals to this module, asking it to update the state
 export const send = (signal, data) => {
@@ -85,7 +85,7 @@ export const send = (signal, data) => {
         const tg = new window.Blob([get('code')], { type: 'text/plain;charset=utf-8' })
         const a1 = document.createElement('a')
         a1.setAttribute('href', URL.createObjectURL(tg))
-        a1.setAttribute('download', `${get('name')}.${extensions[get('language')]}`)
+        a1.setAttribute('download', `${get('name') || 'filename'}.${extensions[get('language')]}`)
         a1.click()
         break
 
@@ -107,7 +107,7 @@ export const send = (signal, data) => {
         const tgx = new window.Blob([json], { type: 'text/plain;charset=utf-8' })
         const a2 = document.createElement('a')
         a2.setAttribute('href', URL.createObjectURL(tgx))
-        a2.setAttribute('download', `${get('name')}.tgx`)
+        a2.setAttribute('download', `${get('name') || 'filename'}.tgx`)
         a2.click()
         break
 

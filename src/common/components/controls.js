@@ -7,46 +7,48 @@ import output from './machine/output'
 import languages from 'common/constants/languages'
 import { send, on } from 'common/system/state'
 
-// the control bar element
-const element = document.createElement('div')
-export default element
+// program controls element
+export const program = document.createElement('div')
 
-// initialise the element
-element.classList.add('tse-controls')
-element.innerHTML = `
-  <div class="tse-program-controls">
-    <select class="tse-language-select" data-bind="language-select">${languages.map(x => `<option value="${x}">${x}</option>`).join('')}</select>
-    <input class="tse-filename-input" data-bind="name-input" type="text" placeholder="filename">
+// machine controls element
+export const machine = document.createElement('div')
+
+// initialise the program controls element
+program.classList.add('tse-controls')
+program.innerHTML = `
+  <select class="tse-language-select" data-bind="language-select">${languages.map(x => `<option value="${x}">${x}</option>`).join('')}</select>
+  <input class="tse-filename-input" data-bind="name-input" type="text" placeholder="filename">`
+
+// initialise the machine controls element
+machine.classList.add('tse-controls')
+machine.innerHTML = `
+  <div class="tse-machine-buttons">
+    <button class="tse-run-halt-button" data-bind="run-halt">RUN</button>
+    <button class="tse-play-pause-button" data-bind="play-pause">&#10074;&#10074;</button>
   </div>
-  <div class="tse-machine-controls">
-    <div class="tse-machine-buttons">
-      <button class="tse-run-halt-button" data-bind="run-halt">RUN</button>
-      <button class="tse-play-pause-button" data-bind="play-pause">&#10074;&#10074;</button>
-    </div>
-    <dl class="tse-turtle-properties">
-      <dt>X</dt>
-      <dd class="tse-turtxy" data-bind="turtx">500</dd>
-      <dt>Y</dt>
-      <dd class="tse-turtxy" data-bind="turty">500</dd>
-      <dt>Direction</dt>
-      <dd class="tse-turtd" data-bind="turtd">0</dd>
-      <dt>Thickness</dt>
-      <dd class="tse-turttc" data-bind="turtt">2</dd>
-      <dt>Colour</dt>
-      <dd class="tse-turttc" style="background:#000" data-bind="turtc"></dd>
-    </dl>
-  </div>`
+  <dl class="tse-turtle-properties">
+    <dt>X</dt>
+    <dd class="tse-turtxy" data-bind="turtx">500</dd>
+    <dt>Y</dt>
+    <dd class="tse-turtxy" data-bind="turty">500</dd>
+    <dt>Direction</dt>
+    <dd class="tse-turtd" data-bind="turtd">0</dd>
+    <dt>Thickness</dt>
+    <dd class="tse-turttc" data-bind="turtt">2</dd>
+    <dt>Colour</dt>
+    <dd class="tse-turttc" style="background:#000" data-bind="turtc"></dd>
+  </dl>`
 
 // grab subelements of interest
-const nameInput = element.querySelector('[data-bind="name-input"]')
-const languageSelect = element.querySelector('[data-bind="language-select"]')
-const runHalt = element.querySelector('[data-bind="run-halt"]')
-const playPause = element.querySelector('[data-bind="play-pause"]')
-const turtx = element.querySelector('[data-bind="turtx"]')
-const turty = element.querySelector('[data-bind="turty"]')
-const turtd = element.querySelector('[data-bind="turtd"]')
-const turtt = element.querySelector('[data-bind="turtt"]')
-const turtc = element.querySelector('[data-bind="turtc"]')
+const nameInput = program.querySelector('[data-bind="name-input"]')
+const languageSelect = program.querySelector('[data-bind="language-select"]')
+const runHalt = machine.querySelector('[data-bind="run-halt"]')
+const playPause = machine.querySelector('[data-bind="play-pause"]')
+const turtx = machine.querySelector('[data-bind="turtx"]')
+const turty = machine.querySelector('[data-bind="turty"]')
+const turtd = machine.querySelector('[data-bind="turtd"]')
+const turtt = machine.querySelector('[data-bind="turtt"]')
+const turtc = machine.querySelector('[data-bind="turtc"]')
 
 // setup event listeners on interactive elements
 nameInput.addEventListener('input', (e) => {

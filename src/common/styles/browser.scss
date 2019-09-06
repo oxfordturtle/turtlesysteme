@@ -1,56 +1,25 @@
 @import '_constants';
-@import '_base';
-@import '_overlay';
-@import '_system';
-@import '_controls';
-@import '_tabs';
-@import '_file';
-@import '_code';
-@import '_usage';
-@import '_checkboxes';
-@import '_pcode';
-@import '_canvas';
-@import '_console';
-@import '_output';
-@import '_buttons';
-@import '_memory';
-@import '_settings';
-@import '_help';
+@import '_tse';
+@import '_tse-system';
+@import '_tse-help';
+@import '_tse-overlay';
+@import '_tse-controls';
+@import '_tse-tabs';
+@import '_tse-file';
+@import '_tse-buttons';
+@import '_tse-code';
+@import '_tse-usage';
+@import '_tse-lexemes';
+@import '_tse-checkboxes';
+@import '_tse-pcode';
+@import '_tse-settings';
+@import '_tse-canvas';
+@import '_tse-console';
+@import '_tse-output';
+@import '_tse-memory';
 
 .tse-system, .tse-help {
   width: $system-width;
   height: $system-height;
   margin: 0 auto;
-}
-
-.tse-system {
-  .tse-tabs {
-    height: 648px;
-  }
-}
-
-.tse-help {
-  display: flex;
-  flex-direction: column;
-  .tse-controls {
-    .tse-program-controls {
-      justify-content: flex-end;
-      margin-right: 0;
-      .tse-language-select {
-        margin-right: 0;
-      }
-      .tse-filename-input {
-        display: none;
-      }
-    }
-    .tse-machine-controls {
-      display: none;
-    }
-  }
-  .tse-tabs {
-    flex: 1;
-    .tse-tab-pane {
-      height: 100%;
-    }
-  }
 }

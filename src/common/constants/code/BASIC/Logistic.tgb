@@ -57,7 +57,7 @@ DEF PROCaxes
   SETXY(0, 1060)
   PRINT("Population over " + STR$(MAXGEN%) + " generations, where P (population/" + STR$(MAXPOP%) + ")", 4, 25)
   SETXY(0, 1110)
-  PRINT("is determined by the logistic equation P"" = rP(1 - P), with r = " + QSTR$(r%, 10, 1), 4, 25)
+  PRINT("is determined by the logistic equation P' = rP(1 - P), with r = " + QSTR$(r%, 10, 1), 4, 25)
 ENDPROC
 
 DEF PROCmenu

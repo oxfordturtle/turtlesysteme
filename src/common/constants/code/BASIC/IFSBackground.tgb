@@ -34,7 +34,7 @@ DEF PROCbackground(rad%)
       cx% = XLEFT% + DIVMULT(XRIGHT% - XLEFT%, GRIDSCALE%, x%) + GRIDTHICK%
       cy% = YTOP% + DIVMULT(YBOTTOM% - YTOP%, GRIDSCALE%, y%) + GRIDTHICK%
       r% = DIVMULT(255, GRIDSCALE% - 1, x%)
-      g% = DIVMULT(255, GRIDSCALE% - 1 , y%)
+      g% = DIVMULT(255, GRIDSCALE% - 1, y%)
       b% = DIVMULT(255, 2 * GRIDSCALE% - 2, 2 * GRIDSCALE% - 2 - x% - y%)
       RECOLOUR(cx%, cy%, (r% * &10000) + (g% * &100) + (b% * &1))
     NEXT

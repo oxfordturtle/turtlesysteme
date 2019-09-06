@@ -1,0 +1,106 @@
+.tse-help {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-gap: $padding;
+  background: $darkgray;
+  border: $padding solid $darkgray;
+  line-height: 1.3;
+  .tse-controls {
+    justify-content: flex-end;
+    .tse-filename-input {
+      display: none;
+    }
+  }
+  .tse-tabs {
+    grid-template-rows: none;
+    grid-template-columns: auto 1fr;
+    .tse-tab-list {
+      order: 1;
+      flex-direction: column;
+    }
+    .tse-tab-panes {
+      order: 2;
+      .tse-tab-pane {
+        overflow: auto;
+        padding: ($padding * 2) ($padding * 4);
+        h3, h4 {
+          font-weight: bold;
+          border-bottom: 2px solid $black;
+        }
+        h3 {
+          margin: 0 0 .75em;
+          font-size: 1em;
+        }
+        h4 {
+          font-size: 1em;
+          margin-bottom: .75em;
+        }
+        p {
+          margin: 0 0 1em;
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+        ul {
+          margin-left: 2.5em;
+          li {
+            margin-bottom: .5em;
+          }
+        }
+        i, em {
+          font-style: italic;
+        }
+        a {
+          color: $green;
+          text-decoration: none;
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+        pre {
+          font-family: $monospace;
+          background: $lightgray;
+          border: 1px solid $gray;
+          padding: $padding ($padding * 2);
+          margin: 0 0 .75em;
+        }
+        code {
+          font-family: $monospace;
+        }
+        table {
+          margin: 0;
+          margin-bottom: 1.25em;
+        }
+      }
+    }
+  }
+}
+
+.tse-commands-options {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  label {
+    cursor: pointer;
+    font-weight: bold;
+  }
+  select, div {
+    margin-bottom: 1em;
+  }
+  select {
+    font-weight: normal;
+  }
+}
+
+.tse-commands-table {
+  font-size: 1em;
+  th {
+    font-size: .9em;
+  }
+  td, th {
+    text-align: left;
+  }
+  td:first-child {
+    white-space: nowrap;
+  }
+}

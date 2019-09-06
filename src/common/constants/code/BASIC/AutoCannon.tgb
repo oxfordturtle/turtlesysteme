@@ -23,8 +23,8 @@ DEF PROCgraphaxes
   THICKNESS(5)
   SETXY(9700, 600)
   DRAWXY(0, 3900)
-  DRAWXY(-9000, 0) REM x axis 700 to 9700
-  DRAWXY(0, -3900) REM y axis 4500 to 600
+  DRAWXY(-9000, 0)
+  DRAWXY(0, -3900)
   FOR n% = 0 TO 90
     IF n% MOD 5 = 0 THEN
       SETXY(650 + n% * 100, 4600)

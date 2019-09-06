@@ -1,28 +1,22 @@
 .tse-pcode {
+  flex: 1;
   overflow: auto;
   border: 1px solid $gray;
-  background: $lightgray;
   font-size: .875em;
   line-height: 1.3;
   font-family: $monospace;
   margin: 0;
-  padding-left: 3.5em;
   list-style-type: none;
   counter-reset: pcode-table;
   li {
     display: flex;
     flex-wrap: wrap;
-    background: #fff;
+    background: $lightgray;
     counter-increment: pcode-table;
+    padding-left: 3.5em;
+    border-bottom: 1px solid $gray;
     &::before {
       content: counter(pcode-table);
-    }
-    &:not(:first-child) {
-      border-top: 1px solid $gray;
-      &::before {
-        margin-top: -1px;
-        border-top: 1px solid $gray;
-      }
     }
     &::before {
       font-weight: bold;
@@ -31,10 +25,14 @@
       padding: .25em .5em;
       text-align: right;
     }
+    &:last-child {
+      margin-bottom: -1px;
+    }
     div {
       flex: 0 0 12.5%;
       padding: .25em;
       overflow: hidden;
+      background: #fff;
       border-left: 1px solid $gray;;
       text-align: center;
     }

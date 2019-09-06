@@ -16,9 +16,9 @@ export const code = {
 export const names = {
   // examples 1
   DrawPause: 'Simple drawing with pauses',
-  SmileyFace: 'Smily face (using PENUP and ELLBLOT)',
+  SmileyFace: 'Smiley face (using PENUP and ELLBLOT)',
   ThePlough: 'The plough (using SETXY and POLYLINE)',
-  OlympicRings: 'Olympic rings (using variable)',
+  OlympicRings: 'Olympic rings (using a variable)',
   ForLoop: 'FOR (counting) loop',
   TriangleSpin: 'Spinning triangle pattern',
   Circles: 'Circling circles',
@@ -29,7 +29,7 @@ export const names = {
   // examples 2
   SimpleProc: 'Simple procedure',
   ParameterProc: 'Procedure with parameter',
-  ResizableFace: 'Resizable face',
+  ResizableFace: 'Resizable face (hierarchical procedures)',
   Polygons: 'Polygons (two parameters)',
   Stars: 'Stars (using ANGLES and FORGET)',
   PolygonRings: 'Polygon rings (three parameters)',
@@ -193,7 +193,7 @@ export const menu = [
   },
   {
     index: 5,
-    title: 'user input and interaction',
+    title: 'user input, interaction and games',
     examples: [
       'AskInput',
       'QuickClick',
@@ -210,7 +210,7 @@ export const menu = [
   },
   {
     index: 6,
-    title: 'interdisciplinary models',
+    title: 'interdisciplinary models (from CSAC)',
     examples: [
       'AimCannon',
       'AutoCannon',

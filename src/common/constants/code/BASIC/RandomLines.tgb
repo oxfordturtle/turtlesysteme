@@ -11,7 +11,7 @@ NEXT
 FOR count% = 1 TO 10000
   x% = RND(1000)
   y% = RND(1000)
-  IF PIXCOL(x%, y%)= WHITE THEN
+  IF PIXCOL(x%, y%) = WHITE THEN
     RECOLOUR(x%, y%, RGB(RND(20) + 1))
   ENDIF
 NEXT

@@ -10,8 +10,8 @@ dvel% = 5
 WHILE 0 < 1
   NOUPDATE
   BLANK(WHITE)
-  x% =x% + xvel%
-  y% =y% + yvel%
+  x% = x% + xvel%
+  y% = y% + yvel%
   d% = (d% + dvel%) MOD 360
   PROCtriangle(RED)
   UPDATE

@@ -1,17 +1,19 @@
 /*
 Setup the about page (browser).
 */
-import { create } from 'common/components/tabs'
+import * as dom from 'common/components/dom'
 import canvas from 'common/components/about/canvas'
 import system from 'common/components/about/system'
+import * as controls from 'common/components/controls'
 
 // setup the about page
 export default (tse) => {
   tse.classList.add('tse-help')
-  tse.appendChild(about)
+  dom.setContent(tse, [
+    controls.program,
+    dom.createTabs([
+      { label: 'System', active: true, content: [system] },
+      { label: 'Canvas', active: false, content: [canvas] }
+    ])
+  ])
 }
-
-const about = create([
-  { label: 'System', active: true, content: [system] },
-  { label: 'Canvas', active: false, content: [canvas] }
-])

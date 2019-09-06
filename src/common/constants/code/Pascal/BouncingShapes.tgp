@@ -46,8 +46,6 @@ BEGIN
    noupdate;
    for n := 1 to shapes do
     begin
-     setxy(x[n], y[n]);
-     direction(d[n]);
      drawshape(sides[n], size[n], white);
      x[n] := x[n] + xvel[n];
      y[n] := y[n] + yvel[n];

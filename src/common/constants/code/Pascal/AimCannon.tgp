@@ -11,8 +11,8 @@ VAR n: integer;
     thickness(5);
     setxy(9700, 600);
     drawxy(0, 3900);
-    drawxy(-9000, 0); {x axis 700 to 9700}
-    drawxy(0, -3900); {y axis 4500 to 600}
+    drawxy(-9000, 0);
+    drawxy(0, -3900);
     for n := 0 to 90 do
       if n mod 5 = 0 then
         begin

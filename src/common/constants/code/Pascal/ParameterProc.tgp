@@ -4,7 +4,7 @@ VAR count: integer;
   Procedure prong(len: integer);
   Begin
     forward(len);
-    blot(len div 20);
+    blot(len / 20);
     back(len)
   End;
 

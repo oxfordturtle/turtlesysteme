@@ -40,7 +40,7 @@ VAR x, y: integer;
 BEGIN
   x := 100;
   y := 700;
-  xvel : =8;
+  xvel := 8;
   yvel := -4;
   while 0 < 1 do
     begin

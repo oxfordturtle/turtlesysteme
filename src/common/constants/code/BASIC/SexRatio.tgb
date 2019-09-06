@@ -4,13 +4,13 @@ DIM female%(1000)
 DIM fop%(1000)
 POPULATION% = 1000
 MATEPERGEN% = 400
-RANDOMVAR% = 1 REM %
+RANDOMVAR% = 1
 LEFTMARGIN% = 70
 TOPMARGIN% = 20
 PROCaxes
 FOR n% = 0 TO POPULATION%
   female%(n%) = (RND(2) = 1)
-  fop%(n%) = 900 + RND(100) REM 900/1000 minimum
+  fop%(n%) = 900 + RND(100)
 NEXT
 generation% = 0
 REPEAT

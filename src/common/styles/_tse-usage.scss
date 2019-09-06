@@ -1,0 +1,24 @@
+.tse-usage {
+  flex: 1;
+  border: 1px solid $gray;
+  overflow-x: hidden;
+  overflow-y: auto;
+  code {
+    font-family: $monospace;
+  }
+  .tse-usage-table {
+    td, th {
+      &:first-child, &:last-child {
+        text-align: left;
+      }
+    }
+    .tse-category-heading th {
+      background: $green;
+      color: white;
+      font-style: italic;
+      font-weight: bold;
+      text-align: right;
+    }
+  }
+  .tse-lexemes-table {}
+}

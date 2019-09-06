@@ -49,6 +49,9 @@
     vertical-align: top;
     text-align: center;
     border: 1px solid $gray;
+    &.tse-wide {
+      width: 50%;
+    }
   }
   code {
     .tse-comment {

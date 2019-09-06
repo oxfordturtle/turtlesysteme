@@ -1,10 +1,10 @@
 PROGRAM Launch;
-CONST earthradius = 6371000; {m}
-      earthGM = 398600442; {km3 / s2 * 1000}
-      initdirection = 2000; {seconds of arc}
-      initthrust = 20000; {milliN per kg}
+CONST earthradius = 6371000;
+      earthGM = 398600442;
+      initdirection = 2000;
+      initthrust = 20000;
       thrusttime = 500;
-      angleprecision = 1296000; {seconds of arc}
+      angleprecision = 1296000;
 VAR x, y, d, xvel, yvel: integer;
     thrust, xthrust, ythrust: integer;
     gravity, xgravity, ygravity: integer;
@@ -57,12 +57,12 @@ BEGIN
   canvas(-10000, -10000, 20000, 20000);
   angles(angleprecision);
   x := 0;
-  y := -earthradius; {metres}
+  y := -earthradius;
   xvel := 0;
   yvel := 0;
   d := initdirection;
   t := 0;
-  prevdiff := 1; {so first apogee will report}
+  prevdiff := 1;
   thrust := initthrust;
   repeat
     drawrocket;
@@ -80,7 +80,6 @@ BEGIN
     yvel := yvel + ygravity + ythrust;
     x := x + xvel / 1000;
     y := y + yvel / 1000;
-    {report;}
     if yvel > 0 then
       d := angleprecision / 2 - arctan(xvel, yvel, 1)
     else

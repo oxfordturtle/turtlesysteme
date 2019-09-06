@@ -4,6 +4,8 @@ Required by main/index.js; handles the system menu.
 import { dialog, ipcMain, Menu, systemPreferences } from 'electron'
 import { readFile } from 'fs'
 import { show, windows } from './windows'
+import languages from 'common/constants/languages'
+import extensions from 'common/constants/extensions'
 import * as examples from 'common/constants/examples'
 
 // disable dication and emoji items in edit menu on macos
@@ -12,31 +14,26 @@ if (process.platform === 'darwin') {
   systemPreferences.setUserDefault('NSDisabledCharacterPaletteMenuItem', 'boolean', true)
 }
 
+// keep the current language around, for customising the openFile dialogue
+let currentLanguage
+
+// languages submenu
+const languagesSubmenu = languages.map(language => ({
+  type: 'radio',
+  label: `Turtle ${language}`,
+  click: () => windows.system.webContents.send('set-language', language)
+}))
+
 // system menu
 const systemMenu = {
   label: 'Turtle System E',
-  submenu: [
-    {
-      type: 'radio',
-      label: 'Turtle BASIC',
-      click: () => windows.system.webContents.send('set-language', 'BASIC')
-    },
-    {
-      type: 'radio',
-      label: 'Turtle Pascal',
-      click: () => windows.system.webContents.send('set-language', 'Pascal')
-    },
-    {
-      type: 'radio',
-      label: 'Turtle Python',
-      click: () => windows.system.webContents.send('set-language', 'Python')
-    },
+  submenu: languagesSubmenu.concat([
     { type: 'separator' },
     { label: 'Language Guide', click: () => show('help') },
     { label: 'About', click: () => show('about') },
     { type: 'separator' },
     { role: 'quit' }
-  ]
+  ])
 }
 
 // open program function (called by the file menu below)
@@ -45,9 +42,7 @@ const openProgram = () => {
     {
       properties: ['openFile'],
       filters: [
-        { name: 'Turtle Graphics BASIC', extensions: ['tgb'] },
-        { name: 'Turtle Graphics Pascal', extensions: ['tgp'] },
-        { name: 'Turtle Graphics Python', extensions: ['tgy'] },
+        { name: `Trutle Graphics ${currentLanguage}`, extensions: [extensions[currentLanguage]] },
         { name: 'Turtle Graphics Export Format', extensions: ['tgx'] }
       ]
     },
@@ -175,6 +170,7 @@ Menu.setApplicationMenu(menu)
 ipcMain.on('language-changed', (event, language) => {
   const index = { BASIC: 0, Pascal: 1, Python: 2 }
   menu.items[0].submenu.items[index[language]].checked = true
+  currentLanguage = language
 })
 
 ipcMain.on('show-canvas-changed', (event, showCanvas) => {

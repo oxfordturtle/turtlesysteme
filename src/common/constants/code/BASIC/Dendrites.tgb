@@ -26,9 +26,7 @@ REPEAT
   HOME
   DIRECTION(RND(360))
   FORWARD(HALF%)
-  IF PIXCOL(TURTX%, TURTY%) <> SOLUTION% THEN
-    PROCrandomwalk
-  ENDIF
+  IF PIXCOL(TURTX%, TURTY%) <> SOLUTION% THEN PROCrandomwalk
   cycle% = 0
   WHILE NOT(FNattached(TURTX%, TURTY%))
     PIXSET(TURTX%, TURTY%, MOLECULE%)
@@ -74,12 +72,12 @@ DEF PROCrandomwalk
   REPEAT
     n% = RND(4) * 2
     TURTX% = TURTX% + n% DIV 3 - 1
-    TURTY% = TURTY% + n% MOD  3 -1
+    TURTY% = TURTY% + n% MOD 3 - 1
     IF PIXCOL(TURTX%, TURTY%) = BLACK THEN
       TURTX% = TURTX% - 2 * (n% DIV 3 - 1)
       TURTY% = TURTY% - 2 * (n% MOD 3 - 1)
     ENDIF
-  UNTIL PIXCOL(TURTX%, TURTY%)=SOLUTION%
+  UNTIL PIXCOL(TURTX%, TURTY%) = SOLUTION%
 ENDPROC
 
 DEF PROCbiasedwalk

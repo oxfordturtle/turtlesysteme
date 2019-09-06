@@ -1,25 +1,25 @@
 REM Launch
 
-EARTHRADIUS% = 6371000 REM m
-EARTHGM% = 398600442 REM km3 / s2 * 1000
-INITDIRECTION% = 2000 REM seconds of arc
-INITTHRUST% = 20000 REM milliN per kg
+EARTHRADIUS% = 6371000
+EARTHGM% = 398600442
+INITDIRECTION% = 2000
+INITTHRUST% = 20000
 THRUSTTIME% = 500
-ANGLEPRECISION% = 1296000 REM seconds of arc
+ANGLEPRECISION% = 1296000
 CANVAS(-10000, -10000, 20000, 20000)
 ANGLES(ANGLEPRECISION%)
 x% = 0
-y% = -EARTHRADIUS% REM metres
+y% = -EARTHRADIUS%
 xvel% = 0
 yvel% = 0
 d% = INITDIRECTION%
 t% = 0
-prevdiff% = 1 REM so first apogee will report
+prevdiff% = 1
 thrust% = INITTHRUST%
 REPEAT
   PROCdrawrocket
   prevdist% = dist%
-  dist% = HYPOT(x%, y% ,1)
+  dist% = HYPOT(x%, y%, 1)
   IF (dist% - prevdist%) * prevdiff% <= 0 THEN PROCreport
   prevdiff% = dist% - prevdist%
   gravity% = DIVMULT(EARTHGM%, DIVMULT(dist%, 1000000, dist%), 1000)
@@ -31,7 +31,6 @@ REPEAT
   yvel% = yvel% + ygravity% + ythrust%
   x% = x% + xvel% / 1000
   y% = y% + yvel% / 1000
-  REM report
   IF yvel% > 0 THEN
     d% = ANGLEPRECISION% / 2 - ATN(xvel%, yvel%, 1)
   ELSE

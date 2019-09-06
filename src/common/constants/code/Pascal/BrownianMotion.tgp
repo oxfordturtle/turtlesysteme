@@ -1,7 +1,7 @@
 PROGRAM BrownianMotion;
-CONST polradius = 80; {pollen}
+CONST polradius = 80;
       molradius = 10;
-      hitradius = 90; {polradius+molradius}
+      hitradius = 90;
       molecules = 400;
       slowspeed = 30;
       highspeed = 50;

@@ -3,7 +3,7 @@ Setup the system page (Electron).
 */
 import { ipcRenderer, remote } from 'electron'
 import { create, show } from 'common/components/tabs'
-import controls from 'common/components/controls'
+import * as controls from 'common/components/controls'
 import code from 'common/components/program/code'
 import * as pcode from 'common/components/program/pcode'
 import usage from 'common/components/program/usage'
@@ -20,8 +20,10 @@ export default (tse) => {
   tse.classList.add('tse-system')
 
   // append the system components (defined below)
-  tse.appendChild(controls)
-  tse.appendChild(tabs)
+  tse.appendChild(controls.program)
+  tse.appendChild(controls.machine)
+  tse.appendChild(programTabs)
+  tse.appendChild(machineTabs)
 
   // register to switch tabs when called for
   on('file-changed', () => { show('Code') })
@@ -92,9 +94,3 @@ const machineTabs = create([
   { label: 'Output', active: false, content: [output] },
   { label: 'Memory', active: false, content: [memory.buttons, memory.stack, memory.heap] }
 ])
-
-// both tabs
-const tabs = document.createElement('div')
-tabs.classList.add('tse-body')
-tabs.appendChild(programTabs)
-tabs.appendChild(machineTabs)

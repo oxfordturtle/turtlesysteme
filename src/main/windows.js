@@ -13,8 +13,9 @@ export const windows = {
 }
 
 // function to create a new browser window
-const browserWindow = (width, height) =>
+const browserWindow = (title, width, height) =>
   new BrowserWindow({
+    title,
     width,
     height,
     minWidth: width,
@@ -32,22 +33,22 @@ export const create = (id) => {
   switch (id) {
     // create the main system window
     case 'system':
-      windows.system = browserWindow(1024, 700)
+      windows.system = browserWindow('Turtle System E', 1024, 700)
       break
 
     // create the settings window
     case 'settings':
-      windows.settings = browserWindow(500, 550)
+      windows.settings = browserWindow('Machine Options', 500, 550)
       break
 
     // create the help window
     case 'help':
-      windows.help = browserWindow(900, 600)
+      windows.help = browserWindow('Language Guide', 900, 600)
       break
 
     // create the about window
     case 'about':
-      windows.about = browserWindow(900, 600)
+      windows.about = browserWindow('About', 900, 600)
       break
   }
 

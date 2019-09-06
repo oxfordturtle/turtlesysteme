@@ -287,8 +287,6 @@ const compileWhile = (routine, lex, startLine) => {
     throw error('"WHILE" must be followed by a boolean expression.', routine.lexemes[lex - 1])
   }
   result = molecules.expression(routine, lex, 'null', 'boolean', 'Pascal')
-  console.log('result of compiling WHILE condition:')
-  console.log(result)
   lex = result.lex
   test = result.pcode
 

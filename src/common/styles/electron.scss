@@ -1,29 +1,41 @@
+@import '_constants';
+@import '_tse';
+@import '_tse-system';
+@import '_tse-help';
+@import '_tse-overlay';
+@import '_tse-controls';
+@import '_tse-tabs';
+@import '_tse-file';
+@import '_tse-buttons';
+@import '_tse-code';
+@import '_tse-usage';
+@import '_tse-lexemes';
+@import '_tse-checkboxes';
+@import '_tse-pcode';
+@import '_tse-settings';
+@import '_tse-canvas';
+@import '_tse-console';
+@import '_tse-output';
+@import '_tse-memory';
+
 html {
   height: 100vh;
-  body {
-    margin: 0;
-    height: 100%;
-  }
 }
 
-@import '_constants';
-@import '_base';
-@import '_system';
-@import '_controls';
-@import '_tabs';
-@import '_code';
-@import '_usage';
-@import '_checkboxes';
-@import '_pcode';
-@import '_canvas';
-@import '_console';
-@import '_output';
-@import '_buttons';
-@import '_memory';
-@import '_settings';
-@import '_help';
+body {
+  margin: 0;
+  height: 100%;
+}
+
+.tse-system, .tse-help {
+  height: 100%;
+}
+
+.tse-help {
+  grid-template-rows: 1fr;
+}
 
 .tse-settings {
-  padding: $padding;
   border: $padding solid $darkgray;
+  padding: $padding;
 }

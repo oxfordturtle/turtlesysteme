@@ -1,7 +1,7 @@
 PROGRAM SexRatio;
 CONST population = 1000;
       matepergen = 400;
-      randomvar = 1; {%}
+      randomvar = 1;
       leftmargin = 70;
       topmargin = 20;
 VAR female: array[1..population] of boolean;
@@ -74,7 +74,7 @@ BEGIN
   for n := 1 to population do
     begin
       female[n] := (random(2) = 0);
-      fop[n] := 900 + random(101) {900/1000 minimum}
+      fop[n] := 900 + random(101)
     end;
   generation := 0;
   repeat
