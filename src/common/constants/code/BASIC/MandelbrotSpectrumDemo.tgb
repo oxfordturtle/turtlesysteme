@@ -1,9 +1,9 @@
 REM MandelbrotSpectrumDemo
 
-DIM spectcol%(7)
-DIM boundary%(7)
-MAXCOL% = 40
-SPECTRUM% = 7
+CONST MAXCOL% = 40
+CONST SPECTRUM% = 7
+DIM spectcol%(SPECTRUM%)
+DIM boundary%(SPECTRUM%)
 PROCstartprompt
 PROCcolsetup
 xstart% = DIVMULT(xcentre%, 1000000, scale%) - pixels% / 2

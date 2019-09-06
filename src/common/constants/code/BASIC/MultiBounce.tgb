@@ -1,14 +1,14 @@
 REM MultiBounce
 
-DIM x%(10)
-DIM y%(10)
-DIM xvel%(10)
-DIM yvel%(10)
-DIM size%(10)
-DIM colr%(10)
-MINSIZE% = 70
-MAXSIZE% = 130
-BALLS% = 10
+CONST MINSIZE% = 70
+CONST MAXSIZE% = 130
+CONST BALLS% = 10
+DIM x%(BALLS%)
+DIM y%(BALLS%)
+DIM xvel%(BALLS%)
+DIM yvel%(BALLS%)
+DIM size%(BALLS%)
+DIM colr%(BALLS%)
 FOR n% = 1 TO BALLS%
   size%(n%) = MINSIZE% + RND(MAXSIZE% - MINSIZE%)
   colr%(n%) = RGB(n%)

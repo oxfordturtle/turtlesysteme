@@ -1,6 +1,6 @@
 REM StringFunctions
 
-DELAY% = 500
+CONST DELAY% = 500
 OUTPUT(TRUE, CREAM, TRUE)
 s1$ = "Turtle BASIC"
 s2$ = MID$(s1$, 1, 6)

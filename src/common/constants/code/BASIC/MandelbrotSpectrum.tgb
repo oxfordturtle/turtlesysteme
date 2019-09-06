@@ -1,13 +1,13 @@
 REM MandelbrotSpectrum
 
-DIM spectcol%(7)
-DIM boundary%(7)
-MAXCOL% = 40
-SCALE% = 250
-PIXELS% = 750
-XCENTRE% = -500000 REM millionths
-YCENTRE% = 0 REM millionths
-SPECTRUM% = 7
+CONST MAXCOL% = 40
+CONST SCALE% = 250
+CONST PIXELS% = 750
+CONST XCENTRE% = -500000
+CONST YCENTRE% = 0
+CONST SPECTRUM% = 7
+DIM spectcol%(SPECTRUM%)
+DIM boundary%(SPECTRUM%)
 PROCcolsetup
 xstart% = DIVMULT(XCENTRE%, 1000000, SCALE%) - PIXELS% / 2
 ystart% = DIVMULT(YCENTRE%, 1000000, SCALE%) - PIXELS% / 2

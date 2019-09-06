@@ -2,8 +2,8 @@ PROGRAM Mandelbrot;
 CONST maxcol = 40;
       scale = 250;
       pixels = 750;
-      xcentre = -500000; {millionths}
-      ycentre = 0; {millionths}
+      xcentre = -500000;
+      ycentre = 0;
 VAR xstart, xfinish, ystart, yfinish: integer;
     a, b, x, y: integer;
     iterations, temp: integer;

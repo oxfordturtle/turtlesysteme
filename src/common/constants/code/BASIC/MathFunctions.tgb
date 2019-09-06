@@ -1,7 +1,7 @@
 REM MathFunctions
 
-DECIMALS% = 4
-DENOMINATOR% = 1000000
+CONST DECIMALS% = 4
+CONST DENOMINATOR% = 1000000
 OUTPUT(TRUE, WHITE, TRUE)
 WRITELN("This program selects two random numbers a and b, in the")
 WRITELN("range 100-999, and then outputs various mathematical")

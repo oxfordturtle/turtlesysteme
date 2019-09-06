@@ -1,7 +1,7 @@
 REM Fibonaccis
 
-DIM fibsave%(25)
 LASTNUM% = 25
+DIM fibsave%(LASTNUM%)
 OUTPUT(TRUE, CREAM, TRUE)
 WRITELN("First, by recursion:")
 TIMESET(0)

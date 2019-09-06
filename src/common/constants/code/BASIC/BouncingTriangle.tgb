@@ -1,6 +1,6 @@
 REM BouncingTriangle
 
-SIZE% = 100
+CONST SIZE% = 100
 x% = 100
 y% = 700
 d% = 0

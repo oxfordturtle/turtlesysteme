@@ -1,11 +1,11 @@
 REM SolarSystem
 
+CONST SUNRADIUS% = 50000
 DIM radius%(7)
 DIM distancefromsun%(7)
 DIM design%(7)
 DIM rotation%(7)
 DIM speed%(7)
-SUNRADIUS% = 50000
 radius%(0) = 2433
 distancefromsun%(0) = 5795
 speed%(0) = 1607

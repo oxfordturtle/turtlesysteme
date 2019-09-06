@@ -1,6 +1,6 @@
 REM BouncingFace
 
-FACESIZE% = 100
+CONST FACESIZE% = 100
 x% = 100
 y% = 700
 xvel% = 8

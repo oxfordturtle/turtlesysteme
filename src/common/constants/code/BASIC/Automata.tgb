@@ -1,9 +1,9 @@
 REM Automata
 
+CONST WIDTH% = 100
+CONST HEIGHT% = 100
 DIM cellcol%(1)
 DIM nextstate%(7)
-WIDTH% = 100
-HEIGHT% = 100
 CANVAS(0, 0, WIDTH%, HEIGHT%)
 RESOLUTION(WIDTH%, HEIGHT%)
 cellcol%(0) = &FFFFFE

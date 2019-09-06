@@ -1,17 +1,17 @@
 REM BouncingShapes
 
-DIM x%(6)
-DIM y%(6)
-DIM d%(6)
-DIM xvel%(6)
-DIM yvel%(6)
-DIM dvel%(6)
-DIM sides%(6)
-DIM size%(6)
-DIM colr%(6)
-MINSIZE% = 70
-MAXSIZE% = 130
-SHAPES% = 6
+CONST MINSIZE% = 70
+CONST MAXSIZE% = 130
+CONST SHAPES% = 6
+DIM x%(SHAPES%)
+DIM y%(SHAPES%)
+DIM d%(SHAPES%)
+DIM xvel%(SHAPES%)
+DIM yvel%(SHAPES%)
+DIM dvel%(SHAPES%)
+DIM sides%(SHAPES%)
+DIM size%(SHAPES%)
+DIM colr%(SHAPES%)
 FOR n% = 1 TO SHAPES%
   sides%(n%) = n% + 2
   size%(n%) = MINSIZE% + RND(MAXSIZE% - MINSIZE%)

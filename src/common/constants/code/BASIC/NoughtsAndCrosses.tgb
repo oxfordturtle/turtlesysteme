@@ -1,9 +1,9 @@
 REM NoughtsAndCrosses
 
+CONST CROSS% = 33
+CONST NOUGHT% = 2
 DIM board%(11)
 DIM b2%(9, 11)
-CROSS% = 33
-NOUGHT% = 2
 numgames% = 0
 REPEAT
   numgames% = numgames% + 1

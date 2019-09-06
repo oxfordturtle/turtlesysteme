@@ -1,6 +1,6 @@
 REM Mandelbrot
 
-MAXCOL% = 40
+CONST MAXCOL% = 40
 PROCstartprompt
 xstart% = DIVMULT(xcentre%, 1000000, scale%) - pixels% / 2
 ystart% = DIVMULT(ycentre%, 1000000, scale%) - pixels% / 2

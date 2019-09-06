@@ -1,13 +1,13 @@
 REM IFSDemonstrator
 
-DIM mapxx%(4)
-DIM mapxy%(4)
-DIM mapxc%(4)
-DIM mapyx%(4)
-DIM mapyy%(4)
-DIM mapyc%(4)
-MAXMAPPINGS% = 4
-PAUSEVAL% = 2000
+CONST MAXMAPPINGS% = 4
+CONST PAUSEVAL% = 2000
+DIM mapxx%(MAXMAPPINGS%)
+DIM mapxy%(MAXMAPPINGS%)
+DIM mapxc%(MAXMAPPINGS%)
+DIM mapyx%(MAXMAPPINGS%)
+DIM mapyy%(MAXMAPPINGS%)
+DIM mapyc%(MAXMAPPINGS%)
 PROCstartprompt
 PROCsetscale
 CANVAS(xl%, yt%, xr% - xl% + 1, yb% - yt% + 1)
