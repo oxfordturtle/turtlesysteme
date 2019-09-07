@@ -17,6 +17,6 @@ BEGIN
       if (turtx < 50) or (turtx > 949) then
         xvel := -xvel;
       if (turty < 50) or (turty > 949) then
-        yvel := -yvel;
+        yvel := -yvel
     end
 END.

@@ -1,54 +1,45 @@
 /*
 The program file component.
 */
+import * as dom from 'common/components/dom'
 import * as examples from 'common/constants/examples'
 import { send } from 'common/system/state'
 
-// the file elements
-export const newFile = document.createElement('div')
-export const openHelp = document.createElement('div')
-export const openCSAC = document.createElement('div')
-const fileInput = document.createElement('input')
+// buttons
+const newButton = dom.createElement('button', null, 'New Program')
+
+const skeletonButton = dom.createElement('button', null, 'New Skeleton Program')
+
+const openButton = dom.createElement('button', null, 'Open Program')
+
+const closeButton = dom.createElement('button', null, 'Close Program')
+
+const saveButton = dom.createElement('button', null, 'Save Program')
+
+const saveTgxButton = dom.createElement('button', null, 'Save Export File')
+
+// file elements
+export const newFile = dom.createElement('div', 'tse-file-box', [
+  dom.createElement('label', null, 'File'),
+  dom.createElement('div', 'tse-buttons', [newButton, skeletonButton]),
+  dom.createElement('div', 'tse-buttons', [openButton, closeButton]),
+  dom.createElement('div', 'tse-buttons', [saveButton, saveTgxButton])
+])
 
 // create optgroup from examples group
-const optgroup = (group) => `
-  <optgroup label="${group.index.toString(10)}. ${group.title}">
-    ${group.examples.map(x => `<option value="${x}">${examples.names[x]}</option>`).join('')}
-  </optgroup>`
+const optgroup = group =>
+  dom.createOptgroup(`${group.index.toString(10)}. ${group.title}`, group.examples.map(x =>
+    dom.createOption(examples.names[x], x)
+  ))
 
-newFile.classList.add('tse-file-box')
-newFile.innerHTML = `
-  <label>File</label>
-  <div class="tse-buttons">
-    <button data-bind="new-program">New Program</button>
-    <button data-bind="new-skeleton-program">New Skeleton Program</button>
-  </div>
-  <div class="tse-buttons">
-    <button data-bind="open-program">Open Program</button>
-    <button data-bind="close-program">Close Program</button>
-  </div>
-  <div class="tse-buttons">
-    <button data-bind="save-program">Save Program</button>
-    <button data-bind="save-tgx-program">Save Export File</button>
-  </div>`
+const helpExamples = dom.createElement('select', null, examples.menu.map(optgroup))
 
-openHelp.classList.add('tse-file-box')
-openHelp.innerHTML = `
-  <label>Example Programs</label>
-  <select data-bind="help-examples">
-    ${examples.menu.map(optgroup)}
-  </select>`
+export const openHelp = dom.createElement('div', 'tse-file-box', [
+  dom.createElement('label', null, 'Example Programs'),
+  helpExamples
+])
 
-fileInput.type = 'file'
-
-// grab sub-elements of interest
-const newButton = newFile.querySelector('[data-bind="new-program"]')
-const skeletonButton = newFile.querySelector('[data-bind="new-skeleton-program"]')
-const openButton = newFile.querySelector('[data-bind="open-program"]')
-const closeButton = newFile.querySelector('[data-bind="close-program"]')
-const saveButton = newFile.querySelector('[data-bind="save-program"]')
-const saveTgxButton = newFile.querySelector('[data-bind="save-tgx-program"]')
-const helpExamples = openHelp.querySelector('[data-bind="help-examples"]')
+const fileInput = dom.createInput('file')
 
 // setup event listeners on interactive elements
 newButton.addEventListener('click', () => {
@@ -78,6 +69,7 @@ saveTgxButton.addEventListener('click', () => {
 helpExamples.addEventListener('focus', () => {
   helpExamples.selectedIndex = -1
 })
+
 helpExamples.addEventListener('change', () => {
   send('set-example', helpExamples.value)
 })

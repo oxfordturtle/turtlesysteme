@@ -21,6 +21,6 @@ BEGIN
       if (x < 50) or (x > 949) then
         xvel := -xvel;
       if (y < 50) or (y > 949) then
-        yvel := -yvel;
+        yvel := -yvel
     end
 END.

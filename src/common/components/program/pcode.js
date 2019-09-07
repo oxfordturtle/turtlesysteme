@@ -1,28 +1,26 @@
 /*
 The program pcode component.
 */
+import * as dom from 'common/components/dom'
 import pcodes from 'common/constants/pcodes'
 import { send, on } from 'common/system/state'
 
-// the pcode elements
-export const options = document.createElement('div')
-export const list = document.createElement('ol')
+// radio options
+const assemblerInput = dom.createInput('radio', 'pcodeOptions1')
+const decimalInput = dom.createInput('radio', 'pcodeOptions2')
+const machineInput = dom.createInput('radio', 'pcodeOptions1')
+const hexadecimalInput = dom.createInput('radio', 'pcodeOptions2')
 
-// initialise the elements
-options.classList.add('tse-checkboxes')
-options.innerHTML = `
-  <label><input type="radio" name="pcodeOptions1" data-bind="assembler">Assembler Code</label>
-  <label><input type="radio" name="pcodeOptions2" data-bind="decimal">Decimal</label>
-  <label><input type="radio" name="pcodeOptions1" data-bind="machine">Machine Code</label>
-  <label><input type="radio" name="pcodeOptions2" data-bind="hexadecimal">Hexadecimal</label>`
+// the checkbox div (exported)
+export const options = dom.createElement('div', 'tse-checkboxes', [
+  dom.createElement('label', null, [assemblerInput, dom.createTextNode('Assembler Code')]),
+  dom.createElement('label', null, [decimalInput, dom.createTextNode('Decimal')]),
+  dom.createElement('label', null, [machineInput, dom.createTextNode('Machine Code')]),
+  dom.createElement('label', null, [hexadecimalInput, dom.createTextNode('Hexadecimal')])
+])
 
-list.classList.add('tse-pcode')
-
-// grab sub-elements of interest
-const assemblerInput = options.querySelector('[data-bind="assembler"]')
-const machineInput = options.querySelector('[data-bind="machine"]')
-const decimalInput = options.querySelector('[data-bind="decimal"]')
-const hexadecimalInput = options.querySelector('[data-bind="hexadecimal"]')
+// the pcode display (exported)
+export const list = dom.createElement('ol', 'tse-pcode')
 
 // setup event listeners on interactive elements
 assemblerInput.addEventListener('change', () => {
@@ -45,6 +43,7 @@ hexadecimalInput.addEventListener('change', () => {
 on('pcode-changed', ({ pcode, assembler, decimal }) => {
   if (assembler) {
     assemblerInput.setAttribute('checked', 'checked')
+    console.log('hello?')
   } else {
     machineInput.setAttribute('checked', 'checked')
   }
@@ -53,19 +52,18 @@ on('pcode-changed', ({ pcode, assembler, decimal }) => {
   } else {
     hexadecimalInput.setAttribute('checked', 'checked')
   }
-  list.innerHTML = ''
-  pcode.map((line) => {
-    const li = document.createElement('li')
-    const content = assembler
-      ? assemble(line, 0, decimal)
-      : line.reduce((sofar, current) => sofar.concat(cell(current, decimal)), [])
-    while (content.length % 8 > 0) {
-      content.push(document.createElement('div'))
-    }
-    content.forEach((div) => { li.appendChild(div) })
-    return li
-  }).forEach((x) => list.appendChild(x))
+  dom.setContent(list, pcode.map(pcodeListItem.bind(null, assembler, decimal)))
 })
+
+const pcodeListItem = (assembler, decimal, line) => {
+  const content = assembler
+    ? assemble(line, 0, decimal)
+    : line.reduce((sofar, current) => sofar.concat(cell(current, decimal)), [])
+  while (content.length % 8 > 0) {
+    content.push(dom.createElement('div'))
+  }
+  return dom.createElement('li', null, content)
+}
 
 const assemble = (line, index, decimal) => {
   const hit = pcodes[line[index]]
@@ -93,15 +91,13 @@ const assemble = (line, index, decimal) => {
 }
 
 const cell = (content, decimal) => {
-  const div = document.createElement('div')
   if (content === null) {
-    div.innerHTML = ':('
+    return dom.createElement('div', null, ':(')
   } else if (decimal === undefined) {
-    div.innerHTML = content
+    return dom.createElement('div', null, content)
   } else if (decimal) {
-    div.innerHTML = content.toString(10)
+    return dom.createElement('div', null, content.toString(10))
   } else {
-    div.innerHTML = content.toString(16).toUpperCase()
+    return dom.createElement('div', null, content.toString(16).toUpperCase())
   }
-  return div
 }

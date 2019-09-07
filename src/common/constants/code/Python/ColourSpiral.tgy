@@ -1,16 +1,16 @@
 # ColourSpiral
 
-length: int
+len: int
 
 def lineturn():
-  forward(length)
+  forward(len)
   right(60)
 
 blank(black)
 forward(15)
 thickness(27)
-length = 20
-while length <= 500:
+len = 20
+while len <= 500:
   randcol(40)
   lineturn()
-  length = length + 10
+  len = len + 10

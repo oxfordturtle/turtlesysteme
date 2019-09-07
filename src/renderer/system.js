@@ -2,7 +2,7 @@
 Setup the system page (Electron).
 */
 import { ipcRenderer, remote } from 'electron'
-import { create, show } from 'common/components/tabs'
+import * as dom from 'common/components/dom'
 import * as controls from 'common/components/controls'
 import code from 'common/components/program/code'
 import * as pcode from 'common/components/program/pcode'
@@ -20,17 +20,28 @@ export default (tse) => {
   tse.classList.add('tse-system')
 
   // append the system components (defined below)
-  tse.appendChild(controls.program)
-  tse.appendChild(controls.machine)
-  tse.appendChild(programTabs)
-  tse.appendChild(machineTabs)
+  dom.setContent(tse, [
+    controls.program,
+    controls.machine,
+    dom.createTabs([
+      { label: 'Code', active: true, content: [code] },
+      { label: 'Usage', active: false, content: [usage] },
+      { label: 'Lexemes', active: false, content: [lexemes] },
+      { label: 'PCode', active: false, content: [pcode.options, pcode.list] }
+    ]),
+    dom.createTabs([
+      { label: 'Canvas', active: true, content: [canvas, console] },
+      { label: 'Output', active: false, content: [output] },
+      { label: 'Memory', active: false, content: [memory.buttons, memory.stack, memory.heap] }
+    ])
+  ])
 
   // register to switch tabs when called for
-  on('file-changed', () => { show('Code') })
-  on('show-settings', () => { show('Settings') })
-  on('show-canvas', () => { show('Canvas') })
-  on('show-output', () => { show('Output') })
-  on('show-memory', () => { show('Memory') })
+  on('file-changed', () => { dom.showTab('Code') })
+  on('show-settings', () => { dom.showTab('Settings') })
+  on('show-canvas', () => { dom.showTab('Canvas') })
+  on('show-output', () => { dom.showTab('Output') })
+  on('show-memory', () => { dom.showTab('Memory') })
 
   // register to show errors as dialog boxes
   on('error', (error) => {
@@ -79,18 +90,3 @@ export default (tse) => {
     ipcRenderer.send('show-memory-changed', showMemory)
   })
 }
-
-// program tabs
-const programTabs = create([
-  { label: 'Code', active: true, content: [code] },
-  { label: 'Usage', active: false, content: [usage] },
-  { label: 'Lexemes', active: false, content: [lexemes] },
-  { label: 'PCode', active: false, content: [pcode.options, pcode.list] }
-])
-
-// machine tabs
-const machineTabs = create([
-  { label: 'Canvas', active: true, content: [canvas, console] },
-  { label: 'Output', active: false, content: [output] },
-  { label: 'Memory', active: false, content: [memory.buttons, memory.stack, memory.heap] }
-])

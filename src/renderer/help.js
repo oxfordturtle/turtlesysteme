@@ -1,7 +1,7 @@
 /*
 Setup the help page (Electron).
 */
-import { create } from 'common/components/tabs'
+import * as dom from 'common/components/dom'
 import basics from 'common/components/help/basics'
 import colours from 'common/components/help/colours'
 import commands from 'common/components/help/commands'
@@ -14,14 +14,12 @@ import structures from 'common/components/help/structures'
 // setup the help page
 export default (tse) => {
   tse.classList.add('tse-help')
-  tse.appendChild(help)
+  dom.setContent(tse, [dom.createTabs([
+    { label: 'Commands', active: true, content: [commands] },
+    { label: 'Basics', active: false, content: [basics] },
+    { label: 'Structures', active: false, content: [structures] },
+    { label: 'Operators', active: false, content: [operators] },
+    { label: 'User Input', active: false, content: [input] },
+    { label: 'Constants', active: false, content: [colours, fonts, cursors] }
+  ])])
 }
-
-const help = create([
-  { label: 'Commands', active: true, content: [commands] },
-  { label: 'Basics', active: false, content: [basics] },
-  { label: 'Structures', active: false, content: [structures] },
-  { label: 'Operators', active: false, content: [operators] },
-  { label: 'User Input', active: false, content: [input] },
-  { label: 'Constants', active: false, content: [colours, fonts, cursors] }
-])

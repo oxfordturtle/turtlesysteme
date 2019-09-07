@@ -1,28 +1,29 @@
 /*
 The program code component.
 */
+import * as dom from 'common/components/dom'
 import highlight from 'common/compiler/highlight'
 import { send, on } from 'common/system/state'
 
-// the code element
-const code = document.createElement('div')
-export default code
+// sub elements of the code element
+const plainCode = dom.createElement('textarea')
+plainCode.wrap = 'off'
+plainCode.spellcheck = false
+plainCode.autocapitalize = 'off'
+plainCode.autocomplete = 'off'
+plainCode.autocorrect = 'off'
 
-// initialise the code element
-code.classList.add('tse-code')
-code.innerHTML = `
-  <textarea data-bind="plain-code" wrap="off" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"></textarea>
-  <ol data-bind="line-numbers"></ol>
-  <pre data-bind="pretty-wrapper"><code data-bind="pretty-code"></code></pre>`
+const lineNumbers = dom.createElement('ol')
 
-// grab sub-elements of interest
-const plainCode = code.querySelector('[data-bind="plain-code"]')
-const prettyWrapper = code.querySelector('[data-bind="pretty-wrapper"]')
-const prettyCode = code.querySelector('[data-bind="pretty-code"]')
-const lineNumbers = code.querySelector('[data-bind="line-numbers"]')
+const prettyCode = dom.createElement('code')
+
+const prettyWrapper = dom.createElement('pre', null, [prettyCode])
+
+const code = dom.createElement('div', 'tse-code', [plainCode, lineNumbers, prettyWrapper])
 
 // add event listeners to interactive elements
 plainCode.addEventListener('keydown', (e) => {
+  // catch tab press and insert two spaces at the cursor
   if (e.keyCode === 9) {
     const pos = plainCode.selectionStart
     const left = plainCode.value.slice(0, pos)
@@ -34,6 +35,7 @@ plainCode.addEventListener('keydown', (e) => {
     plainCode.selectionEnd = pos + 2
   }
 })
+
 plainCode.addEventListener('input', () => {
   send('set-code', plainCode.value)
 })
@@ -46,11 +48,14 @@ on('file-changed', () => {
 
 on('code-changed', ({ code, language }) => {
   const lines = code.split('\n')
-  lineNumbers.innerHTML = lines.map((x, y) => `<li>${(y + 1).toString(10)}</li>`).join('')
-  prettyCode.innerHTML = highlight(code, language)
+  dom.setContent(lineNumbers, lines.map((x, y) => dom.createElement('li', null, y + 1)))
+  dom.setContent(prettyCode, highlight(code, language))
   window.requestAnimationFrame(() => {
     plainCode.value = code
     plainCode.style.height = `${lineNumbers.scrollHeight.toString(10)}px`
     plainCode.style.width = `${prettyWrapper.scrollWidth.toString(10)}px`
   })
 })
+
+// the code element
+export default code

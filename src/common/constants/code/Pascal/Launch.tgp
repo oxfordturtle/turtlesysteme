@@ -1,6 +1,6 @@
 PROGRAM Launch;
 CONST earthradius = 6371000;
-      earthGM = 398600442;
+      earthgm = 398600442;
       initdirection = 2000;
       initthrust = 20000;
       thrusttime = 500;
@@ -54,7 +54,7 @@ VAR x, y, d, xvel, yvel: integer;
   End;
 
 BEGIN
-  canvas(-10000, -10000, 20000, 20000);
+  canvas(-20000, -20000, 40000, 40000);
   angles(angleprecision);
   x := 0;
   y := -earthradius;
@@ -71,7 +71,7 @@ BEGIN
     if (dist - prevdist) * prevdiff <= 0 then
       report;
     prevdiff := dist - prevdist;
-    gravity := divmult(earthGM, divmult(dist, 1000000, dist), 1000);
+    gravity := divmult(earthgm, divmult(dist, 1000000, dist), 1000);
     xgravity := divmult(gravity, dist, -x);
     ygravity := divmult(gravity, dist, -y);
     xthrust := sin(d, 1, thrust);

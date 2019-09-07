@@ -1,4 +1,4 @@
-PROGRAM Shoot;
+PROGRAM Arcade;
 CONST targets = 10;
 VAR facex, facey: integer;
     facexspeed, faceyspeed: integer;

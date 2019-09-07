@@ -29,7 +29,7 @@ VAR x, y, d: array[1..shapes] of integer;
  End;
 
 BEGIN
- for n:=1 to shapes do
+ for n := 1 to shapes do
   begin
    sides[n] := n + 2;
    size[n] := minsize + random(maxsize - minsize);
@@ -44,9 +44,9 @@ BEGIN
  while 0 < 1 do
   begin
    noupdate;
+   blank(white);
    for n := 1 to shapes do
     begin
-     drawshape(sides[n], size[n], white);
      x[n] := x[n] + xvel[n];
      y[n] := y[n] + yvel[n];
      d[n] := (d[n] + dvel[n]) mod 360;

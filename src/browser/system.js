@@ -28,7 +28,7 @@ export default (tse) => {
     controls.program,
     controls.machine,
     dom.createTabs([
-      { label: 'File', active: false, content: [file.newFile, file.openHelp, file.openCSAC] },
+      { label: 'File', active: false, content: [file.newFile, file.openHelp] },
       { label: 'Code', active: true, content: [code] },
       { label: 'Usage', active: false, content: [usage] },
       { label: 'Lexemes', active: false, content: [lexemes] },

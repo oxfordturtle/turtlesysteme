@@ -101,7 +101,7 @@ BEGIN
             row := (?clicky - 50) div 250
           until board[column + row * 3] = 0;
           doblot(column, row, cross);
-          board[column + row * 3] : =cross;
+          board[column + row * 3] := cross;
           cursor(11);
           evaluate(board, cross, 0)
         end;

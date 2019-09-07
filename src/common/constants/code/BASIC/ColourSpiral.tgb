@@ -3,15 +3,15 @@ REM ColourSpiral
 BLANK(BLACK)
 FORWARD(15)
 THICKNESS(27)
-length% = 20
+len% = 20
 REPEAT
   RNDCOL(40)
   PROClineturn
-  length% = length% + 10
-UNTIL length% > 500
+  len% = len% + 10
+UNTIL len% > 500
 END
 
 DEF PROClineturn
-  FORWARD(length%)
+  FORWARD(len%)
   RIGHT(60)
 ENDPROC

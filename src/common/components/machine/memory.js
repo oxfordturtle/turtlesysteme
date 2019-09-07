@@ -1,6 +1,7 @@
 /*
 The machine memory component.
 */
+import * as dom from 'common/components/dom'
 import { send, on } from 'common/system/state'
 
 // the memory elements
@@ -72,20 +73,13 @@ on('dump-memory', (memory) => {
   while (memory.heap.length > 0) {
     heapSplit[heapSplit.length] = memory.heap.splice(0, 8)
   }
-  stackTable.innerHTML = ''
-  heapTable.innerHTML = ''
-  stackSplit.map(tr.bind(null, 0)).forEach((bytes) => {
-    stackTable.appendChild(bytes)
-  })
-  heapSplit.map(tr.bind(null, memory.heapBase)).forEach((bytes) => {
-    heapTable.appendChild(bytes)
-  })
+  dom.setContent(stackTable, stackSplit.map(tr.bind(null, 0)))
+  dom.setContent(heapTable, heapSplit.map(tr.bind(null, 0)))
 })
 
 // function to create a tr row of bytes
 const tr = (offset, bytes, index) => {
-  const tr = document.createElement('tr')
-  tr.innerHTML = `<th>${(offset + index * 8).toString(10)}</th>`
-  tr.innerHTML += bytes.map(byte => `<td>${byte.toString(10)}</td>`).join('')
-  return tr
+  const content = bytes.map(byte => dom.createElement('td', null, byte.toString(10)))
+  content.unshift(dom.createElement('th', null, (offset + index * 8).toString(10)))
+  return dom.createElement('tr', null, content)
 }

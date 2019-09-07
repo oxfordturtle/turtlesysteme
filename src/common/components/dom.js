@@ -10,6 +10,34 @@ export const createElement = (type, className = null, content = null) => {
   return element
 }
 
+// create an input element
+export const createInput = (type, name) => {
+  const input = document.createElement('input')
+  input.type = type
+  input.name = name
+  return input
+}
+
+// create an optgroup element
+export const createOptgroup = (label, content) => {
+  const optgroup = document.createElement('optgroup')
+  optgroup.setAttribute('label', label)
+  setContent(optgroup, content)
+  return optgroup
+}
+
+// create a select option
+export const createOption = (label, value) => {
+  const option = document.createElement('option')
+  option.innerHTML = label
+  option.setAttribute('value', value)
+  return option
+}
+
+// create a text node
+export const createTextNode = (text) =>
+  document.createTextNode(text)
+
 // create a document fragment
 export const createFragment = (content = null) => {
   const fragment = document.createDocumentFragment()

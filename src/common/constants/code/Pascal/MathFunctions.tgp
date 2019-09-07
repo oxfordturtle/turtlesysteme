@@ -27,7 +27,7 @@ BEGIN
   writeln('');
   selectab;
   writeln('a=' + str(a) + '; b=' + str(b));
-  writeln('a/b = ' + str(a) + '/'+str(b) + ' = ' + qstr(a, b, decimals));
+  writeln('a/b = ' + str(a) + '/' + str(b) + ' = ' + qstr(a, b, decimals));
   writeln('');
   show('square', power(a, b, 2, denominator));
   show('square root', root(a, b, 2, denominator));

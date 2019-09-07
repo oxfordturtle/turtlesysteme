@@ -94,6 +94,6 @@ BEGIN
           paintbrush(?mousex, ?mousey)
       end;
     if (?rmouse > 0) and (?mousey < 850) then
-      paintcan(?mousex, ?mousey);
+      paintcan(?mousex, ?mousey)
   until false
 END.
