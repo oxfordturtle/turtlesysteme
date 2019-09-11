@@ -1,0 +1,60 @@
+PROGRAM TypingTestKeys;
+VAR count: integer;
+    letters: string;
+    c, m, n: integer;
+    temp: char;
+    lowcase, shiftok: boolean;
+    x, y: integer;
+BEGIN
+  blank(cream);
+  setxy(15, 200);
+  print('In this typing test, you will be shown the', 4, 36);
+  setxy(20, 270);
+  print('letters of the alphabet in a random order, ', 4, 36);
+  setxy(20, 340);
+  print('and in a mixture of upper- and lower-case.', 4, 36);
+  setxy(20, 410);
+  print('Type them as fast as you can, and see how', 4, 36);
+  setxy(20, 480);
+  print('quickly you can finish the entire alphabet.', 4, 36);
+  setxy(100, 620);
+  print('Now press the "Esc" key to start ...', 4, 36);
+  keyecho(false);
+  repeat
+  until (abs(?key) = \escape);
+  letters := '';
+  for c := 65 to 90 do
+    letters := letters + chr(c);
+  for count := 1 to 50 do
+    begin
+     m := random(26) + 1;
+     n := random(26) + 1;
+     if m <> n then
+       begin
+         temp := letters[m];
+         letters[m] := letters[n];
+         letters[n] := temp
+       end
+    end;
+  timeset(0);
+  for count := 1 to 26 do
+    begin
+      c := ord(letters[count]);
+      lowcase := (random(2) = 0);
+      blank(black);
+      setxy(100 + random(300), random(250));
+      colour(yellow);
+      if lowcase then
+        print(chr(c + 32), 3, 450)
+      else
+        print(chr(c), 3, 450);
+      repeat
+        shiftok := ((abs(?kshift) and 8) > 0) xor lowcase
+      until (abs(?key) = c) and shiftok;
+      reset(?kshift)
+    end;
+  blank(lightblue);
+  setxy(60, 460);
+  colour(lightred);
+  print('Your time was ' + qstr(time, 1000, 2) + ' seconds', 4, 50)
+END.

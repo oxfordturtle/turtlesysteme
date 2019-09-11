@@ -1,0 +1,8 @@
+# AskInput
+
+write('What is your name?  ')
+s: str = readline()
+writeline('')
+write('Hello, ' + s + ', ...  ')
+pause(500)
+writeline('How are you?')

@@ -1,0 +1,36 @@
+REM GameOfLife
+
+CONST WIDTH% = 32
+CONST HEIGHT% = 32
+CANVAS(0, 0, WIDTH%, HEIGHT%)
+RESOLUTION(WIDTH%, HEIGHT%)
+FOR x% = 0 TO WIDTH% - 1
+  FOR y% = 0 TO HEIGHT% - 1
+    IF RND(7) = 1 THEN PIXSET(x%, y%, BLACK)
+  NEXT
+NEXT
+WHILE ?KEY <> \ESCAPE
+  NOUPDATE
+  FOR x% = 0 TO WIDTH% - 1
+    FOR y% = 0 TO HEIGHT% - 1
+      dn% = 0
+      FOR i% = -1 TO 1
+        FOR j% = -1 TO 1
+          dn% = dn% + PIXCOL((x% + i% + WIDTH%) MOD WIDTH%, (y% + j% + HEIGHT%) MOD HEIGHT%) AND 1
+        NEXT
+      NEXT
+      IF ((PIXCOL(x%, y%) AND 1 = 0) AND ((dn% < 5) OR (dn% > 6))) OR ((PIXCOL(x%, y%) AND 1 = 1) AND (dn% = 6)) THEN
+        PIXSET(x%, y%, PIXCOL(x%, y%) EOR 2)
+      ENDIF
+    NEXT
+  NEXT
+  FOR x% = 0 TO WIDTH% - 1
+    FOR y% = 0 TO HEIGHT% - 1
+      IF (PIXCOL(x%, y%) AND 3) MOD 3 <> 0 THEN
+        PIXSET(x%, y%, PIXCOL(x%, y%) EOR &FFFFFD)
+      ENDIF
+    NEXT
+  NEXT
+  UPDATE
+ENDWHILE
+END

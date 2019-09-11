@@ -23,7 +23,7 @@ module.exports = function (env, argv) {
           use: ['style-loader', 'css-loader', 'sass-loader']
         },
         {
-          test: /\.tg(b|p|y|x)$/,
+          test: /\.t(bas|pas|py|gx)$/,
           use: 'raw-loader'
         }
       ]

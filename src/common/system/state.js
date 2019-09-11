@@ -505,6 +505,7 @@ machine.on('turtt', (t) => reply('turtt-changed', t))
 machine.on('turtc', (c) => reply('turtc-changed', c))
 machine.on('show', (what) => reply(`show-${what}`))
 machine.on('dump', (memory) => reply('dump-memory', memory))
+machine.on('error', (error) => reply('error', error))
 
 // check for latest npm_package_version
 window.fetch('https://raw.githubusercontent.com/oxfordturtle/turtlesysteme/master/package.json')

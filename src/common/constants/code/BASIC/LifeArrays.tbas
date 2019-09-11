@@ -1,0 +1,45 @@
+REM LifeArrays
+
+CONST WIDTH% = 32
+CONST HEIGHT% = 32
+DIM thisgen%(WIDTH%, HEIGHT%)
+DIM nextgen%(WIDTH%, HEIGHT%)
+CANVAS(0, 0, WIDTH%, HEIGHT%)
+RESOLUTION(WIDTH%, HEIGHT%)
+FOR x% = 0 TO WIDTH% - 1
+  FOR y% = 0 TO HEIGHT% - 1
+    nextgen%(x%, y%) = (RND(7) = 1)
+  NEXT
+NEXT
+WHILE ?KEY <> \ESCAPE
+  NOUPDATE
+  FOR x% = 0 TO WIDTH% - 1
+    FOR y% = 0 TO HEIGHT% - 1
+      thisgen%(x%, y%) = nextgen%(x%, y%)
+      IF thisgen(x%, y%) THEN
+        PIXSET(x%, y%, MAROON)
+      ELSE
+        PIXSET(x%, y%, LIGHTGREEN)
+      ENDIF
+    NEXT
+  NEXT
+  UPDATE
+  FOR x% = 0 TO WIDTH% - 1
+    FOR y% = 0 TO HEIGHT% - 1
+      livenb% = 0
+      FOR i% = -1 TO 1
+        FOR j% = -1 TO 1
+          IF thisgen%((x% + i% + WIDTH%) MOD WIDTH%, (y% + j% + HEIGHT%) MOD HEIGHT%) THEN
+            INC(livenb%)
+          ENDIF
+        NEXT
+      NEXT
+      IF thisgen%(x%, y%) THEN
+        nextgen%(x%, y%) = ((livenb% = 3) OR (livenb% = 4))
+      ELSE
+        nextgen%(x%, y%) = (livenb% = 3)
+      ENDIF
+    NEXT
+  NEXT
+ENDWHILE
+END

@@ -971,7 +971,7 @@ export default [
     code: pc.sval,
     parameters: [
       { name: 'string', type: 'string', byref: false, length: 1 },
-      { name: 'default', type: 'string', byref: false, length: 1 }
+      { name: 'default', type: 'integer', byref: false, length: 1 }
     ],
     returns: 'integer',
     category: 8,

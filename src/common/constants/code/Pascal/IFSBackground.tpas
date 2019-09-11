@@ -1,0 +1,47 @@
+PROGRAM IFSBackground;
+CONST xleft = 0;
+      xright = 999;
+      ytop = 0;
+      ybottom = 999;
+      gridscale = 5;
+      gridthick = 64;
+
+  Procedure background();
+  Var x, y: integer;
+  Var cx, cy, r, g, b: integer;
+  Begin
+    thickness(gridthick);
+    colour(darkgrey);
+    for x := 1 to gridscale - 1 do
+      begin
+        setxy(xleft + divmult(xright - xleft, gridscale, x), ytop);
+        drawxy(0, ybottom - ytop)
+      end;
+    for y := 1 to gridscale - 1 do
+      begin
+        setxy(xleft + gridthick / 2, ytop + divmult(ybottom - ytop, gridscale, y));
+        drawxy(xright - xleft - gridthick, 0)
+      end;
+    colour(black);
+    setxy(xleft, ytop);
+    drawxy(xright - xleft, 0);
+    drawxy(0, ybottom - ytop);
+    drawxy(xleft - xright, 0);
+    drawxy(0, ytop - ybottom);
+    for x := 0 to gridscale - 1 do
+      for y := 0 to gridscale - 1 do
+        begin
+          cx := xleft + divmult(xright - xleft, gridscale, x) + gridthick;
+          cy := ytop + divmult(ybottom - ytop, gridscale, y) + gridthick;
+          r := divmult(255, gridscale - 1, x);
+          g := divmult(255, gridscale - 1, y);
+          b := divmult(255, 2 * gridscale - 2, 2 * gridscale - 2 - x - y);
+          recolour(cx, cy, (r * $10000) + (g * $100) + (b * $1))
+        end
+  End;
+
+BEGIN
+  canvas(xleft, ytop, xright - xleft + 1, ybottom - ytop + 1);
+  resolution(xright - xleft + 1, ybottom - ytop + 1);
+  background(6)
+END.

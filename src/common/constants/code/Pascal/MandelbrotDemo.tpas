@@ -1,0 +1,98 @@
+PROGRAM MandelbrotDemo;
+CONST maxcol = 40;
+VAR xcentre, ycentre: integer;
+    xstart, xfinish, ystart, yfinish: integer;
+    a, b, x, y: integer;
+    iterations, temp: integer;
+    scale, pixels: integer;
+
+  Procedure startprompt;
+  Begin
+    output(true, cream, true);
+    keyecho(false);
+    writeln('MANDELBROT SET DISPLAY PROGRAM');
+    writeln('');
+    write('Select Whole set, or Zoom on mini "lake" at -0.1592,-1.0330 (W/Z)');
+    repeat
+    until (abs(?key) = \w) or (abs(?key) = \z);
+    writeln(chr(abs(?key)));
+    if abs(?key) = \w then
+      begin
+        xcentre := -500000;
+        ycentre := 0
+      end
+    else
+      begin
+        xcentre := -159200;
+        ycentre := -1033000
+      end;
+    writeln('');
+    if ycentre = 0 then
+      write('Select Fast/Medium/Slow, giving resolution 300/750/1500: (F/M/S) ')
+    else
+      write('Select Fast/Medium/Slow, giving resolution 300/600/1200: (F/M/S) ');
+    repeat
+    until (abs(?key) = \f) or (abs(?key) = \m) or (abs(?key) = \s);
+    writeln(chr(abs(?key)));
+    if ycentre = 0 then
+      begin
+        if abs(?key) = \f then
+          scale := 100
+        else
+        if abs(?key) = \m then
+          scale := 250
+        else
+          scale := 500;
+        pixels := scale * 3
+      end
+    else
+      begin
+        if abs(?key) = \f then
+          scale := 10000
+        else
+        if abs(?key) = \m then
+          scale := 20000
+        else
+          scale := 40000;
+        pixels := scale / 100 * 3
+      end;
+    output(false, white, false)
+  End;
+
+BEGIN
+  startprompt;
+  xstart := divmult(xcentre, 1000000, scale) - pixels / 2;
+  ystart := divmult(ycentre, 1000000, scale) - pixels / 2;
+  xfinish := xstart + pixels - 1;
+  yfinish := ystart + pixels - 1;
+  writeln('Mandelbrot will be plotted over the following real range:');
+  write(qstr(xstart, scale, 4) + ' < x < ' + qstr(xfinish, scale, 4) + '    ');
+  writeln(qstr(ystart, scale, 4) + ' < y < ' + qstr(yfinish, scale, 4));
+  writeln('Scaling factor: ' + str(scale) + '    Image resolution: ' + str(pixels) + 'x' + str(pixels));
+  canvas(xstart, ystart, pixels, pixels);
+  resolution(pixels, pixels);
+  timeset(0);
+  for a := xstart to xfinish do
+    begin
+      noupdate;
+      for b := ystart to yfinish do
+        begin
+          x := a;
+          y := b;
+          iterations := 0;
+          while (hypot(x, y, 1) < 2 * scale) and (iterations <= maxcol) do
+            begin
+              temp := divmult(x + y, scale, x - y);
+              y := divmult(2 * x, scale, y) + b;
+              x := temp + a;
+              inc(iterations)
+            end;
+          if iterations > maxcol then
+            pixset(a, b, black)
+          else
+            pixset(a, b, rgb(iterations + 1))
+        end;
+      update
+    end;
+  writeln('Time taken: ' + qstr(time, 1000, 1) + ' seconds.')
+END.

@@ -13,7 +13,7 @@ export default element
 // initialise the element
 element.innerHTML = `
   <h3>Native Turtle Commands</h3>
-  <p>The languages understood by the Turtle System come with several built in procedures and functions, including those that implement the Turtle Graphics drawing metaphor. A full list of commands is show in the table below. For convenience, they have been grouped into 11 categories, and divided into three difficulty levels. Only simple commands are shown by default; use the checkboxes below to show intermediate and advanced commands as well.</p>
+  <p>The languages understood by the Turtle System come with several built-in procedures and functions, including those that implement the Turtle Graphics drawing metaphor. A full list of commands is show in the table below. For convenience, they have been grouped into 11 categories, and divided into three difficulty levels. Only simple commands are shown by default; use the checkboxes below to show intermediate and advanced commands as well.</p>
   <div class="tse-commands-options">
     <label>
       Select group

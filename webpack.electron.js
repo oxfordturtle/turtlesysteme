@@ -2,7 +2,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.tg(b|p|y|x)$/,
+        test: /\.t(bas|pas|py|gx)$/,
         use: 'raw-loader'
       }
     ]

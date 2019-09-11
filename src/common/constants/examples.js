@@ -66,6 +66,7 @@ export const names = {
   QuickClick: 'Mouse reaction game',
   TypingTest: 'Typing test (checking characters)',
   TypingTestKeys: 'Typing test (checking keys)',
+  IterationGame: 'Iteration game (Collatz sequence)',
   SpongeThrow: 'Throwing sponges at a moving face',
   Arcade: 'Arcade shooting game',
   SnakeGame: 'Snake (classic game)',
@@ -79,14 +80,19 @@ export const names = {
   Launch: 'Launching a rocket into orbit',
   Disease: 'Spread of disease',
   GameOfLife: 'Conway’s Game of Life',
+  LifeArrays: 'Game of Life, using arrays',
   Automata: 'One-dimensional cellular automata',
   BrownianMotion: 'Brownian motion',
   Dendrites: 'Dendritic crystal growth',
   Cheetahs: 'Cheetahs and gazelles',
   SexRatio: 'The sex ratio',
   Flocking: 'Flocking behaviour',
+  Roads: 'Town road simulation',
   Schelling: 'Schelling’s segregation model',
   IteratedPD: 'Iterated Prisoner’s Dilemma',
+  Interference: 'Wave interference tutor',
+  TwoSlits: 'Interference from two slits',
+  WaveSuperposer: 'Hugh Wallis’s wave superposer',
   // examples 7
   RecursionFactory: 'Recursion factory',
   RecursiveTree: 'Recursive tree',
@@ -101,6 +107,14 @@ export const names = {
   LogisticSpider: 'Logistic spider',
   MandelbrotDemo: 'Mandelbrot multi-colour',
   MandelbrotSpectrumDemo: 'Mandelbrot spectral colours',
+  Quine: 'Quine (self-replicating) program',
+  // examples 8
+  Syllogisms: 'Syllogism testing program',
+  TuringMachines: 'Turing machine simulator',
+  Sorting: 'Comparison of sorting methods',
+  NimLearn: 'Nim learning program',
+  MultiNim: 'Nim with multiple piles',
+  KnightsTour: 'Knight’s Tour program',
   // other CSAC examples not in the system menu
   LifeStart: 'Initialising Conway’s Game of Life',
   Diffusion: 'A model of diffusion',
@@ -114,12 +128,7 @@ export const names = {
   BarnsleyIFS: 'Barnsley IFS',
   DragonColour: 'Dragon colour',
   DragonIFS: 'Dragon IFS',
-  TreeIFS: 'Tree IFS',
-  Interference: 'Interference',
-  WaveSuperposer: 'Wave superposer',
-  TwoSlits: 'Young’s two-slit experiment',
-  KnightsTour: 'Knight’s tour',
-  Nim: 'Nim'
+  TreeIFS: 'Tree IFS'
 }
 
 // array of menu items
@@ -199,6 +208,7 @@ export const menu = [
       'QuickClick',
       'TypingTest',
       'TypingTestKeys',
+      'IterationGame',
       'SpongeThrow',
       'Arcade',
       'SnakeGame',
@@ -217,14 +227,19 @@ export const menu = [
       'Launch',
       'Disease',
       'GameOfLife',
+      'LifeArrays',
       'Automata',
       'BrownianMotion',
       'Dendrites',
       'Cheetahs',
       'SexRatio',
       'Flocking',
+      'Roads',
       'Schelling',
-      'IteratedPD'
+      'IteratedPD',
+      'Interference',
+      'TwoSlits',
+      'WaveSuperposer'
     ]
   },
   {
@@ -243,7 +258,20 @@ export const menu = [
       'Logistic',
       'LogisticSpider',
       'MandelbrotDemo',
-      'MandelbrotSpectrumDemo'
+      'MandelbrotSpectrumDemo',
+      'Quine'
+    ]
+  },
+  {
+    index: 8,
+    title: 'logic and computer science',
+    examples: [
+      'Syllogisms',
+      'TuringMachines',
+      'Sorting',
+      'NimLearn',
+      'MultiNim',
+      'KnightsTour'
     ]
   }
 ]

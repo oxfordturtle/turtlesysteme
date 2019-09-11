@@ -128,7 +128,8 @@ const command = (code) => {
   const names = commands
     .reduce((x, y) => y.names.Python ? `${x}|${y.names.Python}` : x, '')
     .slice(1)
-  const regex = new RegExp(new RegExp(`^(${names}|range)\\b`)) // pretend "range" is a command
+  // pretend "bool" and "range" are also commands (these should be added later)
+  const regex = new RegExp(new RegExp(`^(${names}|bool|range)\\b`))
   const test = code.match(regex)
   return test ? { type: 'command', content: test[0] } : false
 }

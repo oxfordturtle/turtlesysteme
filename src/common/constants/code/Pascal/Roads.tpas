@@ -1,0 +1,133 @@
+PROGRAM Roads;
+CONST maxnodes = 500;
+      suffnodes = 400;
+      maxedges = 1000;
+      mindistance = 40;
+      noderadius = 6;
+      roadradius = 4;
+      normalroad = black;
+      linkroad = blue;
+VAR nodex, nodey: array[1..maxnodes] of integer;
+    nodedist: array[1..maxnodes] of integer;
+    numnodes: integer;
+    edge1, edge2, edgelen: array[1..maxedges] of integer;
+    numedges: integer;
+    m: integer;
+
+  Function closest(n: integer): integer;
+  Var i, min, d: integer;
+  Begin
+    result := 0;
+    min := maxint;
+    for i := 1 to numnodes do
+      if i <> n then
+        begin
+          d := hypot(nodex[n] - nodex[i], nodey[n] - nodey[i], 1);
+          if d < min then
+            begin
+              min := d;
+              result := i
+            end
+        end;
+    if min < mindistance then
+      result := -1
+  End;
+
+  Procedure marknode(n, col, rad: integer);
+  Begin
+    setxy(nodex[n], nodey[n]);
+    colour(col);
+    blot(rad)
+  End;
+
+  Procedure makeedge(nodea, nodeb, col: integer);
+  Begin
+    inc(numedges);
+    edge1[numedges] := nodea;
+    edge2[numedges] := nodeb;
+    edgelen[numedges] := hypot(nodex[nodea] - nodex[nodeb], nodey[nodea] - nodey[nodeb], 1);
+    setxy(nodex[nodea], nodey[nodea]);
+    colour(col);
+    setxy(nodex[nodeb], nodey[nodeb]);
+    polyline(2)
+  End;
+
+  Procedure linkup(nodea, nodeb: integer);
+  Begin
+    if hypot(nodex[nodea] - nodex[nodeb], nodey[nodea] - nodey[nodeb], 1) < mindistance * 2 then
+      makeedge(nodea, nodeb, normalroad)
+    else
+      begin
+        inc(numnodes);
+        nodex[numnodes] := (nodex[nodea] + nodex[nodeb]) / 2;
+        nodey[numnodes] := (nodey[nodea] + nodey[nodeb]) / 2;
+        marknode(numnodes, cyan, roadradius);
+        linkup(nodea, numnodes);
+        linkup(numnodes, nodeb)
+      end
+  End;
+
+  Procedure joinup(thisnode: integer);
+  Var i, j, dist: integer;
+      continue: boolean;
+  Begin
+    for i := 1 to numnodes do
+      nodedist[i] := maxint;
+    nodedist[thisnode] := 0;
+    continue := true;
+    while continue do
+      begin
+        continue := false;
+        for i := 1 to numedges do
+          begin
+            if nodedist[edge1[i]] < maxint then
+              begin
+                if nodedist[edge1[i]] + edgelen[i] < nodedist[edge2[i]] then
+                  begin
+                    nodedist[edge2[i]] := nodedist[edge1[i]] + edgelen[i];
+                    continue := true
+                  end
+              end;
+            if nodedist[edge2[i]] < maxint then
+              begin
+                if nodedist[edge2[i]] + edgelen[i] < nodedist[edge1[i]] then
+                  begin
+                    nodedist[edge1[i]] := nodedist[edge2[i]] + edgelen[i];
+                    continue := true
+                  end
+              end
+          end
+      end;
+    i := 0;
+    continue := true;
+    while (i < numnodes) and continue do
+      begin
+        inc(i);
+        dist = hypot(nodex[i] - nodex[thisnode], nodey[i] - nodey[thisnode], 1);
+        if (i <> thisnode) and (nodedist[i] > 1000) and (dist < mindistance * 2) then
+          begin
+            makeedge(thisnode, i, linkroad);
+            continue := false
+          end
+      end
+  End;
+
+BEGIN
+  thickness(6);
+  numnodes := 0;
+  numedges := 0;
+  while numnodes < suffnodes do
+    begin
+      inc(numnodes);
+      repeat
+        nodex[numnodes] := random(1000);
+        nodey[numnodes] := random(1000);
+        m := closest(numnodes)
+      until m >= 0;
+      marknode(numnodes, red, noderadius);
+      if m > 0 then
+        linkup(m, numnodes)
+    end;
+  for m := 1 to numnodes do
+    joinup(m)
+END.

@@ -318,7 +318,7 @@ const compileWhile = (routine, lex, startLine) => {
 // generate the pcode for a block (i.e. a sequence of commands/structures)
 const block = (routine, lex, startLine, startKeyword) => {
   let pcode = []
-  let pcodeTemp
+  let result
   let end = false
 
   // expecting something
@@ -332,9 +332,9 @@ const block = (routine, lex, startLine, startKeyword) => {
       lex += 1
     } else {
       // compile the structure
-      pcodeTemp = pcode
-      ;({ lex, pcode } = coder(routine, lex, startLine + pcode.length))
-      pcode = pcodeTemp.concat(pcode)
+      result = coder(routine, lex, startLine + pcode.length)
+      pcode = pcode.concat(result.pcode)
+      lex = result.lex
     }
   }
 

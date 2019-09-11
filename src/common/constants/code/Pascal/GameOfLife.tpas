@@ -1,0 +1,32 @@
+PROGRAM GameOfLife;
+CONST width = 32;
+      height = 32;
+VAR x, y, i, j, dn: integer;
+BEGIN
+  canvas(0, 0, width, height);
+  resolution(width, height);
+  for x := 0 to width - 1 do
+    for y := 0 to height - 1 do
+      if random(7) = 0 then
+        pixset(x, y, black);
+  while ?key <> \escape do
+    begin
+      noupdate;
+      for x := 0 to width - 1 do
+        for y := 0 to height - 1 do
+          begin
+            dn := 0;
+            for i := -1 to 1 do
+              for j := -1 to 1 do
+                dn := dn + pixcol((x + i + width) mod width, (y + j + height) mod height) and 1;
+            if ((pixcol(x, y) and 1 = 0) and ((dn < 5) or (dn > 6)))
+                or ((pixcol(x, y) and 1 = 1) and (dn = 6)) then
+              pixset(x, y, pixcol(x, y) xor 2)
+          end;
+      for x := 0 to width - 1 do
+        for y := 0 to height - 1 do
+          if (pixcol(x, y) and 3) mod 3 <> 0 then
+            pixset(x, y, pixcol(x, y) xor $FFFFFD);
+      update
+    end
+END.

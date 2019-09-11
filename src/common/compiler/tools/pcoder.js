@@ -5,10 +5,20 @@ import pc from 'common/constants/pc'
 import * as find from './find.js'
 
 // merge two arrays of pcode into one, without a line break in between
-export const merge = (pcode1, pcode2) =>
-  pcode1.slice(0, -1)
+export const merge = (pcode1, pcode2) => {
+  // corner case: INPT followed by ICLR (from e.g. "reset(?key)"), INPT should be deleted
+  if (pcode2[0] && pcode2[0][0] && pcode2[0][0] === pc.iclr) {
+    const last1 = pcode1.length - 1
+    const last2 = pcode1[last1] ? pcode1[last1].length - 1 : 0
+    if (pcode1[last1] && pcode1[last1][last2] && pcode1[last1][last2] === pc.inpt) {
+      pcode1[last1].pop() // delete pc.inpt
+    }
+  }
+  // return the merged arrays
+  return pcode1.slice(0, -1)
     .concat([pcode1[pcode1.length - 1].concat(pcode2[0])])
     .concat(pcode2.slice(1))
+}
 
 // merge two things with an operator at the end
 export const mergeWithOperator = (sofar, next, operator, makeAbsolute = false) => {
@@ -198,7 +208,7 @@ export const callCommand = (command, routine, language) => {
 
     // undefined means this is a custom command
     case undefined:
-      return [pc.subr, command.startLine]
+      return [pc.subr, command.startLine || `SUBR${command.index}`]
 
     // anything else is a native command that just corresponds to a direct machine code
     default:
@@ -413,7 +423,7 @@ const setupProgramDefaults = [
 ]
 
 // pcode for the start of the main program
-const programStartCode = (routine) => {
+export const programStartCode = (routine) => {
   const startCode = [
     setupGlobalMemory(routine.turtleAddress, routine.memoryNeeded),
     setupProgramDefaults

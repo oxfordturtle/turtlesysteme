@@ -1,0 +1,89 @@
+PROGRAM IteratedPD;
+CONST width = 50;
+      height = 50;
+      n = 10;
+VAR i, j: integer;
+    util: array[1..14] of integer;
+
+  Procedure utility(x, y: integer);
+  Var this, utot, i, j, flag: integer;
+  Begin
+    this := pixcol(x, y) and $7;
+    utot := 0;
+    for i := -1 to 1 do
+      for j := -1 to 1 do
+        if (i <> 0) or (j <> 0) then
+          begin
+            flag := this or (pixcol((x + width + i) mod width, (y + height + j) mod height)) and $F;
+            utot := utot + util[flag]
+          end;
+    pixset(x, y, utot * $100 + pixcol(x, y) and $F)
+  End;
+
+  Procedure pickbest(x, y: integer);
+  Var i, j, bestsofar: integer;
+  Begin
+    bestsofar := pixcol(x, y);
+    if random(5) > 0 then
+      for i := -1 to 1 do
+        for j := -1 to 1 do
+          if (pixcol((x + width + i) mod width, (y + height + j) mod height) and $FFFF00) > (bestsofar and $FFFF00) then
+            bestsofar := pixcol((x + width + i) mod width, (y + height + j) mod height);
+    pixset(x, y, (pixcol(x, y) and $FFFF0F) + (bestsofar and $F) * $10)
+  End;
+
+  Procedure fixbest(x, y: integer);
+  Begin
+    if (pixcol(x, y) and $10) > 0 then
+      pixset(x, y, $FF0001)
+    else
+    if (pixcol(x, y) and $20) > 0 then
+      pixset(x, y, $00FF02)
+    else
+     pixset(x, y, $0000FC)
+  End;
+
+  Procedure setutilities;
+  Begin
+    util[1] := 3 * n;
+    util[2] := 3 * n;
+    util[3] := 3 * n;
+    util[5] := 5 * n;
+    util[6] := n + 4;
+    util[12] := n;
+    util[13] := 0;
+    util[14] := n - 1
+  End;
+
+BEGIN
+  canvas(0, 0, width, height);
+  resolution(width, height);
+  setutilities;
+  noupdate;
+  for i := 0 to width - 1 do
+    for j := 0 to height - 1 do
+      if random(50) = 0 then
+        pixset(i, j, $0000FC)
+      else
+      if random(7) = 0 then
+        pixset(i, j, $00FF02)
+      else
+        pixset(i, j, $FF0001);
+  pause(1000);
+  while ?key <> \escape do
+    begin
+      timeset(0);
+      noupdate;
+      for i := 0 to width - 1 do
+        for j := 0 to height - 1 do
+          utility(i, j);
+      for i := 0 to width - 1 do
+        for j := 0 to height - 1 do
+          pickbest(i, j);
+      for i := 0 to width - 1 do
+        for j := 0 to height - 1 do
+          fixbest(i, j);
+      update;
+      noupdate
+    end
+END.

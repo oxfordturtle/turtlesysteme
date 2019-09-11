@@ -43,7 +43,6 @@ hexadecimalInput.addEventListener('change', () => {
 on('pcode-changed', ({ pcode, assembler, decimal }) => {
   if (assembler) {
     assemblerInput.setAttribute('checked', 'checked')
-    console.log('hello?')
   } else {
     machineInput.setAttribute('checked', 'checked')
   }

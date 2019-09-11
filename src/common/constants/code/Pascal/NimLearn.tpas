@@ -1,0 +1,286 @@
+PROGRAM NimLearn;
+CONST maxcoins = 20;
+      maxtake = 3;
+      columns = 10;
+      margin = 35;
+      menutype = 4;
+      menusize = 36;
+VAR prob: array[1..maxcoins, 1..maxtake] of integer;
+    taken: array[1..maxcoins] of integer;
+    numcoins, move: integer;
+    h, v, r, font: integer;
+    max: integer;
+    youwin: integer;
+    myscore, yourscore: integer;
+    opponent: integer;
+    total, count: integer;
+
+ Procedure menu;
+ Var choice: integer;
+ Begin
+  blank(white);
+  setxy(margin, 50);
+  colour(brown);
+  print('   NIM LEARNING PROGRAM', menutype or 16, 42);
+  colour(darkred);
+  setxy(margin, 150);
+  print('This program learns to play NIM, and can be', menutype, 32);
+  setxy(margin, 200);
+  print('configured to play either against you (human', menutype, 32);
+  setxy(margin, 250);
+  print('opponent), or against a simulated computer', menutype, 32);
+  setxy(margin, 300);
+  print('opponent, which either plays randomly or', menutype, 32);
+  setxy(margin, 350);
+  print('itself learns from experience.', menutype, 32);
+  colour(black);
+  setxy(margin, 525);
+  print('Choose from the following:', menutype or 16, menusize);
+  setxy(margin, 650);
+  print('  1.  Human opponent', menutype, menusize);
+  setxy(margin, 750);
+  print('  2.  Random opponent', menutype, menusize);
+  setxy(margin, 850);
+  print('  3.  Opponent that also learns', menutype, menusize);
+  repeat
+   choice := abs(?key) - 48
+  until (choice > 0) and (choice < 4);
+  opponent := choice;
+  blank(white)
+ End;
+
+ Procedure initialise;
+ Var i, j: integer;
+ Begin
+  for i := 1 to maxcoins do
+   for j := 1 to maxtake do
+    if j > i then
+     prob[i, j] := 0
+    else
+     prob[i, j] := 5;
+  numcoins := maxcoins;
+  h := 1000 / (columns + 1);
+  v := 50;
+  r := (h * 3) / 8;
+  font := 28;
+  myscore := 0;
+  yourscore := 0
+ End;
+
+ Procedure display;
+ Var i, j: integer;
+ Begin
+  noupdate;
+  blank(white);
+  for i := 0 to maxcoins - 1 do
+   begin
+    setxy(3 * h / 2 + (i mod columns) * h, v + (i div columns) * v * (maxtake + 3));
+    if i < numcoins then
+     begin
+      colour(red);
+      blot(r)
+     end
+    else
+     begin
+      colour(white);
+      blot(r)
+     end;
+    movexy(-3 * font / 4, 0);
+    for j := 1 to maxtake do
+     begin
+      movexy(0, v);
+      colour(black);
+      box(h / 2, v, cream, true);
+      if taken[i + 1] = j then
+       box(h / 2, v, lime, true)
+      else
+      if taken[i + 1] = -j then
+       box(h / 2, v, cyan, true)
+      else
+       box(h / 2, v, cream, true);
+      print(' ' + str(prob[i + 1, j]), 4, font)
+     end;
+    if i mod columns = 0 then
+     begin
+      setxy(h / 2 - font / 2, v + (i / columns) * v * (maxtake + 3));
+      colour(blue);
+      for j := 1 to maxtake do
+       begin
+        movexy(0, v);
+        print(str(j), 4, font)
+       end
+     end
+   end;
+  update
+ End;
+
+ Function coins(n: integer): string;
+ Begin
+  if n = 1 then
+   result := '1 coin'
+  else
+   result := str(n) + ' coins'
+ End;
+
+ Function usermove(max: integer): integer;
+ Var n: integer;
+ Begin
+  colour(black);
+  setxy(h, v + (((maxcoins - 1) div columns) + 1) * v * (maxtake + 3));
+  box(1000, 500, white, false);
+  if numcoins = 1 then
+   begin
+    print('Since there is only one coin left, you must take it', 4, font);
+    pause(2000);
+    result := 1
+   end
+  else
+   begin
+    print('There are ' + coins(numcoins) + ', of which you may take up to ' + str(max) + '.', 4, font);
+    movexy(0, v);
+    print('How many would you like to take? ', 4, font);
+    reset(\keybuffer);
+    repeat
+     n := val(read(1))
+    until (n > 0) and (n <= max);
+    reset(\keybuffer);
+    movexy(0, v * 2);
+    print('OK - you are taking ' + coins(n) + ' ...', 4, font);
+    movexy(0, v);
+    result := n
+   end
+ End;
+
+ Function randommove(max: integer): integer;
+ Begin
+  result := random(max) + 1
+ End;
+
+ Function machinemove: integer;
+ Var i, total, choose: integer;
+ Begin
+  total := 0;
+  for i := 1 to maxtake do
+   total := total + prob[numcoins, i];
+  choose := random(total);
+  i := 0;
+  repeat
+   inc(i);
+   choose := choose - prob[numcoins, i]
+  until choose < 0;
+  result := i
+ End;
+
+ Procedure showresult;
+ Var s: string;
+ Begin
+  if opponent = 1 then
+   begin
+    colour(black);
+    setxy(200, v + (((maxcoins - 1) div columns) + 1) * v * (maxtake + 3));
+    if youwin > 0 then
+     print('YOU WIN!!', 4, font * 3)
+    else
+     print(' I WIN!!', 4, font * 3);
+    movexy(0, 4 * v);
+    print('Press <RETURN> or <ENTER> to continue ...', 4, font);
+    s := readln
+   end
+  else
+   writeln('PROGRAM: ' + str(myscore) + ';  OPPONENT: ' + str(yourscore))
+ End;
+
+ Procedure startgame;
+ Var i: integer;
+ Begin
+  for i := 1 to maxcoins do
+   taken[i] := 0;
+  numcoins := maxcoins
+ End;
+
+ Procedure adjustweights;
+ Var i, j: integer;
+     add: integer;
+ Begin
+  for i := 1 to maxcoins do
+   if taken[i] <> 0 then
+    begin
+     if taken[i] * youwin > 0 then
+      add := 1
+     else
+      add := -1;
+     for j := 1 to maxtake do
+      begin
+       if j <= i then
+        begin
+         if (j = abs(taken[i])) then
+          prob[i, j] := prob[i, j] + add
+         else
+          prob[i, j] := prob[i, j] - add;
+         if prob[i, j] < 0 then
+          prob[i, j] := 0;
+         if prob[i, j] > 9 then
+          prob[i, j] := 9
+        end
+      end
+    end
+ End;
+
+BEGIN
+ keyecho(false);
+ menu;
+ initialise;
+ repeat
+  startgame;
+  repeat
+   display;
+   if numcoins > maxtake then
+    max := maxtake
+   else
+    max := numcoins;
+   if opponent = 1 then
+    move := usermove(max)
+   else
+   if opponent = 2 then
+    move := randommove(max)
+   else
+    move := machinemove;
+   taken[numcoins] := move;
+   numcoins := numcoins - move;
+   if numcoins = 0 then
+    youwin := 1
+   else
+    begin
+     youwin := -1;
+     move := machinemove;
+     if opponent = 1 then
+      begin
+       pause(2000);
+       display;
+       setxy(h, v + (((maxcoins - 1) div columns) + 1) * v * (maxtake + 3));
+       print('The computer will choose on these probabilities:', 4, font);
+       movexy(0, v / 2);
+       total := prob[numcoins, 1] + prob[numcoins, 2] + prob[numcoins, 3];
+       for count := 1 to 3 do
+        begin
+         movexy(0, v);
+         print('     ' + coins(count) + ': ' + str(prob[numcoins, count]) + '/' + str(total), 4, font)
+        end;
+       pause(2000);
+       movexy(0, 3 * v / 2);
+       print('OK, in response, the computer takes ' + coins(move) + ' ...', 4, font);
+       pause(2000)
+      end;
+     taken[numcoins] := -move;
+     numcoins := numcoins - move
+    end;
+   display
+  until numcoins = 0;
+  if youwin > 0 then
+   inc(yourscore)
+  else
+   inc(myscore);
+  showresult;
+  adjustweights
+ until 0 = 1
+END.

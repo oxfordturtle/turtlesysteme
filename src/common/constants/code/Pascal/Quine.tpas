@@ -1,0 +1,27 @@
+PROGRAM Quine;
+VAR lines: array[0..14] of string[97];
+    i: integer;
+BEGIN
+  output(true, cream, true);
+  lines[0] := 'PROGRAM Quine;';
+  lines[1] := 'VAR lines: array[0..14] of string[97];';
+  lines[2] := '    i: integer;';
+  lines[3] := 'BEGIN';
+  lines[4] := '  output(true, cream, true);';
+  lines[5] := '  for i := 0 to 4 do';
+  lines[6] := '    writeln(lines[i]);';
+  lines[7] := '  for i := 0 to 14 do';
+  lines[8] := '    writeln(chr(32) + lines[12] + str(i) + lines[13] + chr(39) + lines[i] + chr(39) + lines[14]);';
+  lines[9] := '  for i := 5 to 11 do';
+  lines[10] := '    writeln(lines[i])';
+  lines[11] := 'END.';
+  lines[12] := ' lines[';
+  lines[13] := '] := ';
+  lines[14] := ';';
+  for i := 0 to 4 do
+    writeln(lines[i]);
+  for i := 0 to 14 do
+    writeln(chr(32) + lines[12] + str(i) + lines[13] + chr(39) + lines[i] + chr(39) + lines[14]);
+  for i := 5 to 11 do
+    writeln(lines[i])
+END.

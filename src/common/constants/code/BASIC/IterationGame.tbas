@@ -1,0 +1,48 @@
+REM IterationGame
+
+KEYECHO(FALSE)
+REPEAT
+  BLANK(WHITE)
+  SETXY(50, 20)
+  COLOUR(BLUE)
+  PRINT("Type in a starting integer (>1):", 4, 36)
+  SETXY(800, 20)
+  COLOUR(BLACK)
+  REPEAT
+    RESET(\KEYBUFFER)
+    REPEAT
+      BOX(200, 60, WHITE, FALSE)
+      PRINT(GET$(0), 4, 36)
+      PAUSE(100)
+    UNTIL ABS(?KEY) = \RETURN
+    s$ = GETLINE$
+    RESET(?KEY)
+    first% = VALDEF(s$, -1)
+  UNTIL first% > 1
+  latest% = first%
+  count% = 0
+  COLOUR(BLUE)
+  REPEAT
+    SETXY((count% MOD 10) * 100 + 20, (count% DIV 10) * 45 + 300)
+    PRINT(STR$(latest%), 4, 24)
+    IF latest% MOD 2 = 0 THEN
+      latest% = latest% / 2
+    ELSE
+      latest% = 3 * latest% + 1
+    ENDIF
+    INC(count%)
+    COLOUR(GREEN)
+  UNTIL latest% = 1
+  SETXY((count% MOD 10) * 100 + 20, (count% DIV 10) * 45 + 300)
+  COLOUR(RED)
+  PRINT(STR$(latest%), 4, 24)
+  SETXY(100, 100)
+  PRINT("That took " + STR$(count%) + " iterations to reach 1", 4, 36)
+  COLOUR(BLACK)
+  SETXY(250, 200)
+  PRINT("[Press a key to continue]", 4, 30)
+  REPEAT
+  UNTIL ?KEY > 0
+  RESET(?KEY)
+UNTIL FALSE
+END

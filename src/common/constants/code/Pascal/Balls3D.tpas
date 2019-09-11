@@ -1,0 +1,36 @@
+PROGRAM Balls3D;
+VAR count: integer;
+BEGIN
+  setxy(250, 250);
+  colour($00FFFF);
+  for count := 240 downto 1 do
+    begin
+      blot(count);
+      turtc := turtc + $10000
+    end;
+  right(60);
+  setxy(750, 250);
+  colour($D2691E);
+  for count := 40 downto 1 do
+    begin
+      blot(count * 6);
+      forward(3);
+      turtc := turtc + $10102
+    end;
+  setxy(250, 750);
+  colour($D2691E);
+  for count := 40 downto 1 do
+    begin
+      blot(count * 6);
+      forward(3);
+      turtc := turtc + $10102
+    end;
+  setxy(750, 750);
+  colour($FFA500);
+  for count := 80 downto 1 do
+    begin
+      blot(count * 3);
+      forward(2);
+      turtc := turtc + $101
+    end
+END.

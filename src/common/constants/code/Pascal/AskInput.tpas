@@ -1,0 +1,10 @@
+PROGRAM AskInput;
+VAR s: string;
+BEGIN
+  write('What is your name?  ');
+  s := readln;
+  writeln('');
+  write('Hello, ' + s + ', ...  ');
+  pause(500);
+  writeln('How are you?')
+END.

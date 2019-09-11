@@ -1,0 +1,119 @@
+REM Roads
+
+CONST MAXNODES% = 500
+CONST SUFFNODES% = 400
+CONST MAXEDGES% = 1000
+CONST MINDISTANCE% = 40
+CONST NODERADIUS% = 6
+CONST ROADRADIUS% = 4
+CONST NORMALROAD% = BLACK
+CONST LINKROAD% = BLUE
+DIM nodex%(MAXNODES%)
+DIM nodey%(MAXNODES%)
+DIM nodedist%(MAXNODES%)
+DIM edge1%(MAXEDGES%)
+DIM edge2%(MAXEDGES%)
+DIM edgelen%(MAXEDGES%)
+THICKNESS(6)
+numnodes% = 0
+numedges% = 0
+WHILE numnodes% < SUFFNODES%
+  INC(numnodes%)
+  REPEAT
+    nodex%(numnodes%) = RND(1000)
+    nodey%(numnodes%) = RND(1000)
+    m% = FNclosest(numnodes%)
+  UNTIL m% >= 0
+  PROCmarknode(numnodes%, RED, NODERADIUS%)
+  IF m% > 0 THEN
+    PROClinkup(m%, numnodes%)
+  ENDIF
+ENDWHILE
+FOR m% = 1 TO numnodes%
+  PROCjoinup(m%)
+NEXT
+END
+
+DEF FNclosest(n%)
+  LOCAL i%, min%, d%
+  result% = 0
+  min% = MAXINT
+  FOR i% = 1 TO numnodes%
+    IF i% <> n% THEN
+      d% = HYPOT(nodex%(n%) - nodex%(i%), nodey%(n%) - nodey%(i%), 1)
+      IF d% < min% THEN
+        min% = d%
+        result% = i%
+      ENDIF
+    ENDIF
+  NEXT
+  IF min% < MINDISTANCE% THEN
+    result% = -1
+  ENDIF
+= result%
+
+DEF PROCmarknode(n%, col%, rad%)
+  SETXY(nodex%(n%), nodey%(n%))
+  COLOUR(col%)
+  BLOT(rad%)
+ENDPROC
+
+DEF PROCmakeedge(nodea%, nodeb%, col%)
+  INC(numedges%)
+  edge1%(numedges%) = nodea%
+  edge2%(numedges%) = nodeb%
+  edgelen%(numedges%) = HYPOT(nodex%(nodea%) - nodex%(nodeb%), nodey%(nodea%) - nodey%(nodeb%), 1)
+  SETXY(nodex%(nodea%), nodey%(nodea%))
+  COLOUR(col%)
+  SETXY(nodex%(nodeb%), nodey%(nodeb%))
+  POLYLINE(2)
+ENDPROC
+
+DEF PROClinkup(nodea%, nodeb%)
+  IF HYPOT(nodex%(nodea%) - nodex%(nodeb%), nodey%(nodea%) - nodey%(nodeb%), 1) < MINDISTANCE% * 2 THEN
+    PROCmakeedge(nodea%, nodeb%, NORMALROAD%)
+  ELSE
+    INC(numnodes%)
+    nodex%(numnodes%) = (nodex%(nodea%) + nodex%(nodeb%)) / 2
+    nodey%(numnodes%) = (nodey%(nodea%) + nodey%(nodeb%)) / 2
+    PROCmarknode(numnodes%, CYAN, ROADRADIUS%)
+    PROClinkup(nodea%, numnodes%)
+    PROClinkup(numnodes%, nodeb%)
+  ENDIF
+ENDPROC
+
+DEF PROCjoinup(thisnode%)
+  LOCAL i%, j%, dist%, continue%
+  FOR i% = 1 TO numnodes%
+    nodedist%(i%) = MAXINT
+  NEXT
+  nodedist%(thisnode%) = 0
+  continue% = TRUE
+  WHILE continue%
+    continue% = FALSE
+    FOR i% = 1 TO numedges%
+      IF nodedist%(edge1%(i%)) < MAXINT THEN
+        IF nodedist%(edge1%(i%)) + edgelen%(i%) < nodedist%(edge2%(i%)) THEN
+          nodedist%(edge2%(i%)) = nodedist%(edge1%(i%)) + edgelen%(i%)
+          continue% = TRUE
+        ENDIF
+      ENDIF
+      IF nodedist%(edge2%(i%)) < MAXINT THEN
+        IF nodedist%(edge2%(i%)) + edgelen%(i%) < nodedist%(edge1%(i%)) THEN
+          nodedist%(edge1%(i%)) = nodedist%(edge2%(i%)) + edgelen%(i%)
+          continue% = TRUE
+        ENDIF
+      ENDIF
+    NEXT
+  ENDWHILE
+  i% = 0
+  continue% = TRUE
+  WHILE (i% < numnodes%) AND continue%
+    INC(i%)
+    dist% = HYPOT(nodex%(i%) - nodex%(thisnode%), nodey%(i%) - nodey%(thisnode%), 1)
+    IF (i% <> thisnode%) AND (nodedist%(i%) > 1000) AND (dist% < MINDISTANCE% * 2) THEN
+      PROCmakeedge(thisnode%, i%, LINKROAD%)
+      continue% = FALSE
+    ENDIF
+  ENDWHILE
+ENDPROC

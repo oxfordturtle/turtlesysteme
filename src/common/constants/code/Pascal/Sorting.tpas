@@ -1,0 +1,102 @@
+PROGRAM Sorting;
+CONST n = 100;
+      rows = 10;
+      cols = 10;
+      tries = 25;
+VAR a: array[1..100] of integer;
+    swapcount: integer;
+    seltotal, bubtotal: integer;
+    count: integer;
+
+ Procedure swap(x, y: integer);
+ Var t: integer;
+ Begin
+  t := a[x];
+  a[x] := a[y];
+  a[y] := t;
+  inc(swapcount)
+ End;
+
+ Procedure init;
+ Var i: integer;
+ Begin
+  writeln('INITIALISING ...');
+  writeln('');
+  for i := 1 to n do
+   a[i] := i
+ End;
+
+ Procedure list;
+ Var i, j: integer;
+ Begin
+  writeln('');
+  writeln('LISTING:');
+  for i := 0 to rows - 1 do
+   begin
+    for j := 1 to cols do
+     write(str(a[i * cols + j]) + ' ');
+    writeln('')
+   end
+ End;
+
+ Procedure randomise;
+ Var i, j: integer;
+ Begin
+  for i := 1 to n do
+   begin
+    j := random(n) + 1;
+    swap(i, j)
+   end
+ End;
+
+ Procedure bubblesort;
+ Var i, j: integer;
+ Begin
+  write('Bubblesorting ...  ');
+  swapcount := 0;
+  for i := 1 to n do
+   for j := 1 to n - 1 do
+    if a[j + 1] < a[j] then
+     swap(j, j + 1);
+  writeln(str(swapcount) + ' swaps')
+ End;
+
+ Procedure selectionsort;
+ Var i, j: integer;
+     lowsofar: integer;
+ Begin
+  write('Selectionsorting ...            ');
+  swapcount := 0;
+  for i := 1 to n do
+   begin
+    lowsofar := i;
+    for j := i + 1 to n do
+     if a[j] < a[lowsofar] then
+      lowsofar := j;
+    if lowsofar <> i then
+     swap(i, lowsofar)
+   end;
+  writeln(str(swapcount) + ' swaps')
+ End;
+
+BEGIN
+ output(true, white, true);
+ init;
+ bubtotal := 0;
+ seltotal := 0;
+ for count := 1 to tries do
+  begin
+   randomise;
+   bubblesort;
+   bubtotal := bubtotal + swapcount;
+   randomise;
+   selectionsort;
+   seltotal := seltotal + swapcount;
+   writeln('')
+  end;
+ output(true, cream, true);
+ writeln('Averages from sorting ' + str(n) + ' items, over ' + str(tries) + ' trials');
+ writeln('');
+ writeln('Bubblesort average swaps: ' + qstr(bubtotal, 100, 2));
+ writeln('Selectionsort average swaps: ' + qstr(seltotal, 100, 2))
+END.

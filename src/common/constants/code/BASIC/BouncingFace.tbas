@@ -1,0 +1,56 @@
+REM BouncingFace
+
+CONST FACESIZE% = 100
+x% = 300
+y% = 700
+xvel% = 8
+yvel% = -4
+WHILE 0 < 1
+  NOUPDATE
+  COLOUR(WHITE)
+  BLOT(FACESIZE% + 1)
+  x% = x% + xvel%
+  y% = y% + yvel%
+  SETXY(x%, y%)
+  PROCface(FACESIZE%)
+  SETXY(x%, y%)
+  UPDATE
+  PAUSE(10)
+  IF (x% < FACESIZE%) OR (x% > 999 - FACESIZE%) THEN
+    xvel% = -xvel%
+  ENDIF
+  IF (y% < FACESIZE%) OR (y% > 999 - FACESIZE%) THEN
+    yvel% = -yvel%
+  ENDIF
+ENDWHILE
+END
+
+DEF PROCeye(size%)
+  COLOUR(WHITE)
+  ELLBLOT(size% * 3 / 20, size% / 10)
+  COLOUR(EMERALD)
+  BLOT(size% * 9 / 100)
+  COLOUR(BLACK)
+  BLOT(size% / 25)
+ENDPROC
+
+DEF PROCface(size%)
+  DIRECTION(0)
+  COLOUR(PEACH)
+  BLOT(size%)
+  COLOUR(DARKRED)
+  BLOT(size% * 7 / 10)
+  FORWARD(size% * 3 / 20)
+  COLOUR(PEACH)
+  BLOT(size% * 3 / 4)
+  BACK(size% * 3 / 10)
+  COLOUR(ROYAL)
+  BLOT(size% * 3 / 20)
+  PENUP
+  FORWARD(size% * 9 / 20)
+  LEFT(90)
+  FORWARD(size% * 2 / 5)
+  PROCeye(size%)
+  BACK(size% * 4 / 5)
+  PROCeye(size%)
+ENDPROC

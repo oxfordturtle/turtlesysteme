@@ -2,6 +2,7 @@
 */
 import * as factory from './factory'
 import error from '../../tools/error'
+import evaluate from '../../tools/evaluate'
 import * as find from '../../tools/find'
 
 // create main program object
@@ -14,7 +15,7 @@ export const subroutine = (name, type, parent) =>
 
 // create constant object
 export const constant = (lexemes, lex, routine) => {
-  const [identifier, assignment, next1, next2] = lexemes.slice(lex, lex + 4)
+  const [identifier, assignment, next] = lexemes.slice(lex, lex + 3)
 
   // basic error checking
   if (!identifier) {
@@ -32,64 +33,33 @@ export const constant = (lexemes, lex, routine) => {
   if (!assignment) {
     throw error('Constant must be assigned a value.', identifier)
   }
-  if (assignment.content !== '=' || !next1) {
+  if (assignment.content !== '=' || !next) {
     throw error('Constant must be assigned a value.', assignment)
   }
 
   // determine constant type based on name
   const type = identifier.content.slice(-1) === '$' ? 'string' : 'boolint'
 
-  // determine constant value
-  let value
-  if (next1.content === '-') {
-    if (!next2) {
-      throw error('Negation operator must be followed by an integer value.')
-    }
-    if (next2.type !== 'integer') {
-      throw error('{lex} cannot be negated', next2)
-    }
-    if (type !== 'boolint') {
-      throw error('Integer constants must have "%" at the end of their names.', identifier)
-    }
-    value = -next2.value
-    lex = lex + 3
-  } else {
-    switch (next1.type) {
-      case 'integer': // fallthrough
-      case 'boolean':
-        if (type !== 'boolint') {
-          throw error('Integer and Boolean constants must have "%" at the end of their names.', identifier)
-        }
-        value = next1.value
-        break
+  // get all the lexemes up to the first line break
+  const valueLexemes = []
+  lex += 1
+  while (lexemes[lex + 1] && lexemes[lex + 1].type !== 'NEWLINE') {
+    valueLexemes.push(lexemes[lex + 1])
+    lex += 1
+  }
+  let value = evaluate(identifier, valueLexemes, routine)
+  switch (typeof value) {
+    case 'number':
+      if (type === 'string') {
+        throw error('String constant cannot be assigned an integer value.', identifier)
+      }
+      break
 
-      case 'identifier':
-        const hit = find.constant(routine, next1.content, 'BASIC') ||
-          find.colour(next1.content, 'BASIC')
-        if (hit) {
-          if (type === 'boolint' && hit.type === 'string') {
-            throw error('String constants must have "$" at the end of their names.', identifier)
-          }
-          if (type === 'string' && hit.type !== 'string') {
-            throw error('Integet and Boolean constants must have "%" at the end of their names.', identifier)
-          }
-          value = hit.value
-        } else {
-          throw error('{lex} is not a valid constant value.')
-        }
-        break
-
-      case 'string':
-        if (type !== 'string') {
-          throw error('String constants must have "$" at the end of their names.', identifier)
-        }
-        value = next1.value
-        break
-
-      default:
-        throw error('{lex} is not a valid constant value.', next1)
-    }
-    lex = lex + 2
+    case 'string':
+      if (type === 'boolint') {
+        throw error('Integer constant cannot be assigned a string value.', identifier)
+      }
+      break
   }
 
   // return the constant object and index of the next lexeme

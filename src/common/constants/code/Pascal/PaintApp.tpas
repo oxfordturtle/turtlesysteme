@@ -1,0 +1,99 @@
+PROGRAM PaintApp;
+VAR brushwidth: integer;
+    brushcolour: integer;
+
+  Procedure setbrushwidth(wdth: integer);
+  Var count: integer;
+  Begin
+    brushwidth := wdth;
+    noupdate;
+    colour(black);
+    for count := 0 to 4 do
+      begin
+        setxy(625 + count * 50, 875);
+        blot(8 + count * 2)
+      end;
+    colour(brushcolour);
+    recolour(((brushwidth + 16) * 25) + 25, 875, lightred);
+    update
+  End;
+
+  Procedure setbrushcolour(clr: integer);
+  Begin
+    brushcolour := clr;
+    colour(clr);
+    setxy(975, 875);
+    blot(16)
+  End;
+
+  Procedure paintbrush(x: integer; y: integer);
+  Begin
+    setxy(x, y);
+    blot(brushwidth)
+  End;
+
+  Procedure paintcan(x: integer; y: integer);
+  Begin
+    recolour(x, y, brushcolour)
+  End;
+
+  Procedure setup;
+  Var count: integer;
+
+    procedure square(col: integer);
+    begin
+      movexy(50, 0);
+      movexy(0, 50);
+      movexy(-50, 0);
+      movexy(0, -50);
+      colour(col);
+      polygon(4)
+    end;
+
+  Begin
+    colour(lightred);
+    setxy(0, 850);
+    drawxy(1000, 0);
+    setxy(0, 900);
+    drawxy(1000, 0);
+    setxy(450, 850);
+    drawxy(0, 50);
+    setxy(850, 850);
+    drawxy(0, 50);
+    colour(black);
+    setxy(10, 858);
+    print('Left-click to draw, right-click to fill', 0, 20);
+    setxy(450 + 10, 858);
+    print('Brush width:', 0, 20);
+    setxy(850 + 10, 858);
+    print('Colour:', 0, 20);
+    setxy(0, 900);
+    for count := 1 to 20 do
+      begin
+        square(rgb(count));
+        movexy(0, 50);
+        square(rgb(count + 30));
+        movexy(50, -50)
+      end;
+    setbrushwidth(8);
+    setbrushcolour(black)
+  End;
+
+BEGIN
+  setup;
+  repeat
+    if ?lmouse > 0 then
+      begin
+        if ?mousey > 900 then
+          setbrushcolour(pixcol(?mousex, ?mousey))
+        else
+        if (?mousey > 850) and ((?mousex > 600) and (?mousex < 850)) then
+          setbrushwidth(((?mousex div 50) * 2) - 16)
+        else
+        if ?mousey < 850 - brushwidth then
+          paintbrush(?mousex, ?mousey)
+      end;
+    if (?rmouse > 0) and (?mousey < 850) then
+      paintcan(?mousex, ?mousey)
+  until false
+END.

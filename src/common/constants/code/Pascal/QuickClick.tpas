@@ -1,0 +1,42 @@
+PROGRAM QuickClick;
+VAR x, y: integer;
+    count: integer;
+    clickcol: integer;
+BEGIN
+  blank(cream);
+  setxy(15, 200);
+  print('This reaction game will display a sequence', 4, 36);
+  setxy(20, 270);
+  print('of 10 coloured circles on the Canvas.  Try', 4, 36);
+  setxy(20, 340);
+  print('to click the mouse on each circle as quickly', 4, 36);
+  setxy(20, 410);
+  print('as you can, and see how short a total time', 4, 36);
+  setxy(20, 480);
+  print('you can achieve for all 10.', 4, 36);
+  setxy(100, 620);
+  print('Now press the "Esc" key to start ...', 4, 36);
+  keyecho(false);
+  repeat
+  until (abs(?key) = \escape);
+  timeset(0);
+  for count := 1 to 10 do
+    begin
+      x := random(900) + 50;
+      y := random(900) + 50;
+      blank(black);
+      setxy(x, y);
+      colour(rgb(count));
+      blot(50);
+      repeat
+        repeat
+          update
+        until ?lmouse > 0;
+        clickcol := pixcol(?mousex, ?mousey)
+      until clickcol = turtc
+    end;
+  blank(lightblue);
+  setxy(60, 460);
+  colour(lightred);
+  print('Your time was ' + qstr(time, 1000, 2) + ' seconds', 4, 50)
+END.

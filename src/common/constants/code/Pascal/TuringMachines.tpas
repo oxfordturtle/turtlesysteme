@@ -1,0 +1,467 @@
+PROGRAM TuringMachines;
+CONST margin = 35;
+      tapelabel = 25;
+      tapetop = 100;
+      cycleindent = 200;
+      cyclelabel = 200;
+      tablelabel = 350;
+      tabletop = 425;
+      rowheight = 48;
+      headspace = 6;
+      fontsize = 23;
+      menusize = 36;
+      fonttype = 16;
+      menutype = 4;
+      leftend = -1000;
+      rightend = 1000;
+      showcells = 20;
+      showleftmin = 1;
+      showleft = 4;
+      showright = 2;
+      maxstates = 30;
+      maxbehaviour = 100;
+      maxtriggers = 5;
+VAR tape: array[leftend..rightend] of char;
+    numstates: integer;
+    state: integer;
+    machinetitle: string[64];
+    pausetime: integer;
+    statecodes: string[maxstates];
+    behaviour: array[1..maxstates] of string[maxbehaviour];
+    triggerstring: array[1..maxstates] of string[maxtriggers];
+    transitionstring: array[1..maxstates] of string[maxtriggers];
+    cycles: integer;
+    headpos: integer;
+    leftmost, rightmost: integer;
+    leftshown: integer;
+    lmargin, cellwidth, cmargin: integer;
+
+ Procedure initialise;
+ Var i: integer;
+ Begin
+  statecodes := '';
+  for i := 1 to maxstates do
+   begin
+    behaviour[i] := '';
+    triggerstring[i] := '';
+    transitionstring[i] := ''
+   end;
+  for i := leftend to rightend do
+   tape[i] := ' ';
+  headpos := 0;
+  leftmost := 0;
+  rightmost := 0;
+  leftshown := -showleftmin;
+  cellwidth := 998 / showcells;
+  cmargin := cellwidth / 4;
+  lmargin := (1000 - showcells * cellwidth) / 2
+ End;
+
+ Procedure definemachine(choice: integer);
+ Begin
+  pausetime := 200;
+  if choice = 1 then
+   begin
+    machinetitle := 'Petzold p. 81, 0 1 0 1 ...  4 states';
+    numstates := 4;
+    behaviour[1] := 'b; cP0,R';
+    behaviour[2] := 'c; eR';
+    behaviour[3] := 'e; fP1,R';
+    behaviour[4] := 'f; bR'
+   end
+  else
+  if choice = 2 then
+   begin
+    machinetitle := 'Petzold p. 84, 0 1 0 1 ...  1 state';
+    numstates := 1;
+    behaviour[1] := 'b; bP0;0bR,R,P1;1bR,R,P0;'
+   end
+  else
+  if choice = 3 then
+   begin
+    machinetitle := 'Petzold p. 87, transcendental';
+    numstates := 5;
+    behaviour[1] := 'b;*oP@,R,P@,R,P0,R,R,P0,L,L';
+    behaviour[2] := 'o;1oR,Px,L,L,L;0q';
+    behaviour[3] := 'q; pP1,L;*qR,R';
+    behaviour[4] := 'p;xqP ,R;@fR; pL,L';
+    behaviour[5] := 'f; oP0,L,L;*fR,R'
+   end
+  else
+  if choice = 4 then
+   begin
+    machinetitle := 'Petzold p. 99, binary counting';
+    numstates := 3;
+    behaviour[1] := 'b; iP0';
+    behaviour[2] := 'i;0rP1;1iP0,L; rP1';
+    behaviour[3] := 'r; iL;*rR'
+   end
+  else
+  if choice = 5 then
+   begin
+    machinetitle := 'Petzold pp. 102-8, root of 2';
+    numstates := 27;
+    behaviour[1] := 'b; nP@,R,P1';
+    behaviour[2] := 'n;@mR;*nL';
+    behaviour[3] := 'm;0mR,Px,R;1mR,Px,R; xR,Pz,R,R,Pr';
+    behaviour[4] := 'x;xrP ;@sN;*xL,L';
+    behaviour[5] := 'r;rRR,R;*rR,R';
+    behaviour[6] := 'R;rRR,R; xPr,R,R,Pr';
+    behaviour[7] := 's;@fR,R;*sL,L';
+    behaviour[8] := 'f;xFL;yFL;zDL; fR,R';
+    behaviour[9] := 'F;00R;1dR,R,R';
+    behaviour[10] := 'd;xDL;yDL; dR,R';
+    behaviour[11] := 'D;00R;11R; 1R';
+    behaviour[12] := '0;raPs;uaPv;*0R,R';
+    behaviour[13] := '1;raPv;ucPs,R,R;*1R,R';
+    behaviour[14] := 'c;raPu; zPu;ucPr,R,R';
+    behaviour[15] := 'a;@eR,R;*aL,L';
+    behaviour[16] := 'e;xyP ,L,L;zyPy,L,L;*eR,R';
+    behaviour[17] := 'y;@ER,R;ysPz; sPx';
+    behaviour[18] := 'E;yYP ,L,L;*ER,R';
+    behaviour[19] := 'Y;@oR;*XPy,R';
+    behaviour[20] := 'X; uR,Px;*XR,R';
+    behaviour[21] := 'u;sUPt,R,R;vUPw,R,R;*uR,R';
+    behaviour[22] := 'U;sUPr,R,R;vUPu,R,R;*sN';
+    behaviour[23] := 'z;@pR;*zL';
+    behaviour[24] := 'p;0pR,P ,R;1pR,P ,R; CP0,R,R,R';
+    behaviour[25] := 'o;@PR;*oL';
+    behaviour[26] := 'P;0PR,P ,R;1PR,P ,R; CP1,R,R,R';
+    behaviour[27] := 'C; nN;*CP ,R,R'
+   end
+ End;
+
+ Function statestr(i: integer): string;
+ Begin
+  result := str(i) + ' (''' + statecodes[i] + ''')'
+ End;
+
+ Function analysemachine: boolean;
+ Var i, j, posn: integer;
+     s: string;
+ Begin
+  result := true;
+  i := 1;
+  while i <= numstates do
+   begin
+    if behaviour[i] = '' then
+     begin
+      for j := i + 1 to numstates do
+       behaviour[j - 1] := behaviour[j];
+      dec(numstates)
+     end
+    else
+     begin
+      s := behaviour[i];
+      statecodes := statecodes + s[1];
+      posn := pos(';', s);
+      while posn > 0 do
+       begin
+        s := delete(s, 1, posn);
+        if length(s) > 1 then
+         begin
+          if pos(s[1], triggerstring[i]) > 0 then
+           begin
+            writeln('State ' + statestr(i) + ' has multiple actions for character "' + s[1] + '"');
+            result := false
+           end;
+          triggerstring[i] := triggerstring[i] + s[1];
+          transitionstring[i] := transitionstring[i] + s[2]
+         end;
+        posn := pos(';', s)
+       end;
+      inc(i)
+     end
+   end;
+  for i := 1 to numstates - 1 do
+   for j := i + 1 to numstates do
+    if statecodes[i] = statecodes[j] then
+     begin
+      writeln('States ' + str(i) + ' and ' + str(j) + ' both have code "' + statecodes[i] + '".');
+      result := false
+     end;
+  if result then
+   for i := 1 to numstates do
+    for j := 1 to length(transitionstring[i]) do
+     begin
+      posn := pos(transitionstring[i, j], statecodes);
+      if posn = 0 then
+       begin
+        writeln('Transition state code "' + transitionstring[i, j] + '" is not recognised.');
+        result := false
+       end
+      else
+       transitionstring[i, j] := chr(posn)
+     end
+ End;
+
+ Function getactstring(state: integer;c: char): string;
+ Var posn: integer;
+ Begin
+  posn := pos(';' + c, behaviour[state]);
+  if posn = 0 then
+   posn := pos(';*', behaviour[state]);
+  if posn = 0 then
+   begin
+    writeln('Inconsistent data or analysis for "' + c + '" in state ' + statestr(state));
+    result := 'HALT'
+   end
+  else
+   begin
+    result := copy(behaviour[state], posn + 3, maxint);
+    posn := pos(';', result);
+    if posn > 0 then
+     result := copy(result, 1, posn - 1)
+   end
+ End;
+
+ Procedure menu;
+ Var keyok: boolean;
+     choice: integer;
+ Begin
+  blank(white);
+  colour(brown);
+  setxy(margin, 50);
+  print('TURING MACHINE SIMULATOR', menutype or 16, 42);
+  colour(darkred);
+  setxy(margin + 30, 175);
+  print('(Examples are taken from Charles Petzold''s', menutype, 30);
+  setxy(margin + 30, 225);
+  print('excellent book, "The Annotated Turing")', menutype, 30);
+  colour(black);
+  setxy(margin, 350);
+  print('Choose from the following:', menutype or 16, menusize);
+  setxy(margin, 450);
+  print('  1.  Petzold p.81 (0 1 0 1 ...  4 states)', menutype, menusize);
+  setxy(margin, 550);
+  print('  2.  Petzold p.84 (0 1 0 1 ...  1 state)', menutype, menusize);
+  setxy(margin, 650);
+  print('  3.  Petzold p.87 (transcendental)', menutype, menusize);
+  setxy(margin, 750);
+  print('  4.  Petzold p.99 (binary counting)', menutype, menusize);
+  setxy(margin, 850);
+  print('  5.  Petzold pp. 102-8, root of 2', menutype, menusize);
+  repeat
+   choice := abs(?key) - 48
+  until (choice > 0) and (choice < 6);
+  definemachine(choice);
+  blank(white)
+ End;
+
+ Procedure dolabels;
+ Begin
+  colour(red);
+  setxy(margin, tapelabel);
+  print('TAPE:', fonttype, fontsize);
+  setxy(margin, cyclelabel);
+  print('CYCLES:', fonttype, fontsize);
+  setxy(margin, tablelabel);
+  print('MACHINE TABLE (' + machinetitle + '):', fonttype, fontsize);
+  colour(lightgrey);
+  setxy(400, cyclelabel);
+  print('(press ESCAPE to return to menu)', fonttype, fontsize)
+ End;
+
+ Procedure drawtable;
+ Var i, j: integer;
+
+  procedure heading(s: string;width: integer);
+  begin
+   colour(black);
+   box(width, rowheight + headspace * 2, brown, true);
+   colour(white);
+   movexy(0, headspace + 4);
+   print(s, fonttype or 32, fontsize);
+   movexy(width, -headspace - 4)
+  end;
+
+  procedure entry(s: string;width: integer);
+  begin
+   box(width, rowheight, white, true);
+   movexy(0, 4);
+   print(s, fonttype, fontsize);
+   movexy(width, -4)
+  end;
+
+ Begin
+  setxy(margin, tabletop);
+  heading(' m-config. ', 150);
+  heading(' symbol ', 130);
+  heading('              operations ', 420);
+  heading(' final m-config. ', 230);
+  colour(black);
+  movexy(0, headspace * 2);
+  for i := 1 to numstates do
+   for j := 1 to length(triggerstring[i]) do
+    begin
+     setxy(margin, turty + rowheight);
+     if j = 1 then
+      entry('   ' + statestr(i), 150)
+     else
+      entry('', 150);
+     if triggerstring[i, j] = ' ' then
+      entry('   None', 130)
+     else
+     if triggerstring[i, j] = '*' then
+      entry('    Any', 130)
+     else
+      entry('      ' + triggerstring[i, j], 130);
+     entry(' ' + getactstring(i, triggerstring[i, j]), 420);
+     entry('        ' + statestr(ord(transitionstring[i, j])), 230)
+    end
+ End;
+
+ Procedure drawtape;
+ Var i: integer;
+ Begin
+  noupdate;
+  setxy(0, tapetop - 5);
+  box(1000, 2 * cellwidth + 10, white, false);
+  if headpos < leftshown + showleft then
+   begin
+    leftshown := headpos - showleft;
+    if leftshown < leftmost - showleftmin then
+     leftshown := leftmost - showleftmin
+   end
+  else
+  if headpos >= leftshown + showcells - showright then
+   leftshown := headpos - showcells + showright + 1;
+  setxy(lmargin - cellwidth, tapetop);
+  for i := leftshown - 1 to leftshown + showcells do
+   begin
+    box(cellwidth, cellwidth, cream, true);
+    movexy(cmargin, 0);
+    print(tape[i], 1, cellwidth / 2);
+    if i mod 5 = 0 then
+     begin
+      movexy(-cmargin + 2, -12);
+      print('.', 1, 12);
+      movexy(cmargin - 2, 12)
+     end;
+    movexy(cellwidth - cmargin, 0)
+   end;
+  setxy(lmargin + cellwidth * (headpos - leftshown), tapetop);
+  thickness(10);
+  box(cellwidth, cellwidth, cyan, true);
+  thickness(2);
+  movexy(cmargin, 0);
+  print(tape[headpos], 1, cellwidth / 2);
+  movexy(0, cellwidth + 8);
+  colour(brown);
+  print(str(state), fonttype, cellwidth / 2);
+  setxy(cycleindent, cyclelabel);
+  box(200, 100, white, false);
+  print(str(cycles), fonttype, cellwidth / 2);
+  colour(black);
+  update
+ End;
+
+ Procedure dostep;
+ Var thischar: char;
+     posn: integer;
+     actstring: string;
+
+  procedure process(var s: string);
+  var posn: integer;
+  begin
+   if s[1] = 'L' then
+    begin
+     dec(headpos);
+     if headpos < leftmost then
+      leftmost := headpos
+    end
+   else
+   if s[1] = 'R' then
+    begin
+     inc(headpos);
+     if headpos > rightmost then
+      rightmost := headpos
+    end
+   else
+   if s[1] = 'P' then
+    begin
+     if length(s) > 1 then
+      begin
+       tape[headpos] := s[2];
+       if (s[2] = '0') or (s[2] = '1') then
+        writeln('Cycle = ' + str(cycles) + '; Position = ' + str(headpos) + '; State = ' + statestr(state)
+     + '; Printed = "' + s[2] + '"')
+      end
+     else
+      writeln('Null Print instruction for "' + thischar + '" in state ' + statestr(state))
+    end;
+   posn := pos(',', s);
+   if posn = 0 then
+    s := ''
+   else
+    s := delete(s, 1, posn)
+  end;
+
+ Begin
+  inc(cycles);
+  thischar := tape[headpos];
+  if pausetime = 200 then
+   writeln('Cycle = ' + str(cycles) + '; Position = ' + str(headpos) + '; State = ' + statestr(state) +
+     '; Symbol = "' + thischar + '"');
+  posn := pos(thischar, triggerstring[state]);
+  if posn = 0 then
+   posn := pos('*', triggerstring[state]);
+  if posn = 0 then
+   begin
+    writeln('Action for "' + thischar + '" is not defined for state ' + statestr(state));
+    state := 0
+   end
+  else
+   begin
+    actstring := getactstring(state, thischar);
+    if pausetime = 200 then
+     writeln('Processing "' + actstring + '"');
+    if actstring = 'HALT' then
+     state := 0
+    else
+     begin
+      while actstring <> '' do
+       process(actstring);
+      state := ord(transitionstring[state, posn])
+     end
+   end
+ End;
+
+ Procedure showspeed;
+ Begin
+  setxy(870, tapelabel);
+  colour(brown);
+  box(95, 32, cream, true);
+  if pausetime = 200 then
+   print('SLOW', fonttype, fontsize)
+  else
+   print(' FAST', fonttype, fontsize)
+ End;
+
+BEGIN
+ repeat
+  initialise;
+  menu;
+  if analysemachine then
+   begin
+    cycles := 0;
+    dolabels;
+    drawtable;
+    drawtape;
+    showspeed;
+    state := 1;
+    repeat
+     dostep;
+     drawtape;
+     pause(pausetime);
+     if (?click > 0) and (?clickx > 870) and (?clicky < 100) then
+      begin
+       pausetime := 200 - pausetime;
+       showspeed;
+       update;
+       pause(500)
+      end
+    until abs(?key) = \escape
+   end
+ until state = 0
+END.

@@ -37,7 +37,8 @@ export const subroutine = (name, type, parent) =>
     parent,
     subroutines: [],
     lexemes: [],
-    memoryNeeded: null // fixed later by the main parser module
+    memoryNeeded: null, // fixed later by the main parser module
+    startLine: null // fixed later by the main coder module
   })
 
 // create constant object

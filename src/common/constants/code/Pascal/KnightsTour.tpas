@@ -1,0 +1,261 @@
+PROGRAM KnightsTour;
+CONST width = 10;
+      height = 10;
+      maxlast = 255;
+      delay = 0;
+      margin = 20;
+      timelimit = 500;
+      pauseonbest = 1000;
+      drawall = false;
+VAR vectorx, vectory: array[0..8] of integer;
+    squarestatus, cleverrank: array[0..maxlast] of integer;
+    lastsquare: integer;
+    xgap, ygap, radius: integer;
+    countsquares, attempts, total, best: integer;
+    clever, pausenow: boolean;
+
+ Procedure setup;
+ Begin
+  vectorx[0] := 1;
+  vectory[0] := -2;
+  vectorx[1] := 2;
+  vectory[1] := -1;
+  vectorx[2] := 2;
+  vectory[2] := 1;
+  vectorx[3] := 1;
+  vectory[3] := 2;
+  vectorx[4] := -1;
+  vectory[4] := 2;
+  vectorx[5] := -2;
+  vectory[5] := 1;
+  vectorx[6] := -2;
+  vectory[6] := -1;
+  vectorx[7] := -1;
+  vectory[7] := -2;
+  xgap := (1000 - 2 * margin) / width;
+  ygap := (1000 - 2 * margin) / height;
+  if xgap <= ygap then
+   radius := xgap * 2 / 5
+  else
+   radius := ygap * 2 / 5;
+  lastsquare := width * height - 1
+ End;
+
+ Function findx(s: integer): integer;
+ Begin
+  result := s mod width
+ End;
+
+ Function findy(s: integer): integer;
+ Begin
+  result := s div width
+ End;
+
+ Function findsquare(x, y: integer): integer;
+ Begin
+  result := y * width + x
+ End;
+
+ Procedure drawsquare(s: integer);
+ Begin
+  setxy(margin + xgap * findx(s) + xgap / 2, margin + ygap * findy(s) + ygap / 2);
+  if squarestatus[s] = 0 then
+   begin
+    colour(salmon);
+    blot(radius)
+   end
+  else
+   begin
+    colour(white);
+    blot(radius);
+    if width > 10 then
+     begin
+      if squarestatus[s] < 10 then
+       movexy(-8, -20)
+      else
+      if squarestatus[s] < 100 then
+       movexy(-15, -20)
+      else
+       movexy(-22, -20);
+      colour(black);
+      print(str(squarestatus[s]), 4, 20)
+     end
+    else
+     begin
+      if squarestatus[s] < 10 then
+       movexy(-10, -24)
+      else
+      if squarestatus[s] < 100 then
+       movexy(-20, -24)
+      else
+       movexy(-30, -24);
+      colour(black);
+      print(str(squarestatus[s]), 4, 25)
+     end
+   end
+ End;
+
+ Procedure drawboard;
+ Var s: integer;
+ Begin
+  blank(darkgreen);
+  for s := 0 to lastsquare do
+   drawsquare(s)
+ End;
+
+ Function goodmove(s, direction: integer): integer;
+ Var newx, newy: integer;
+ Begin
+  newx := findx(s) + vectorx[direction];
+  newy := findy(s) + vectory[direction];
+  if (newx >= 0) and (newx < width) and (newy >= 0) and (newy < height) then
+   begin
+    result := findsquare(newx, newy);
+    if squarestatus[result] > 0 then
+     result := -1
+   end
+  else
+   result := -1
+ End;
+
+ Function moveto(s, direction: integer): integer;
+ Var newx, newy: integer;
+     newn: integer;
+     d: integer;
+ Begin
+  newx := findx(s) + vectorx[direction];
+  newy := findy(s) + vectory[direction];
+  result := findsquare(newx, newy);
+  if clever then
+   for d := 0 to 7 do
+    begin
+     newn := goodmove(result, d);
+     if newn > -1 then
+      dec(cleverrank[newn])
+    end
+ End;
+
+ Procedure clearboard;
+ Var s, d: integer;
+ Begin
+  for s := 0 to lastsquare do
+   squarestatus[s] := 0;
+  if clever then
+   for s := 0 to lastsquare do
+    begin
+     cleverrank[s] := 0;
+     for d := 0 to 7 do
+      if goodmove(s, d) > -1 then
+       inc(cleverrank[s])
+    end
+ End;
+
+ Function randommove(s: integer): integer;
+ Var d: integer;
+ Begin
+  repeat
+   d := random(8)
+  until (goodmove(s, d) > -1) or (time >= timelimit);
+  result := d
+ End;
+
+ Function clevermove(s: integer): integer;
+ Var chosen, d, news: integer;
+     bestrank, numbest: integer;
+ Begin
+  chosen := -1;
+  bestrank := 9;
+  for d := 0 to 8 do
+   begin
+    news := goodmove(s, d);
+    if news > -1 then
+     if cleverrank[news] < bestrank then
+      begin
+       chosen := d;
+       bestrank := cleverrank[news];
+       numbest := 1
+      end
+     else
+     if cleverrank[news] = bestrank then
+      begin
+       inc(numbest);
+       if random(numbest) = 0 then
+        chosen := d
+      end
+   end;
+  result := chosen
+ End;
+
+ Procedure findroute;
+ Var thiss, s, d: integer;
+ Begin
+  countsquares := 1;
+  thiss := random(lastsquare + 1);
+  squarestatus[thiss] := countsquares;
+  timeset(0);
+  while time < timelimit do
+   begin
+    if clever then
+     d := clevermove(thiss)
+    else
+     d := randommove(thiss);
+    if (time < timelimit) and (d > -1) then
+     begin
+      thiss := moveto(thiss, d);
+      inc(countsquares);
+      squarestatus[thiss] := countsquares;
+      if drawall then
+       drawsquare(thiss)
+     end
+   end
+ End;
+
+BEGIN
+ write('Random search or Clever search? (R/C) ');
+ repeat
+ until (abs(?key) = \r) or (abs(?key) = \c);
+ clever := (abs(?key) = \c);
+ if clever then
+  writeln('  Clever ...')
+ else
+  writeln('  Random ...');
+ setup;
+ if lastsquare > maxlast then
+  writeln('Error: maximum board size is ' + str(maxlast + 1) + ' squares')
+ else
+  begin
+   attempts := 0;
+   total := 0;
+   best := 0;
+   repeat
+    inc(attempts);
+    clearboard;
+    if drawall then
+     drawboard;
+    findroute;
+    total := total + countsquares;
+    pausenow := (countsquares > best);
+    if countsquares > best then
+     begin
+      drawboard;
+      best := countsquares;
+      write('Attempt ');
+      write(str(attempts));
+      write(', score: ');
+      write(str(countsquares));
+      if attempts > 1 then
+       begin
+        write('   (average of all attempts: ');
+        write(qstr(total, attempts, 2));
+        writeln(')')
+       end
+      else
+       writeln('');
+      update
+     end;
+    if pausenow then
+     pause(pauseonbest);
+    noupdate
+   until best = width * height
+  end
+END.

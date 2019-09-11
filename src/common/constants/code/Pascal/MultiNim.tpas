@@ -1,0 +1,175 @@
+PROGRAM MultiNim;
+CONST piles = 5;
+      maxheight = 8;
+      margin = 20;
+VAR pile: array[1..piles] of integer;
+    xgap, ygap, left, bottom, radius: integer;
+    totalcoins: integer;
+    xorscore: integer;
+    showmaths: boolean;
+    thiscolour, thispile, thiscoin: integer;
+    autopile, autocoin: integer;
+
+ Procedure setup;
+ Begin
+  xgap := (1000 - 2 * margin) div piles;
+  ygap := (800 - margin) div maxheight;
+  if ygap * maxheight > 800 then
+   ygap := 800 div maxheight;
+  radius := (ygap - margin) div 2;
+  left := margin + radius - xgap;
+  bottom := 800 - radius + ygap;
+  showmaths := false
+ End;
+
+ Procedure fixpiles;
+ Var p: integer;
+ Begin
+  for p := 1 to piles do
+   pile[p] := random(maxheight) + 1
+ End;
+
+ Procedure domaths;
+ Var p: integer;
+ Begin
+  totalcoins := 0;
+  xorscore := 0;
+  for p := 1 to piles do
+   begin
+    totalcoins := totalcoins + pile[p];
+    xorscore := xorscore xor pile[p]
+   end
+ End;
+
+ Procedure drawpiles;
+ Var p, c, autocount: integer;
+ Begin
+  blank(white);
+  autocount := random(totalcoins) + 1;
+  for p := 1 to piles do
+   begin
+    c := pile[p];
+    while c > 0 do
+     begin
+      dec(autocount);
+      if autocount = 0 then
+       begin
+        autopile := p;
+        autocoin := c
+       end;
+      setxy(left + xgap * p, bottom - ygap * c);
+      colour(rgb(p));
+      blot(radius);
+      if xorscore xor pile[p] xor (c - 1) = 0 then
+       begin
+        autopile := p;
+        autocoin := c;
+        autocount := 0
+       end;
+      if showmaths then
+       begin
+        movexy(radius + margin, -radius + 15);
+        colour(black);
+        print(str(xorscore xor pile[p] xor (c - 1)), 4, 20)
+       end;
+      dec(c)
+     end
+   end;
+  colour(black);
+  setxy(margin, 900);
+  print('Total Coins:  ' + str(totalcoins), 4, 30);
+  if showmaths then
+   begin
+    colour(black);
+    setxy(450, 900);
+    print('XOR score:  ' + str(xorscore), 4, 30);
+    setxy(850, 890);
+    colour(maroon);
+    box(140, 100, red, true);
+    print(' HIDE', 4, 25);
+    setxy(850, 940);
+    print(' MATHS', 4, 25)
+   end
+  else
+   begin
+    colour(maroon);
+    setxy(850, 890);
+    box(140, 100, red, true);
+    print(' SHOW', 4, 25);
+    setxy(850, 940);
+    print(' MATHS', 4, 25)
+   end
+ End;
+
+ Procedure blackout(p, c: integer);
+ Begin
+  setxy(left + xgap * p, bottom - ygap * c);
+  colour(black);
+  blot(radius)
+ End;
+
+BEGIN
+ setup;
+ repeat
+  fixpiles;
+  repeat
+   domaths;
+   drawpiles;
+   repeat
+    cursor(2);
+    repeat
+     repeat
+     until ?lmouse > 0;
+     pause(200);
+     thiscolour := pixcol(?clickx, ?clicky)
+    until (thiscolour <> rgb(white)) and (thiscolour <> rgb(black));
+    cursor(11);
+    if ?clicky >= 800 then
+     begin
+      thiscoin := maxheight + 1;
+      showmaths := not(showmaths);
+      domaths;
+      drawpiles
+     end
+    else
+     begin
+      thispile := (?clickx - margin + radius) div xgap + 1;
+      thiscoin := (bottom - radius - ?clicky) div ygap + 1
+     end
+   until (?clicky < 800);
+   pile[thispile] := thiscoin - 1;
+   domaths;
+   if totalcoins = 0 then
+    begin
+     blank(white);
+     setxy(330, 850);
+     colour(blue);
+     print('You Win!', 4, 60);
+     pause(5000)
+    end
+   else
+    begin
+     drawpiles;
+     pause(1000);
+     blackout(autopile, autocoin);
+     pile[autopile] := autocoin - 1;
+     domaths;
+     if (xorscore = 0) and not(showmaths) then
+      begin
+       colour(pink);
+       setxy(400, 900);
+       print('I''m going to win!', 4, 30)
+      end;
+     pause(2500);
+     if totalcoins = 0 then
+      begin
+       blank(white);
+       setxy(330, 850);
+       colour(red);
+       print('I Win!', 4, 60);
+       pause(5000)
+      end
+    end
+  until totalcoins = 0
+ until 0 = 1
+END.

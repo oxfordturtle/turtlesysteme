@@ -1,103 +1,121 @@
-import DrawPause from './Pascal/DrawPause.tgp'
-import SmileyFace from './Pascal/SmileyFace.tgp'
-import ThePlough from './Pascal/ThePlough.tgp'
-import OlympicRings from './Pascal/OlympicRings.tgp'
-import ForLoop from './Pascal/ForLoop.tgp'
-import TriangleSpin from './Pascal/TriangleSpin.tgp'
-import Circles from './Pascal/Circles.tgp'
-import NestedLoops from './Pascal/NestedLoops.tgp'
-import RandomLines from './Pascal/RandomLines.tgp'
-import RandomEllipses from './Pascal/RandomEllipses.tgp'
-import ColourSpiral from './Pascal/ColourSpiral.tgp'
-import SimpleProc from './Pascal/SimpleProc.tgp'
-import ParameterProc from './Pascal/ParameterProc.tgp'
-import ResizableFace from './Pascal/ResizableFace.tgp'
-import Polygons from './Pascal/Polygons.tgp'
-import Stars from './Pascal/Stars.tgp'
-import PolygonRings from './Pascal/PolygonRings.tgp'
-import Triangle1 from './Pascal/Triangle1.tgp'
-import Triangle2 from './Pascal/Triangle2.tgp'
-import Triangle3 from './Pascal/Triangle3.tgp'
-import Triangles from './Pascal/Triangles.tgp'
-import Factorials from './Pascal/Factorials.tgp'
-import Fibonaccis from './Pascal/Fibonaccis.tgp'
-import YouAreHere from './Pascal/YouAreHere.tgp'
-import CycleColours from './Pascal/CycleColours.tgp'
-import Clock from './Pascal/Clock.tgp'
-import DigitalClock from './Pascal/DigitalClock.tgp'
-import Flashlights from './Pascal/Flashlights.tgp'
-import RefParams from './Pascal/RefParams.tgp'
-import Balls3D from './Pascal/Balls3D.tgp'
-import StringFunctions from './Pascal/StringFunctions.tgp'
-import MathFunctions from './Pascal/MathFunctions.tgp'
-import TrigGraphs from './Pascal/TrigGraphs.tgp'
-import MovingBall from './Pascal/MovingBall.tgp'
-import BouncingBall from './Pascal/BouncingBall.tgp'
-import TurtleMove from './Pascal/TurtleMove.tgp'
-import TurtleBounce from './Pascal/TurtleBounce.tgp'
-import BouncingFace from './Pascal/BouncingFace.tgp'
-import MultiBounce from './Pascal/MultiBounce.tgp'
-import BouncingTriangle from './Pascal/BouncingTriangle.tgp'
-import BouncingShapes from './Pascal/BouncingShapes.tgp'
-import GravitySteps from './Pascal/GravitySteps.tgp'
-import SolarSystem from './Pascal/SolarSystem.tgp'
-import AskInput from './Pascal/AskInput.tgp'
-import QuickClick from './Pascal/QuickClick.tgp'
-import TypingTest from './Pascal/TypingTest.tgp'
-import TypingTestKeys from './Pascal/TypingTestKeys.tgp'
-import SpongeThrow from './Pascal/SpongeThrow.tgp'
-import Arcade from './Pascal/Arcade.tgp'
-import SnakeGame from './Pascal/SnakeGame.tgp'
-import NoughtsAndCrosses from './Pascal/NoughtsAndCrosses.tgp'
-import SimpleDraw from './Pascal/SimpleDraw.tgp'
-import PaintApp from './Pascal/PaintApp.tgp'
-import FiveTurtles from './Pascal/FiveTurtles.tgp'
-import AimCannon from './Pascal/AimCannon.tgp'
-import AutoCannon from './Pascal/AutoCannon.tgp'
-import Launch from './Pascal/Launch.tgp'
-import Disease from './Pascal/Disease.tgp'
-import GameOfLife from './Pascal/GameOfLife.tgp'
-import Automata from './Pascal/Automata.tgp'
-import BrownianMotion from './Pascal/BrownianMotion.tgp'
-import Dendrites from './Pascal/Dendrites.tgp'
-import Cheetahs from './Pascal/Cheetahs.tgp'
-import SexRatio from './Pascal/SexRatio.tgp'
-import Flocking from './Pascal/Flocking.tgp'
-import Schelling from './Pascal/Schelling.tgp'
-import IteratedPD from './Pascal/IteratedPD.tgp'
-import RecursionFactory from './Pascal/RecursionFactory.tgp'
-import RecursiveTree from './Pascal/RecursiveTree.tgp'
-import KochSnowflake from './Pascal/KochSnowflake.tgp'
-import SquareKoch from './Pascal/SquareKoch.tgp'
-import Sierpinski from './Pascal/Sierpinski.tgp'
-import SierpinskiDots from './Pascal/SierpinskiDots.tgp'
-import IFSBackground from './Pascal/IFSBackground.tgp'
-import IFSColour from './Pascal/IFSColour.tgp'
-import IFSDemonstrator from './Pascal/IFSDemonstrator.tgp'
-import Logistic from './Pascal/Logistic.tgp'
-import LogisticSpider from './Pascal/LogisticSpider.tgp'
-import MandelbrotDemo from './Pascal/MandelbrotDemo.tgp'
-import MandelbrotSpectrumDemo from './Pascal/MandelbrotSpectrumDemo.tgp'
-import LifeStart from './Pascal/LifeStart.tgp'
-import Diffusion from './Pascal/Diffusion.tgp'
-import Mandelbrot from './Pascal/Mandelbrot.tgp'
-import MandelbrotMini from './Pascal/MandelbrotMini.tgp'
-import MandelbrotSpectrum from './Pascal/MandelbrotSpectrum.tgp'
-import MandelbrotMiniSpectrum from './Pascal/MandelbrotMiniSpectrum.tgp'
-import SierpinskiColour from './Pascal/SierpinskiColour.tgp'
-import SierpinskiIFS from './Pascal/SierpinskiIFS.tgp'
-import BarnsleyColour from './Pascal/BarnsleyColour.tgp'
-import BarnsleyIFS from './Pascal/BarnsleyIFS.tgp'
-import DragonColour from './Pascal/DragonColour.tgp'
-import DragonIFS from './Pascal/DragonIFS.tgp'
-import TreeIFS from './Pascal/TreeIFS.tgp'
-import Interference from './Pascal/Interference.tgp'
-import WaveSuperposer from './Pascal/WaveSuperposer.tgp'
-import TwoSlits from './Pascal/TwoSlits.tgp'
-import KnightsTour from './Pascal/KnightsTour.tgp'
-import Nim from './Pascal/Nim.tgp'
+// examples 1
+import DrawPause from './Pascal/DrawPause.tpas'
+import SmileyFace from './Pascal/SmileyFace.tpas'
+import ThePlough from './Pascal/ThePlough.tpas'
+import OlympicRings from './Pascal/OlympicRings.tpas'
+import ForLoop from './Pascal/ForLoop.tpas'
+import TriangleSpin from './Pascal/TriangleSpin.tpas'
+import Circles from './Pascal/Circles.tpas'
+import NestedLoops from './Pascal/NestedLoops.tpas'
+import RandomLines from './Pascal/RandomLines.tpas'
+import RandomEllipses from './Pascal/RandomEllipses.tpas'
+import ColourSpiral from './Pascal/ColourSpiral.tpas'
+// examples 2
+import SimpleProc from './Pascal/SimpleProc.tpas'
+import ParameterProc from './Pascal/ParameterProc.tpas'
+import ResizableFace from './Pascal/ResizableFace.tpas'
+import Polygons from './Pascal/Polygons.tpas'
+import Stars from './Pascal/Stars.tpas'
+import PolygonRings from './Pascal/PolygonRings.tpas'
+import Triangle1 from './Pascal/Triangle1.tpas'
+import Triangle2 from './Pascal/Triangle2.tpas'
+import Triangle3 from './Pascal/Triangle3.tpas'
+import Triangles from './Pascal/Triangles.tpas'
+import Factorials from './Pascal/Factorials.tpas'
+import Fibonaccis from './Pascal/Fibonaccis.tpas'
+// examples 3
+import YouAreHere from './Pascal/YouAreHere.tpas'
+import CycleColours from './Pascal/CycleColours.tpas'
+import Clock from './Pascal/Clock.tpas'
+import DigitalClock from './Pascal/DigitalClock.tpas'
+import Flashlights from './Pascal/Flashlights.tpas'
+import RefParams from './Pascal/RefParams.tpas'
+import Balls3D from './Pascal/Balls3D.tpas'
+import StringFunctions from './Pascal/StringFunctions.tpas'
+import MathFunctions from './Pascal/MathFunctions.tpas'
+import TrigGraphs from './Pascal/TrigGraphs.tpas'
+// examples 4
+import MovingBall from './Pascal/MovingBall.tpas'
+import BouncingBall from './Pascal/BouncingBall.tpas'
+import TurtleMove from './Pascal/TurtleMove.tpas'
+import TurtleBounce from './Pascal/TurtleBounce.tpas'
+import BouncingFace from './Pascal/BouncingFace.tpas'
+import MultiBounce from './Pascal/MultiBounce.tpas'
+import BouncingTriangle from './Pascal/BouncingTriangle.tpas'
+import BouncingShapes from './Pascal/BouncingShapes.tpas'
+import GravitySteps from './Pascal/GravitySteps.tpas'
+import SolarSystem from './Pascal/SolarSystem.tpas'
+// examples 5
+import AskInput from './Pascal/AskInput.tpas'
+import QuickClick from './Pascal/QuickClick.tpas'
+import TypingTest from './Pascal/TypingTest.tpas'
+import TypingTestKeys from './Pascal/TypingTestKeys.tpas'
+import IterationGame from './Pascal/IterationGame.tpas'
+import SpongeThrow from './Pascal/SpongeThrow.tpas'
+import Arcade from './Pascal/Arcade.tpas'
+import SnakeGame from './Pascal/SnakeGame.tpas'
+import NoughtsAndCrosses from './Pascal/NoughtsAndCrosses.tpas'
+import SimpleDraw from './Pascal/SimpleDraw.tpas'
+import PaintApp from './Pascal/PaintApp.tpas'
+import FiveTurtles from './Pascal/FiveTurtles.tpas'
+// examples 6
+import AimCannon from './Pascal/AimCannon.tpas'
+import AutoCannon from './Pascal/AutoCannon.tpas'
+import Launch from './Pascal/Launch.tpas'
+import Disease from './Pascal/Disease.tpas'
+import GameOfLife from './Pascal/GameOfLife.tpas'
+import LifeArrays from './Pascal/LifeArrays.tpas'
+import Automata from './Pascal/Automata.tpas'
+import BrownianMotion from './Pascal/BrownianMotion.tpas'
+import Dendrites from './Pascal/Dendrites.tpas'
+import Cheetahs from './Pascal/Cheetahs.tpas'
+import SexRatio from './Pascal/SexRatio.tpas'
+import Flocking from './Pascal/Flocking.tpas'
+import Roads from './Pascal/Roads.tpas'
+import Schelling from './Pascal/Schelling.tpas'
+import IteratedPD from './Pascal/IteratedPD.tpas'
+import Interference from './Pascal/Interference.tpas'
+import TwoSlits from './Pascal/TwoSlits.tpas'
+import WaveSuperposer from './Pascal/WaveSuperposer.tpas'
+// examples 7
+import RecursionFactory from './Pascal/RecursionFactory.tpas'
+import RecursiveTree from './Pascal/RecursiveTree.tpas'
+import KochSnowflake from './Pascal/KochSnowflake.tpas'
+import SquareKoch from './Pascal/SquareKoch.tpas'
+import Sierpinski from './Pascal/Sierpinski.tpas'
+import SierpinskiDots from './Pascal/SierpinskiDots.tpas'
+import IFSBackground from './Pascal/IFSBackground.tpas'
+import IFSColour from './Pascal/IFSColour.tpas'
+import IFSDemonstrator from './Pascal/IFSDemonstrator.tpas'
+import Logistic from './Pascal/Logistic.tpas'
+import LogisticSpider from './Pascal/LogisticSpider.tpas'
+import MandelbrotDemo from './Pascal/MandelbrotDemo.tpas'
+import MandelbrotSpectrumDemo from './Pascal/MandelbrotSpectrumDemo.tpas'
+import Quine from './Pascal/Quine.tpas'
+// examples 8
+import Syllogisms from './Pascal/Syllogisms.tpas'
+import TuringMachines from './Pascal/TuringMachines.tpas'
+import Sorting from './Pascal/Sorting.tpas'
+import NimLearn from './Pascal/NimLearn.tpas'
+import MultiNim from './Pascal/MultiNim.tpas'
+import KnightsTour from './Pascal/KnightsTour.tpas'
+// other CSAC examples
+import LifeStart from './Pascal/LifeStart.tpas'
+import Diffusion from './Pascal/Diffusion.tpas'
+import Mandelbrot from './Pascal/Mandelbrot.tpas'
+import MandelbrotMini from './Pascal/MandelbrotMini.tpas'
+import MandelbrotSpectrum from './Pascal/MandelbrotSpectrum.tpas'
+import MandelbrotMiniSpectrum from './Pascal/MandelbrotMiniSpectrum.tpas'
+import SierpinskiColour from './Pascal/SierpinskiColour.tpas'
+import SierpinskiIFS from './Pascal/SierpinskiIFS.tpas'
+import BarnsleyColour from './Pascal/BarnsleyColour.tpas'
+import BarnsleyIFS from './Pascal/BarnsleyIFS.tpas'
+import DragonColour from './Pascal/DragonColour.tpas'
+import DragonIFS from './Pascal/DragonIFS.tpas'
+import TreeIFS from './Pascal/TreeIFS.tpas'
 
 export default {
+  // examples 1
   DrawPause,
   SmileyFace,
   ThePlough,
@@ -109,6 +127,7 @@ export default {
   RandomLines,
   RandomEllipses,
   ColourSpiral,
+  // examples 2
   SimpleProc,
   ParameterProc,
   ResizableFace,
@@ -121,6 +140,7 @@ export default {
   Triangles,
   Factorials,
   Fibonaccis,
+  // examples 3
   YouAreHere,
   CycleColours,
   Clock,
@@ -131,6 +151,7 @@ export default {
   StringFunctions,
   MathFunctions,
   TrigGraphs,
+  // examples 4
   MovingBall,
   BouncingBall,
   TurtleMove,
@@ -141,10 +162,12 @@ export default {
   BouncingShapes,
   GravitySteps,
   SolarSystem,
+  // examples 5
   AskInput,
   QuickClick,
   TypingTest,
   TypingTestKeys,
+  IterationGame,
   SpongeThrow,
   Arcade,
   SnakeGame,
@@ -152,19 +175,26 @@ export default {
   SimpleDraw,
   PaintApp,
   FiveTurtles,
+  // examples 6
   AimCannon,
   AutoCannon,
   Launch,
   Disease,
   GameOfLife,
+  LifeArrays,
   Automata,
   BrownianMotion,
   Dendrites,
   Cheetahs,
   SexRatio,
   Flocking,
+  Roads,
   Schelling,
   IteratedPD,
+  Interference,
+  TwoSlits,
+  WaveSuperposer,
+  // examples 7
   RecursionFactory,
   RecursiveTree,
   KochSnowflake,
@@ -178,6 +208,15 @@ export default {
   LogisticSpider,
   MandelbrotDemo,
   MandelbrotSpectrumDemo,
+  Quine,
+  // examples 8
+  Syllogisms,
+  TuringMachines,
+  Sorting,
+  NimLearn,
+  MultiNim,
+  KnightsTour,
+  // other CSAC examples
   LifeStart,
   Diffusion,
   Mandelbrot,
@@ -190,10 +229,5 @@ export default {
   BarnsleyIFS,
   DragonColour,
   DragonIFS,
-  TreeIFS,
-  Interference,
-  WaveSuperposer,
-  TwoSlits,
-  KnightsTour,
-  Nim
+  TreeIFS
 }

@@ -1,6 +1,0 @@
-# AskInput
-
-name: str = input('What is your name?')
-writeline('')
-writeline('Hello, ' + name + ',')
-writeline('How are you?')

@@ -1,0 +1,40 @@
+PROGRAM LifeArrays;
+CONST width = 32;
+      height = 32;
+VAR x, y, i, j, livenb: integer;
+    thisgen: array[0..width, 0..height] of boolean;
+    nextgen: array[0..width, 0..height] of boolean;
+BEGIN
+  canvas(0, 0, width, height);
+  resolution(width, height);
+  for x := 0 to width - 1 do
+    for y := 0 to height - 1 do
+      nextgen[x, y] := (random(7) = 0);
+  while ?key <> \escape do
+    begin
+      noupdate;
+      for x := 0 to width - 1 do
+        for y := 0 to height - 1 do
+          begin
+            thisgen[x, y] := nextgen[x, y];
+            if thisgen[x, y] then
+              pixset(x, y, maroon)
+            else
+              pixset(x, y, lightgreen)
+          end;
+      update;
+      for x := 0 to width - 1 do
+        for y := 0 to height - 1 do
+          begin
+            livenb := 0;
+            for i := -1 to 1 do
+              for j := -1 to 1 do
+                if thisgen[(x + i + width) mod width, (y + j + height) mod height] then
+                  inc(livenb);
+            if thisgen[x, y] then
+              nextgen[x, y] := ((livenb = 3) or (livenb = 4))
+            else
+              nextgen[x, y] := (livenb = 3)
+          end
+    end
+END.

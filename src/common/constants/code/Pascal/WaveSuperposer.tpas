@@ -1,0 +1,1209 @@
+PROGRAM WaveSuperposer;
+CONST textrow = 0;
+      tvalrow = 1;
+      spinrow = 2;
+      buttrow = 3;
+      fine = 1;
+      course = 0;
+CONST normtext = 0;
+      boldtext = 1;
+      large = 1;
+      small = 0;
+      noborder = 0;
+      withborder = 1;
+CONST nobackground = 0;
+      withbackground = 1;
+CONST maxwaves = 60;
+      maxamplitude = 500;
+      maxphase = 360;
+      amplitudeinc = 5;
+      phaseinc = 2;
+      maxdecayrate = 10;
+CONST precdecay = 100;
+VAR exitflag, count, numwaves, selectedwave, multsumwaves, decayrate, infoflag: integer;
+VAR divideby, granularity: integer;
+VAR keypressed: string;
+VAR wavesshown, buttontext: string;
+VAR amplitudes, phases, onoff, decaymult: array[1..maxwaves] of integer;
+
+ Function getnumdigits(num: integer): integer;
+ Var numdigits: integer;
+ Begin
+  num := abs(num);
+  if (num = 0) then
+   numdigits := 1
+  else
+   begin
+    numdigits := 0;
+    while num > 0 do
+     begin
+      num := num / 10;
+      inc(numdigits)
+     end
+   end;
+  result := numdigits
+ End;
+
+ Procedure outtext(x, y, texttype, textcolour: integer;text: string);
+ Var height: integer;
+ Begin
+  if texttype = boldtext then
+   y := y - 3
+  else
+   y := y - 1;
+  setxy(x + 5, y);
+  colour(textcolour);
+  if texttype = boldtext then
+   print(text, 16, 18)
+  else
+   print(text, 0, 18)
+ End;
+
+ Procedure outvalue(x, y, numwidth, value, textcolour: integer);
+ Var width, height, minusshift, charwidth: integer;
+ Var valuestr: string;
+ Begin
+  charwidth := 13;
+  minusshift := 8;
+  width := 12 + charwidth * numwidth;
+  height := 24;
+  pendown;
+  setxy(x + width, y);
+  colour(midgrey);
+  drawxy(0, height);
+  drawxy(-width, 0);
+  colour(darkgrey);
+  drawxy(0, -height - 1);
+  drawxy(width, 0);
+  setxy(x + 1, y + 1);
+  setxy(x + width - 2, y + 1);
+  setxy(x + width - 2, y + height - 2);
+  setxy(x + 1, y + height - 2);
+  colour(black);
+  polygon(4);
+  if (value < 0) then
+   setxy(x + 5 + charwidth * (numwidth - getnumdigits(value)) - minusshift, y - 2)
+  else
+   setxy(x + 5 + charwidth * (numwidth - getnumdigits(value)), y - 2);
+  colour(textcolour);
+  valuestr := str(value);
+  print(valuestr, 0, 18)
+ End;
+
+ Procedure spinbutton(x, y: integer;symbol: char;buttoncolour: integer);
+ Var width, height: integer;
+ Begin
+  width := 24;
+  height := 24;
+  pendown;
+  setxy(x + width, y);
+  colour(darkgrey);
+  drawxy(0, height);
+  drawxy(-width, 0);
+  colour(lightgrey);
+  drawxy(0, -height - 1);
+  drawxy(width, 0);
+  recolour(x + 1, y + 1, buttoncolour);
+  setxy(x + 6, y - 14);
+  colour(black);
+  print(symbol, 4, 24)
+ End;
+
+ Procedure button(x, y, numchars: integer;btext: string;buttoncolour, textcolour: integer);
+ Var width, height: integer;
+ Begin
+  width := 8 + 13 * numchars;
+  height := 30;
+  y := y - 2;
+  pendown;
+  setxy(x + width, y);
+  colour(darkgrey);
+  drawxy(0, height);
+  drawxy(-width, 0);
+  colour(lightgrey);
+  drawxy(0, -height - 1);
+  drawxy(width, 0);
+  recolour(x + 1, y + 1, buttoncolour);
+  setxy(x + 8, y - 2);
+  colour(textcolour);
+  print(btext, 0, 22)
+ End;
+
+ Procedure smallbutton(x, y, numchars: integer;btext: string;buttoncolour, textcolour: integer);
+ Var width, height: integer;
+ Begin
+  width := 8 + 13 * numchars;
+  height := 24;
+  pendown;
+  setxy(x + width, y);
+  colour(darkgrey);
+  drawxy(0, height);
+  drawxy(-width, 0);
+  colour(lightgrey);
+  drawxy(0, -height - 1);
+  drawxy(width, 0);
+  recolour(x + 1, y + 1, buttoncolour);
+  setxy(x + 4, y - 1);
+  colour(textcolour);
+  print(btext, 0, 18)
+ End;
+
+ Procedure border(x, y, width, height, highcolour, lowcolour, backcolour, backflag: integer);
+ Begin
+  pendown;
+  if (backflag = withbackground) then
+   begin
+    setxy(x + 1, y + 1);
+    setxy(x - 2 + width, y + 1);
+    setxy(x - 2 + width, y - 2 + height);
+    setxy(x + 1, y - 2 + height);
+    colour(backcolour);
+    polygon(4)
+   end;
+  setxy(x + width, y);
+  colour(lowcolour);
+  drawxy(0, height);
+  drawxy(-width, 0);
+  colour(highcolour);
+  drawxy(0, -height - 1);
+  drawxy(width, 0)
+ End;
+
+ Procedure borders(x, y, numchars, numdigits, numrows, highcolour, lowcolour, backcolour, borderflag,
+     backflag: integer);
+ Var width, height, spinnershift: integer;
+ Begin
+  spinnershift := 34;
+  height := 8 + numrows * spinnershift;
+  width := 8 + (numchars + numdigits + 6) * 13;
+  if borderflag = withborder then
+   begin
+    border(x, y, width, height, highcolour, lowcolour, silver, nobackground);
+    border(x + 2, y + 2, width - 4, height - 4, lowcolour, highcolour, silver, nobackground)
+   end;
+  if backflag = withbackground then
+   begin
+    if borderflag = noborder then
+     begin
+      x := x - 2;
+      y := y - 8
+     end
+    else
+     begin
+      x := x + 2;
+      y := y + 2
+     end;
+    setxy(x, y);
+    setxy(x - 6 + width, y);
+    setxy(x - 6 + width, y - 6 + height);
+    setxy(x, y - 6 + height);
+    colour(backcolour);
+    polygon(4)
+   end
+ End;
+
+ Procedure spinner(row, spintype, texttype, x, y, numchars, numdigits: integer;text: string;value,
+     textcolour, digitcolour, buttoncolour: integer);
+ Var charwidth, textshift, buttonshift, numshift, spinnershift: integer;
+ Begin
+  spinnershift := 34;
+  charwidth := 13;
+  buttonshift := 30;
+  textshift := charwidth * numchars;
+  numshift := 18 + charwidth * numdigits;
+  y := y + (row - 1) * spinnershift;
+  outtext(x, y, texttype, textcolour, text);
+  if spintype = spinrow then
+   spinbutton(x + textshift, y, '<', buttoncolour);
+  if spintype <> textrow then
+   outvalue(x + textshift + buttonshift, y, numdigits, value, digitcolour);
+  if spintype = spinrow then
+   spinbutton(x + textshift + buttonshift + numshift, y, '>', buttoncolour)
+ End;
+
+ Procedure incdecspinner(row, x, y, numchars, numdigits: integer;var value: integer;min, max, mult:
+     integer);
+ Var charwidth, textshift, buttonshift, numshift, spinnershift: integer;
+ Begin
+  spinnershift := 34;
+  charwidth := 13;
+  buttonshift := 30;
+  textshift := charwidth * numchars;
+  numshift := 18 + charwidth * numdigits;
+  y := y + (row - 1) * spinnershift;
+  if (?mousex > (x + textshift)) and (?mousex < (x + textshift + buttonshift)) and (?mousey > y) and (?mousey
+     < y + spinnershift) then
+   if (value >= (min + mult)) then
+    value := value - mult;
+  if (?mousex > (x + textshift + buttonshift + numshift)) and (?mousex < (x + textshift + 2 * buttonshift
+     + numshift)) and (?mousey > y) and (?mousey < y + spinnershift) then
+   if (value <= (max - mult)) then
+    value := value + mult
+ End;
+
+ Procedure loaddecaymults(decayrate: integer);
+ Var count, count2: integer;
+ Begin
+  for count := 1 to maxwaves do
+   decaymult[count] := precdecay;
+  for count := 2 to maxwaves do
+   begin
+    for count2 := count to maxwaves do
+     begin
+      decaymult[count2] := ((precdecay - decayrate) * decaymult[count2]) / precdecay
+     end
+   end
+ End;
+
+ Procedure incdecdecay(row, x, y, numchars, numdigits: integer;var value: integer;min, max, mult: integer);
+ Var charwidth, textshift, buttonshift, numshift, spinnershift: integer;
+ Var count, count2: integer;
+ Begin
+  spinnershift := 34;
+  charwidth := 13;
+  buttonshift := 30;
+  textshift := charwidth * numchars;
+  numshift := 18 + charwidth * numdigits;
+  y := y + (row - 1) * spinnershift;
+  if (?mousex > (x + textshift)) and (?mousex < (x + textshift + buttonshift)) and (?mousey > y) and (?mousey
+     < y + spinnershift) then
+   if (value >= (min + mult)) then
+    value := value - mult;
+  if (?mousex > (x + textshift + buttonshift + numshift)) and (?mousex < (x + textshift + 2 * buttonshift
+     + numshift)) and (?mousey > y) and (?mousey < y + spinnershift) then
+   if (value <= (max - mult)) then
+    value := value + mult;
+  loaddecaymults(decayrate)
+ End;
+
+ Procedure incdecdivideby(row, x, y, numchars, numdigits: integer;var value: integer;min, max, mult:
+     integer);
+ Var charwidth, textshift, buttonshift, numshift, spinnershift: integer;
+ Var count, count2: integer;
+ Begin
+  spinnershift := 34;
+  charwidth := 13;
+  buttonshift := 30;
+  textshift := charwidth * numchars;
+  numshift := 18 + charwidth * numdigits;
+  y := y + (row - 1) * spinnershift;
+  if (?mousex > (x + textshift)) and (?mousex < (x + textshift + buttonshift)) and (?mousey > y) and (?mousey
+     < y + spinnershift) then
+   if (value >= (min + mult)) then
+    begin
+     value := value - mult;
+     wavesshown := 'Divide by';
+     for count := 1 to maxwaves do
+      begin
+       if (count) mod divideby = 0 then
+        onoff[count] := 1
+       else
+        onoff[count] := 0
+      end
+    end;
+  if (?mousex > (x + textshift + buttonshift + numshift)) and (?mousex < (x + textshift + 2 * buttonshift
+     + numshift)) and (?mousey > y) and (?mousey < y + spinnershift) then
+   if (value <= (max - mult)) then
+    begin
+     value := value + mult;
+     wavesshown := 'Divide by';
+     for count := 1 to maxwaves do
+      begin
+       if (count) mod divideby = 0 then
+        onoff[count] := 1
+       else
+        onoff[count] := 0
+      end
+    end;
+  loaddecaymults(decayrate)
+ End;
+
+ Procedure updatevaluebutton(x, y, numchars: integer;var value: integer;newvalue, size: integer);
+ Var width, height: integer;
+ Begin
+  width := 8 + 13 * numchars;
+  if size = large then
+   height := 30
+  else
+   height := 22;
+  if (?mousex > x) and (?mousex < (x + width)) and (?mousey > y) and (?mousey < y + height) then
+   begin
+    value := newvalue
+   end
+ End;
+
+ Procedure updatetogglebutton(x, y, numchars: integer;var value: integer;size: integer);
+ Var width, height: integer;
+ Begin
+  width := 8 + 13 * numchars;
+  if size = large then
+   height := 30
+  else
+   height := 22;
+  if (?mousex > x) and (?mousex < (x + width)) and (?mousey > y) and (?mousey < y + height) then
+   begin
+    if (value = 0) then
+     value := 1
+    else
+     value := 0
+   end
+ End;
+
+ Procedure updatewavebutton(x, y, numchars, size: integer);
+ Var width, height: integer;
+ Begin
+  width := 8 + 13 * numchars;
+  if size = large then
+   height := 30
+  else
+   height := 34;
+  if (?mousex > x) and (?mousex < (x + width)) and (?mousey > y) and (?mousey < y + height) then
+   begin
+    amplitudes[selectedwave] := 100;
+    phases[selectedwave] := 0
+   end
+ End;
+
+ Procedure initwaves;
+ Var count: integer;
+ Begin
+  for count := 1 to maxwaves do
+   begin
+    amplitudes[count] := 100;
+    phases[count] := 0;
+    onoff[count] := 1
+   end;
+  decayrate := 10;
+  loaddecaymults(decayrate);
+  multsumwaves := 1
+ End;
+
+ Procedure initallwavesbutton(x, y, numchars, size: integer);
+ Var width, height: integer;
+ Begin
+  width := 8 + 13 * numchars;
+  if size = large then
+   height := 30
+  else
+   height := 34;
+  if (?mousex > x) and (?mousex < (x + width)) and (?mousey > y) and (?mousey < y + height) then
+   begin
+    initwaves;
+    wavesshown := 'All waves'
+   end
+ End;
+
+ Procedure updateshowbuttons(showtype, x, y, numchars, size: integer);
+ Var width, height, count, prevcount, temp: integer;
+ Begin
+  width := 8 + 13 * numchars;
+  if size = large then
+   height := 30
+  else
+   height := 22;
+  if (?mousex > x) and (?mousex < (x + width)) and (?mousey > y) and (?mousey < y + height) then
+   begin
+    if showtype = 1 then
+     begin
+      wavesshown := 'All waves';
+      for count := 1 to maxwaves do
+       begin
+        onoff[count] := 1
+       end
+     end;
+    if (showtype = 2) then
+     begin
+      wavesshown := 'Evens';
+      for count := 1 to maxwaves do
+       begin
+        if count mod 2 = 0 then
+         onoff[count] := 1
+        else
+         onoff[count] := 0
+       end
+     end;
+    if showtype = 3 then
+     begin
+      wavesshown := 'Odds';
+      for count := 1 to maxwaves do
+       begin
+        if count mod 2 = 0 then
+         onoff[count] := 0
+        else
+         onoff[count] := 1
+       end
+     end;
+    if showtype = 4 then
+     begin
+      wavesshown := 'Fibonacci';
+      for count := 1 to maxwaves do
+       begin
+        onoff[count] := 0
+       end;
+      onoff[1] := 1;
+      count := 2;
+      prevcount := 1;
+      repeat
+       onoff[count] := 1;
+       temp := count;
+       count := count + prevcount;
+       prevcount := temp
+      until count > maxwaves
+     end;
+    if showtype = 5 then
+     begin
+      wavesshown := 'None';
+      for count := 1 to maxwaves do
+       begin
+        onoff[count] := 0
+       end
+     end
+   end
+ End;
+
+ Procedure fibonacci;
+ Var count, prevcount, temp: integer;
+ Begin
+  for count := 1 to maxwaves do
+   begin
+    onoff[count] := 0
+   end;
+  onoff[1] := 1;
+  count := 2;
+  prevcount := 1;
+  repeat
+   onoff[count] := 1;
+   temp := count;
+   count := count + prevcount;
+   prevcount := temp
+  until count > maxwaves
+ End;
+
+ Procedure updatepresetbuttons(showtype, x, y, numchars, size: integer);
+ Var width, height, count, prevcount, temp: integer;
+ Begin
+  width := 8 + 13 * numchars;
+  if size = large then
+   height := 30
+  else
+   height := 26;
+  if (?mousex > x) and (?mousex < (x + width)) and (?mousey > y) and (?mousey < y + height) then
+   begin
+    initwaves;
+    if showtype = 0 then
+     begin
+      for count := 1 to (selectedwave - 1) do
+       begin
+        onoff[count] := 0
+       end;
+      onoff[selectedwave] := 1;
+      for count := selectedwave + 1 to maxwaves do
+       begin
+        if (count - selectedwave) mod divideby = 0 then
+         onoff[count] := 1
+        else
+         onoff[count] := 0
+       end;
+      wavesshown := 'Lim Divide';
+      loaddecaymults(decayrate);
+      multsumwaves := 1
+     end;
+    if showtype = 1 then
+     begin
+      initwaves;
+      for count := 1 to maxwaves do
+       begin
+        if count mod 2 = 0 then
+         onoff[count] := 1
+        else
+         onoff[count] := 0;
+        amplitudes[count] := 200
+       end;
+      wavesshown := 'Sawtooth';
+      decayrate := 30;
+      loaddecaymults(decayrate);
+      numwaves := 12;
+      multsumwaves := 1
+     end;
+    if showtype = 2 then
+     begin
+      initwaves;
+      for count := 1 to maxwaves do
+       begin
+        if count mod 2 = 0 then
+         onoff[count] := 0
+        else
+         onoff[count] := 1;
+        amplitudes[count] := 150
+       end;
+      wavesshown := 'Square';
+      decayrate := 40;
+      loaddecaymults(decayrate);
+      numwaves := 11;
+      amplitudes[3] := 115;
+      amplitudes[5] := 130;
+      amplitudes[7] := 130;
+      amplitudes[9] := 190;
+      multsumwaves := 1
+     end;
+    if showtype = 3 then
+     begin
+      initwaves;
+      fibonacci;
+      wavesshown := 'Shortstock';
+      decayrate := 3;
+      loaddecaymults(decayrate);
+      numwaves := 40;
+      multsumwaves := 1;
+      granularity := fine
+     end;
+    if showtype = 4 then
+     begin
+      initwaves;
+      fibonacci;
+      wavesshown := 'Longstock';
+      decayrate := 3;
+      loaddecaymults(decayrate);
+      numwaves := 60;
+      multsumwaves := 1;
+      granularity := fine;
+      onoff[1] := 0;
+      onoff[2] := 0;
+      onoff[3] := 0;
+      onoff[5] := 0
+     end;
+    if showtype = 5 then
+     begin
+      initwaves;
+      for count := 1 to maxwaves do
+       begin
+        if count mod 2 = 0 then
+         onoff[count] := 0
+        else
+         onoff[count] := 1;
+        amplitudes[count] := 100
+       end;
+      wavesshown := 'Pulse';
+      decayrate := 3;
+      loaddecaymults(decayrate);
+      numwaves := 60;
+      onoff[3] := 0;
+      multsumwaves := 3
+     end;
+    if showtype = 6 then
+     begin
+      initwaves;
+      for count := 1 to maxwaves do
+       begin
+        if count mod 2 = 0 then
+         onoff[count] := 1
+        else
+         onoff[count] := 0;
+        amplitudes[count] := 100
+       end;
+      wavesshown := 'Relaxed';
+      decayrate := 2;
+      loaddecaymults(decayrate);
+      numwaves := 60;
+      onoff[1] := 0;
+      onoff[3] := 0;
+      onoff[5] := 0;
+      onoff[7] := 0;
+      onoff[9] := 0;
+      phases[2] := 90;
+      multsumwaves := 4
+     end;
+    if showtype = 7 then
+     begin
+      initwaves;
+      for count := 1 to maxwaves do
+       begin
+        onoff[count] := 0;
+        amplitudes[count] := 100
+       end;
+      wavesshown := 'One beat';
+      decayrate := 1;
+      loaddecaymults(decayrate);
+      numwaves := 40;
+      onoff[28] := 1;
+      onoff[30] := 1;
+      granularity := fine;
+      multsumwaves := 1
+     end;
+    if showtype = 8 then
+     begin
+      initwaves;
+      for count := 1 to maxwaves do
+       begin
+        onoff[count] := 0;
+        amplitudes[count] := 100
+       end;
+      wavesshown := 'Two beats';
+      decayrate := 1;
+      loaddecaymults(decayrate);
+      numwaves := 40;
+      onoff[34] := 1;
+      onoff[36] := 1;
+      onoff[38] := 1;
+      granularity := fine;
+      multsumwaves := 1
+     end
+   end
+ End;
+
+ Procedure controlboard(x, y, numchars, numdigits, numrows, borderflag, backflag: integer);
+ Var t1, t2: string;
+ Begin
+  borders(x, y, numchars, numdigits, numrows, gold, darkbrown, ochre, borderflag, backflag);
+  if borderflag = withborder then
+   begin
+    x := x + 4;
+    y := y + 8
+   end;
+  t1 := 'No. Waves';
+  spinner(1, spinrow, boldtext, x, y, numchars, numdigits, t1, numwaves, black, white, red);
+  t2 := ' 2';
+  smallbutton(x + 10, y + 34, 2, t2, red, black);
+  t2 := '10';
+  smallbutton(x + 54, y + 34, 2, t2, red, black);
+  t2 := '20';
+  smallbutton(x + 98, y + 34, 2, t2, red, black);
+  t2 := '40';
+  smallbutton(x + 142, y + 34, 2, t2, red, black);
+  t2 := '60';
+  smallbutton(x + 186, y + 34, 2, t2, red, black);
+  t2 := 'Initialise all waves';
+  smallbutton(x + 8, y + 68, 16, t2, lightgreen, black)
+ End;
+
+ Procedure controlboard2(x, y, numchars, numdigits, numrows, borderflag, backflag: integer);
+ Var t1, t2: string;
+ Begin
+  borders(x, y, numchars, numdigits, numrows, gold, darkbrown, ochre, borderflag, backflag);
+  if borderflag = withborder then
+   begin
+    x := x + 4;
+    y := y + 8
+   end;
+  t1 := 'Select Wave';
+  t2 := '';
+  spinner(1, spinrow, boldtext, x, y, numchars, numdigits, t1, selectedwave, black, white, lime);
+  spinner(2, tvalrow, normtext, x, y, numchars, numdigits, t2, onoff[selectedwave], black, white, emerald);
+  t2 := 'Wave On/Off';
+  smallbutton(x + 28, y + 34, 11, t2, emerald, black)
+ End;
+
+ Procedure controlboard2a(x, y, numchars, numdigits, numrows, borderflag, backflag: integer);
+ Var t1, t2: string;
+ Begin
+  borders(x, y, numchars, numdigits, numrows, gold, darkbrown, ochre, borderflag, backflag);
+  if borderflag = withborder then
+   begin
+    x := x + 4;
+    y := y + 8
+   end;
+  t1 := ' Amplitude';
+  t2 := '       Phase';
+  spinner(1, spinrow, normtext, x, y, numchars, numdigits, t1, amplitudes[selectedwave], black, white,
+     lightgreen);
+  spinner(2, spinrow, normtext, x, y, numchars, numdigits, t2, phases[selectedwave], black, white,
+     lightgreen);
+  t2 := 'X';
+  smallbutton(x + 14, y + 34, 1, t2, lightgreen, black)
+ End;
+
+ Procedure controlboard3(x, y, numchars, numdigits, numrows, borderflag, backflag: integer);
+ Var t1: string;
+ Var xshift: integer;
+ Begin
+  borders(x, y, numchars, numdigits, numrows, gold, darkbrown, ochre, borderflag, backflag);
+  if borderflag = withborder then
+   begin
+    x := x + 4;
+    y := y + 8
+   end;
+  xshift := 32;
+  t1 := 'All';
+  smallbutton(x + xshift, y, 2, t1, emerald, black);
+  t1 := 'Evens';
+  smallbutton(x + xshift + 55, y, 5, t1, emerald, black);
+  t1 := 'Odds';
+  smallbutton(x + xshift + 150, y, 5, t1, emerald, black);
+  t1 := 'Fibonacci';
+  smallbutton(x + xshift + 245, y, 8, t1, emerald, black);
+  t1 := 'None';
+  smallbutton(x + xshift + 380, y, 5, t1, emerald, black)
+ End;
+
+ Procedure controlboard4(x, y, numchars, numdigits, numrows, borderflag, backflag: integer);
+ Var dummy: integer;
+ Var t1, t2: string;
+ Begin
+  borders(x, y, numchars, numdigits, numrows, gold, darkbrown, ochre, borderflag, backflag);
+  if borderflag = withborder then
+   begin
+    x := x + 4;
+    y := y + 8
+   end;
+  t1 := 'Decay Rate';
+  t2 := '%';
+  spinner(1, textrow, boldtext, x, y, numchars, numdigits, t1, dummy, black, white, darkblue);
+  spinner(2, spinrow, boldtext, x, y, numchars, numdigits, t2, decayrate, black, white, skyblue)
+ End;
+
+ Procedure controlboard5(x, y, numchars, numdigits, numrows, borderflag, backflag: integer);
+ Var dummy: integer;
+ Var t1: string;
+ Begin
+  borders(x, y, numchars, numdigits, numrows, ochre, darkbrown, ochre, borderflag, backflag);
+  if borderflag = withborder then
+   begin
+    x := x + 4;
+    y := y + 8
+   end;
+  t1 := 'Shrink Y';
+  spinner(1, spinrow, normtext, x, y, numchars, numdigits, t1, multsumwaves, black, white, ochre)
+ End;
+
+ Procedure controlboard6(x, y, numchars, numdigits, numrows, borderflag, backflag: integer);
+ Var dummy: integer;
+ Var t1: string;
+ Begin
+  borders(x, y, numchars, numdigits, numrows, ochre, darkbrown, gold, borderflag, backflag);
+  if borderflag = withborder then
+   begin
+    x := x + 4;
+    y := y + 8
+   end;
+  t1 := '  Superposed Wave';
+  spinner(1, textrow, boldtext, x, y, numchars, numdigits, t1, dummy, black, white, ochre)
+ End;
+
+ Procedure controlboard7(x, y, numchars, numdigits, numrows, borderflag, backflag: integer);
+ Var dummy: integer;
+ Var t1: string;
+ Begin
+  borders(x, y, numchars, numdigits, numrows, ochre, darkbrown, gold, borderflag, backflag);
+  if borderflag = withborder then
+   begin
+    x := x + 4;
+    y := y + 8
+   end;
+  t1 := ' Component Waves';
+  spinner(1, textrow, boldtext, x, y, numchars, numdigits, t1, dummy, black, white, ochre)
+ End;
+
+ Procedure controlboard8(x, y, numchars, numdigits, numrows, borderflag, backflag: integer);
+ Var t1: string;
+ Begin
+  borders(x, y, numchars, numdigits, numrows, gold, darkbrown, ochre, borderflag, backflag);
+  if borderflag = withborder then
+   begin
+    x := x + 4;
+    y := y + 8
+   end;
+  t1 := 'Coarse';
+  smallbutton(x + 22, y + 2, 6, t1, ochre, black);
+  t1 := 'Fine';
+  smallbutton(x + 130, y + 2, 4, t1, ochre, black)
+ End;
+
+ Procedure infoboard(x, y, numchars, numdigits, numrows, borderflag, backflag: integer);
+ Var dummy: integer;
+ Var t1, t2: string;
+ Begin
+  borders(x, y, numchars, numdigits, numrows, gold, blue, ochre, borderflag, backflag);
+  if borderflag = withborder then
+   begin
+    x := x + 4;
+    y := y + 8
+   end;
+  t1 := 'Showing:  ' + wavesshown;
+  t2 := '        Divide by';
+  spinner(1, textrow, boldtext, x, y, numchars, numdigits, t1, dummy, black, white, emerald);
+  spinner(2, spinrow, normtext, x, y, numchars, numdigits, t2, divideby, black, white, emerald);
+  t2 := 'Lim';
+  smallbutton(x + 8, y + 1 * 34, 3, t2, emerald, black);
+  t2 := '  Square';
+  smallbutton(x + 8, y + 2 * 34, 9, t2, emerald, black);
+  t2 := '    Pulse';
+  smallbutton(x + 8, y + 3 * 34, 9, t2, emerald, black);
+  t2 := 'One beat';
+  smallbutton(x + 8, y + 4 * 34, 9, t2, emerald, black);
+  t2 := 'Shortstock';
+  smallbutton(x + 8, y + 5 * 34, 9, t2, emerald, black);
+  t2 := ' Sawtooth';
+  smallbutton(x + 142, y + 2 * 34, 9, t2, emerald, black);
+  t2 := '  Relaxed';
+  smallbutton(x + 142, y + 3 * 34, 9, t2, emerald, black);
+  t2 := 'Two beats';
+  smallbutton(x + 142, y + 4 * 34, 9, t2, emerald, black);
+  t2 := 'Longstock';
+  smallbutton(x + 142, y + 5 * 34, 9, t2, emerald, black)
+ End;
+
+ Procedure helpexitboard(x, y, numchars, numdigits, numrows, borderflag, backflag: integer);
+ Var t1: string;
+ Begin
+  borders(x, y, numchars, numdigits, numrows, gold, darkbrown, ochre, borderflag, backflag);
+  if borderflag = withborder then
+   begin
+    x := x + 4;
+    y := y + 8
+   end;
+  t1 := ' Menu';
+  smallbutton(x + 3, y, 5, t1, blue, cream);
+  t1 := ' Exit';
+  smallbutton(x + 81, y, 4, t1, red, white)
+ End;
+
+ Procedure updatecontrolboard(x, y, numchars, numdigits, borderflag: integer);
+ Begin
+  if borderflag = noborder then
+   begin
+    x := x - 4;
+    y := y - 8
+   end;
+  incdecspinner(1, x, y, numchars, numdigits, numwaves, 1, maxwaves, 1);
+  updatevaluebutton(x + 10, y + 40, 2, numwaves, 2, small);
+  updatevaluebutton(x + 54, y + 40, 2, numwaves, 10, small);
+  updatevaluebutton(x + 98, y + 40, 2, numwaves, 20, small);
+  updatevaluebutton(x + 142, y + 40, 2, numwaves, 40, small);
+  updatevaluebutton(x + 186, y + 40, 2, numwaves, 60, small);
+  initallwavesbutton(x + 8, y + 68, 16, small)
+ End;
+
+ Procedure updatecontrolboard2(x, y, numchars, numdigits, borderflag: integer);
+ Begin
+  if borderflag = noborder then
+   begin
+    x := x - 4;
+    y := y - 8
+   end;
+  incdecspinner(1, x, y, numchars, numdigits, selectedwave, 1, maxwaves, 1);
+  updatetogglebutton(x + 28, y + 34, 11, onoff[selectedwave], small)
+ End;
+
+ Procedure updatecontrolboard2a(x, y, numchars, numdigits, borderflag: integer);
+ Begin
+  if borderflag = noborder then
+   begin
+    x := x - 4;
+    y := y - 8
+   end;
+  incdecspinner(1, x, y, numchars, numdigits, amplitudes[selectedwave], -maxamplitude, maxamplitude,
+     amplitudeinc);
+  incdecspinner(2, x, y, numchars, numdigits, phases[selectedwave], -maxphase, maxphase, phaseinc);
+  updatewavebutton(x + 14, y + 34, 1, small)
+ End;
+
+ Procedure updatecontrolboard3(x, y, numchars, numdigits, borderflag: integer);
+ Var xshift: integer;
+ Begin
+  if borderflag = noborder then
+   begin
+    x := x - 4;
+    y := y - 8
+   end;
+  xshift := 32;
+  updateshowbuttons(1, x + xshift, y, 2, small);
+  updateshowbuttons(2, x + xshift + 55, y, 5, small);
+  updateshowbuttons(3, x + xshift + 150, y, 5, small);
+  updateshowbuttons(4, x + xshift + 245, y, 8, small);
+  updateshowbuttons(5, x + xshift + 380, y, 5, small)
+ End;
+
+ Procedure updatecontrolboard4(x, y, numchars, numdigits, borderflag: integer);
+ Var dummy: integer;
+ Begin
+  if borderflag = noborder then
+   begin
+    x := x - 4;
+    y := y - 8
+   end;
+  incdecdecay(2, x, y, numchars, numdigits, decayrate, 0, precdecay - 1, 1)
+ End;
+
+ Procedure updatecontrolboard5(x, y, numchars, numdigits, borderflag: integer);
+ Begin
+  if borderflag = noborder then
+   begin
+    x := x - 4;
+    y := y - 8
+   end;
+  incdecspinner(1, x, y, numchars, numdigits, multsumwaves, 1, 20, 1)
+ End;
+
+ Procedure updatecontrolboard8(x, y, numchars, numdigits, borderflag: integer);
+ Begin
+  if borderflag = noborder then
+   begin
+    x := x - 4;
+    y := y - 8
+   end;
+  updatevaluebutton(x + 22, y + 8, 6, granularity, course, small);
+  updatevaluebutton(x + 130, y + 8, 4, granularity, fine, small)
+ End;
+
+ Procedure updateinfoboard(x, y, numchars, numdigits, borderflag: integer);
+ Var dummy: integer;
+ Begin
+  if borderflag = noborder then
+   begin
+    x := x - 4;
+    y := y - 8
+   end;
+  incdecdivideby(2, x, y, numchars, numdigits, divideby, 1, 20, 1);
+  updatepresetbuttons(0, x + 8, y + 1 * 36, 3, small);
+  updatepresetbuttons(2, x + 8, y + 2 * 36, 9, small);
+  updatepresetbuttons(5, x + 8, y + 3 * 36, 9, small);
+  updatepresetbuttons(7, x + 8, y + 4 * 36, 9, small);
+  updatepresetbuttons(3, x + 8, y + 5 * 36, 9, small);
+  updatepresetbuttons(1, x + 142, y + 2 * 36, 9, small);
+  updatepresetbuttons(6, x + 142, y + 3 * 36, 9, small);
+  updatepresetbuttons(8, x + 142, y + 4 * 36, 9, small);
+  updatepresetbuttons(4, x + 142, y + 5 * 36, 9, small)
+ End;
+
+ Procedure updatehelpexitboard(x, y, numchars, numdigits, borderflag: integer);
+ Var dummy: integer;
+ Begin
+  if borderflag = noborder then
+   begin
+    x := x - 4;
+    y := y - 8
+   end;
+  updatetogglebutton(x + 8, y, 4, infoflag, small);
+  updatevaluebutton(x + 76, y, 4, exitflag, 1, small)
+ End;
+
+ Procedure displaycontrolboards;
+ Begin
+  controlboard(36, 6, 10, 2, 3, withborder, withbackground);
+  borders(280, 2, 34, 0, 2, gold, darkbrown, ochre, withborder, withbackground);
+  controlboard2(286, 10, 12, 2, 3, noborder, nobackground);
+  controlboard2a(546, 10, 10, 4, 3, noborder, nobackground);
+  controlboard3(280, 74, 33, 1, 1, withborder, withbackground);
+  controlboard4(810, 40, 2, 3, 2, withborder, withbackground);
+  controlboard5(34, 954, 8, 2, 1, withborder, withbackground);
+  controlboard6(372, 956, 11, 2, 1, withborder, withbackground);
+  controlboard7(372, 414, 11, 2, 1, withborder, withbackground);
+  controlboard8(750, 954, 10, 0, 1, withborder, withbackground);
+  helpexitboard(810, 2, 5, 0, 1, withborder, withbackground);
+  if infoflag = 1 then
+   infoboard(684, 122, 13, 2, 6, withborder, withbackground)
+ End;
+
+ Procedure updatecontrolboards;
+ Begin
+  updatecontrolboard(36, 6, 10, 2, withborder);
+  updatecontrolboard2(286, 14, 12, 2, noborder);
+  updatecontrolboard2a(546, 14, 10, 4, noborder);
+  updatecontrolboard3(280, 80, 33, 1, withborder);
+  updatecontrolboard4(810, 36, 2, 3, withborder);
+  updatecontrolboard5(34, 954, 8, 2, withborder);
+  updatecontrolboard8(750, 954, 10, 0, withborder);
+  updatehelpexitboard(810, 7, 5, 0, withborder);
+  if infoflag = 1 then
+   updateinfoboard(684, 122, 13, 2, withborder)
+ End;
+
+ Procedure sinecurve(period, gwidth, scolour, xstart, ystart: integer);
+ Var x, y, gran, step, xdiv: integer;
+ Begin
+  if onoff[period] = 1 then
+   begin
+    if granularity = fine then
+     begin
+      gran := 180;
+      step := 5;
+      xdiv := 2;
+      xstart := xstart + 4
+     end
+    else
+     begin
+      gran := 90;
+      step := 10;
+      xdiv := 1
+     end;
+    colour(scolour);
+    setxy(xstart, ystart);
+    direction(90);
+    x := 0;
+    for x := 0 to gran do
+     begin
+      penup;
+      forward(step);
+      forget(1);
+      left(90);
+      y := (decaymult[period] * sin((4 * x / xdiv + phases[period]) * period, 1, amplitudes[period])) /
+     precdecay;
+      forward(y);
+      back(y);
+      forget(1);
+      right(90)
+     end;
+    if period = selectedwave then
+     thickness(4);
+    polyline(gran + 1);
+    if period = selectedwave then
+     thickness(2)
+   end
+ End;
+
+ Procedure addsinecurves(maxperiod, amplitude, phase, scolour, xstart, ystart: integer);
+ Var x, period, y, gran, step, xdiv: integer;
+ Begin
+  colour(scolour);
+  if granularity = fine then
+   begin
+    gran := 180;
+    step := 5;
+    xdiv := 2;
+    xstart := xstart + 4;
+    thickness(2);
+    colour(black)
+   end
+  else
+   begin
+    gran := 90;
+    step := 10;
+    xdiv := 1;
+    thickness(2)
+   end;
+  setxy(xstart, ystart);
+  direction(90);
+  x := 0;
+  for x := 0 to gran do
+   begin
+    penup;
+    forward(step);
+    forget(1);
+    pendown;
+    left(90);
+    y := 0;
+    for period := 1 to maxperiod do
+     begin
+      if onoff[period] = 1 then
+       y := y + (decaymult[period] * sin((4 * x / xdiv + phases[period]) * period, 1, amplitudes[period]))
+     / precdecay
+     end;
+    if multsumwaves > 0 then
+     y := y / multsumwaves
+    else
+    if multsumwaves < 0 then
+     begin
+      y := y * abs(multsumwaves)
+     end;
+    if granularity = fine then
+     penup;
+    forward(y);
+    back(y);
+    pendown;
+    forget(1);
+    right(90)
+   end;
+  polyline(gran + 1)
+ End;
+
+ Procedure verticalgrid(startx, starty, gwidth, gheight: integer);
+ Var count: integer;
+ Begin
+  setxy(startx, starty + gheight);
+  colour(lightgrey);
+  direction(0);
+  for count := 1 to 9 do
+   begin
+    pendown;
+    if count = 1 then
+     thickness(4)
+    else
+     thickness(2);
+    forward(2 * gheight);
+    back(2 * gheight);
+    right(90);
+    penup;
+    forward(gwidth / 8);
+    if count mod 2 = 1 then
+     forward(1);
+    pendown;
+    left(90)
+   end
+ End;
+
+ Procedure horizontalgrid(startx, starty, gwidth, gheight: integer);
+ Var count, steps: integer;
+ Begin
+  steps := 50;
+  setxy(startx, starty - gheight);
+  colour(lightgrey);
+  direction(90);
+  for count := 1 to 2 * (gheight / steps) + 1 do
+   begin
+    if count = gheight / steps + 1 then
+     thickness(4)
+    else
+     thickness(2);
+    pendown;
+    forward(gwidth);
+    back(gwidth);
+    right(90);
+    penup;
+    forward(steps);
+    pendown;
+    left(90)
+   end
+ End;
+
+ Procedure initialise;
+ Var count: integer;
+ Begin
+  keyecho(false);
+  numwaves := 2;
+  selectedwave := 1;
+  multsumwaves := 1;
+  decayrate := 10;
+  infoflag := 0;
+  divideby := 1;
+  granularity := course;
+  wavesshown := 'All waves';
+  loaddecaymults(decayrate);
+  for count := 1 to maxwaves do
+   begin
+    amplitudes[count] := 100;
+    phases[count] := 0;
+    onoff[count] := 1
+   end
+ End;
+
+ Procedure displaygraphs;
+ Var count: integer;
+ Begin
+  border(30, 460, 940, 540, ochre, black, silver, withbackground);
+  border(32, 462, 936, 536, black, ochre, white, withbackground);
+  verticalgrid(50, 730, 900, 250);
+  horizontalgrid(50, 730, 900, 250);
+  addsinecurves(numwaves, 100, 0, darkgrey, 40, 730);
+  border(30, 118, 940, 340, ochre, darkbrown, silver, nobackground);
+  border(32, 120, 936, 336, darkbrown, ochre, cream, withbackground);
+  verticalgrid(50, 288, 900, 150);
+  horizontalgrid(50, 288, 900, 150);
+  for count := 1 to numwaves do
+   sinecurve(count, 900, count, 40, 288)
+ End;
+
+BEGIN
+ initialise;
+ exitflag := 0;
+ repeat
+  noupdate;
+  blank(coffee);
+  displaygraphs;
+  displaycontrolboards;
+  update;
+  repeat
+   pause(30)
+  until ?click > 0;
+  updatecontrolboards
+ until exitflag = 1
+END.

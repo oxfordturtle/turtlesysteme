@@ -1,0 +1,50 @@
+# BouncingFace
+
+def face(size: int):
+  def eye():
+    colour(white);
+    ellblot(size * 3 / 20, size / 10)
+    colour(emerald)
+    blot(size * 9 / 100)
+    colour(black)
+    blot(size / 25)
+
+  direction(0)
+  colour(peach)
+  blot(size)
+  colour(darkred)
+  blot(size * 7 / 10)
+  forward(size * 3 / 20)
+  colour(peach)
+  blot(size * 3 / 4)
+  back(size * 3 / 10)
+  colour(royal)
+  blot(size * 3 / 20)
+  penup()
+  forward(size * 9 / 20)
+  left(90)
+  forward(size * 2 / 5)
+  eye()
+  back(size * 4 / 5)
+  eye()
+
+facesize: int = 100
+x: int = 300
+y: int = 700
+xvel: int = 8
+yvel: int = -4
+while 0 < 1:
+  noupdate()
+  colour(white)
+  blot(facesize + 1)
+  x = x + xvel
+  y = y + yvel
+  setxy(x, y)
+  face(facesize)
+  setxy(x, y)
+  update()
+  pause(10)
+  if (x < facesize) or (x > 999 - facesize):
+    xvel = -xvel;
+  if (y < facesize) or (y > 999 - facesize):
+    yvel = -yvel

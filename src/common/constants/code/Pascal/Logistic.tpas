@@ -1,0 +1,89 @@
+PROGRAM Logistic;
+CONST maxpop = 100000;
+      maxgen = 100;
+      lmargin = 105;
+      rmargin = 40;
+      tmargin = 150;
+      bmargin = 200;
+      output = false;
+
+VAR gen, pop: integer;
+    r: integer;
+
+  Procedure axes;
+  Var i: integer;
+  Begin
+    colour(black);
+    for i := 0 to 10 do
+      begin
+        setxy(i * 100 - 25, 1000);
+        print(str(i * maxgen / 10), 4, 20)
+      end;
+    for i := 1 to 10 do
+      begin
+        setxy(-lmargin + 5, 1000 - i * 100 - 20);
+        print(str(i * maxpop / 10), 4, 20)
+      end;
+    setxy(0, 0);
+    drawxy(0, 1000);
+    drawxy(1000, 0);
+    colour(red);
+    setxy(0, 1060);
+    print('Population over ' + str(maxgen) + ' generations, where P (population/' + str(maxpop) + ')', 4, 25);
+    setxy(0, 1110);
+    print('is determined by the logistic equation P'' = rP(1 - P), with r = ' + qstr(r, 10, 1), 4, 25)
+  End;
+
+  Procedure menu;
+  Var i: integer;
+  Begin
+    colour(black);
+    setxy(10, -tmargin + 20);
+    print('Set r:', 4, 25);
+    for i := 21 to 40 do
+      begin
+        setxy(((i - 1) mod 10) * 90 + 130, ((i - 1) div 10) * 50 - 100 - tmargin);
+        if i = r then
+          box(90, 50, red, true)
+        else
+          box(90, 50, cream, true);
+        print('  ' + qstr(i, 10, 1), 4, 25)
+      end
+  End;
+
+BEGIN
+  canvas(-lmargin, -tmargin, 1000 + lmargin + rmargin, 1000 + tmargin + bmargin);
+  resolution(1000 + lmargin + rmargin, 1000 + tmargin + bmargin);
+  thickness(3);
+  r := 30;
+  repeat
+    noupdate;
+    blank(white);
+    axes;
+    menu;
+    colour(blue);
+    pop := random(maxpop - 9) + 10;
+    if output then
+      begin
+        writeln('');
+        writeln('r = ' + qstr(r, 10, 1) + '; Initial population = ' + str(pop))
+      end;
+    setxy(0, 1000 - divmult(pop, maxpop, 1000));
+    for gen := 1 to maxgen do
+      begin
+        pop := divmult(pop, 10 * maxpop, r * (maxpop - pop));
+        setxy(divmult(gen, maxgen, 1000), 1000 - divmult(pop, maxpop, 1000));
+        polyline(2);
+        if output then
+          begin
+            write(str(pop) + ' ');
+            if gen mod 10 = 0 then
+              writeln('')
+          end
+      end;
+    update;
+    repeat
+    until (?lmouse > 0) and (?clicky < (100 - tmargin)) and (?clickx >= 130) and (?clickx < 1030);
+    r := ((?clickx - 130) div 90) + ((?clicky + tmargin + 100) div 50) * 10 + 1
+  until 0 = 1
+END.

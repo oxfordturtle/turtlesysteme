@@ -1,0 +1,277 @@
+PROGRAM Syllogisms;
+CONST lastsyll = 255;
+      maxpop = 8;
+      randpop = 4;
+      randomtries = 1000;
+      systemtries = 256;
+      qorder = 'AEIO';
+VAR qcode: array[0..3] of char;
+    qstr1: array[0..3] of string[5];
+    qstr2: array[0..3] of string[8];
+    majors, majorp, minors, minorp, concls, conclp: array[0..lastsyll] of char;
+    majormp, minorsm, conclsp: array[0..lastsyll] of string[3];
+    syllcode: array[0..lastsyll] of string[5];
+    m, p, s: array[0..maxpop] of boolean;
+    majortrue, minortrue, concltrue: array[0..lastsyll] of boolean;
+    refutecount: array[0..lastsyll] of integer;
+    i, try, count: integer;
+    aristotle: boolean;
+    showpops: boolean;
+    thispop: integer;
+
+ Procedure initialise;
+ Var i: integer;
+ Begin
+  for i := 0 to 3 do
+   qcode[i] := qorder[i + 1];
+  qstr1[0] := 'All ';
+  qstr1[1] := 'No ';
+  qstr1[2] := 'Some ';
+  qstr1[3] := 'Some ';
+  qstr2[0] := 's are ';
+  qstr2[1] := ' is ';
+  qstr2[2] := ' is ';
+  qstr2[3] := ' is not '
+ End;
+
+ Procedure setupsyllogisms;
+ Var syl: integer;
+ Begin
+  for syl := 0 to lastsyll do
+   begin
+    if (syl and 64) = 0 then
+     begin
+      majors[syl] := 'M';
+      majorp[syl] := 'P'
+     end
+    else
+     begin
+      majors[syl] := 'P';
+      majorp[syl] := 'M'
+     end;
+    if (syl and 128) = 0 then
+     begin
+      minors[syl] := 'S';
+      minorp[syl] := 'M'
+     end
+    else
+     begin
+      minors[syl] := 'M';
+      minorp[syl] := 'S'
+     end;
+    concls[syl] := 'S';
+    conclp[syl] := 'P';
+    majormp[syl] := qcode[syl mod 4] + majors[syl] + majorp[syl];
+    minorsm[syl] := qcode[(syl / 4) mod 4] + minors[syl] + minorp[syl];
+    conclsp[syl] := qcode[(syl / 16) mod 4] + concls[syl] + conclp[syl];
+    syllcode[syl] := str(syl / 64 + 1) + ' ' + qcode[syl mod 4] + qcode[(syl / 4) mod 4] + qcode[(syl /
+     16) mod 4]
+   end
+ End;
+
+ Function systempop(b: integer): integer;
+ Var bit: integer;
+ Begin
+  result := 0;
+  bit := 1;
+  repeat
+   if (bit and b) > 0 then
+    begin
+     m[result] := (bit and #AA) > 0;
+     p[result] := (bit and #CC) > 0;
+     s[result] := (bit and #F0) > 0;
+     result := result + 1
+    end;
+   bit := bit * 2
+  until bit > 128
+ End;
+
+ Procedure showpop(n: integer);
+ Var i: integer;
+     preds: string[5];
+ Begin
+  write(str(n) + ' - population ' + str(thispop) + ': ');
+  for i := 0 to thispop - 1 do
+   begin
+    if m[i] then
+     preds := 'M'
+    else
+     preds := '';
+    if p[i] then
+     preds := preds + 'P';
+    if s[i] then
+     preds := preds + 'S';
+    write(' [' + preds + '] ')
+   end;
+  writeln('')
+ End;
+
+ Function common(var property1, property2: array of boolean): integer;
+ Var i: integer;
+ Begin
+  result := 0;
+  for i := 0 to thispop - 1 do
+   if property1[i] then
+    begin
+     if property2[i] then
+      result := result or 8
+     else
+      result := result or 2
+    end
+   else
+    begin
+     if property2[i] then
+      result := result or 4
+     else
+      result := result or 1
+    end
+ End;
+
+ Procedure fixtruth(prop: string;b: boolean);
+ Var syl: integer;
+ Begin
+  for syl := 0 to lastsyll do
+   begin
+    if majormp[syl] = prop then
+     majortrue[syl] := b
+    else
+    if minorsm[syl] = prop then
+     minortrue[syl] := b
+    else
+    if conclsp[syl] = prop then
+     concltrue[syl] := b
+   end
+ End;
+
+ Procedure checkoverlap(var property1, property2: array of boolean;c1, c2: char);
+ Var overlap: integer;
+ Begin
+  overlap := common(property1, property2);
+  fixtruth('A' + c1 + c2, (overlap and 2) = 0);
+  fixtruth('A' + c2 + c1, (overlap and 4) = 0);
+  fixtruth('E' + c1 + c2, (overlap and 8) = 0);
+  fixtruth('E' + c2 + c1, (overlap and 8) = 0);
+  fixtruth('I' + c1 + c2, (overlap and 8) > 0);
+  fixtruth('I' + c2 + c1, (overlap and 8) > 0);
+  fixtruth('O' + c1 + c2, (overlap and 2) > 0);
+  fixtruth('O' + c2 + c1, (overlap and 4) > 0)
+ End;
+
+ Procedure fixrefutes;
+ Var syl: integer;
+ Begin
+  for syl := 0 to lastsyll do
+   begin
+    if (majortrue[syl] and minortrue[syl]) and not(concltrue[syl]) then
+     inc(refutecount[syl])
+   end
+ End;
+
+BEGIN
+ output(true, cream, true);
+ writeln('          ARISTOTELIAN SYLLOGISM TESTING PROGRAM');
+ writeln('Aristotelian syllogisms consist of two premises followed by a');
+ writeln('conclusion. The first (Major) premise connects the predicates M');
+ writeln('and P, the second (Minor) premise connects the predicates S and');
+ writeln('M, while the Conclusion connects the predicates S and P. Four');
+ writeln('different types of logical connection are available, with a');
+ writeln('traditional shorthand code using the vowels A, E, I and O:');
+ writeln('    A     All Fs are G.       E     No F is G.');
+ writeln('    I     Some F is G.        O     Some F is not G.');
+ writeln('There are thus 4 possible relations in the Major Premise, 4 in');
+ writeln('the Minor Premise, and 4 in the Conclusion (so 64 combinations');
+ writeln('overall), but in addition, there are four different "Figures",');
+ writeln('which indicate the order of the predicates in each proposition:');
+ writeln('   Figure 1   Major: M-P   Minor: S-M   Conclusion: S-P');
+ writeln('   Figure 2   Major: P-M   Minor: S-M   Conclusion: S-P');
+ writeln('   Figure 3   Major: M-P   Minor: M-S   Conclusion: S-P');
+ writeln('   Figure 4   Major: P-M   Minor: M-S   Conclusion: S-P');
+ writeln('Hence there are 256 possible syllogisms altogether. Here is the');
+ writeln('syllogism of Figure 1 coded "EIO":');
+ writeln('   No M is P;  Some S is M;  therefore  Some S is not P.');
+ writeln('And here is the syllogism of Figure 4 coded "AEO":');
+ writeln('   All Ps are M;  No M is S;  therefore  Some S is not P.');
+ writeln('The vowel codes were used in the Middle Ages as mnemonics for');
+ writeln('the forms of syllogism that were accepted as valid - in these');
+ writeln('cases "Ferio" (1:EIO) and "Calemos" (4:AEO) respectively. But');
+ writeln('note that Calemos is invalid (i.e. its premises can be true and');
+ writeln('yet its conclusion turn out false) if we allow a world in which');
+ writeln('there is no S at all. Aristotle''s theory takes for granted that');
+ writeln('all three predicates are at least satisfied by something.');
+ writeln('');
+ cursor(11);
+ writeln('Now press "f" or "F" for Fregean validity testing, which does not');
+ writeln('assume that the relevant predicates M, P and S are satisfied');
+ writeln('by anything; press "a" or "A" for Aristotelian validity testing.');
+ writeln('Capital "F" or "A" will display all 256 possible population types');
+ write('as they are generated and tested.  ');
+ repeat
+ until (?key = -\a) or (?key = -\f);
+ aristotle := (?key = -\a);
+ showpops := (abs(?kshift) and 8) > 0;
+ writeln('');
+ writeln('');
+ output(true, cream, true);
+ if aristotle then
+  writeln('ARISTOTELIAN conditions assumed ...')
+ else
+  writeln('FREGEAN truth-conditions assumed ... ');
+ writeln('');
+ writeln('Now all 256 possible syllogisms will be tested against ' + str(systemtries));
+ writeln('populations of individuals, whose number and characteristics');
+ writeln('are systematically generated to cover all relevant possibilities:');
+ writeln('');
+ cursor(11);
+ initialise;
+ setupsyllogisms;
+ for i := 0 to lastsyll do
+  refutecount[i] := 0;
+ if not(showpops) then
+  write('(256) ');
+ try := systemtries;
+ while try > 0 do
+  begin
+   if (try mod 50 = 0) and not(showpops) then
+    begin
+     writeln('');
+     write('(' + str(try) + ') ')
+    end;
+   dec(try);
+   thispop := systempop(try);
+   if showpops then
+    showpop(try)
+   else
+    write('.');
+   if not(aristotle) or (((try and #AA) > 0) and ((try and #CC) > 0) and ((try and #F0) > 0)) then
+    begin
+     checkoverlap(m, p, 'M', 'P');
+     checkoverlap(s, m, 'S', 'M');
+     checkoverlap(s, p, 'S', 'P');
+     fixrefutes
+    end
+  end;
+ cursor(1);
+ output(false, lightgreen, true);
+ writeln('');
+ writeln('');
+ writeln('After systematically testing all relevant possibilities');
+ if aristotle then
+  writeln('(in which some Ms, some Ps, and some Ss exist),')
+ else
+  writeln('(without requiring that any Ms, Ps or Ss exist),');
+ writeln('these are the unrefuted (and thus valid)');
+ writeln('Aristotelian Forms of Syllogism:');
+ writeln('');
+ count := 0;
+ for i := 0 to lastsyll do
+  if refutecount[i] = 0 then
+   begin
+    writeln('  ' + syllcode[i] + ':  ' + qstr1[pos(majormp[i, 1], qorder) - 1] + majormp[i, 2] + qstr2[pos(majormp[i,
+     1], qorder) - 1] + majormp[i, 3] + '  ' + qstr1[pos(minorsm[i, 1], qorder) - 1] + minorsm[i, 2] +
+     qstr2[pos(minorsm[i, 1], qorder) - 1] + minorsm[i, 3] + '  =>  ' + qstr1[pos(conclsp[i, 1], qorder)
+     - 1] + conclsp[i, 2] + qstr2[pos(conclsp[i, 1], qorder) - 1] + conclsp[i, 3]);
+    inc(count)
+   end;
+ writeln('');
+ writeln('(' + str(count) + ' forms altogether)')
+END.

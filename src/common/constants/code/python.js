@@ -1,103 +1,121 @@
-import DrawPause from './Python/DrawPause.tgy'
-import SmileyFace from './Python/SmileyFace.tgy'
-import ThePlough from './Python/ThePlough.tgy'
-import OlympicRings from './Python/OlympicRings.tgy'
-import ForLoop from './Python/ForLoop.tgy'
-import TriangleSpin from './Python/TriangleSpin.tgy'
-import Circles from './Python/Circles.tgy'
-import NestedLoops from './Python/NestedLoops.tgy'
-import RandomLines from './Python/RandomLines.tgy'
-import RandomEllipses from './Python/RandomEllipses.tgy'
-import ColourSpiral from './Python/ColourSpiral.tgy'
-import SimpleProc from './Python/SimpleProc.tgy'
-import ParameterProc from './Python/ParameterProc.tgy'
-import ResizableFace from './Python/ResizableFace.tgy'
-import Polygons from './Python/Polygons.tgy'
-import Stars from './Python/Stars.tgy'
-import PolygonRings from './Python/PolygonRings.tgy'
-import Triangle1 from './Python/Triangle1.tgy'
-import Triangle2 from './Python/Triangle2.tgy'
-import Triangle3 from './Python/Triangle3.tgy'
-import Triangles from './Python/Triangles.tgy'
-import Factorials from './Python/Factorials.tgy'
-import Fibonaccis from './Python/Fibonaccis.tgy'
-import YouAreHere from './Python/YouAreHere.tgy'
-import CycleColours from './Python/CycleColours.tgy'
-import Clock from './Python/Clock.tgy'
-import DigitalClock from './Python/DigitalClock.tgy'
-import Flashlights from './Python/Flashlights.tgy'
-import RefParams from './Python/RefParams.tgy'
-import Balls3D from './Python/Balls3D.tgy'
-import StringFunctions from './Python/StringFunctions.tgy'
-import MathFunctions from './Python/MathFunctions.tgy'
-import TrigGraphs from './Python/TrigGraphs.tgy'
-import MovingBall from './Python/MovingBall.tgy'
-import BouncingBall from './Python/BouncingBall.tgy'
-import TurtleMove from './Python/TurtleMove.tgy'
-import TurtleBounce from './Python/TurtleBounce.tgy'
-import BouncingFace from './Python/BouncingFace.tgy'
-import MultiBounce from './Python/MultiBounce.tgy'
-import BouncingTriangle from './Python/BouncingTriangle.tgy'
-import BouncingShapes from './Python/BouncingShapes.tgy'
-import GravitySteps from './Python/GravitySteps.tgy'
-import SolarSystem from './Python/SolarSystem.tgy'
-import AskInput from './Python/AskInput.tgy'
-import QuickClick from './Python/QuickClick.tgy'
-import TypingTest from './Python/TypingTest.tgy'
-import TypingTestKeys from './Python/TypingTestKeys.tgy'
-import SpongeThrow from './Python/SpongeThrow.tgy'
-import Arcade from './Python/Arcade.tgy'
-import SnakeGame from './Python/SnakeGame.tgy'
-import NoughtsAndCrosses from './Python/NoughtsAndCrosses.tgy'
-import SimpleDraw from './Python/SimpleDraw.tgy'
-import PaintApp from './Python/PaintApp.tgy'
-import FiveTurtles from './Python/FiveTurtles.tgy'
-import AimCannon from './Python/AimCannon.tgy'
-import AutoCannon from './Python/AutoCannon.tgy'
-import Launch from './Python/Launch.tgy'
-import Disease from './Python/Disease.tgy'
-import GameOfLife from './Python/GameOfLife.tgy'
-import Automata from './Python/Automata.tgy'
-import BrownianMotion from './Python/BrownianMotion.tgy'
-import Dendrites from './Python/Dendrites.tgy'
-import Cheetahs from './Python/Cheetahs.tgy'
-import SexRatio from './Python/SexRatio.tgy'
-import Flocking from './Python/Flocking.tgy'
-import Schelling from './Python/Schelling.tgy'
-import IteratedPD from './Python/IteratedPD.tgy'
-import RecursionFactory from './Python/RecursionFactory.tgy'
-import RecursiveTree from './Python/RecursiveTree.tgy'
-import KochSnowflake from './Python/KochSnowflake.tgy'
-import SquareKoch from './Python/SquareKoch.tgy'
-import Sierpinski from './Python/Sierpinski.tgy'
-import SierpinskiDots from './Python/SierpinskiDots.tgy'
-import IFSBackground from './Python/IFSBackground.tgy'
-import IFSColour from './Python/IFSColour.tgy'
-import IFSDemonstrator from './Python/IFSDemonstrator.tgy'
-import Logistic from './Python/Logistic.tgy'
-import LogisticSpider from './Python/LogisticSpider.tgy'
-import MandelbrotDemo from './Python/MandelbrotDemo.tgy'
-import MandelbrotSpectrumDemo from './Python/MandelbrotSpectrumDemo.tgy'
-import LifeStart from './Python/LifeStart.tgy'
-import Diffusion from './Python/Diffusion.tgy'
-import Mandelbrot from './Python/Mandelbrot.tgy'
-import MandelbrotMini from './Python/MandelbrotMini.tgy'
-import MandelbrotSpectrum from './Python/MandelbrotSpectrum.tgy'
-import MandelbrotMiniSpectrum from './Python/MandelbrotMiniSpectrum.tgy'
-import SierpinskiColour from './Python/SierpinskiColour.tgy'
-import SierpinskiIFS from './Python/SierpinskiIFS.tgy'
-import BarnsleyColour from './Python/BarnsleyColour.tgy'
-import BarnsleyIFS from './Python/BarnsleyIFS.tgy'
-import DragonColour from './Python/DragonColour.tgy'
-import DragonIFS from './Python/DragonIFS.tgy'
-import TreeIFS from './Python/TreeIFS.tgy'
-import Interference from './Python/Interference.tgy'
-import WaveSuperposer from './Python/WaveSuperposer.tgy'
-import TwoSlits from './Python/TwoSlits.tgy'
-import KnightsTour from './Python/KnightsTour.tgy'
-import Nim from './Python/Nim.tgy'
+// examples 1
+import DrawPause from './Python/DrawPause.tpy'
+import SmileyFace from './Python/SmileyFace.tpy'
+import ThePlough from './Python/ThePlough.tpy'
+import OlympicRings from './Python/OlympicRings.tpy'
+import ForLoop from './Python/ForLoop.tpy'
+import TriangleSpin from './Python/TriangleSpin.tpy'
+import Circles from './Python/Circles.tpy'
+import NestedLoops from './Python/NestedLoops.tpy'
+import RandomLines from './Python/RandomLines.tpy'
+import RandomEllipses from './Python/RandomEllipses.tpy'
+import ColourSpiral from './Python/ColourSpiral.tpy'
+// examples 2
+import SimpleProc from './Python/SimpleProc.tpy'
+import ParameterProc from './Python/ParameterProc.tpy'
+import ResizableFace from './Python/ResizableFace.tpy'
+import Polygons from './Python/Polygons.tpy'
+import Stars from './Python/Stars.tpy'
+import PolygonRings from './Python/PolygonRings.tpy'
+import Triangle1 from './Python/Triangle1.tpy'
+import Triangle2 from './Python/Triangle2.tpy'
+import Triangle3 from './Python/Triangle3.tpy'
+import Triangles from './Python/Triangles.tpy'
+import Factorials from './Python/Factorials.tpy'
+import Fibonaccis from './Python/Fibonaccis.tpy'
+// examples 3
+import YouAreHere from './Python/YouAreHere.tpy'
+import CycleColours from './Python/CycleColours.tpy'
+import Clock from './Python/Clock.tpy'
+import DigitalClock from './Python/DigitalClock.tpy'
+import Flashlights from './Python/Flashlights.tpy'
+import RefParams from './Python/RefParams.tpy'
+import Balls3D from './Python/Balls3D.tpy'
+import StringFunctions from './Python/StringFunctions.tpy'
+import MathFunctions from './Python/MathFunctions.tpy'
+import TrigGraphs from './Python/TrigGraphs.tpy'
+// examples 4
+import MovingBall from './Python/MovingBall.tpy'
+import BouncingBall from './Python/BouncingBall.tpy'
+import TurtleMove from './Python/TurtleMove.tpy'
+import TurtleBounce from './Python/TurtleBounce.tpy'
+import BouncingFace from './Python/BouncingFace.tpy'
+import MultiBounce from './Python/MultiBounce.tpy'
+import BouncingTriangle from './Python/BouncingTriangle.tpy'
+import BouncingShapes from './Python/BouncingShapes.tpy'
+import GravitySteps from './Python/GravitySteps.tpy'
+import SolarSystem from './Python/SolarSystem.tpy'
+// examples 5
+import AskInput from './Python/AskInput.tpy'
+import QuickClick from './Python/QuickClick.tpy'
+import TypingTest from './Python/TypingTest.tpy'
+import TypingTestKeys from './Python/TypingTestKeys.tpy'
+import IterationGame from './Python/IterationGame.tpy'
+import SpongeThrow from './Python/SpongeThrow.tpy'
+import Arcade from './Python/Arcade.tpy'
+import SnakeGame from './Python/SnakeGame.tpy'
+import NoughtsAndCrosses from './Python/NoughtsAndCrosses.tpy'
+import SimpleDraw from './Python/SimpleDraw.tpy'
+import PaintApp from './Python/PaintApp.tpy'
+import FiveTurtles from './Python/FiveTurtles.tpy'
+// examples 6
+import AimCannon from './Python/AimCannon.tpy'
+import AutoCannon from './Python/AutoCannon.tpy'
+import Launch from './Python/Launch.tpy'
+import Disease from './Python/Disease.tpy'
+import GameOfLife from './Python/GameOfLife.tpy'
+import LifeArrays from './Python/LifeArrays.tpy'
+import Automata from './Python/Automata.tpy'
+import BrownianMotion from './Python/BrownianMotion.tpy'
+import Dendrites from './Python/Dendrites.tpy'
+import Cheetahs from './Python/Cheetahs.tpy'
+import SexRatio from './Python/SexRatio.tpy'
+import Flocking from './Python/Flocking.tpy'
+import Roads from './Python/Roads.tpy'
+import Schelling from './Python/Schelling.tpy'
+import IteratedPD from './Python/IteratedPD.tpy'
+import Interference from './Python/Interference.tpy'
+import TwoSlits from './Python/TwoSlits.tpy'
+import WaveSuperposer from './Python/WaveSuperposer.tpy'
+// examples 7
+import RecursionFactory from './Python/RecursionFactory.tpy'
+import RecursiveTree from './Python/RecursiveTree.tpy'
+import KochSnowflake from './Python/KochSnowflake.tpy'
+import SquareKoch from './Python/SquareKoch.tpy'
+import Sierpinski from './Python/Sierpinski.tpy'
+import SierpinskiDots from './Python/SierpinskiDots.tpy'
+import IFSBackground from './Python/IFSBackground.tpy'
+import IFSColour from './Python/IFSColour.tpy'
+import IFSDemonstrator from './Python/IFSDemonstrator.tpy'
+import Logistic from './Python/Logistic.tpy'
+import LogisticSpider from './Python/LogisticSpider.tpy'
+import MandelbrotDemo from './Python/MandelbrotDemo.tpy'
+import MandelbrotSpectrumDemo from './Python/MandelbrotSpectrumDemo.tpy'
+import Quine from './Python/Quine.tpy'
+// examples 8
+import Syllogisms from './Python/Syllogisms.tpy'
+import TuringMachines from './Python/TuringMachines.tpy'
+import Sorting from './Python/Sorting.tpy'
+import NimLearn from './Python/NimLearn.tpy'
+import MultiNim from './Python/MultiNim.tpy'
+import KnightsTour from './Python/KnightsTour.tpy'
+// other CSAC examples
+import LifeStart from './Python/LifeStart.tpy'
+import Diffusion from './Python/Diffusion.tpy'
+import Mandelbrot from './Python/Mandelbrot.tpy'
+import MandelbrotMini from './Python/MandelbrotMini.tpy'
+import MandelbrotSpectrum from './Python/MandelbrotSpectrum.tpy'
+import MandelbrotMiniSpectrum from './Python/MandelbrotMiniSpectrum.tpy'
+import SierpinskiColour from './Python/SierpinskiColour.tpy'
+import SierpinskiIFS from './Python/SierpinskiIFS.tpy'
+import BarnsleyColour from './Python/BarnsleyColour.tpy'
+import BarnsleyIFS from './Python/BarnsleyIFS.tpy'
+import DragonColour from './Python/DragonColour.tpy'
+import DragonIFS from './Python/DragonIFS.tpy'
+import TreeIFS from './Python/TreeIFS.tpy'
 
 export default {
+  // examples 1
   DrawPause,
   SmileyFace,
   ThePlough,
@@ -109,6 +127,7 @@ export default {
   RandomLines,
   RandomEllipses,
   ColourSpiral,
+  // examples 2
   SimpleProc,
   ParameterProc,
   ResizableFace,
@@ -121,6 +140,7 @@ export default {
   Triangles,
   Factorials,
   Fibonaccis,
+  // examples 3
   YouAreHere,
   CycleColours,
   Clock,
@@ -131,6 +151,7 @@ export default {
   StringFunctions,
   MathFunctions,
   TrigGraphs,
+  // examples 4
   MovingBall,
   BouncingBall,
   TurtleMove,
@@ -141,10 +162,12 @@ export default {
   BouncingShapes,
   GravitySteps,
   SolarSystem,
+  // examples 5
   AskInput,
   QuickClick,
   TypingTest,
   TypingTestKeys,
+  IterationGame,
   SpongeThrow,
   Arcade,
   SnakeGame,
@@ -152,19 +175,26 @@ export default {
   SimpleDraw,
   PaintApp,
   FiveTurtles,
+  // examples 6
   AimCannon,
   AutoCannon,
   Launch,
   Disease,
   GameOfLife,
+  LifeArrays,
   Automata,
   BrownianMotion,
   Dendrites,
   Cheetahs,
   SexRatio,
   Flocking,
+  Roads,
   Schelling,
   IteratedPD,
+  Interference,
+  TwoSlits,
+  WaveSuperposer,
+  // examples 7
   RecursionFactory,
   RecursiveTree,
   KochSnowflake,
@@ -178,6 +208,15 @@ export default {
   LogisticSpider,
   MandelbrotDemo,
   MandelbrotSpectrumDemo,
+  Quine,
+  // examples 8
+  Syllogisms,
+  TuringMachines,
+  Sorting,
+  NimLearn,
+  MultiNim,
+  KnightsTour,
+  // other CSAC examples
   LifeStart,
   Diffusion,
   Mandelbrot,
@@ -190,10 +229,5 @@ export default {
   BarnsleyIFS,
   DragonColour,
   DragonIFS,
-  TreeIFS,
-  Interference,
-  WaveSuperposer,
-  TwoSlits,
-  KnightsTour,
-  Nim
+  TreeIFS
 }

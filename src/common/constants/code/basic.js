@@ -1,103 +1,121 @@
-import DrawPause from './BASIC/DrawPause.tgb'
-import SmileyFace from './BASIC/SmileyFace.tgb'
-import ThePlough from './BASIC/ThePlough.tgb'
-import OlympicRings from './BASIC/OlympicRings.tgb'
-import ForLoop from './BASIC/ForLoop.tgb'
-import TriangleSpin from './BASIC/TriangleSpin.tgb'
-import Circles from './BASIC/Circles.tgb'
-import NestedLoops from './BASIC/NestedLoops.tgb'
-import RandomLines from './BASIC/RandomLines.tgb'
-import RandomEllipses from './BASIC/RandomEllipses.tgb'
-import ColourSpiral from './BASIC/ColourSpiral.tgb'
-import SimpleProc from './BASIC/SimpleProc.tgb'
-import ParameterProc from './BASIC/ParameterProc.tgb'
-import ResizableFace from './BASIC/ResizableFace.tgb'
-import Polygons from './BASIC/Polygons.tgb'
-import Stars from './BASIC/Stars.tgb'
-import PolygonRings from './BASIC/PolygonRings.tgb'
-import Triangle1 from './BASIC/Triangle1.tgb'
-import Triangle2 from './BASIC/Triangle2.tgb'
-import Triangle3 from './BASIC/Triangle3.tgb'
-import Triangles from './BASIC/Triangles.tgb'
-import Factorials from './BASIC/Factorials.tgb'
-import Fibonaccis from './BASIC/Fibonaccis.tgb'
-import YouAreHere from './BASIC/YouAreHere.tgb'
-import CycleColours from './BASIC/CycleColours.tgb'
-import Clock from './BASIC/Clock.tgb'
-import DigitalClock from './BASIC/DigitalClock.tgb'
-import Flashlights from './BASIC/Flashlights.tgb'
-import RefParams from './BASIC/RefParams.tgb'
-import Balls3D from './BASIC/Balls3D.tgb'
-import StringFunctions from './BASIC/StringFunctions.tgb'
-import MathFunctions from './BASIC/MathFunctions.tgb'
-import TrigGraphs from './BASIC/TrigGraphs.tgb'
-import MovingBall from './BASIC/MovingBall.tgb'
-import BouncingBall from './BASIC/BouncingBall.tgb'
-import TurtleMove from './BASIC/TurtleMove.tgb'
-import TurtleBounce from './BASIC/TurtleBounce.tgb'
-import BouncingFace from './BASIC/BouncingFace.tgb'
-import MultiBounce from './BASIC/MultiBounce.tgb'
-import BouncingTriangle from './BASIC/BouncingTriangle.tgb'
-import BouncingShapes from './BASIC/BouncingShapes.tgb'
-import GravitySteps from './BASIC/GravitySteps.tgb'
-import SolarSystem from './BASIC/SolarSystem.tgb'
-import AskInput from './BASIC/AskInput.tgb'
-import QuickClick from './BASIC/QuickClick.tgb'
-import TypingTest from './BASIC/TypingTest.tgb'
-import TypingTestKeys from './BASIC/TypingTestKeys.tgb'
-import SpongeThrow from './BASIC/SpongeThrow.tgb'
-import Arcade from './BASIC/Arcade.tgb'
-import SnakeGame from './BASIC/SnakeGame.tgb'
-import NoughtsAndCrosses from './BASIC/NoughtsAndCrosses.tgb'
-import SimpleDraw from './BASIC/SimpleDraw.tgb'
-import PaintApp from './BASIC/PaintApp.tgb'
-import FiveTurtles from './BASIC/FiveTurtles.tgb'
-import AimCannon from './BASIC/AimCannon.tgb'
-import AutoCannon from './BASIC/AutoCannon.tgb'
-import Launch from './BASIC/Launch.tgb'
-import Disease from './BASIC/Disease.tgb'
-import GameOfLife from './BASIC/GameOfLife.tgb'
-import Automata from './BASIC/Automata.tgb'
-import BrownianMotion from './BASIC/BrownianMotion.tgb'
-import Dendrites from './BASIC/Dendrites.tgb'
-import Cheetahs from './BASIC/Cheetahs.tgb'
-import SexRatio from './BASIC/SexRatio.tgb'
-import Flocking from './BASIC/Flocking.tgb'
-import Schelling from './BASIC/Schelling.tgb'
-import IteratedPD from './BASIC/IteratedPD.tgb'
-import RecursionFactory from './BASIC/RecursionFactory.tgb'
-import RecursiveTree from './BASIC/RecursiveTree.tgb'
-import KochSnowflake from './BASIC/KochSnowflake.tgb'
-import SquareKoch from './BASIC/SquareKoch.tgb'
-import Sierpinski from './BASIC/Sierpinski.tgb'
-import SierpinskiDots from './BASIC/SierpinskiDots.tgb'
-import IFSBackground from './BASIC/IFSBackground.tgb'
-import IFSColour from './BASIC/IFSColour.tgb'
-import IFSDemonstrator from './BASIC/IFSDemonstrator.tgb'
-import Logistic from './BASIC/Logistic.tgb'
-import LogisticSpider from './BASIC/LogisticSpider.tgb'
-import MandelbrotDemo from './BASIC/MandelbrotDemo.tgb'
-import MandelbrotSpectrumDemo from './BASIC/MandelbrotSpectrumDemo.tgb'
-import LifeStart from './BASIC/LifeStart.tgb'
-import Diffusion from './BASIC/Diffusion.tgb'
-import Mandelbrot from './BASIC/Mandelbrot.tgb'
-import MandelbrotMini from './BASIC/MandelbrotMini.tgb'
-import MandelbrotSpectrum from './BASIC/MandelbrotSpectrum.tgb'
-import MandelbrotMiniSpectrum from './BASIC/MandelbrotMiniSpectrum.tgb'
-import SierpinskiColour from './BASIC/SierpinskiColour.tgb'
-import SierpinskiIFS from './BASIC/SierpinskiIFS.tgb'
-import BarnsleyColour from './BASIC/BarnsleyColour.tgb'
-import BarnsleyIFS from './BASIC/BarnsleyIFS.tgb'
-import DragonColour from './BASIC/DragonColour.tgb'
-import DragonIFS from './BASIC/DragonIFS.tgb'
-import TreeIFS from './BASIC/TreeIFS.tgb'
-import Interference from './BASIC/Interference.tgb'
-import WaveSuperposer from './BASIC/WaveSuperposer.tgb'
-import TwoSlits from './BASIC/TwoSlits.tgb'
-import KnightsTour from './BASIC/KnightsTour.tgb'
-import Nim from './BASIC/Nim.tgb'
+// examples 1
+import DrawPause from './BASIC/DrawPause.tbas'
+import SmileyFace from './BASIC/SmileyFace.tbas'
+import ThePlough from './BASIC/ThePlough.tbas'
+import OlympicRings from './BASIC/OlympicRings.tbas'
+import ForLoop from './BASIC/ForLoop.tbas'
+import TriangleSpin from './BASIC/TriangleSpin.tbas'
+import Circles from './BASIC/Circles.tbas'
+import NestedLoops from './BASIC/NestedLoops.tbas'
+import RandomLines from './BASIC/RandomLines.tbas'
+import RandomEllipses from './BASIC/RandomEllipses.tbas'
+import ColourSpiral from './BASIC/ColourSpiral.tbas'
+// examples 2
+import SimpleProc from './BASIC/SimpleProc.tbas'
+import ParameterProc from './BASIC/ParameterProc.tbas'
+import ResizableFace from './BASIC/ResizableFace.tbas'
+import Polygons from './BASIC/Polygons.tbas'
+import Stars from './BASIC/Stars.tbas'
+import PolygonRings from './BASIC/PolygonRings.tbas'
+import Triangle1 from './BASIC/Triangle1.tbas'
+import Triangle2 from './BASIC/Triangle2.tbas'
+import Triangle3 from './BASIC/Triangle3.tbas'
+import Triangles from './BASIC/Triangles.tbas'
+import Factorials from './BASIC/Factorials.tbas'
+import Fibonaccis from './BASIC/Fibonaccis.tbas'
+// examples 3
+import YouAreHere from './BASIC/YouAreHere.tbas'
+import CycleColours from './BASIC/CycleColours.tbas'
+import Clock from './BASIC/Clock.tbas'
+import DigitalClock from './BASIC/DigitalClock.tbas'
+import Flashlights from './BASIC/Flashlights.tbas'
+import RefParams from './BASIC/RefParams.tbas'
+import Balls3D from './BASIC/Balls3D.tbas'
+import StringFunctions from './BASIC/StringFunctions.tbas'
+import MathFunctions from './BASIC/MathFunctions.tbas'
+import TrigGraphs from './BASIC/TrigGraphs.tbas'
+// examples 4
+import MovingBall from './BASIC/MovingBall.tbas'
+import BouncingBall from './BASIC/BouncingBall.tbas'
+import TurtleMove from './BASIC/TurtleMove.tbas'
+import TurtleBounce from './BASIC/TurtleBounce.tbas'
+import BouncingFace from './BASIC/BouncingFace.tbas'
+import MultiBounce from './BASIC/MultiBounce.tbas'
+import BouncingTriangle from './BASIC/BouncingTriangle.tbas'
+import BouncingShapes from './BASIC/BouncingShapes.tbas'
+import GravitySteps from './BASIC/GravitySteps.tbas'
+import SolarSystem from './BASIC/SolarSystem.tbas'
+// examples 5
+import AskInput from './BASIC/AskInput.tbas'
+import QuickClick from './BASIC/QuickClick.tbas'
+import TypingTest from './BASIC/TypingTest.tbas'
+import TypingTestKeys from './BASIC/TypingTestKeys.tbas'
+import IterationGame from './BASIC/IterationGame.tbas'
+import SpongeThrow from './BASIC/SpongeThrow.tbas'
+import Arcade from './BASIC/Arcade.tbas'
+import SnakeGame from './BASIC/SnakeGame.tbas'
+import NoughtsAndCrosses from './BASIC/NoughtsAndCrosses.tbas'
+import SimpleDraw from './BASIC/SimpleDraw.tbas'
+import PaintApp from './BASIC/PaintApp.tbas'
+import FiveTurtles from './BASIC/FiveTurtles.tbas'
+// examples 6
+import AimCannon from './BASIC/AimCannon.tbas'
+import AutoCannon from './BASIC/AutoCannon.tbas'
+import Launch from './BASIC/Launch.tbas'
+import Disease from './BASIC/Disease.tbas'
+import GameOfLife from './BASIC/GameOfLife.tbas'
+import LifeArrays from './BASIC/LifeArrays.tbas'
+import Automata from './BASIC/Automata.tbas'
+import BrownianMotion from './BASIC/BrownianMotion.tbas'
+import Dendrites from './BASIC/Dendrites.tbas'
+import Cheetahs from './BASIC/Cheetahs.tbas'
+import SexRatio from './BASIC/SexRatio.tbas'
+import Flocking from './BASIC/Flocking.tbas'
+import Roads from './BASIC/Roads.tbas'
+import Schelling from './BASIC/Schelling.tbas'
+import IteratedPD from './BASIC/IteratedPD.tbas'
+import Interference from './BASIC/Interference.tbas'
+import TwoSlits from './BASIC/TwoSlits.tbas'
+import WaveSuperposer from './BASIC/WaveSuperposer.tbas'
+// examples 7
+import RecursionFactory from './BASIC/RecursionFactory.tbas'
+import RecursiveTree from './BASIC/RecursiveTree.tbas'
+import KochSnowflake from './BASIC/KochSnowflake.tbas'
+import SquareKoch from './BASIC/SquareKoch.tbas'
+import Sierpinski from './BASIC/Sierpinski.tbas'
+import SierpinskiDots from './BASIC/SierpinskiDots.tbas'
+import IFSBackground from './BASIC/IFSBackground.tbas'
+import IFSColour from './BASIC/IFSColour.tbas'
+import IFSDemonstrator from './BASIC/IFSDemonstrator.tbas'
+import Logistic from './BASIC/Logistic.tbas'
+import LogisticSpider from './BASIC/LogisticSpider.tbas'
+import MandelbrotDemo from './BASIC/MandelbrotDemo.tbas'
+import MandelbrotSpectrumDemo from './BASIC/MandelbrotSpectrumDemo.tbas'
+import Quine from './BASIC/Quine.tbas'
+// examples 8
+import Syllogisms from './BASIC/Syllogisms.tbas'
+import TuringMachines from './BASIC/TuringMachines.tbas'
+import Sorting from './BASIC/Sorting.tbas'
+import NimLearn from './BASIC/NimLearn.tbas'
+import MultiNim from './BASIC/MultiNim.tbas'
+import KnightsTour from './BASIC/KnightsTour.tbas'
+// other CSAC examples
+import LifeStart from './BASIC/LifeStart.tbas'
+import Diffusion from './BASIC/Diffusion.tbas'
+import Mandelbrot from './BASIC/Mandelbrot.tbas'
+import MandelbrotMini from './BASIC/MandelbrotMini.tbas'
+import MandelbrotSpectrum from './BASIC/MandelbrotSpectrum.tbas'
+import MandelbrotMiniSpectrum from './BASIC/MandelbrotMiniSpectrum.tbas'
+import SierpinskiColour from './BASIC/SierpinskiColour.tbas'
+import SierpinskiIFS from './BASIC/SierpinskiIFS.tbas'
+import BarnsleyColour from './BASIC/BarnsleyColour.tbas'
+import BarnsleyIFS from './BASIC/BarnsleyIFS.tbas'
+import DragonColour from './BASIC/DragonColour.tbas'
+import DragonIFS from './BASIC/DragonIFS.tbas'
+import TreeIFS from './BASIC/TreeIFS.tbas'
 
 export default {
+  // examples 1
   DrawPause,
   SmileyFace,
   ThePlough,
@@ -109,6 +127,7 @@ export default {
   RandomLines,
   RandomEllipses,
   ColourSpiral,
+  // examples 2
   SimpleProc,
   ParameterProc,
   ResizableFace,
@@ -121,6 +140,7 @@ export default {
   Triangles,
   Factorials,
   Fibonaccis,
+  // examples 3
   YouAreHere,
   CycleColours,
   Clock,
@@ -131,6 +151,7 @@ export default {
   StringFunctions,
   MathFunctions,
   TrigGraphs,
+  // examples 4
   MovingBall,
   BouncingBall,
   TurtleMove,
@@ -141,10 +162,12 @@ export default {
   BouncingShapes,
   GravitySteps,
   SolarSystem,
+  // examples 5
   AskInput,
   QuickClick,
   TypingTest,
   TypingTestKeys,
+  IterationGame,
   SpongeThrow,
   Arcade,
   SnakeGame,
@@ -152,19 +175,26 @@ export default {
   SimpleDraw,
   PaintApp,
   FiveTurtles,
+  // examples 6
   AimCannon,
   AutoCannon,
   Launch,
   Disease,
   GameOfLife,
+  LifeArrays,
   Automata,
   BrownianMotion,
   Dendrites,
   Cheetahs,
   SexRatio,
   Flocking,
+  Roads,
   Schelling,
   IteratedPD,
+  Interference,
+  TwoSlits,
+  WaveSuperposer,
+  // examples 7
   RecursionFactory,
   RecursiveTree,
   KochSnowflake,
@@ -178,6 +208,15 @@ export default {
   LogisticSpider,
   MandelbrotDemo,
   MandelbrotSpectrumDemo,
+  Quine,
+  // examples 8
+  Syllogisms,
+  TuringMachines,
+  Sorting,
+  NimLearn,
+  MultiNim,
+  KnightsTour,
+  // other CSAC examples
   LifeStart,
   Diffusion,
   Mandelbrot,
@@ -190,10 +229,5 @@ export default {
   BarnsleyIFS,
   DragonColour,
   DragonIFS,
-  TreeIFS,
-  Interference,
-  WaveSuperposer,
-  TwoSlits,
-  KnightsTour,
-  Nim
+  TreeIFS
 }

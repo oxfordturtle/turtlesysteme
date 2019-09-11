@@ -1,0 +1,49 @@
+PROGRAM IterationGame;
+VAR s: string;
+    first, count, latest: integer;
+BEGIN
+  keyecho(false);
+  repeat
+    blank(white);
+    setxy(50, 20);
+    colour(blue);
+    print('Type in a starting integer (>1):', 4, 36);
+    setxy(800, 20);
+    colour(black);
+    repeat
+      reset(\keybuffer);
+      repeat
+        box(200, 60, white, false);
+        print(read(0), 4, 36);
+        pause(100)
+      until abs(?key) = \return;
+      s := readln;
+      reset(?key);
+      first := valdef(s, -1)
+    until first > 1;
+    latest := first;
+    count := 0;
+    colour(blue);
+    repeat
+      setxy((count mod 10) * 100 + 20, (count div 10) * 45 + 300);
+      print(str(latest), 4, 24);
+      if latest mod 2 = 0 then
+        latest := latest / 2
+      else
+        latest := 3 * latest + 1;
+      inc(count);
+      colour(green)
+    until latest = 1;
+    setxy((count mod 10) * 100 + 20, (count div 10) * 45 + 300);
+    colour(red);
+    print(str(latest), 4, 24);
+    setxy(100, 100);
+    print('That took ' + str(count) + ' iterations to reach 1', 4, 36);
+    colour(black);
+    setxy(250, 200);
+    print('[Press a key to continue]', 4, 30);
+    repeat
+    until ?key > 0;
+    reset(?key)
+  until false
+END.

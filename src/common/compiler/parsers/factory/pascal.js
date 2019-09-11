@@ -2,6 +2,7 @@
 */
 import * as factory from './factory'
 import error from '../../tools/error'
+import evaluate from '../../tools/evaluate'
 import * as find from '../../tools/find'
 
 // look for "PROGRAM identifier"; return program object and index of the next lexeme
@@ -54,67 +55,20 @@ export const constant = (lexemes, lex, routine) => {
     throw error('Constant must be assigned a value.', assignment)
   }
 
-  // get the constant
-  let result = (next.content === '-')
-    ? negativeConstant(lexemes, lex + 3, identifier.content, routine)
-    : nonnegativeConstant(lexemes, lex + 2, identifier.content, routine)
+  // get all the lexemes up to the first semicolon
+  const valueLexemes = []
+  lex += 2
+  while (lexemes[lex] && lexemes[lex].content !== ';') {
+    valueLexemes.push(lexemes[lex])
+    lex += 1
+  }
+  console.log(valueLexemes)
+  let value = evaluate(identifier, valueLexemes, routine)
+  let type = (typeof value === 'number') ? 'integer' : 'string'
+  console.log(`constant ${identifier.content} = ${value}`)
 
   // return the constant object and index of the next lexeme
-  return result
-}
-
-// look for integer literal followed by semicolon; return constant object and next lexeme index
-const negativeConstant = (lexemes, lex, name, routine) => {
-  const value = lexemes[lex]
-
-  // error checking
-  if (!value) throw error('Constant must be assigned a value.', lexemes[lex - 1])
-
-  // do different things depending on the type
-  switch (value.type) {
-    case 'string':
-      throw error('Strings cannot be negated.', value)
-
-    case 'boolean':
-      throw error('Boolean values cannot be negated.', value)
-
-    case 'integer':
-      return { lex: lex + 1, constant: factory.constant(name, value.type, -value.value) }
-
-    case 'identifier':
-      let constant = find.constant(routine, value.content, 'Pascal') ||
-        find.colour(value.content, 'Pascal')
-      if (!constant) throw error('{lex} is not a valid constant value.', value)
-      return { lex: lex + 1, constant: factory.constant(name, constant.type, -constant.value) }
-
-    default:
-      throw error('{lex} is not a valid constant value.', value)
-  }
-}
-
-// look for any literal value followed by semicolon; return constant object and next lexeme index
-const nonnegativeConstant = (lexemes, lex, name, routine) => {
-  const value = lexemes[lex]
-
-  // error checking
-  if (!value) throw error('Constant must be assigned a value.', lexemes[lex - 1])
-
-  // do different things depending on the type
-  switch (value.type) {
-    case 'boolean': // fallthrough
-    case 'integer': // fallthrough
-    case 'string':
-      return { lex: lex + 1, constant: factory.constant(name, value.type, value.value) }
-
-    case 'identifier':
-      let constant = find.constant(routine, value.content, 'Pascal') ||
-        find.colour(value.content, 'Pascal')
-      if (!constant) throw error('{lex} is not a valid constant value.', value)
-      return { lex: lex + 1, constant: factory.constant(name, constant.type, constant.value) }
-
-    default:
-      throw error('{lex} is not a valid constant value.', value)
-  }
+  return { lex, constant: factory.constant(identifier.content, type, value) }
 }
 
 // array of typed variables (with index of the next lexeme)

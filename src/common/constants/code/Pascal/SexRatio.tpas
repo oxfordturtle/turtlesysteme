@@ -1,0 +1,86 @@
+PROGRAM SexRatio;
+CONST population = 1000;
+      matepergen = 400;
+      randomvar = 1;
+      leftmargin = 70;
+      topmargin = 20;
+VAR female: array[1..population] of boolean;
+    fop: array[1..population] of integer;
+    generation: integer;
+    n: integer;
+
+  Procedure axes;
+  Var i: integer;
+  Begin
+    for i := 1 to 9 do
+      begin
+        setxy(leftmargin + i * 100 - 25, topmargin + 800);
+        print(str(i * 100), 4, 20)
+      end;
+    for i := 2 to 10 do
+      begin
+        setxy(0, 1000 - i * 100);
+        colour(black);
+        print(str(i * 10) + '%', 4, 20);
+        movexy(leftmargin, topmargin);
+        colour(lightgrey);
+        drawxy(1000 - leftmargin, 0)
+      end;
+    setxy(leftmargin, topmargin);
+    colour(black);
+    drawxy(0, 800);
+    drawxy(1000 - leftmargin, 0);
+    colour(red);
+    setxy(50, 880);
+    print('Proportion of Females in Population, over 900 Generations', 4, 25);
+    setxy(50, 930);
+    print('with Female Offspring Probability genes initially set 90%+', 4, 25)
+  End;
+
+  Procedure graph;
+  Var females, n: integer;
+  Begin
+    females := 0;
+    for n := 1 to population do
+      if female[n] then
+        inc(females);
+    colour(red);
+    setxy(leftmargin + generation, topmargin + 1000 - females);
+    if generation > 0 then
+      polyline(2)
+  End;
+
+  Procedure domating;
+  Var A, B, replace: integer;
+      inheritA: boolean;
+  Begin
+    repeat
+      A := random(population) + 1;
+      B := random(population) + 1
+    until female[A] <> female[B];
+    inheritA := (random(2) = 0);
+    replace := random(population) + 1;
+    if inheritA then
+      fop[replace] := fop[A]
+    else
+      fop[replace] := fop[B];
+    female[replace] := fop[replace] > random(1000);
+    fop[replace] := fop[replace] + random(randomvar * 20 + 1) - randomvar * 10;
+    fop[replace] := max(0, min(1000, fop[replace]))
+  End;
+
+BEGIN
+  axes;
+  for n := 1 to population do
+    begin
+      female[n] := (random(2) = 0);
+      fop[n] := 900 + random(101)
+    end;
+  generation := 0;
+  repeat
+    graph;
+    inc(generation);
+    for n := 1 to matepergen do
+      domating
+  until generation = 900
+END.

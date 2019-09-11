@@ -1,0 +1,35 @@
+PROGRAM Sierpinski;
+
+  Procedure triangle(x1, y1, x2, y2, x3, y3: integer);
+  Var x12, y12, x23, y23, x31, y31: integer;
+  Begin
+    setxy(x1, y1);
+    setxy(x2, y2);
+    setxy(x3, y3);
+    setxy(x1, y1);
+    colour(black);
+    polyline(4);
+    if hypot(x2 - x1, y2 - y1, 1) > 3 then
+      begin
+        x12 := (x1 + x2) / 2;
+        y12 := (y1 + y2) / 2;
+        x23 := (x2 + x3) / 2;
+        y23 := (y2 + y3) / 2;
+        x31 := (x3 + x1) / 2;
+        y31 := (y3 + y1) / 2;
+        setxy(x12, y12);
+        setxy(x23, y23);
+        setxy(x31, y31);
+        colour(white);
+        polygon(3);
+        triangle(x1, y1, x12, y12, x31, y31);
+        triangle(x2, y2, x23, y23, x12, y12);
+        triangle(x3, y3, x31, y31, x23, y23)
+      end
+  End;
+
+BEGIN
+  blank(cream);
+  thickness(1);
+  triangle(400, 138, 843, 650, 179, 778)
+END.

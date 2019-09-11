@@ -43,6 +43,10 @@ export default [
     value: -1
   },
   {
+    names: { BASIC: '\\KEYBUFFER', Pascal: '\\keybuffer', Python: '\\keybuffer' },
+    value: 0
+  },
+  {
     names: { BASIC: '\\BACKSPACE', Pascal: '\\backspace', Python: '\\backspace' },
     value: 8
   },
@@ -52,6 +56,10 @@ export default [
   },
   {
     names: { BASIC: '\\ENTER', Pascal: '\\enter', Python: '\\enter' },
+    value: 13
+  },
+  {
+    names: { BASIC: '\\RETURN', Pascal: '\\return', Python: '\\return' },
     value: 13
   },
   {

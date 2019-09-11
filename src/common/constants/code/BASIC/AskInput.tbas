@@ -1,0 +1,9 @@
+REM AskInput
+
+WRITE("What is your name?  ")
+s$ = GETLINE$
+WRITELN("")
+WRITE("Hello, " + s$ + ", ...  ")
+PAUSE(500)
+WRITELN("How are you?")
+END

@@ -58,7 +58,7 @@ const string = (code) => {
   if (code.match(/^""[^"]/)) return { type: 'string', content: '""' }
   // normal cases
   const start = code[0] === '"'
-  const end = code.match(/[^"](")/)
+  const end = code.match(/[^"](")([^"]|$)/)
   if (start && end) return { type: 'string', content: code.slice(0, end.index + 2) }
   if (start) return { type: 'unterminated-string', content: code.split('\n')[0] }
   return false
