@@ -24,7 +24,7 @@ BEGIN
   letters := '';
   for c := 65 to 90 do
     if random(2) = 0 then
-      letters := letters+chr(c)
+      letters := letters + chr(c)
     else
       letters := letters + chr(c + 32);
   for count := 1 to 50 do

@@ -2,7 +2,7 @@ REM SpongeThrow
 
 CONST FACESIZE% = 100
 CONST SPONGESIZE% = 40
-x% = 100
+x% = 300
 y% = 700
 xvel% = 8
 yvel% = -4

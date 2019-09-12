@@ -26,10 +26,10 @@ REPEAT
   HOME
   DIRECTION(RND(360))
   FORWARD(HALF%)
-  IF PIXCOL(TURTX%, TURTY%) <> SOLUTION% THEN PROCrandomwalk
+  IF PIXCOL(turtx%, turty%) <> SOLUTION% THEN PROCrandomwalk
   cycle% = 0
-  WHILE NOT(FNattached(TURTX%, TURTY%))
-    PIXSET(TURTX%, TURTY%, MOLECULE%)
+  WHILE NOT(FNattached(turtx%, turty%))
+    PIXSET(turtx%, turty%, MOLECULE%)
     IF cycle% MOD CYCLEMOD% = 0 THEN
       UPDATE
       IF MODDELAY% > 0 THEN
@@ -38,7 +38,7 @@ REPEAT
       NOUPDATE
     ENDIF
     INC(cycle%)
-    PIXSET(TURTX%, TURTY%, SOLUTION%)
+    PIXSET(turtx%, turty%, SOLUTION%)
     PROCbiasedwalk
   ENDWHILE
   IF numattached% MOD 10 = 0 THEN
@@ -71,19 +71,19 @@ DEF PROCrandomwalk
   LOCAL n%
   REPEAT
     n% = RND(4) * 2
-    TURTX% = TURTX% + n% DIV 3 - 1
-    TURTY% = TURTY% + n% MOD 3 - 1
-    IF PIXCOL(TURTX%, TURTY%) = BLACK THEN
-      TURTX% = TURTX% - 2 * (n% DIV 3 - 1)
-      TURTY% = TURTY% - 2 * (n% MOD 3 - 1)
+    turtx% = turtx% + n% DIV 3 - 1
+    turty% = turty% + n% MOD 3 - 1
+    IF PIXCOL(turtx%, turty%) = BLACK THEN
+      turtx% = turtx% - 2 * (n% DIV 3 - 1)
+      turty% = turty% - 2 * (n% MOD 3 - 1)
     ENDIF
-  UNTIL PIXCOL(TURTX%, TURTY%) = SOLUTION%
+  UNTIL PIXCOL(turtx%, turty%) = SOLUTION%
 ENDPROC
 
 DEF PROCbiasedwalk
   LOCAL distance%, turn%, range%
-  TURNXY(-TURTX%, -TURTY%)
-  distance% = HYPOT(TURTX%, TURTY%, 1)
+  TURNXY(-turtx%, -turty%)
+  distance% = HYPOT(turtx%, turty%, 1)
   IF distance% < randomradius% THEN
     DIRECTION(RND(360))
   ELSE
@@ -93,5 +93,5 @@ DEF PROCbiasedwalk
   ENDIF
   REPEAT
     FORWARD(1)
-  UNTIL PIXCOL(TURTX%, TURTY%) = SOLUTION%
+  UNTIL PIXCOL(turtx%, turty%) = SOLUTION%
 ENDPROC

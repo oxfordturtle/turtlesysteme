@@ -38,7 +38,7 @@ VAR x, y: integer;
   End;
 
 BEGIN
-  x := 100;
+  x := 300;
   y := 700;
   xvel := 8;
   yvel := -4;

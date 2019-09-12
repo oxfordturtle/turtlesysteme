@@ -54,10 +54,10 @@ DEF PROCdrawshape(sid%, siz%, col%)
   COLOUR(col%)
   FOR count% = 1 TO sid%
     FORWARD(siz%)
-    IF ABS(TURTX% - 500) > 495 THEN
+    IF ABS(turtx% - 500) > 495 THEN
       bouncex% = TRUE
     ENDIF
-    IF ABS(TURTY% - 500) > 495 THEN
+    IF ABS(turty% - 500) > 495 THEN
       bouncey% = TRUE
     ENDIF
     BACK(siz%)

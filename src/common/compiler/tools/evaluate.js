@@ -43,7 +43,9 @@ const toJsString = (lexeme) => {
     case 'boolean':
       return lexeme.content.toLowerCase()
 
-    case 'integer': // fallthrough
+    case 'integer':
+      return lexeme.content.replace(/^[$&]/, '0x') // fix hexadecimal values
+
     case 'string':
       return lexeme.content
 

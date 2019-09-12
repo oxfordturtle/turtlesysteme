@@ -1,7 +1,7 @@
 REM BouncingTriangle
 
 CONST SIZE% = 100
-x% = 100
+x% = 300
 y% = 700
 d% = 0
 xvel% = 8
@@ -36,10 +36,10 @@ DEF PROCtriangle(col%)
   COLOUR(col%)
   FOR count% = 1 TO 3
     FORWARD(SIZE%)
-    IF ABS(TURTX% - 500) > 495 THEN
+    IF ABS(turtx% - 500) > 495 THEN
       bouncex% = TRUE
     ENDIF
-    IF ABS(TURTY% - 500) > 495 THEN
+    IF ABS(turty% - 500) > 495 THEN
       bouncey% = TRUE
     ENDIF
     BACK(SIZE%)

@@ -6,9 +6,9 @@ CONST xleft = 0;
       gridscale = 5;
       gridthick = 64;
 
-  Procedure background();
+  Procedure background;
   Var x, y: integer;
-  Var cx, cy, r, g, b: integer;
+      cx, cy, r, g, b: integer;
   Begin
     thickness(gridthick);
     colour(darkgrey);
@@ -43,5 +43,5 @@ CONST xleft = 0;
 BEGIN
   canvas(xleft, ytop, xright - xleft + 1, ybottom - ytop + 1);
   resolution(xright - xleft + 1, ybottom - ytop + 1);
-  background(6)
+  background
 END.

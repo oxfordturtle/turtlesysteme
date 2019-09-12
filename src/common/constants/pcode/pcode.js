@@ -10,6 +10,44 @@ import TypingTestB from './BASIC/TypingTest.json'
 import TypingTestP from './Pascal/TypingTest.json'
 import TypingTestKeysB from './BASIC/TypingTestKeys.json'
 import TypingTestKeysP from './Pascal/TypingTestKeys.json'
+import NoughtsAndCrossesB from './BASIC/NoughtsAndCrosses.json'
+import NoughtsAndCrossesP from './Pascal/NoughtsAndCrosses.json'
+import FiveTurtlesB from './BASIC/FiveTurtles.json'
+import FiveTurtlesP from './Pascal/FiveTurtles.json'
+import LifeArraysB from './BASIC/LifeArrays.json'
+import LifeArraysP from './Pascal/LifeArrays.json'
+import AutomataB from './BASIC/Automata.json'
+import AutomataP from './Pascal/Automata.json'
+import BrownianMotionB from './BASIC/BrownianMotion.json'
+import BrownianMotionP from './Pascal/BrownianMotion.json'
+import CheetahsB from './BASIC/Cheetahs.json'
+import CheetahsP from './Pascal/Cheetahs.json'
+import SexRatioB from './BASIC/SexRatio.json'
+import SexRatioP from './Pascal/SexRatio.json'
+import FlockingB from './BASIC/Flocking.json'
+import FlockingP from './Pascal/Flocking.json'
+import RoadsB from './BASIC/Roads.json'
+import RoadsP from './Pascal/Roads.json'
+import IteratedPDB from './BASIC/IteratedPD.json'
+import IteratedPDP from './Pascal/IteratedPD.json'
+import InterferenceP from './Pascal/Interference.json'
+import TwoSlitsP from './Pascal/TwoSlits.json'
+import WaveSuperposerP from './Pascal/WaveSuperposer.json'
+import SierpinskiDotsB from './BASIC/SierpinskiDots.json'
+import SierpinskiDotsP from './Pascal/SierpinskiDots.json'
+import IFSColourB from './BASIC/IFSColour.json'
+import IFSColourP from './Pascal/IFSColour.json'
+import IFSDemonstratorB from './BASIC/IFSDemonstrator.json'
+import IFSDemonstratorP from './Pascal/IFSDemonstrator.json'
+import MandelbrotSpectrumDemoB from './BASIC/MandelbrotSpectrumDemo.json'
+import MandelbrotSpectrumDemoP from './Pascal/MandelbrotSpectrumDemo.json'
+import QuineP from './Pascal/Quine.json'
+import SyllogismsP from './Pascal/Syllogisms.json'
+import TuringMachinesP from './Pascal/TuringMachines.json'
+import SortingP from './Pascal/Sorting.json'
+import NimLearnP from './Pascal/NimLearn.json'
+import MultiNimP from './Pascal/MultiNim.json'
+import KnightsTourP from './Pascal/KnightsTour.json'
 
 export default {
   Fibonaccis: { BASIC: FibonaccisB, Pascal: FibonaccisP },
@@ -17,5 +55,29 @@ export default {
   BouncingShapes: { BASIC: BouncingShapesB, Pascal: BouncingShapesP },
   SolarSystem: { BASIC: SolarSystemB, Pascal: SolarSystemP },
   TypingTest: { BASIC: TypingTestB, Pascal: TypingTestP },
-  TypingTestKeys: { BASIC: TypingTestKeysB, Pascal: TypingTestKeysP }
+  TypingTestKeys: { BASIC: TypingTestKeysB, Pascal: TypingTestKeysP },
+  NoughtsAndCrosses: { BASIC: NoughtsAndCrossesB, Pascal: NoughtsAndCrossesP },
+  FiveTurtles: { BASIC: FiveTurtlesB, Pascal: FiveTurtlesP },
+  LifeArrays: { BASIC: LifeArraysB, Pascal: LifeArraysP },
+  Automata: { BASIC: AutomataB, Pascal: AutomataP },
+  BrownianMotion: { BASIC: BrownianMotionB, Pascal: BrownianMotionP },
+  Cheetahs: { BASIC: CheetahsB, Pascal: CheetahsP },
+  SexRatio: { BASIC: SexRatioB, Pascal: SexRatioP },
+  Flocking: { BASIC: FlockingB, Pascal: FlockingP },
+  Roads: { BASIC: RoadsB, Pascal: RoadsP },
+  IteratedPD: { BASIC: IteratedPDB, Pascal: IteratedPDP },
+  Interference: { Pascal: InterferenceP },
+  TwoSlits: { Pascal: TwoSlitsP },
+  WaveSuperposer: { Pascal: WaveSuperposerP },
+  SierpinskiDots: { BASIC: SierpinskiDotsB, Pascal: SierpinskiDotsP },
+  IFSColour: { BASIC: IFSColourB, Pascal: IFSColourP },
+  IFSDemonstrator: { BASIC: IFSDemonstratorB, Pascal: IFSDemonstratorP },
+  MandelbrotSpectrumDemo: { BASIC: MandelbrotSpectrumDemoB, Pascal: MandelbrotSpectrumDemoP },
+  Quine: { Pascal: QuineP },
+  Syllogisms: { Pascal: SyllogismsP },
+  TuringMachines: { Pascal: TuringMachinesP },
+  Sorting: { Pascal: SortingP },
+  NimLearn: { Pascal: NimLearnP },
+  MultiNim: { Pascal: MultiNimP },
+  KnightsTour: { Pascal: KnightsTourP }
 }

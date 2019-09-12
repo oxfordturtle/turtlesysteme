@@ -1,10 +1,10 @@
 REM RefParams
 
 SETXY(100, 900)
-PROClines(TURTT%, FALSE)
-PROClines(TURTC%, TRUE)
-PROCdots(TURTX%)
-PROCdots(TURTY%)
+PROClines(turtt%, FALSE)
+PROClines(turtc%, TRUE)
+PROCdots(turtx%)
+PROCdots(turty%)
 END
 
 DEF PROClines(RETURN style%, convert%)

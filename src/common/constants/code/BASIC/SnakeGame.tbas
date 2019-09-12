@@ -17,16 +17,16 @@ PROCnewapple
 crash% = FALSE
 REPEAT
   NOUPDATE
-  IF (ABS(?KEY) = \UP) AND (TURTD% <> 2) THEN DIRECTION(0)
-  IF (ABS(?KEY) = \RIGHT) AND (TURTD% <> 3) THEN DIRECTION(1)
-  IF (ABS(?KEY) = \DOWN) AND (TURTD% <> 0) THEN DIRECTION(2)
-  IF (ABS(?KEY) = \LEFT) AND (TURTD% <> 1) THEN DIRECTION(3)
+  IF (ABS(?KEY) = \UP) AND (turtd% <> 2) THEN DIRECTION(0)
+  IF (ABS(?KEY) = \RIGHT) AND (turtd% <> 3) THEN DIRECTION(1)
+  IF (ABS(?KEY) = \DOWN) AND (turtd% <> 0) THEN DIRECTION(2)
+  IF (ABS(?KEY) = \LEFT) AND (turtd% <> 1) THEN DIRECTION(3)
   FORWARD(1)
-  IF (TURTX% < 0) OR (TURTX% >= BOARDSIZE%) OR (TURTY% < 0) OR (TURTY% >= BOARDSIZE%) THEN crash% = TRUE
-  IF PIXCOL(TURTX%, TURTY%) = SNAKECOLOUR% THEN crash% = TRUE
-  IF PIXCOL(TURTX%, TURTY%) = APPLECOLOUR% THEN
+  IF (turtx% < 0) OR (turtx% >= BOARDSIZE%) OR (turty% < 0) OR (turty% >= BOARDSIZE%) THEN crash% = TRUE
+  IF PIXCOL(turtx%, turty%) = SNAKECOLOUR% THEN crash% = TRUE
+  IF PIXCOL(turtx%, turty%) = APPLECOLOUR% THEN
     INC(snakelength%)
-    PIXSET(TURTX%, TURTY%, SNAKECOLOUR%)
+    PIXSET(turtx%, turty%, SNAKECOLOUR%)
     PROCnewapple
   ENDIF
   COLOUR(LIGHTBLUE)

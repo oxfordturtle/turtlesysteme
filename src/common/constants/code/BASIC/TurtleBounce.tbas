@@ -12,10 +12,10 @@ WHILE 0 < 1
   BLOT(50)
   UPDATE
   PAUSE(5)
-  IF (TURTX% < 50) OR (TURTX% > 949) THEN
+  IF (turtx% < 50) OR (turtx% > 949) THEN
     xvel% = -xvel%
   ENDIF
-  IF (TURTY% < 50) OR (TURTY% > 949) THEN
+  IF (turty% < 50) OR (turty% > 949) THEN
     yvel% = -yvel%
   ENDIF
 ENDWHILE

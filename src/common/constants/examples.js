@@ -220,7 +220,7 @@ export const menu = [
   },
   {
     index: 6,
-    title: 'interdisciplinary models (from CSAC)',
+    title: 'interdisciplinary models (CSAC project)',
     examples: [
       'AimCannon',
       'AutoCannon',

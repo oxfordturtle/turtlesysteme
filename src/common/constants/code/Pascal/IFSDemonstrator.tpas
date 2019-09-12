@@ -176,14 +176,14 @@ VAR xleft, xright, ytop, ybottom: integer;
       end
   End;
 
-  Procedure map(a,x,y: integer;var newx,newy: integer);
+  Procedure map(a, x, y: integer; var newx, newy: integer);
   Begin
     newx := divmult(x, coeffdiv, mapxx[a]) + divmult(y, coeffdiv, mapxy[a]) + mapxc[a];
     newy := divmult(x, coeffdiv, mapyx[a]) + divmult(y, coeffdiv, mapyy[a]) + mapyc[a]
   End;
 
   Procedure domap(mapnum: integer);
-  Var x,y,newx,newy: integer;
+  Var x, y, newx, newy: integer;
   Begin
     noupdate;
     for y := yt to yb do
@@ -202,7 +202,7 @@ VAR xleft, xright, ytop, ybottom: integer;
   End;
 
   Procedure cleanup;
-  Var x,y: integer;
+  Var x, y: integer;
   Begin
     noupdate;
     for y := yt to yb do

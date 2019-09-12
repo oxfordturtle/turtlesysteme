@@ -1,4 +1,4 @@
-REM Mandelbrot
+REM MandelbrotDemo
 
 CONST MAXCOL% = 40
 PROCstartprompt

@@ -4,7 +4,7 @@ FOR count% = 1 TO 30
   x% = RND(1000)
   y% = RND(1000)
   SETXY(x%, y%)
-  TURTD% = RND(360)
+  turtd% = RND(360)
   FORWARD(1500)
   BACK(3000)
 NEXT

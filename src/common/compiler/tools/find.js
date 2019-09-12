@@ -16,7 +16,7 @@ export const constant = (routine, name, language) =>
 // find a variable visible to a routine
 export const variable = (routine, name, language) => {
   const properties = (language === 'BASIC')
-    ? ['TURTX%', 'TURTY%', 'TURTD%', 'TURTT%', 'TURTC%']
+    ? ['turtx%', 'turty%', 'turtd%', 'turtt%', 'turtc%']
     : ['turtx', 'turty', 'turtd', 'turtt', 'turtc']
   const turtle = properties.indexOf(name) + 1
   const isGlobal = (routine.index > 0) ? (routine.globals.indexOf(name) > -1) : false

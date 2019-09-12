@@ -29,13 +29,13 @@ DEF PROCrecurse(flag%, size%, depth%, col%)
     IF depth% < slowlev% THEN NOUPDATE ELSE UPDATE
     IF flag% = 1 THEN
       FOR flag% = 2 TO 3
-        storex% = TURTX%
-        storey% = TURTY%
+        storex% = turtx%
+        storey% = turty%
         FOR sides% = 1 TO NUMSIDES%
           PROCrecurse(flag%, size%, depth%, col%)
         NEXT
-        TURTX% = storex%
-        TURTY% = storey%
+        turtx% = storex%
+        turty% = storey%
       NEXT
     ELSE
       PENUP

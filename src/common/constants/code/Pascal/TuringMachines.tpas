@@ -195,7 +195,7 @@ VAR tape: array[leftend..rightend] of char;
      end
  End;
 
- Function getactstring(state: integer;c: char): string;
+ Function getactstring(state: integer; c: char): string;
  Var posn: integer;
  Begin
   posn := pos(';' + c, behaviour[state]);
@@ -265,7 +265,7 @@ VAR tape: array[leftend..rightend] of char;
  Procedure drawtable;
  Var i, j: integer;
 
-  procedure heading(s: string;width: integer);
+  procedure heading(s: string; width: integer);
   begin
    colour(black);
    box(width, rowheight + headspace * 2, brown, true);
@@ -275,7 +275,7 @@ VAR tape: array[leftend..rightend] of char;
    movexy(width, -headspace - 4)
   end;
 
-  procedure entry(s: string;width: integer);
+  procedure entry(s: string; width: integer);
   begin
    box(width, rowheight, white, true);
    movexy(0, 4);
@@ -384,8 +384,8 @@ VAR tape: array[leftend..rightend] of char;
       begin
        tape[headpos] := s[2];
        if (s[2] = '0') or (s[2] = '1') then
-        writeln('Cycle = ' + str(cycles) + '; Position = ' + str(headpos) + '; State = ' + statestr(state)
-     + '; Printed = "' + s[2] + '"')
+        writeln('Cycle = ' + str(cycles) + '; Position = ' + str(headpos) + '; State = ' + statestr(state) +
+     '; Printed = "' + s[2] + '"')
       end
      else
       writeln('Null Print instruction for "' + thischar + '" in state ' + statestr(state))

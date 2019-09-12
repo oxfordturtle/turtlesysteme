@@ -4,7 +4,7 @@ REPEAT
   RNDCOL(10)
   PROCprong
   RIGHT(61)
-UNTIL TURTD% = 0
+UNTIL turtd% = 0
 END
 
 DEF PROCprong

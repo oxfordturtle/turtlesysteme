@@ -12,7 +12,7 @@ REPEAT
     COLOUR(RGB(?MOUSEX DIV 100 + 1))
   ELSE
     IF ?LMOUSE > 0 THEN
-      DRAWXY(?MOUSEX - TURTX%, ?MOUSEY - TURTY%)
+      DRAWXY(?MOUSEX - turtx%, ?MOUSEY - turty%)
     ELSE
       SETXY(?MOUSEX, ?MOUSEY)
     ENDIF

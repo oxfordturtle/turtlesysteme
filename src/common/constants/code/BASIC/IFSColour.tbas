@@ -171,11 +171,11 @@ DEF PROCbackground
   DRAWXY(0, yt% - yb%)
   FOR x% = 0 TO gridscale% - 1
     FOR y% = 0 TO gridscale% - 1
-      cx% = XLEFT% + DIVMULT(XRIGHT% - XLEFT%, GRIDSCALE%, x%) + GRIDTHICK%
-      cy% = YTOP% + DIVMULT(YBOTTOM% - YTOP%, GRIDSCALE%, y%) + GRIDTHICK%
-      r% = DIVMULT(255, GRIDSCALE% - 1, x%)
-      g% = DIVMULT(255, GRIDSCALE% - 1, y%)
-      b% = DIVMULT(255, 2 * GRIDSCALE% - 2, 2 * GRIDSCALE% - 2 - x% - y%)
+      cx% = xl% + DIVMULT(xr% - xl%, gridscale%, x%) + gt%
+      cy% = yt% + DIVMULT(yb% - yt%, gridscale%, y%) + gt%
+      r% = DIVMULT(255, gridscale% - 1, x%)
+      g% = DIVMULT(255, gridscale% - 1, y%)
+      b% = DIVMULT(255, 2 * gridscale% - 2, 2 * gridscale% - 2 - x% - y%)
       RECOLOUR(cx%, cy%, (r% * &10000) + (g% * &100) + (b% * &1))
     NEXT
   NEXT

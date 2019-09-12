@@ -10,7 +10,7 @@ BEGIN
   setxy(15, 200);
   print('In this typing test, you will be shown the', 4, 36);
   setxy(20, 270);
-  print('letters of the alphabet in a random order, ', 4, 36);
+  print('letters of the alphabet in a random order,', 4, 36);
   setxy(20, 340);
   print('and in a mixture of upper- and lower-case.', 4, 36);
   setxy(20, 410);

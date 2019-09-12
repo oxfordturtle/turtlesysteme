@@ -38,7 +38,7 @@ VAR x, y: integer;
       inc(col2)
     until boundary[col2] >= n;
     col1 := col2 - 1;
-    result:=mixcols(sectcol[col1], sectcol[col2], boundary[col2] - n, n - boundary[col1])
+    result := mixcols(sectcol[col1], sectcol[col2], boundary[col2] - n, n - boundary[col1])
   End;
 
   Procedure clocksetup;
@@ -72,7 +72,7 @@ VAR x, y: integer;
       else
         begin
           setxy(leftx + n, top);
-          colour(wavecolour(divmult(n mod wavelength, wavelength,360)));
+          colour(wavecolour(divmult(n mod wavelength, wavelength, 360)));
           drawxy(0, 50)
         end;
     for n := 1 to clocks do
@@ -121,7 +121,7 @@ VAR x, y: integer;
             turnxy(waveaddi, -waveaddj);
             colour(mixcols(wavecolour(turtd), black, waveadd, 1000 - waveadd));
             if mixcols(wavecolour(turtd), black, waveadd, 1000 - waveadd) < 51 then
-              colour(black); {to avoid colour code problems}
+              colour(black);
             drawxy(0, 100)
           end
       end;

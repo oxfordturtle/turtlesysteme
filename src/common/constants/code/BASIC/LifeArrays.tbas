@@ -16,7 +16,7 @@ WHILE ?KEY <> \ESCAPE
   FOR x% = 0 TO WIDTH% - 1
     FOR y% = 0 TO HEIGHT% - 1
       thisgen%(x%, y%) = nextgen%(x%, y%)
-      IF thisgen(x%, y%) THEN
+      IF thisgen%(x%, y%) THEN
         PIXSET(x%, y%, MAROON)
       ELSE
         PIXSET(x%, y%, LIGHTGREEN)

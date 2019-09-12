@@ -29,7 +29,7 @@ FOR count% = 1 TO 10
       UPDATE
     UNTIL ?LMOUSE > 0
     clickcol% = PIXCOL(?MOUSEX, ?MOUSEY)
-  UNTIL clickcol% = TURTC%
+  UNTIL clickcol% = turtc%
 NEXT
 BLANK(LIGHTBLUE)
 SETXY(60, 460)

@@ -82,7 +82,7 @@ VAR lampx: integer;
       end;
     colour(yellow);
     setxy(lampx, 984);
-    blot(10);
+    blot(10)
   End;
 
 BEGIN
@@ -101,7 +101,7 @@ BEGIN
         waveaddi := sin(wave1 * 360, wavelength, 500) + sin(wave2 * 360, wavelength, 500);
         waveaddj := cos(wave1 * 360, wavelength, 500) + cos(wave2 * 360, wavelength, 500);
         waveadd := hypot(waveaddi, waveaddj, 1);
-        angleadd := (arctan(waveaddi, waveaddj, 1) + 360)mod 360;
+        angleadd := (arctan(waveaddi, waveaddj, 1) + 360) mod 360;
         pixset(x, y, mixcols(wavecolour(angleadd), black, waveadd, 1000 - waveadd))
       end
     end

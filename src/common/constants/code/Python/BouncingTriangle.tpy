@@ -21,7 +21,7 @@ def triangle(col: int):
 bouncex: bool
 bouncey: bool
 size: int = 100
-x: int = 100
+x: int = 300
 y: int = 700
 d: int = 0
 xvel: int = 8

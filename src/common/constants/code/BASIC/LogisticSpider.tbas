@@ -26,8 +26,8 @@ REPEAT
   FOR gen% = 1 TO MAXGEN%
     pop% = DIVMULT(pop%, 10 * MAXPOP%, r% * (MAXPOP% - pop%))
     COLOUR(MIXCOLS(LIGHTGREEN, GREEN, MAXGEN% - gen%, gen%))
-    DRAWXY(0, 1000 - DIVMULT(pop%, MAXPOP%, 1000) - TURTY%)
-    DRAWXY(DIVMULT(pop%, MAXPOP%, 1000) - TURTX%, 0)
+    DRAWXY(0, 1000 - DIVMULT(pop%, MAXPOP%, 1000) - turty%)
+    DRAWXY(DIVMULT(pop%, MAXPOP%, 1000) - turtx%, 0)
     IF OUTPUT% THEN
       WRITE(STR$(pop%) + " ")
       IF gen% MOD 10 = 0 THEN WRITELN("")

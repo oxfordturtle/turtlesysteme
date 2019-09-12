@@ -103,7 +103,7 @@ VAR nodex, nodey: array[1..maxnodes] of integer;
     while (i < numnodes) and continue do
       begin
         inc(i);
-        dist = hypot(nodex[i] - nodex[thisnode], nodey[i] - nodey[thisnode], 1);
+        dist := hypot(nodex[i] - nodex[thisnode], nodey[i] - nodey[thisnode], 1);
         if (i <> thisnode) and (nodedist[i] > 1000) and (dist < mindistance * 2) then
           begin
             makeedge(thisnode, i, linkroad);

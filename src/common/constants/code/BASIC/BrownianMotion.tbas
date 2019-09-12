@@ -82,17 +82,17 @@ DEF PROCmove(m%)
   SETXY(mx%(m%), my%(m%))
   DIRECTION(md%(m%))
   FORWARD(ms%(m%))
-  IF HYPOT(TURTX% - px%, TURTY% - py%, 1) <= HITRADIUS% THEN
-    WHILE HYPOT(TURTX% - px%, TURTY% - py%, 1) < HITRADIUS%
+  IF HYPOT(turtx% - px%, turty% - py%, 1) <= HITRADIUS% THEN
+    WHILE HYPOT(turtx% - px%, turty% - py%, 1) < HITRADIUS%
       BACK(1)
     ENDWHILE
-    TURNXY(px% - TURTX%, py% - TURTY%)
-    degturn% = TURTD% - md%(m%)
-    md%(m%) = (180 + (TURTD% + degturn%)) MOD 360
+    TURNXY(px% - turtx%, py% - turty%)
+    degturn% = turtd% - md%(m%)
+    md%(m%) = (180 + (turtd% + degturn%)) MOD 360
     impact% = COS(degturn%, 1, ms%(m%))
-    pxvel% = pxvel% + SIN(TURTD%, 1, impact%)
-    pyvel% = pyvel% - COS(TURTD%, 1, impact%)
+    pxvel% = pxvel% + SIN(turtd%, 1, impact%)
+    pyvel% = pyvel% - COS(turtd%, 1, impact%)
   ENDIF
-  mx%(m%) = (TURTX% + 1000) MOD 1000
-  my%(m%) = (TURTY% + 1000) MOD 1000
+  mx%(m%) = (turtx% + 1000) MOD 1000
+  my%(m%) = (turty% + 1000) MOD 1000
 ENDPROC

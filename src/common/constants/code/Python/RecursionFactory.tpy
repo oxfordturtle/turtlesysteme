@@ -1,3 +1,59 @@
 # RecursionFactory
 
-# not yet available in Turtle Python
+numsides: int = 6
+initsize: int = 240
+shrink: int = 40
+rangle: int = 180
+polygap: int = 0
+levels: int = 5
+slowdraw: int = 3
+mode: int = 1
+firstcol: int = 1
+colinc: int = 2
+minthick: int = 2
+addthick: int = 6
+circsize: int = 60
+
+def recurse(flag: int, size: int, depth: int, col: int):
+  if depth > 0:
+    if depth < slowlev:
+      noupdate()
+    else:
+      update()
+    if flag = 1:
+      for flag in range(2, 4, 1):
+        storex: int = turtx
+        storey: int = turty
+        for sides in range (0, numsides, 1):
+          recurse(flag, size, depth, col)
+        turtx = storex
+        turty = storey
+    else:
+      penup()
+      if flag = 2:
+        colour(rgb(col))
+        thickness(minthick + ((depth - 1) * addthick) / 12)
+        if mode = 1:
+          pendown()
+        else:
+          if mode = 2:
+            blot(size * circsize / 120)
+          else:
+            circle(size * circsize / 120)
+      left(halfangle)
+      forward(size)
+      right(180 - halfangle + rangle)
+      if flag = 3:
+        forward(size * polygap / 120)
+        recurse(1, (size * shrink) / 120, depth - 1, ((col + colinc - 1) % 7) + 1)
+        back(size * polygap / 120)
+      left(rangle)
+
+blank(black)
+if 180 % numsides == 0:
+  halfangle: int = 90 - (180 / numsides)
+  slowlev: int = levels + 1 - slowdraw
+  if slowlev > levels - 1:
+    slowlev = levels - 1
+  movexy(0, initsize)
+  recurse(1, initsize, levels, firstcol)

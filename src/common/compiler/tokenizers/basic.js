@@ -133,7 +133,7 @@ const custom = (code) => {
 
 // built-in turtle property variables
 const turtle = (code) => {
-  const test = code.match(/^(TURT[XYDTC]%)/)
+  const test = code.match(/^(turt[xydtc]%)/)
   return test ? { type: 'turtle', content: test[0] } : false
 }
 

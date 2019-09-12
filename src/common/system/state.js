@@ -25,9 +25,9 @@ import lexer from 'common/compiler/lexer'
 import * as machine from './machine'
 
 // current version (should match the value in the package.json file)
-// this is used at the end of this module to check against github repository, and advise the user
+// this is used at the end of this module to check against the Turtle web site, and advise the user
 // if their version is out of date
-const version = '1.0.1'
+const version = '1.0.0'
 
 // function for "sending" signals to this module, asking it to update the state
 export const send = (signal, data) => {
@@ -508,13 +508,13 @@ machine.on('dump', (memory) => reply('dump-memory', memory))
 machine.on('error', (error) => reply('error', error))
 
 // check for latest npm_package_version
-window.fetch('https://raw.githubusercontent.com/oxfordturtle/turtlesysteme/master/package.json')
+window.fetch('https://www.turtle.ox.ac.uk/turtle/versions')
   .then((result) => {
     result.json().then((data) => {
-      if (version !== data.version) {
+      if (version !== data.E) {
         reply('warning', {
           title: 'Update Available',
-          message: `This version of the Turtle System E is out of date. Please visit www.turtle.ox.ac.uk to download the latest version (v${data.version}).`
+          message: `This version of the Turtle System E is out of date. Please visit www.turtle.ox.ac.uk to download the latest version (v${data.E}).`
         })
       }
     })
