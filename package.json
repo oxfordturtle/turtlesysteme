@@ -6,8 +6,8 @@
   "copyright": "Copyright © 2019 University of Oxford",
   "license": "MIT",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/oxfordturtle/turtlesysteme.git"
+    "type": "git",
+    "url": "https://github.com/oxfordturtle/turtlesysteme.git"
   },
   "scripts": {
     "dev-electron": "electron-webpack dev",
@@ -47,5 +47,8 @@
     "mac": {
       "icon": "assets/mac/turtle.icns"
     }
+  },
+  "dependencies": {
+    "source-map-support": "^0.5.13"
   }
 }
