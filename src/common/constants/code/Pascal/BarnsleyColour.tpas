@@ -53,7 +53,7 @@ VAR xl, xr, yt, yb, gt: integer;
     for i := 1 to mappings do
       begin
         mapxc[i] := mapxc[i] / scaledown;
-        mapyc[i] : =mapyc[i] / scaledown
+        mapyc[i] := mapyc[i] / scaledown
       end;
     gt := gridthick / scaledown
   End;

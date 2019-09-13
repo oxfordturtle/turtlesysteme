@@ -76,7 +76,7 @@ VAR xl, xr, yt, yb, gt: integer;
     for x := 0 to gridlines - 1 do
       for y := 0 to gridlines - 1 do
         begin
-          xc := xl + divmult(xr - xl, gridlines, x) + gt;
+          cx := xl + divmult(xr - xl, gridlines, x) + gt;
           cy := yt + divmult(yb - yt, gridlines, y) + gt;
           r := divmult(255, gridlines - 1, x);
           g := divmult(255, gridlines - 1, y);

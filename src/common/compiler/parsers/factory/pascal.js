@@ -62,10 +62,8 @@ export const constant = (lexemes, lex, routine) => {
     valueLexemes.push(lexemes[lex])
     lex += 1
   }
-  console.log(valueLexemes)
   let value = evaluate(identifier, valueLexemes, routine)
   let type = (typeof value === 'number') ? 'integer' : 'string'
-  console.log(`constant ${identifier.content} = ${value}`)
 
   // return the constant object and index of the next lexeme
   return { lex, constant: factory.constant(identifier.content, type, value) }

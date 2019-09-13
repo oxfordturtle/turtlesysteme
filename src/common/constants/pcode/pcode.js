@@ -48,6 +48,16 @@ import SortingP from './Pascal/Sorting.json'
 import NimLearnP from './Pascal/NimLearn.json'
 import MultiNimP from './Pascal/MultiNim.json'
 import KnightsTourP from './Pascal/KnightsTour.json'
+import DiffusionP from './Pascal/Diffusion.json'
+import MandelbrotSpectrumP from './Pascal/MandelbrotSpectrum.json'
+import MandelbrotMiniSpectrumP from './Pascal/MandelbrotMiniSpectrum.json'
+import SierpinskiColourP from './Pascal/SierpinskiColour.json'
+import SierpinskiIFSP from './Pascal/SierpinskiIFS.json'
+import BarnsleyIFSP from './Pascal/BarnsleyIFS.json'
+import BarnsleyColourP from './Pascal/BarnsleyColour.json'
+import TreeIFSP from './Pascal/TreeIFS.json'
+import DragonIFSP from './Pascal/DragonIFS.json'
+import DragonColourP from './Pascal/DragonColour.json'
 
 export default {
   Fibonaccis: { BASIC: FibonaccisB, Pascal: FibonaccisP },
@@ -79,5 +89,15 @@ export default {
   Sorting: { Pascal: SortingP },
   NimLearn: { Pascal: NimLearnP },
   MultiNim: { Pascal: MultiNimP },
-  KnightsTour: { Pascal: KnightsTourP }
+  KnightsTour: { Pascal: KnightsTourP },
+  Diffusion: { Pascal: DiffusionP },
+  MandelbrotSpectrum: { Pascal: MandelbrotSpectrumP },
+  MandelbrotMiniSpectrum: { Pascal: MandelbrotMiniSpectrumP },
+  SierpinskiColour: { Pascal: SierpinskiColourP },
+  SierpinskiIFS: { Pascal: SierpinskiIFSP },
+  BarnsleyIFS: { Pascal: BarnsleyIFSP },
+  BarnsleyColour: { Pascal: BarnsleyColourP },
+  TreeIFS: { Pascal: TreeIFSP },
+  DragonIFS: { Pascal: DragonIFSP },
+  DragonColour: { Pascal: DragonColourP }
 }
