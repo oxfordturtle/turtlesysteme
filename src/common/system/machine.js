@@ -5,6 +5,14 @@ import colours from 'common/constants/colours'
 import pc from 'common/constants/pc'
 import * as component from './component.js'
 
+// machine constants
+const turtxIndex = 1
+const turtyIndex = 2
+const turtdIndex = 3
+const turtaIndex = 4
+const turttIndex = 5
+const turtcIndex = 6
+
 // function for registering callbacks on the record of outgoing messages
 export const on = (message, callback) => {
   replies[message] = callback
@@ -1256,13 +1264,13 @@ const execute = (pcode, line, code, options) => {
           vcanvas.starty = stack.pop()
           vcanvas.startx = stack.pop()
           component.canvas(vcanvas.startx, vcanvas.starty, vcanvas.sizex, vcanvas.sizey)
-          memory[memory[0] + 1] = Math.round(vcanvas.startx + (vcanvas.sizex / 2))
-          memory[memory[0] + 2] = Math.round(vcanvas.starty + (vcanvas.sizey / 2))
-          memory[memory[0] + 3] = 0
-          replies.turtx(memory[memory[0] + 1])
-          replies.turty(memory[memory[0] + 2])
-          replies.turtd(memory[memory[0] + 3])
-          coords.push([memory[memory[0] + 1], memory[memory[0] + 2]])
+          memory[memory[0] + turtxIndex] = Math.round(vcanvas.startx + (vcanvas.sizex / 2))
+          memory[memory[0] + turtyIndex] = Math.round(vcanvas.starty + (vcanvas.sizey / 2))
+          memory[memory[0] + turtdIndex] = 0
+          replies.turtx(memory[memory[0] + turtxIndex])
+          replies.turty(memory[memory[0] + turtyIndex])
+          replies.turtd(memory[memory[0] + turtdIndex])
+          coords.push([memory[memory[0] + turtxIndex], memory[memory[0] + turtyIndex]])
           drawCount = options.drawCountMax // force runtime.update
           break
 
@@ -1311,44 +1319,44 @@ const execute = (pcode, line, code, options) => {
         case pc.home:
           a = vcanvas.startx + (vcanvas.sizex / 2)
           b = vcanvas.starty + (vcanvas.sizey / 2)
-          memory[memory[0] + 1] = Math.round(a)
-          memory[memory[0] + 2] = Math.round(b)
-          memory[memory[0] + 3] = 0
-          replies.turtx(memory[memory[0] + 1])
-          replies.turty(memory[memory[0] + 2])
-          replies.turtd(memory[memory[0] + 3])
-          coords.push([memory[memory[0] + 1], memory[memory[0] + 2]])
+          memory[memory[0] + turtxIndex] = Math.round(a)
+          memory[memory[0] + turtyIndex] = Math.round(b)
+          memory[memory[0] + turtdIndex] = 0
+          replies.turtx(memory[memory[0] + turtxIndex])
+          replies.turty(memory[memory[0] + turtyIndex])
+          replies.turtd(memory[memory[0] + turtdIndex])
+          coords.push([memory[memory[0] + turtxIndex], memory[memory[0] + turtyIndex]])
           break
 
         case pc.setx:
           a = stack.pop()
-          memory[memory[0] + 1] = a
+          memory[memory[0] + turtxIndex] = a
           replies.turtx(a)
-          coords.push([memory[memory[0] + 1], memory[memory[0] + 2]])
+          coords.push([memory[memory[0] + turtxIndex], memory[memory[0] + turtyIndex]])
           break
 
         case pc.sety:
           a = stack.pop()
           memory[memory[0] + 2] = a
           replies.turty(a)
-          coords.push([memory[memory[0] + 1], memory[memory[0] + 2]])
+          coords.push([memory[memory[0] + turtxIndex], memory[memory[0] + turtyIndex]])
           break
 
         case pc.setd:
           a = stack.pop() % vcanvas.degrees
-          memory[memory[0] + 3] = a
+          memory[memory[0] + turtdIndex] = a
           replies.turtd(a)
           break
 
         case pc.thik:
           a = stack.pop()
-          memory[memory[0] + 4] = a
+          memory[memory[0] + turttIndex] = a
           replies.turtt(a)
           break
 
         case pc.colr:
           a = stack.pop()
-          memory[memory[0] + 5] = a
+          memory[memory[0] + turtcIndex] = a
           replies.turtc(hex(a))
           break
 
@@ -1383,32 +1391,32 @@ const execute = (pcode, line, code, options) => {
         case pc.toxy:
           b = stack.pop()
           a = stack.pop()
-          memory[memory[0] + 1] = a
-          memory[memory[0] + 2] = b
+          memory[memory[0] + turtxIndex] = a
+          memory[memory[0] + turtyIndex] = b
           replies.turtx(a)
           replies.turty(b)
           coords.push([a, b])
           break
 
         case pc.mvxy:
-          b = stack.pop() + memory[memory[0] + 2]
-          a = stack.pop() + memory[memory[0] + 1]
-          memory[memory[0] + 1] = a
-          memory[memory[0] + 2] = b
+          b = stack.pop() + memory[memory[0] + turtyIndex]
+          a = stack.pop() + memory[memory[0] + turtxIndex]
+          memory[memory[0] + turtxIndex] = a
+          memory[memory[0] + turtyIndex] = b
           replies.turtx(a)
           replies.turty(b)
           coords.push([a, b])
           break
 
         case pc.drxy:
-          b = stack.pop() + memory[memory[0] + 2]
-          a = stack.pop() + memory[memory[0] + 1]
+          b = stack.pop() + memory[memory[0] + turtyIndex]
+          a = stack.pop() + memory[memory[0] + turtxIndex]
           if (runtime.pendown) {
             component.line(turtle(), turtx(a), turty(b))
             if (runtime.update) drawCount += 1
           }
-          memory[memory[0] + 1] = a
-          memory[memory[0] + 2] = b
+          memory[memory[0] + turtxIndex] = a
+          memory[memory[0] + turtyIndex] = b
           replies.turtx(a)
           replies.turty(b)
           coords.push([a, b])
@@ -1416,22 +1424,21 @@ const execute = (pcode, line, code, options) => {
 
         case pc.fwrd:
           c = stack.pop() // distance
+          d = memory[memory[0] + turtdIndex] // turtle direction
           // work out final y coordinate
-          b = memory[memory[0] + 3]
-          b = Math.cos(b * Math.PI / (vcanvas.degrees / 2))
+          b = Math.cos(d * Math.PI / (vcanvas.degrees / 2))
           b = -Math.round(b * c)
-          b += memory[memory[0] + 2]
+          b += memory[memory[0] + turtyIndex]
           // work out final x coordinate
-          a = memory[memory[0] + 3]
-          a = Math.sin(a * Math.PI / (vcanvas.degrees / 2))
+          a = Math.sin(d * Math.PI / (vcanvas.degrees / 2))
           a = Math.round(a * c)
-          a += memory[memory[0] + 1]
+          a += memory[memory[0] + turtxIndex]
           if (runtime.pendown) {
             component.line(turtle(), turtx(a), turty(b))
             if (runtime.update) drawCount += 1
           }
-          memory[memory[0] + 1] = a
-          memory[memory[0] + 2] = b
+          memory[memory[0] + turtxIndex] = a
+          memory[memory[0] + turtyIndex] = b
           replies.turtx(a)
           replies.turty(b)
           coords.push([a, b])
@@ -1439,30 +1446,29 @@ const execute = (pcode, line, code, options) => {
 
         case pc.back:
           c = stack.pop() // distance
+          d = memory[memory[0] + turtdIndex] // turtle direction
           // work out final y coordinate
-          b = memory[memory[0] + 3]
-          b = Math.cos(b * Math.PI / (vcanvas.degrees / 2))
+          b = Math.cos(d * Math.PI / (vcanvas.degrees / 2))
           b = Math.round(b * c)
-          b += memory[memory[0] + 2]
+          b += memory[memory[0] + turtyIndex]
           // work out final x coordinate
-          a = memory[memory[0] + 3]
-          a = Math.sin(a * Math.PI / (vcanvas.degrees / 2))
+          a = Math.sin(d * Math.PI / (vcanvas.degrees / 2))
           a = -Math.round(a * c)
-          a += memory[memory[0] + 1]
+          a += memory[memory[0] + turtxIndex]
           if (runtime.pendown) {
             component.line(turtle(), turtx(a), turty(b))
             if (runtime.update) drawCount += 1
           }
-          memory[memory[0] + 1] = a
-          memory[memory[0] + 2] = b
+          memory[memory[0] + turtxIndex] = a
+          memory[memory[0] + turtyIndex] = b
           replies.turtx(a)
           replies.turty(b)
           coords.push([a, b])
           break
 
         case pc.left:
-          a = (memory[memory[0] + 3] - stack.pop()) % vcanvas.degrees
-          memory[memory[0] + 3] = a
+          a = (memory[memory[0] + turtdIndex] - stack.pop()) % vcanvas.degrees
+          memory[memory[0] + turtdIndex] = a
           replies.turtd(a)
           break
 

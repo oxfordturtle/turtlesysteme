@@ -4,6 +4,11 @@ assorted functions for generating the pcode
 import pc from 'common/constants/pc'
 import * as find from './find.js'
 
+// machine constants
+const turtleProperties = 6
+const baseGlobals = 10 // keybuffer, turtle, and 8 files
+const baseOffset = baseGlobals - 1
+
 // merge two arrays of pcode into one, without a line break in between
 export const merge = (pcode1, pcode2) => {
   // corner case: INPT followed by ICLR (from e.g. "reset(?key)"), INPT should be deleted
@@ -45,21 +50,21 @@ export const loadInputValue = (input) =>
 export const loadVariableValue = (variable) => {
   // predefined turtle property
   if (variable.turtle) {
-    return [pc.ldin, 0, pc.lptr, pc.ldin, variable.turtle, pc.plus, pc.lptr]
+    return [pc.ldvg, variable.routine.turtleAddress + variable.turtle]
   }
 
   // global variable
   if (variable.routine.index === 0) {
-    return [pc.ldvg, variable.routine.turtleAddress + 5 + variable.index]
+    return [pc.ldvg, variable.routine.turtleAddress + turtleProperties + variable.index]
   }
 
   // local reference variable
   if (variable.byref) {
-    return [pc.ldvr, variable.routine.index + 9, variable.index]
+    return [pc.ldvr, variable.routine.index + baseOffset, variable.index]
   }
 
   // local value variable
-  return [pc.ldvv, variable.routine.index + 9, variable.index]
+  return [pc.ldvv, variable.routine.index + baseOffset, variable.index]
 }
 
 // pcode for loading the address of a variable onto the stack
@@ -71,11 +76,11 @@ export const loadVariableAddress = (variable) => {
 
   // global variable
   if (variable.routine.index === 0) {
-    return [pc.ldag, variable.routine.turtleAddress + 5 + variable.index]
+    return [pc.ldag, variable.routine.turtleAddress + turtleProperties + variable.index]
   }
 
   // local variable
-  return [pc.ldav, variable.routine.index + 9, variable.index]
+  return [pc.ldav, variable.routine.index + baseOffset, variable.index]
 }
 
 // pcode for storing the value of a variable in memory
@@ -87,25 +92,24 @@ export const storeVariableValue = (variable, parameter = false) => {
 
   // global variable
   if (variable.routine.index === 0) {
-    if (variable.fulltype.type === 'string') {
-      return [pc.ldvg, variable.routine.turtleAddress + 5 + variable.index, pc.cstr]
-    }
-
-    return [pc.stvg, variable.routine.turtleAddress + 5 + variable.index]
+    const address = variable.routine.turtleAddress + turtleProperties + variable.index
+    return (variable.fulltype.type === 'string')
+      ? [pc.ldvg, address, pc.cstr]
+      : [pc.stvg, address]
   }
 
   // local string variable
   if (variable.fulltype.type === 'string') {
-    return [pc.ldvv, variable.routine.index + 9, variable.index, pc.cstr, pc.hclr]
+    return [pc.ldvv, variable.routine.index + baseOffset, variable.index, pc.cstr, pc.hclr]
   }
 
   // local (non-string) reference variable (not as a parameter)
   if (variable.byref && !parameter) {
-    return [pc.stvr, variable.routine.index + 9, variable.index]
+    return [pc.stvr, variable.routine.index + baseOffset, variable.index]
   }
 
   // local non-string variable
-  return [pc.stvv, variable.routine.index + 9, variable.index]
+  return [pc.stvv, variable.routine.index + baseOffset, variable.index]
 }
 
 // pcode for loading return value of a function onto the stack
@@ -297,7 +301,7 @@ const stringVariables = routine =>
 
 // pcode for initialising a global string variable
 const setupGlobalString = (variable) => {
-  const index = variable.routine.turtleAddress + 5 + variable.index
+  const index = variable.routine.turtleAddress + turtleProperties + variable.index
 
   return [
     pc.ldag,
@@ -313,7 +317,7 @@ const setupGlobalString = (variable) => {
 
 // pcode for initialising a local string variable
 const setupLocalString = (variable) => {
-  const routine = variable.routine.index + 9
+  const routine = variable.routine.index + baseOffset
   const index = variable.index
 
   return [
@@ -333,8 +337,8 @@ const setupLocalString = (variable) => {
 
 // pcode for initialising subroutine memory
 const initialiseSubroutineMemory = (routine) => {
-  const claimMemory = [pc.memc, routine.index + 9, routine.memoryNeeded]
-  const zeroMemory = [pc.ldav, routine.index + 9, 1, pc.ldin, routine.memoryNeeded, pc.zptr]
+  const claimMemory = [pc.memc, routine.index + baseOffset, routine.memoryNeeded]
+  const zeroMemory = [pc.ldav, routine.index + baseOffset, 1, pc.ldin, routine.memoryNeeded, pc.zptr]
   const claimAndZero = [claimMemory, zeroMemory]
 
   return (stringVariables(routine).length > 0)
@@ -357,7 +361,7 @@ const loadSubroutineArguments = (routine) => {
 
 // pcode for the end of a subroutine
 const subroutineEndCode = (routine) => {
-  const subAddress = routine.index + 9
+  const subAddress = routine.index + baseOffset
   const resultAddress = find.program(routine).resultAddress
   const storeFunctionResult = [pc.ldvg, subAddress, pc.stvg, resultAddress]
   const releaseMemory = [pc.memr, subAddress]
@@ -385,15 +389,15 @@ const setupGlobalMemory = (turtleAddress, memoryNeeded) =>
     0, // address of the turtle pointer
     pc.sptr,
     pc.ldin,
-    5, // number of turtle properties
+    turtleProperties, // number of turtle properties
     pc.swap,
     pc.sptr,
     pc.incr,
     pc.ldin,
-    memoryNeeded + 5, // + 5 for the turtle properties
+    memoryNeeded + turtleProperties,
     pc.zptr,
     pc.ldin,
-    turtleAddress + memoryNeeded + 5, // + 5 for the turtle properties
+    turtleAddress + memoryNeeded + turtleProperties,
     pc.stmt
   ])
 

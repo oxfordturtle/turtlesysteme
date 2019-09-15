@@ -143,7 +143,7 @@ const command = (code) => {
 
 // built-in turtle property variables
 const turtle = (code) => {
-  const test = code.match(/^(turt[xydtc])\b/i)
+  const test = code.match(/^(turt[xydatc])\b/i)
   return test ? { type: 'turtle', content: test[0] } : false
 }
 
