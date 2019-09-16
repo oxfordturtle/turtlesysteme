@@ -9,36 +9,39 @@
   }
   .tse-machine-buttons {
     display: flex;
+    button {
+      padding: $padding / 2;
+    }
     .tse-run-halt-button {
-      width: 4em;
+      width: 3.5em;
       font-weight: bold;
       margin-right: $padding;
     }
     .tse-play-pause-button {
-      width: 2.5em;
+      width: 2em;
     }
   }
   .tse-turtle-properties {
     display: flex;
+    align-items: stretch;
     margin: 0;
-    font-size: .8em;
+    font-size: .75em;
     dd, dt {
       margin: 0;
-      padding: 10px 6px;
+      padding: ($padding * 2) $padding;
       text-align: center;
     }
-    dd {
+    dt {
+      margin-left: $padding;
+    }
+    .tse-turt,
+    .tse-turt-wide {
       background: $lightgray;
       overflow: hidden;
-      &.tse-turtxy {
-        width: 3.2em;
-      }
-      &.tse-turtd {
-        width: 2.25em;
-      }
-      &.tse-turttc {
-        width: 2.5em;
-      }
+      width: 2.5em;
+    }
+    .tse-turt-wide {
+      width: 4.5em;
     }
   }
 }

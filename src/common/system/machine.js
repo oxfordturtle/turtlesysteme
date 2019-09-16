@@ -67,7 +67,6 @@ export const run = (pcode, options, elements) => {
   vcanvas.sizey = 1000
   vcanvas.width = 1000
   vcanvas.height = 1000
-  vcanvas.degrees = 360
   vcanvas.doubled = false
   component.canvas(0, 0, 1000, 1000)
   // setup runtime variables (global to this module)
@@ -540,7 +539,7 @@ const execute = (pcode, line, code, options) => {
           d = stack.pop()
           c = stack.pop()
           b = stack.pop()
-          a = (b / c) * (2 * Math.PI) / vcanvas.degrees
+          a = (b / c) * (2 * Math.PI) / memory[memory[0] + turtaIndex]
           stack.push(Math.round(Math.sin(a) * d))
           break
 
@@ -548,7 +547,7 @@ const execute = (pcode, line, code, options) => {
           d = stack.pop()
           c = stack.pop()
           b = stack.pop()
-          a = (b / c) * (2 * Math.PI) / vcanvas.degrees
+          a = (b / c) * (2 * Math.PI) / memory[memory[0] + turtaIndex]
           stack.push(Math.round(Math.cos(a) * d))
           break
 
@@ -556,7 +555,7 @@ const execute = (pcode, line, code, options) => {
           d = stack.pop()
           c = stack.pop()
           b = stack.pop()
-          a = (b / c) * (2 * Math.PI) / vcanvas.degrees
+          a = (b / c) * (2 * Math.PI) / memory[memory[0] + turtaIndex]
           stack.push(Math.round(Math.tan(a) * d))
           break
 
@@ -564,7 +563,7 @@ const execute = (pcode, line, code, options) => {
           d = stack.pop()
           c = stack.pop()
           b = stack.pop()
-          a = vcanvas.degrees / (2 * Math.PI)
+          a = memory[memory[0] + turtaIndex] / (2 * Math.PI)
           stack.push(Math.round(Math.asin(b / c) * d * a))
           break
 
@@ -572,7 +571,7 @@ const execute = (pcode, line, code, options) => {
           d = stack.pop()
           c = stack.pop()
           b = stack.pop()
-          a = vcanvas.degrees / (2 * Math.PI)
+          a = memory[memory[0] + turtaIndex] / (2 * Math.PI)
           stack.push(Math.round(Math.acos(b / c) * d * a))
           break
 
@@ -580,7 +579,7 @@ const execute = (pcode, line, code, options) => {
           d = stack.pop()
           c = stack.pop()
           b = stack.pop()
-          a = vcanvas.degrees / (2 * Math.PI)
+          a = memory[memory[0] + turtaIndex] / (2 * Math.PI)
           stack.push(Math.round(Math.atan2(b, c) * d * a))
           break
 
@@ -1305,10 +1304,11 @@ const execute = (pcode, line, code, options) => {
 
         case pc.angl:
           a = stack.pop()
-          b = Math.round(a + memory[memory[0] + 3] * a / vcanvas.degrees)
-          memory[memory[0] + 3] = b % a
-          replies.turtd(memory[memory[0] + 3])
-          vcanvas.degrees = a
+          b = Math.round(a + memory[memory[0] + turtdIndex] * a / memory[memory[0] + turtaIndex])
+          memory[memory[0] + turtdIndex] = b % a
+          memory[memory[0] + turtaIndex] = a
+          replies.turtd(b % a)
+          replies.turta(a)
           break
 
         case pc.curs:
@@ -1337,13 +1337,13 @@ const execute = (pcode, line, code, options) => {
 
         case pc.sety:
           a = stack.pop()
-          memory[memory[0] + 2] = a
+          memory[memory[0] + turtyIndex] = a
           replies.turty(a)
           coords.push([memory[memory[0] + turtxIndex], memory[memory[0] + turtyIndex]])
           break
 
         case pc.setd:
-          a = stack.pop() % vcanvas.degrees
+          a = stack.pop() % memory[memory[0] + turtaIndex]
           memory[memory[0] + turtdIndex] = a
           replies.turtd(a)
           break
@@ -1426,11 +1426,11 @@ const execute = (pcode, line, code, options) => {
           c = stack.pop() // distance
           d = memory[memory[0] + turtdIndex] // turtle direction
           // work out final y coordinate
-          b = Math.cos(d * Math.PI / (vcanvas.degrees / 2))
+          b = Math.cos(d * Math.PI / (memory[memory[0] + turtaIndex] / 2))
           b = -Math.round(b * c)
           b += memory[memory[0] + turtyIndex]
           // work out final x coordinate
-          a = Math.sin(d * Math.PI / (vcanvas.degrees / 2))
+          a = Math.sin(d * Math.PI / (memory[memory[0] + turtaIndex] / 2))
           a = Math.round(a * c)
           a += memory[memory[0] + turtxIndex]
           if (runtime.pendown) {
@@ -1448,11 +1448,11 @@ const execute = (pcode, line, code, options) => {
           c = stack.pop() // distance
           d = memory[memory[0] + turtdIndex] // turtle direction
           // work out final y coordinate
-          b = Math.cos(d * Math.PI / (vcanvas.degrees / 2))
+          b = Math.cos(d * Math.PI / (memory[memory[0] + turtaIndex] / 2))
           b = Math.round(b * c)
           b += memory[memory[0] + turtyIndex]
           // work out final x coordinate
-          a = Math.sin(d * Math.PI / (vcanvas.degrees / 2))
+          a = Math.sin(d * Math.PI / (memory[memory[0] + turtaIndex] / 2))
           a = -Math.round(a * c)
           a += memory[memory[0] + turtxIndex]
           if (runtime.pendown) {
@@ -1467,14 +1467,14 @@ const execute = (pcode, line, code, options) => {
           break
 
         case pc.left:
-          a = (memory[memory[0] + turtdIndex] - stack.pop()) % vcanvas.degrees
+          a = (memory[memory[0] + turtdIndex] - stack.pop()) % memory[memory[0] + turtaIndex]
           memory[memory[0] + turtdIndex] = a
           replies.turtd(a)
           break
 
         case pc.rght:
-          a = (memory[memory[0] + 3] + stack.pop()) % vcanvas.degrees
-          memory[memory[0] + 3] = a
+          a = (memory[memory[0] + turtdIndex] + stack.pop()) % memory[memory[0] + turtaIndex]
+          memory[memory[0] + turtdIndex] = a
           replies.turtd(a)
           break
 
@@ -1499,13 +1499,13 @@ const execute = (pcode, line, code, options) => {
             }
             c /= 2
           }
-          c = Math.round(c * vcanvas.degrees / Math.PI / 2) % vcanvas.degrees
-          memory[memory[0] + 3] = c
+          c = Math.round(c * memory[memory[0] + turtaIndex] / Math.PI / 2) % memory[memory[0] + turtaIndex]
+          memory[memory[0] + turtdIndex] = c
           replies.turtd(c)
           break
 
         case pc.rmbr:
-          coords.push([memory[memory[0] + 1], memory[memory[0] + 2]])
+          coords.push([memory[memory[0] + turtxIndex], memory[memory[0] + turtyIndex]])
           break
 
         case pc.frgt:
@@ -1558,8 +1558,8 @@ const execute = (pcode, line, code, options) => {
         case pc.box:
           d = (stack.pop() !== 0) // border
           c = stack.pop() // fill colour
-          b = memory[memory[0] + 2] + stack.pop() // end y coordinate
-          a = memory[memory[0] + 1] + stack.pop() // end x coordinate
+          b = memory[memory[0] + turtyIndex] + stack.pop() // end y coordinate
+          a = memory[memory[0] + turtxIndex] + stack.pop() // end x coordinate
           component.box(turtle(), turtx(a), turty(b), hex(c), d)
           if (runtime.update) drawCount += 1
           break
@@ -1699,11 +1699,12 @@ const readlineProto = (timeoutID, pcode, line, code, options, event) => {
 
 // get current turtle properties
 const turtle = () => ({
-  x: turtx(memory[memory[0] + 1]),
-  y: turty(memory[memory[0] + 2]),
-  d: memory[memory[0] + 3],
-  t: turtt(memory[memory[0] + 4]),
-  c: hex(memory[memory[0] + 5])
+  x: turtx(memory[memory[0] + turtxIndex]),
+  y: turty(memory[memory[0] + turtyIndex]),
+  d: memory[memory[0] + turtdIndex],
+  a: memory[memory[0] + turtaIndex],
+  t: turtt(memory[memory[0] + turttIndex]),
+  c: hex(memory[memory[0] + turtcIndex])
 })
 
 // convert turtx to virtual canvas coordinate

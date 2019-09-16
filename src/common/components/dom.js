@@ -18,6 +18,15 @@ export const createInput = (type, name) => {
   return input
 }
 
+// create a text input element
+export const createTextInput = (className, placeholder) => {
+  const input = document.createElement('input')
+  input.type = 'text'
+  input.classList.add(className)
+  input.placeholder = placeholder
+  return input
+}
+
 // create an optgroup element
 export const createOptgroup = (label, content) => {
   const optgroup = document.createElement('optgroup')

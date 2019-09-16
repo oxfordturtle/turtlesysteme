@@ -1,54 +1,53 @@
 /*
 Control bars for the machine half of the system.
 */
+import * as dom from './dom'
 import canvas from './machine/canvas'
 import console from './machine/console'
 import output from './machine/output'
 import languages from 'common/constants/languages'
 import { send, on } from 'common/system/state'
 
-// program controls element
-export const program = document.createElement('div')
+// program controls
+const languageSelect = dom.createElement('select', 'tse-language-select', languages.map((language) => {
+  return dom.createOption(language, language)
+}))
 
-// machine controls element
-export const machine = document.createElement('div')
+const nameInput = dom.createTextInput('tse-filename-input', 'filename')
 
-// initialise the program controls element
-program.classList.add('tse-controls')
-program.innerHTML = `
-  <select class="tse-language-select" data-bind="language-select">${languages.map(x => `<option value="${x}">${x}</option>`).join('')}</select>
-  <input class="tse-filename-input" data-bind="name-input" type="text" placeholder="filename">`
+export const program = dom.createElement('div', 'tse-controls', [languageSelect, nameInput])
 
-// initialise the machine controls element
-machine.classList.add('tse-controls')
-machine.innerHTML = `
-  <div class="tse-machine-buttons">
-    <button class="tse-run-halt-button" data-bind="run-halt">RUN</button>
-    <button class="tse-play-pause-button" data-bind="play-pause">&#10074;&#10074;</button>
-  </div>
-  <dl class="tse-turtle-properties">
-    <dt>X</dt>
-    <dd class="tse-turtxy" data-bind="turtx">500</dd>
-    <dt>Y</dt>
-    <dd class="tse-turtxy" data-bind="turty">500</dd>
-    <dt>Direction</dt>
-    <dd class="tse-turtd" data-bind="turtd">0</dd>
-    <dt>Thickness</dt>
-    <dd class="tse-turttc" data-bind="turtt">2</dd>
-    <dt>Colour</dt>
-    <dd class="tse-turttc" style="background:#000" data-bind="turtc"></dd>
-  </dl>`
+// machine controls
+const runHalt = dom.createElement('button', 'tse-run-halt-button', 'RUN')
 
-// grab subelements of interest
-const nameInput = program.querySelector('[data-bind="name-input"]')
-const languageSelect = program.querySelector('[data-bind="language-select"]')
-const runHalt = machine.querySelector('[data-bind="run-halt"]')
-const playPause = machine.querySelector('[data-bind="play-pause"]')
-const turtx = machine.querySelector('[data-bind="turtx"]')
-const turty = machine.querySelector('[data-bind="turty"]')
-const turtd = machine.querySelector('[data-bind="turtd"]')
-const turtt = machine.querySelector('[data-bind="turtt"]')
-const turtc = machine.querySelector('[data-bind="turtc"]')
+const playPause = dom.createElement('button', 'tse-play-pause-button', '&#10074;&#10074;')
+
+const turtx = dom.createElement('dd', 'tse-turt-wide', '500')
+
+const turty = dom.createElement('dd', 'tse-turt-wide', '500')
+
+const turtda = dom.createElement('dd', 'tse-turt-wide', '0/360')
+
+const turtt = dom.createElement('dd', 'tse-turt', '2')
+
+const turtc = dom.createElement('dd', 'tse-turt')
+turtc.style.background = '#000'
+
+export const machine = dom.createElement('div', 'tse-controls', [
+  dom.createElement('div', 'tse-machine-buttons', [runHalt, playPause]),
+  dom.createElement('dl', 'tse-turtle-properties', [
+    dom.createElement('dt', null, 'X'),
+    turtx,
+    dom.createElement('dt', null, 'Y'),
+    turty,
+    dom.createElement('dt', null, 'Direction'),
+    turtda,
+    dom.createElement('dt', null, 'Thickness'),
+    turtt,
+    dom.createElement('dt', null, 'Colour'),
+    turtc
+  ])
+])
 
 // setup event listeners on interactive elements
 nameInput.addEventListener('input', (e) => {
@@ -83,7 +82,7 @@ on('machine-started', () => {
   playPause.innerHTML = '&#10074;&#10074;'
   turtx.innerHTML = '500'
   turty.innerHTML = '500'
-  turtd.innerHTML = '0'
+  turtda.innerHTML = '0/360'
   turtt.innerHTML = '2'
   turtc.style.background = '#000'
 })
@@ -110,7 +109,13 @@ on('turty-changed', (y) => {
 })
 
 on('turtd-changed', (d) => {
-  turtd.innerHTML = d.toString(10)
+  const bits = turtda.innerHTML.split('/')
+  turtda.innerHTML = `${d.toString(10)}/${bits[1]}`
+})
+
+on('turta-changed', (a) => {
+  const bits = turtda.innerHTML.split('/')
+  turtda.innerHTML = `${bits[1]}/${a.toString(10)}`
 })
 
 on('turtt-changed', (t) => {
