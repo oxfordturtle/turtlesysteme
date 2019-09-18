@@ -28,7 +28,7 @@ import * as machine from './machine'
 // current version (should match the value in the package.json file)
 // this is used at the end of this module to check against the Turtle web site, and advise the user
 // if their version is out of date
-const version = '1.0.0'
+const version = '1.1.0'
 
 // function for "sending" signals to this module, asking it to update the state
 export const send = (signal, data) => {
