@@ -37,10 +37,6 @@ def setup():
     colour(col)
     polygon(4)
 
-  def text(s: str):
-    colour(black)
-    print(s, 0, 20)
-
   colour(lightred)
   setxy(0, 850)
   drawxy(1000, 0)
@@ -51,11 +47,12 @@ def setup():
   setxy(850, 850)
   drawxy(0, 50)
   setxy(10, 858)
-  text('Left-click to draw, right-click to fill')
+  colour(black)
+  print('Left-click to draw, right-click to fill', 0, 20)
   setxy(450 + 10, 858)
-  text('Brush width:')
+  print('Brush width:', 0, 20)
   setxy(850 + 10, 858)
-  text('Colour:')
+  print('Colour:', 0, 20)
   setxy(0, 900)
   for count in range(1, 21, 1):
     square(rgb(count))

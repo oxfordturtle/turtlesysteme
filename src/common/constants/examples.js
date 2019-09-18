@@ -47,7 +47,8 @@ export const names = {
   Flashlights: 'Flashlights (using Booleans)',
   RefParams: 'Reference parameters',
   Balls3D: '3D colour effects',
-  StringFunctions: 'String functions',
+  StringFunctions: 'Standard string functions',
+  UserStringFunctions: 'User-defined string functions',
   MathFunctions: 'Mathematical functions',
   TrigGraphs: 'Trigonometric graphs',
   // examples 4
@@ -73,7 +74,7 @@ export const names = {
   NoughtsAndCrosses: 'Noughts and crosses',
   SimpleDraw: 'Drawing to the mouse',
   PaintApp: 'Painting application',
-  FiveTurtles: 'Five turtles moving to the mouse',
+  MultipleTurtles: 'Multiple turtles and varying ANGLES',
   // examples 6
   AimCannon: 'Firing a cannon (manual)',
   AutoCannon: 'Firing a cannon (automatic)',
@@ -180,6 +181,7 @@ export const menu = [
       'RefParams',
       'Balls3D',
       'StringFunctions',
+      'UserStringFunctions',
       'MathFunctions',
       'TrigGraphs'
     ]
@@ -215,7 +217,7 @@ export const menu = [
       'NoughtsAndCrosses',
       'SimpleDraw',
       'PaintApp',
-      'FiveTurtles'
+      'MultipleTurtles'
     ]
   },
   {

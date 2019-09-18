@@ -90,7 +90,7 @@ const assemble = (line, index, decimal) => {
 }
 
 const cell = (content, decimal) => {
-  if (content === null) {
+  if (content === null || content === undefined) {
     return dom.createElement('div', null, ':(')
   } else if (decimal === undefined) {
     return dom.createElement('div', null, content)

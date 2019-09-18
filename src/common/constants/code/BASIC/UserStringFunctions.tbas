@@ -1,0 +1,65 @@
+REM UserStringFunctions
+
+OUTPUT(TRUE, CREAM, TRUE)
+WRITELN("Some User-Defined String Functions")
+PROCprocess("the quick brown fox jumps,")
+PROCprocess("OVER THE LAZY DOG.")
+END
+
+DEF FNreverse$(s$)
+  LOCAL posn%, t$
+  t$ = ""
+  FOR posn% = LEN(s$) TO 1 STEP -1
+    t$ = t$ + MID$(s$, posn%, 1)
+  NEXT
+= t$
+
+DEF FNrevrecurse$(s$)
+  IF s$ = "" THEN
+    result$ = s$
+  ELSE
+    result$ = FNrevrecurse$(DEL$(s$, 1, 1)) + MID$(s$, 1, 1)
+  ENDIF
+= result$
+
+DEF FNinitcaps$(s$)
+  LOCAL posn%, t$
+  s$ = LCASE$(s$)
+  t$ = CHR$(ASC(MID$(s$, 1, 1)) - 32)
+  FOR posn% = 2 TO LEN(s$)
+    IF (MID$(s$, posn% - 1, 1) = " ") THEN
+      t$ = t$ + CHR$(ASC(MID$(s$, posn%, 1)) - 32)
+    ELSE
+      t$ = t$ + MID$(s$, posn%, 1)
+    ENDIF
+  NEXT
+= t$
+
+DEF FNcaesar$(s$, n%)
+  LOCAL posn%, c$, t$
+  t$ = ""
+  FOR posn% = 1 TO LEN(s$)
+    c$ = MID$(s$, posn%, 1)
+    IF (c$ >= "A") AND (c$ <= "Z") THEN
+      c$ = CHR$(ASC(c$) + n%)
+      IF c$ > "Z" THEN c$ = CHR$(ASC(c$) - 26)
+    ENDIF
+    IF (c$ >= "a") AND (c$ <= "z") THEN
+      c$ = CHR$(ASC(c$) + n%)
+      IF c$ > "z" THEN c$ = CHR$(ASC(c$) - 26)
+    ENDIF
+    t$ = t$ + c$
+  NEXT
+= t$
+
+DEF PROCprocess(s$)
+  WRITELN("")
+  WRITELN("ORIGINAL STRING:            '" + s$ + "'")
+  WRITELN("REVERSED (by iteration):    '" + FNreverse$(s$) + "'")
+  WRITELN("REVERSED (by recursion):    '" + FNrevrecurse$(s$) + "'")
+  WRITELN("INITIAL CAPITAL ALL WORDS:  '" + FNinitcaps$(s$) + "'")
+  WRITELN("CAESAR CIPHER (1 letter):   '" + FNcaesar$(s$, 1) + "'")
+  WRITELN("CAESAR DECRYPT (1+25 = 26): '" + FNcaesar$(FNcaesar$(s$, 1), 25) + "'")
+  WRITELN("CAESAR CIPHER (4 letters):  '" + FNcaesar$(s$, 4) + "''")
+  WRITELN("CAESAR DECRYPT (4+22 = 26): '" + FNcaesar$(FNcaesar$(s$, 4), 22) + "'")
+ENDPROC

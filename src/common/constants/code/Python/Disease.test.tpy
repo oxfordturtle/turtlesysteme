@@ -1,0 +1,47 @@
+# Disease
+
+width: int = 100
+height: int = 100
+susceptible: int = lightgreen
+infected: int = red
+recovered: int = blue
+startradius: int = 10
+infectprob: int = 1
+immuneprob: int = 2
+recoverprob: int = 15
+numinfected: int = 0
+x: int
+y: int
+n: int
+
+def infect(x: int, y: int):
+  global numinfected
+  pixset(x, y, infected)
+  numinfected = numinfected + 1
+
+canvas(0, 0, width, height)
+resolution(width, height)
+noupdate()
+for x in range(0, width, 1):
+  for y in range(0, height, 1):
+    if ((randint(0, 100) < infectprob) and (hypot(x - width / 2, y - height / 2, 1) <= startradius)):
+      infect(x, y)
+    else:
+      if (randint(0, 100) < immuneprob):
+        pixset(x, y, recovered)
+      else:
+        pixset(x, y, susceptible)
+update()
+while (numinfected > 0):
+  x = randint(0, width)
+  y = randint(0, height)
+  if (pixcol(x, y) == infected):
+    if (randint(0, 100) < recoverprob):
+      pixset(x, y, recovered)
+      numinfected = numinfected - 1
+  else:
+    n = randint(0, 4) * 2 + 1
+    x = x + n // 3 - 1
+    y = y + n % 3 - 1
+    if (pixcol(x, y) == susceptible):
+      infect(x, y)

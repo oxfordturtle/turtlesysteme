@@ -12,8 +12,8 @@ import TypingTestKeysB from './BASIC/TypingTestKeys.json'
 import TypingTestKeysP from './Pascal/TypingTestKeys.json'
 import NoughtsAndCrossesB from './BASIC/NoughtsAndCrosses.json'
 import NoughtsAndCrossesP from './Pascal/NoughtsAndCrosses.json'
-import FiveTurtlesB from './BASIC/FiveTurtles.json'
-import FiveTurtlesP from './Pascal/FiveTurtles.json'
+import MultipleTurtlesB from './BASIC/MultipleTurtles.json'
+import MultipleTurtlesP from './Pascal/MultipleTurtles.json'
 import LifeArraysB from './BASIC/LifeArrays.json'
 import LifeArraysP from './Pascal/LifeArrays.json'
 import AutomataB from './BASIC/Automata.json'
@@ -67,7 +67,7 @@ export default {
   TypingTest: { BASIC: TypingTestB, Pascal: TypingTestP },
   TypingTestKeys: { BASIC: TypingTestKeysB, Pascal: TypingTestKeysP },
   NoughtsAndCrosses: { BASIC: NoughtsAndCrossesB, Pascal: NoughtsAndCrossesP },
-  FiveTurtles: { BASIC: FiveTurtlesB, Pascal: FiveTurtlesP },
+  MultipleTurtles: { BASIC: MultipleTurtlesB, Pascal: MultipleTurtlesP },
   LifeArrays: { BASIC: LifeArraysB, Pascal: LifeArraysP },
   Automata: { BASIC: AutomataB, Pascal: AutomataP },
   BrownianMotion: { BASIC: BrownianMotionB, Pascal: BrownianMotionP },

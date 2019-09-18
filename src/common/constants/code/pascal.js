@@ -32,6 +32,7 @@ import Flashlights from './Pascal/Flashlights.tpas'
 import RefParams from './Pascal/RefParams.tpas'
 import Balls3D from './Pascal/Balls3D.tpas'
 import StringFunctions from './Pascal/StringFunctions.tpas'
+import UserStringFunctions from './Pascal/UserStringFunctions.tpas'
 import MathFunctions from './Pascal/MathFunctions.tpas'
 import TrigGraphs from './Pascal/TrigGraphs.tpas'
 // examples 4
@@ -57,7 +58,7 @@ import SnakeGame from './Pascal/SnakeGame.tpas'
 import NoughtsAndCrosses from './Pascal/NoughtsAndCrosses.tpas'
 import SimpleDraw from './Pascal/SimpleDraw.tpas'
 import PaintApp from './Pascal/PaintApp.tpas'
-import FiveTurtles from './Pascal/FiveTurtles.tpas'
+import MultipleTurtles from './Pascal/MultipleTurtles.tpas'
 // examples 6
 import AimCannon from './Pascal/AimCannon.tpas'
 import AutoCannon from './Pascal/AutoCannon.tpas'
@@ -149,6 +150,7 @@ export default {
   RefParams,
   Balls3D,
   StringFunctions,
+  UserStringFunctions,
   MathFunctions,
   TrigGraphs,
   // examples 4
@@ -174,7 +176,7 @@ export default {
   NoughtsAndCrosses,
   SimpleDraw,
   PaintApp,
-  FiveTurtles,
+  MultipleTurtles,
   // examples 6
   AimCannon,
   AutoCannon,

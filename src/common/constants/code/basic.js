@@ -32,6 +32,7 @@ import Flashlights from './BASIC/Flashlights.tbas'
 import RefParams from './BASIC/RefParams.tbas'
 import Balls3D from './BASIC/Balls3D.tbas'
 import StringFunctions from './BASIC/StringFunctions.tbas'
+import UserStringFunctions from './BASIC/UserStringFunctions.tbas'
 import MathFunctions from './BASIC/MathFunctions.tbas'
 import TrigGraphs from './BASIC/TrigGraphs.tbas'
 // examples 4
@@ -57,7 +58,7 @@ import SnakeGame from './BASIC/SnakeGame.tbas'
 import NoughtsAndCrosses from './BASIC/NoughtsAndCrosses.tbas'
 import SimpleDraw from './BASIC/SimpleDraw.tbas'
 import PaintApp from './BASIC/PaintApp.tbas'
-import FiveTurtles from './BASIC/FiveTurtles.tbas'
+import MultipleTurtles from './BASIC/MultipleTurtles.tbas'
 // examples 6
 import AimCannon from './BASIC/AimCannon.tbas'
 import AutoCannon from './BASIC/AutoCannon.tbas'
@@ -149,6 +150,7 @@ export default {
   RefParams,
   Balls3D,
   StringFunctions,
+  UserStringFunctions,
   MathFunctions,
   TrigGraphs,
   // examples 4
@@ -174,7 +176,7 @@ export default {
   NoughtsAndCrosses,
   SimpleDraw,
   PaintApp,
-  FiveTurtles,
+  MultipleTurtles,
   // examples 6
   AimCannon,
   AutoCannon,

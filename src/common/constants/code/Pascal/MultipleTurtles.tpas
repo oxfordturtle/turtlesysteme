@@ -1,0 +1,83 @@
+PROGRAM MultipleTurtles;
+CONST numturtles = 5;
+      x = 1;
+      y = 2;
+      d = 3;
+      a = 4;
+      t = 5;
+      c = 6;
+VAR turtles: array[1..numturtles, x..c] of integer;
+    i: integer;
+
+  Procedure setupturtles;
+  Var i: integer;
+  Begin
+    for i := 1 to numturtles do
+      begin
+        turtles[i, x] := 10000;
+        turtles[i, y] := 70000;
+        turtles[i, d] := 35 + i * 10;
+        turtles[i, a] := 360;
+        turtles[i, t] := 5 + i;
+        turtles[i, c] := rgb(i)
+      end
+  End;
+
+  Procedure menu;
+  Var i: integer;
+  Begin
+    for i := 1 to numturtles do
+      begin
+        setxy(5000, i * 10000);
+        colour(rgb(i));
+        blot(5000)
+      end
+  End;
+
+  Procedure handleclick;
+  Var col, i, thist: integer;
+      inita, initd, nexta, nextd: integer;
+  Begin
+    col := pixcol(?mousex, ?mousey);
+    thist := 0;
+    for i := 1 to numturtles do
+      if col = rgb(i) then
+        thist := i;
+    if thist > 0 then
+      begin
+        newturtle(turtles[thist]);
+        write('Turtle ' + str(thist) + ' changing direction,');
+        write('  from ' + str(turtles[thist, d]) + '/' + str(turtles[thist, a]));
+        angles(random(46) + 45);
+        writeln('  to ' + str(turtles[thist, d]) + '/' + str(turtles[thist, a]));
+        pause(200)
+      end
+  End;
+
+BEGIN
+  canvas(0, 0, 100000, 100000);
+  setxy(2500, 80000);
+  print('Click on a circle to alter the ANGLES setting', 0, 36);
+  setxy(2500, 86000);
+  print('of the corresponding turtle. Its direction will', 0, 36);
+  setxy(2500, 92000);
+  print('then change to the closest possible angle.', 0, 36);
+  for i := 1 to numturtles do
+    begin
+      setxy(10000, 70000);
+      direction(35 + i * 10);
+      forward(110000)
+    end;
+  menu;
+  setupturtles;
+  repeat
+    for i := 1 to numturtles do
+      begin
+       newturtle(turtles[i]);
+       forward(100)
+      end;
+    pause(50);
+    if ?click > 128 then
+      handleclick
+  until ?key = \escape
+END.

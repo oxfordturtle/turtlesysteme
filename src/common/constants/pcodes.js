@@ -68,7 +68,7 @@ export default [
   { code: 0x3B, args: 0, str: 'INSS' },
   { code: 0x3C, args: 0, str: 'POSS' },
   { code: 0x3D, args: 0, str: 'REPL' },
-  undefined, // 0x3E
+  { code: 0x3E, args: 0, str: 'CORD' },
   undefined, // 0x3F
   // 0x40s - comparison operators
   { code: 0x40, args: 0, str: 'EQAL' },

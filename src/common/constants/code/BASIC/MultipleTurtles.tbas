@@ -1,0 +1,71 @@
+REM MultipleTurtles
+
+CONST NUMTURTLES% = 5
+CONST X% = 0
+CONST Y% = 1
+CONST D% = 2
+CONST A% = 3
+CONST T% = 4
+CONST C% = 5
+DIM turtles%(NUMTURTLES%, C%)
+CANVAS(0, 0, 100000, 100000)
+SETXY(2500, 80000)
+PRINT("Click on a circle to alter the ANGLES setting", 0, 36)
+SETXY(2500, 86000)
+PRINT("of the corresponding turtle. Its direction will", 0, 36)
+SETXY(2500, 92000)
+PRINT("then change to the closest possible angle.", 0, 36)
+FOR i% = 1 TO NUMTURTLES%
+  SETXY(10000, 70000)
+  DIRECTION(35 + i% * 10)
+  FORWARD(110000)
+NEXT
+PROCmenu
+PROCsetupturtles
+REPEAT
+  FOR i% = 1 TO NUMTURTLES%
+    NEWTURTLE(turtles%(i%))
+    FORWARD(100)
+  NEXT
+  PAUSE(50)
+  IF ?CLICK > 128 THEN PROChandleclick
+UNTIL ?KEY = \ESCAPE
+END
+
+DEF PROCsetupturtles
+  LOCAL i%
+  FOR i% = 1 TO NUMTURTLES%
+    turtles%(i%, X%) = 10000
+    turtles%(i%, Y%) = 70000
+    turtles%(i%, D%) = 35 + i% * 10
+    turtles%(i%, A%) = 360
+    turtles%(i%, T%) = 5 + i%
+    turtles%(i%, C%) = RGB(i%)
+  NEXT
+ENDPROC
+
+DEF PROCmenu
+  LOCAL i%
+  FOR i% = 1 TO NUMTURTLES%
+    SETXY(5000, i% * 10000)
+    COLOUR(RGB(i%))
+    BLOT(5000)
+  NEXT
+ENDPROC
+
+DEF PROChandleclick
+  LOCAL col%, i%, thist%
+  col% = PIXCOL(?MOUSEX, ?MOUSEY)
+  thist% = 0
+  FOR i% = 1 TO NUMTURTLES%
+    IF col% = RGB(i%) THEN thist% = i%
+  NEXT
+  IF thist% > 0 THEN
+    NEWTURTLE(turtles%(thist%))
+    WRITE("Turtle " + STR$(thist%) + " changing direction,")
+    WRITE("  from " + STR$(turtles%(thist%, D%)) + "/" + STR$(turtles%(thist%, A%)))
+    ANGLES(RND(46) + 46)
+    WRITELN("  to " + STR$(turtles%(thist%, D%)) + "/" + STR$(turtles%(thist%, A%)))
+    PAUSE(200)
+  ENDIF
+ENDPROC

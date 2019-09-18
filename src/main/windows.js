@@ -28,8 +28,6 @@ const browserWindow = (title, width, height) =>
 
 // function to create a window
 export const create = (id) => {
-  const isDevelopment = process.env.NODE_ENV !== 'production'
-
   switch (id) {
     // create the main system window
     case 'system':
@@ -52,10 +50,9 @@ export const create = (id) => {
       break
   }
 
-  // set page and open dev tools in development
-  if (isDevelopment) {
+  // set page
+  if (process.env.NODE_ENV !== 'production') {
     windows[id].loadURL(`http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`)
-    if (id === 'system') windows.system.webContents.openDevTools()
   } else {
     windows[id].loadFile('index.html')
   }

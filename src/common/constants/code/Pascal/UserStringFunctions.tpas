@@ -1,0 +1,78 @@
+PROGRAM UserStringFunctions;
+
+  Function reverse(s: string): string;
+  Var posn: integer;
+      t: string;
+  Begin
+    t := '';
+    for posn := length(s) downto 1 do
+      t := t + copy(s, posn, 1);
+    result := t
+  End;
+
+  Function revrecurse(s: string): string;
+  Begin
+    if s = '' then
+      result := s
+    else
+      result := reverse(delete(s, 1, 1)) + copy(s, 1, 1)
+  End;
+
+  Function initcaps(s: string): string;
+  Var posn: integer;
+      t: string;
+  Begin
+    s := lowercase(s);
+    t := chr(ord(copy(s, 1, 1)) - 32);
+    for posn := 2 to length(s) do
+      if (copy(s, posn - 1, 1) = ' ') then
+        t := t + chr(ord(copy(s, posn, 1)) - 32)
+      else
+        t := t + copy(s, posn, 1);
+    result := t
+  End;
+
+  Function caesar(s: string; n: integer): string;
+  Var posn: integer;
+      c, t: string;
+  Begin
+    t := '';
+    for posn := 1 to length(s) do
+      begin
+        c := copy(s, posn, 1);
+        if (c >= 'A') and (c <= 'Z') then
+          begin
+            c := chr(ord(c) + n);
+            if c > 'Z' then
+              c := chr(ord(c) - 26)
+          end;
+        if (c >= 'a') and (c <= 'z') then
+          begin
+            c := chr(ord(c) + n);
+            if c > 'z' then
+              c := chr(ord(c) - 26)
+          end;
+        t := t + c
+      end;
+    result := t
+  End;
+
+  Procedure process(s: string);
+  Begin
+    writeln('');
+    writeln('ORIGINAL STRING:            "' + s + '"');
+    writeln('REVERSED (by iteration):    "' + reverse(s) + '"');
+    writeln('REVERSED (by recursion):    "' + revrecurse(s) + '"');
+    writeln('INITIAL CAPITAL ALL WORDS:  "' + initcaps(s) + '"');
+    writeln('CAESAR CIPHER (1 letter):   "' + caesar(s, 1) + '"');
+    writeln('CAESAR DECRYPT (1+25 = 26): "' + caesar(caesar(s, 1), 25) + '"');
+    writeln('CAESAR CIPHER (4 letters):  "' + caesar(s, 4) + '"');
+    writeln('CAESAR DECRYPT (4+22 = 26): "' + caesar(caesar(s, 4), 22) + '"')
+  End;
+
+BEGIN
+  output(true, cream, true);
+  writeln('Some User-Defined String Functions');
+  process('the quick brown fox jumps,');
+  process('OVER THE LAZY DOG.')
+END.

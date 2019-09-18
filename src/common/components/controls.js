@@ -125,3 +125,6 @@ on('turtt-changed', (t) => {
 on('turtc-changed', (c) => {
   turtc.style.background = c
 })
+
+// tell the machine component what elements to use
+send('set-machine-elements', { canvas, console, output })

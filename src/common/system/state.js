@@ -22,6 +22,7 @@ import extensions from 'common/constants/extensions'
 import languages from 'common/constants/languages'
 import compile from 'common/compiler/compile'
 import lexer from 'common/compiler/lexer'
+import * as component from './component'
 import * as machine from './machine'
 
 // current version (should match the value in the package.json file)
@@ -47,6 +48,11 @@ export const send = (signal, data) => {
         reply('simple-changed', get('simple'))
         reply('intermediate-changed', get('intermediate'))
         reply('advanced-changed', get('advanced'))
+        break
+
+      case 'reset':
+        window.localStorage.clear()
+        window.location.reload()
         break
 
       case 'new-program':
@@ -137,6 +143,10 @@ export const send = (signal, data) => {
           }
           reply('file-changed')
         })
+        break
+
+      case 'test-all-examples':
+        testExampleThenNext(0)
         break
 
       case 'load-remote-file':
@@ -305,12 +315,16 @@ export const send = (signal, data) => {
         reply('help-options-changed', get('help-options'))
         break
 
+      case 'set-machine-elements':
+        component.init(data)
+        break
+
       case 'machine-run-halt':
         if (machine.isRunning()) {
           machine.halt()
         } else {
           maybeCompile()
-          machine.run(get('pcode'), get('machine-options'), data)
+          machine.run(get('pcode'), get('machine-options'))
         }
         break
 
@@ -336,6 +350,17 @@ export const send = (signal, data) => {
     // catch any error, and send it as a reply, so that any module can do what they want with it
     // what currently happens is the main module creates a popup showing the error
     reply('error', error)
+  }
+}
+
+// test example at given index, then set timeout to test the next one
+const testExampleThenNext = (index) => {
+  const names = Object.keys(examples.names)
+  if (machine.isRunning()) machine.halt()
+  send('set-example', names[index])
+  send('machine-run-halt')
+  if (index < names.length - 1) {
+    window.setTimeout(testExampleThenNext.bind(null, index + 1), 3000)
   }
 }
 

@@ -114,7 +114,9 @@ export const storeVariableValue = (variable, parameter = false) => {
 
 // pcode for loading return value of a function onto the stack
 export const loadFunctionReturnValue = routine =>
-  [pc.ldvv, find.program(routine).resultAddress, 1]
+  routine.returns === 'string'
+    ? [pc.ldvv, find.program(routine).resultAddress, 1, pc.ldin, 0, pc.case]
+    : [pc.ldvv, find.program(routine).resultAddress, 1]
 
 // pcode for an expression operator
 export const applyOperator = (type) => {

@@ -30,9 +30,7 @@ export const dump = () => {
 }
 
 // run the machine
-export const run = (pcode, options, elements) => {
-  // initialise the component
-  component.init(elements)
+export const run = (pcode, options) => {
   // clear the console and output
   component.resolution(1000, 1000)
   component.console(true, '#FFFFFF')
@@ -702,6 +700,14 @@ const execute = (pcode, line, code, options) => {
           } else {
             makeHeapString(a.replace(new RegExp(b, 'g'), c))
           }
+          break
+
+        case pc.cord:
+          a = getHeapString(stack.pop())
+          if (a.length > 1) {
+            throw error(`Expected a character, but a string of length ${a.length} found.`)
+          }
+          stack.push(a.charCodeAt(0))
           break
 
         // 0x4 - comparison operators (push -1 for true, 0 for false)

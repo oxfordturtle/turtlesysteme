@@ -1,0 +1,87 @@
+# Logistic Spider
+
+maxpop: int = 100000
+maxgen: int = 100
+lmargin: int = 60
+rmargin: int = 40
+tmargin: int = 150
+bmargin: int = 200
+output: bool = True
+r: int
+pop: int
+
+def axes():
+  colour(black)
+  for i in range(0, 11, 1):
+    setxy(i * 100 - 25, 1000)
+    print(qstr(i, 10, 1), 4, 20)
+  for i in range(1, 11, 1):
+    setxy(-lmargin + 5, 1000 - i * 100 - 20)
+    print(qstr(i, 10, 1), 4, 20)
+  setxy(0, 0)
+  drawxy(0, 1000)
+  drawxy(1000, 0)
+  colour(red)
+  setxy(0, 1060)
+  print('Population over ' + str(maxgen) + ' generations, where P (population/' + str(maxpop) + ')', 4, 25)
+  setxy(0, 1110)
+  print('is determined by the logistic equation P\' = rP(1 - P), with r = ' + qstr(r, 10, 1), 4, 25)
+
+def menu():
+  colour(black)
+  setxy(10, -tmargin + 20)
+  print('Set k:', 4, 25)
+  for i in range(21, 41, 1):
+    setxy(((i - 1) % 10) * 90 + 130,((i - 1) // 10) * 50 - 100 - tmargin)
+    if (i == r):
+      box(90, 50, red, True)
+    else:
+      box(90, 50, cream, True)
+    print('  ' + qstr(i, 10, 1), 4, 25)
+
+def curve():
+  global maxpop
+  nextpop: int
+  noupdate()
+  colour(black)
+  setxy(0, 1000)
+  drawxy(1000, -1000)
+  colour(blue)
+  setxy(0, 1000)
+  for i in range(1, 1001, 1):
+    pop = divmult(i, 1000, maxpop)
+    nextpop = divmult(pop, 10 * maxpop, r * (maxpop - pop))
+    setxy(divmult(pop, maxpop, 1000), 1000 - divmult(nextpop, maxpop, 1000))
+    polyline(2)
+  update()
+
+canvas(-lmargin, -tmargin, 1000 + lmargin + rmargin, 1000 + tmargin + bmargin)
+resolution(1000 + lmargin + rmargin, 1000 + tmargin + bmargin)
+thickness(3)
+r = 30
+while True:
+  noupdate()
+  blank(white)
+  axes()
+  menu()
+  curve()
+  pop = randint(0, maxpop - 9) + 10
+  if output:
+    writeline('')
+    writeline('r = ' + qstr(r, 10, 1) + ' Initial population = ' + str(pop))
+  setxy(divmult(pop, maxpop, 1000), 1000)
+  for gen in range (1, maxgen + 1, 1):
+    pop = divmult(pop, 10 * maxpop, r * (maxpop - pop))
+    colour(mixcols(lightgreen, green, maxgen - gen, gen))
+    drawxy(0, 1000 - divmult(pop, maxpop, 1000) - turty)
+    drawxy(divmult(pop, maxpop, 1000) - turtx, 0)
+    if output:
+      write(str(pop) + ' ')
+      if (gen % 10 == 0):
+        writeline('')
+  blot(3)
+  heapreset()
+  update()
+  while not (?lmouse > 0) and (?clicky < (100 - tmargin)) and (?clickx >= 130) and (?clickx < 1030):
+    pass
+  r = ((?clickx - 130) // 90) + ((?clicky + tmargin + 100) // 50) * 10 + 1

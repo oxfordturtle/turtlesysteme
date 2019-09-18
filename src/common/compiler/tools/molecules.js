@@ -25,8 +25,8 @@ export const expression = (routine, lex, type, needed, language) => {
     result = pcoder.mergeWithOperator(result.pcode, next, operator, makeAbsolute)
   }
 
-  // return the whole thing
-  return result
+  // return the whole thing (and force boolean type)
+  return Object.assign(result, { type: 'boolean' })
 }
 
 // variable assignment
@@ -186,12 +186,12 @@ const functionCall = (routine, lex, needed, language) => {
     // check return type (throws an error if wrong)
     check(needed, hit.returns, routine.lexemes[lex])
 
-    // handle the bulk of the function (mostly works just like a procedure call, expect that the
+    // handle the bulk of the function (mostly works just like a procedure call, except that the
     // last argument is set to false, so as to bypass the procedure check)
     const result = procedureCall(routine, lex, language, false)
 
     // user-defined functions need this at the end
-    if (!hit.code) result.pcode.push(pcoder.loadFunctionReturnValue(routine))
+    if (hit.code === undefined) result.pcode.push(pcoder.loadFunctionReturnValue(hit))
 
     return Object.assign(result, { type: hit.returns })
   }

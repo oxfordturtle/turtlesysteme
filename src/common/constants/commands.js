@@ -1004,8 +1004,8 @@ export default [
     level: 1,
     description: 'Returns the input decimal <code>string</code> as an integer, multiplied by <code>mult</code> and rounded to the nearest integer, e.g. <code>qval(\'1.5\',10)=15</code>. Returns the specified <code>default</code> value if the string cannot be converted (i.e. if it is not a decimal string).'
   },
-  {
-    names: { BASIC: 'CHR$', Pascal: 'chr', Python: 'chr' },
+  /* {
+    names: { BASIC: null, Pascal: 'chr', Python: null },
     code: pc.null,
     parameters: [
       { name: 'n', type: 'integer', byref: false, length: 1 }
@@ -1013,18 +1013,29 @@ export default [
     returns: 'char',
     category: 8,
     level: 2,
-    description: 'Returns the character with ASCII character code <code>n</code>, e.g. <code>chr(65)=\'A\'</code>.'
+    description: 'Returns the character with ASCII character code <code>n</code>.'
+  }, */
+  {
+    names: { BASIC: 'CHR$', Pascal: 'chr', Python: 'chr' },
+    code: pc.ctos,
+    parameters: [
+      { name: 'n', type: 'integer', byref: false, length: 1 }
+    ],
+    returns: 'string',
+    category: 8,
+    level: 2,
+    description: 'Returns the character with ASCII character code <code>n</code>.'
   },
   {
     names: { BASIC: 'ASC', Pascal: 'ord', Python: 'ord' },
-    code: pc.null,
+    code: pc.cord,
     parameters: [
-      { name: 'char', type: 'char', byref: false, length: 1 }
+      { name: 'char', type: 'string', byref: false, length: 1 }
     ],
     returns: 'integer',
     category: 8,
     level: 2,
-    description: 'Returns the ASCII code of the input character <code>char</code> (which must be a string of length 1), e.g. <code>ord(\'A\')=65</code>.'
+    description: 'Returns the ASCII code of the input character.'
   },
   {
     names: { BASIC: 'BOOLINT', Pascal: 'boolint', Python: null },

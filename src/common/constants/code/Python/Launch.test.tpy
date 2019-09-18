@@ -1,0 +1,85 @@
+# Launch
+
+earthradius: int = 6371000
+earthgm: int = 398600442
+initdirection: int = 2000
+initthrust: int = 20000
+thrusttime: int = 500
+angleprecision: int = 1296000
+
+def drawrocket():
+  noupdate()
+  blank(black)
+  colour(teal)
+  setxy(0, 0)
+  blot(earthradius / 1000)
+  setxy(x / 1000, y / 1000)
+  direction(d)
+  thickness(4)
+  colour(silver)
+  forward(200)
+  back(200)
+  if thrust > 0:
+    thickness(8)
+    colour(yellow)
+    back(200)
+    forward(200)
+  update()
+
+def report():
+  writeline('')
+  writeline('TIME = ' + str(t))
+  writeline(' Xposition = ' + str(x) + ' metres')
+  writeline(' Yposition = ' + str(y) + ' metres')
+  writeline(' Height = ' + qstr(dist - earthradius, 1000, 2) + ' km')
+  writeline(' Direction = ' + qstr(d, 3600, 1) + ' degrees')
+  writeline(' Thrust = ' + qstr(thrust, 1000, 1) + ' newtons per kg')
+  writeline('  Xthrust = ' + qstr(xthrust, 1000, 1) + ' newtons per kg')
+  writeline('  Ythrust = ' + qstr(ythrust, 1000, 1) + ' newtons per kg')
+  writeline(' Gravity = ' + qstr(gravity, 1000, 1) + ' newtons per kg')
+  writeline('  Xgravity = ' + qstr(xgravity, 1000, 1) + ' newtons per kg')
+  writeline('  Ygravity = ' + qstr(ygravity, 1000, 1) + ' newtons per kg')
+  writeline(' Xvelocity = ' + qstr(xvel, 1000, 1) + ' metres per s')
+  writeline(' Yvelocity = ' + qstr(yvel, 1000, 1) + ' metres per s')
+
+canvas(-20000, -20000, 40000, 40000)
+angles(angleprecision)
+x: int = 0
+y: int = -earthradius
+xvel: int = 0
+yvel: int = 0
+d: int = initdirection
+t: int = 0
+prevdiff: int = 1
+thrust: int = initthrust
+dist: int = 0
+while (dist >= earthradius) and (dist <= 40000000):
+  drawrocket()
+  prevdist: int = dist
+  dist = hypot(x, y ,1)
+  if (dist - prevdist) * prevdiff <= 0:
+    report()
+  prevdiff = dist - prevdist
+  gravity: int = divmult(earthgm, divmult(dist, 1000000, dist), 1000)
+  xgravity: int = divmult(gravity, dist, -x)
+  ygravity: int = divmult(gravity, dist, -y)
+  xthrust: int = sin(d, 1, thrust)
+  ythrust: int = -cos(d, 1, thrust)
+  xvel = xvel + xgravity + xthrust
+  yvel = yvel + ygravity + ythrust
+  x = x + xvel / 1000
+  y = y + yvel / 1000
+  if yvel > 0:
+    d = angleprecision / 2 - atan(xvel, yvel, 1)
+  else:
+    d = atan(xvel, -yvel, 1)
+  inc(t)
+  if t = thrusttime:
+    thrust = 0
+if dist < earthradius:
+  colour(yellow)
+  for explosion in range(100, 200, 1):
+    blot(explosion)
+    pause(3)
+  colour(black)
+  blot(200)

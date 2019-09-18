@@ -1,0 +1,59 @@
+# Schelling
+
+width: int = 50
+height: int = 50
+empty: int = green
+test: int
+continue: bool
+tryi: int
+tryj: int
+this: int
+
+def happy(x: int, y: int, c: int) -> bool:
+  neighbour: int
+  like: int = 0
+  unlike: int = 0
+  for i in range(-1, 2, 1):
+    for j in range(-1, 2, 1):
+      if (i != 0) or (j != 0):
+        neighbour = pixcol(x + i, y + j)
+        if neighbour != empty:
+          if neighbour == c:
+            like = like + 1
+          else:
+            unlike = unlike + 1
+  return (like >= unlike - 1)
+
+canvas(-1, -1, width + 2, height + 2)
+resolution(width + 2, height + 2)
+noupdate()
+blank(empty)
+for i in range(0, width, 1):
+  for j in range(0, height, 1):
+    test = randint(0, 24)
+    if test == 0:
+      pixset(i, j, empty)
+    else:
+      if (i + j) % 2 == 0:
+        pixset(i, j, red)
+      else:
+        pixset(i, j, blue)
+pause(2000)
+while ?key != \escape:
+  noupdate()
+  continue = True
+  while continue:
+    tryi = randint(0, width - 1)
+    tryj = randint(0, height - 1)
+    this = pixcol(tryi, tryj)
+    if (this != empty) and (not(happy(tryi, tryj, this))):
+      continue = False
+  pixset(tryi, tryj, empty)
+  continue = True
+  while continue:
+    tryi = randint(0, width - 1)
+    tryj = randint(0, height - 1)
+    if (pixcol(tryi, tryj) == empty) and happy(tryi, tryj, this):
+      continue = False
+  pixset(tryi, tryj, this)
+  update()

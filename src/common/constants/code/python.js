@@ -32,6 +32,7 @@ import Flashlights from './Python/Flashlights.tpy'
 import RefParams from './Python/RefParams.tpy'
 import Balls3D from './Python/Balls3D.tpy'
 import StringFunctions from './Python/StringFunctions.tpy'
+import UserStringFunctions from './Python/UserStringFunctions.tpy'
 import MathFunctions from './Python/MathFunctions.tpy'
 import TrigGraphs from './Python/TrigGraphs.tpy'
 // examples 4
@@ -57,7 +58,7 @@ import SnakeGame from './Python/SnakeGame.tpy'
 import NoughtsAndCrosses from './Python/NoughtsAndCrosses.tpy'
 import SimpleDraw from './Python/SimpleDraw.tpy'
 import PaintApp from './Python/PaintApp.tpy'
-import FiveTurtles from './Python/FiveTurtles.tpy'
+import MultipleTurtles from './Python/MultipleTurtles.tpy'
 // examples 6
 import AimCannon from './Python/AimCannon.tpy'
 import AutoCannon from './Python/AutoCannon.tpy'
@@ -149,6 +150,7 @@ export default {
   RefParams,
   Balls3D,
   StringFunctions,
+  UserStringFunctions,
   MathFunctions,
   TrigGraphs,
   // examples 4
@@ -174,7 +176,7 @@ export default {
   NoughtsAndCrosses,
   SimpleDraw,
   PaintApp,
-  FiveTurtles,
+  MultipleTurtles,
   // examples 6
   AimCannon,
   AutoCannon,

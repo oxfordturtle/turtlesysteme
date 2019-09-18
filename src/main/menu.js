@@ -153,14 +153,29 @@ const examplesMenu = {
   submenu: examples.menu.map(exampleGroupMenuItem)
 }
 
+// development menu
+const devMenu = {
+  label: 'Development',
+  submenu: [
+    {
+      label: 'Test all example programs',
+      click: () => { windows.system.webContents.send('test-all-examples') }
+    },
+    {
+      label: 'Reset system to initial state',
+      click: () => { windows.system.webContents.send('reset') }
+    },
+    { type: 'separator' },
+    { role: 'reload' },
+    { role: 'forcereload' },
+    { role: 'toggledevtools' }
+  ]
+}
+
 // the full menu bar
-const menu = Menu.buildFromTemplate([
-  systemMenu,
-  fileMenu,
-  editMenu,
-  optionsMenu,
-  examplesMenu
-])
+const menu = (process.env.NODE_ENV === 'production')
+  ? Menu.buildFromTemplate([systemMenu, fileMenu, editMenu, optionsMenu, examplesMenu])
+  : Menu.buildFromTemplate([systemMenu, fileMenu, editMenu, optionsMenu, examplesMenu, devMenu])
 
 // set the full menu bar as the application menu
 Menu.setApplicationMenu(menu)
