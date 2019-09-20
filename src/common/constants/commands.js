@@ -1028,7 +1028,7 @@ export default [
   },
   {
     names: { BASIC: 'ASC', Pascal: 'ord', Python: 'ord' },
-    code: pc.cord,
+    code: pc.sasc,
     parameters: [
       { name: 'char', type: 'string', byref: false, length: 1 }
     ],

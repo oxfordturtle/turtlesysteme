@@ -702,12 +702,13 @@ const execute = (pcode, line, code, options) => {
           }
           break
 
-        case pc.cord:
+        case pc.sasc:
           a = getHeapString(stack.pop())
-          if (a.length > 1) {
-            throw error(`Expected a character, but a string of length ${a.length} found.`)
+          if (a.length === 0) {
+            stack.push(0)
+          } else {
+            stack.push(a.charCodeAt(0))
           }
-          stack.push(a.charCodeAt(0))
           break
 
         // 0x4 - comparison operators (push -1 for true, 0 for false)
