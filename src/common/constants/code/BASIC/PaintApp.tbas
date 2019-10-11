@@ -48,11 +48,6 @@ DEF PROCpaintcan(x%, y%)
   RECOLOUR(x%, y%, BrushColour%)
 ENDPROC
 
-DEF PROCtext(input$)
-  COLOUR(BLACK)
-  PRINT(input$, 0, 20)
-ENDPROC
-
 DEF PROCsquare(col%)
   MOVEXY(50, 0)
   MOVEXY(0, 50)
@@ -73,12 +68,13 @@ DEF PROCsetup
   DRAWXY(0, 50)
   SETXY(850, 850)
   DRAWXY(0, 50)
+  COLOUR(BLACK)
   SETXY(10, 858)
-  PROCtext("Left-click to draw, right-click to fill")
+  PRINT("Left-click to draw, right-click to fill", 0, 20)
   SETXY(450 + 10, 858)
-  PROCtext("Brush width:")
+  PRINT("Brush width:", 0, 20)
   SETXY(850 + 10, 858)
-  PROCtext("Colour:")
+  PRINT("Colour:", 0, 20)
   SETXY(0, 900)
   FOR count% = 1 TO 20
     PROCsquare(RGB(count%))

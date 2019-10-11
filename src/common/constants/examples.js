@@ -113,6 +113,7 @@ export const names = {
   Syllogisms: 'Syllogism testing program',
   TuringMachines: 'Turing machine simulator',
   Sorting: 'Comparison of sorting methods',
+  SortingStrings: 'Comparison of sorting methods (strings)',
   NimLearn: 'Nim learning program',
   MultiNim: 'Nim with multiple piles',
   KnightsTour: 'Knight’s Tour program',
@@ -271,6 +272,7 @@ export const menu = [
       'Syllogisms',
       'TuringMachines',
       'Sorting',
+      'SortingStrings',
       'NimLearn',
       'MultiNim',
       'KnightsTour'

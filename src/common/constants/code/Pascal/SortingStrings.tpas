@@ -1,10 +1,10 @@
-PROGRAM Sorting;
+PROGRAM SortingStrings;
 CONST methods = 4;
       n = 100;
       cols = 10;
       tries = 10;
       checking = true;
-VAR a: array[0..n] of integer;
+VAR a: array[0..n] of string[3];
     comps, swaps: integer;
     caption: array[1..methods] of string;
     comptotal, swaptotal: array[1..methods] of integer;
@@ -20,9 +20,18 @@ VAR a: array[0..n] of integer;
 
  Procedure init;
  Var i: integer;
+
+  function randword: string;
+  var i: integer;
+  begin
+   result := '';
+   for i := 1 to 3 do
+    result := result + chr(ord('a') + random(26))
+  end;
+
  Begin
   for i := 1 to n do
-   a[i] := i;
+   a[i] := randword;
   for i := 1 to methods do
    begin
     comptotal[i] := 0;
@@ -30,14 +39,14 @@ VAR a: array[0..n] of integer;
    end
  End;
 
- Function lessthan(x, y: integer): boolean;
+ Function lessthan(x, y: string[3]): boolean;
  Begin
   result := (x < y);
   inc(comps)
  End;
 
  Procedure swap(x, y: integer);
- Var t: integer;
+ Var t: string[3];
  Begin
   t := a[x];
   a[x] := a[y];
@@ -60,7 +69,7 @@ VAR a: array[0..n] of integer;
   write('     ');
   for i := 1 to n do
    begin
-    write(str(a[i]) + ' ');
+    write(a[i] + ' ');
     if i mod cols = 0 then
      begin
       writeln('');
@@ -178,6 +187,8 @@ BEGIN
  if checking then
   writeln('If sorting fails, the program will halt and show the array.');
  writeln('');
+ list;
+ writeln('');
  for round := 1 to tries do
   begin
    for m := 1 to methods do
@@ -197,5 +208,7 @@ BEGIN
   begin
    write(pad(caption[m], ' ', -17) + pad(qstr(comptotal[m], tries, 1), ' ', 7));
    writeln(pad(qstr(swaptotal[m], tries, 1), ' ', 11))
-  end
+  end;
+ writeln('');
+ list
 END.

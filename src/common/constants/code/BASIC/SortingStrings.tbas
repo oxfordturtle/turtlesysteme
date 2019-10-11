@@ -5,10 +5,12 @@ CONST N% = 100
 CONST COLS% = 10
 CONST TRIES% = 10
 CONST CHECKING% = TRUE
-DIM a%(N%)
+DIM a$(N%)
 DIM caption$(METHODS%)
 DIM comptotal%(METHODS%)
 DIM swaptotal%(METHODS%)
+OUTPUT(TRUE, WHITE, TRUE)
+
 OUTPUT(TRUE, WHITE, TRUE)
 PROCsetup
 PROCinit
@@ -19,6 +21,8 @@ IF CHECKING% THEN
   WRITELN("If sorting fails, the program will halt and show the array.")
   WRITELN("")
 ENDIF
+PROClist
+WRITELN("")
 FOR round% = 1 TO TRIES%
   FOR m% = 1 TO METHODS%
     PROCrandomise
@@ -36,6 +40,8 @@ FOR m% = 1 TO METHODS%
   WRITE(PAD(caption$(m%), " ", -17) + PAD(QSTR$(comptotal%(m%), TRIES%, 1), " ", 7))
   WRITELN(PAD(QSTR$(swaptotal%(m%), TRIES%, 1), " ", 11))
 NEXT
+WRITELN("")
+PROClist
 END
 
 DEF PROCsetup
@@ -45,10 +51,18 @@ DEF PROCsetup
   caption$(4) = "Quicksort:"
 ENDPROC
 
+DEF FNrandword$
+  LOCAL i%, result$
+  result$ = ""
+  FOR i% = 1 TO 3
+    result$ = result$ + CHR$(ASC("a") + RND(26) - 1)
+  NEXT
+= result$
+
 DEF PROCinit
   LOCAL i%
   FOR i% = 1 TO N%
-    a%(i%) = i%
+    a$(i%) = FNrandword$
   NEXT
   FOR i% = 1 TO METHODS%
     comptotal%(i%) = 0
@@ -56,15 +70,15 @@ DEF PROCinit
   NEXT
 ENDPROC
 
-DEF FNlessthan(x%, y%)
+DEF FNlessthan(x$, y$)
   INC(comps%)
-= (x% < y%)
+= (x$ < y$)
 
 DEF PROCswap(x%, y%)
-  LOCAL t%
-  t% = a%(x%)
-  a%(x%) = a%(y%)
-  a%(y%) = t%
+  LOCAL t$
+  t$ = a$(x%)
+  a$(x%) = a$(y%)
+  a$(y%) = t$
   INC(swaps%)
 ENDPROC
 
@@ -72,7 +86,7 @@ DEF FNordered
   LOCAL i%, result%
   result% = TRUE
   FOR i% = 2 TO N%
-    IF a%(i% - 1) > a%(i%) THEN result% = FALSE
+    IF a$(i% - 1) > a$(i%) THEN result% = FALSE
   NEXT
 = result%
 
@@ -80,7 +94,7 @@ DEF PROClist
   LOCAL i%
   WRITE("     ")
   FOR i% = 1 TO N%
-    WRITE(STR$(a%(i%)) + " ")
+    WRITE(a$(i%) + " ")
     IF i% MOD COLS% = 0 THEN
       WRITELN("")
       WRITE("     ")
@@ -101,7 +115,7 @@ DEF PROCbubblesort
   LOCAL i%, j%
   FOR i% = 1 TO N%
     FOR j% = 1 TO N% - 1
-      IF FNlessthan(a%(j% + 1), a%(j%)) THEN PROCswap(j%, j% + 1)
+      IF FNlessthan(a$(j% + 1), a$(j%)) THEN PROCswap(j%, j% + 1)
     NEXT
   NEXT
 ENDPROC
@@ -111,7 +125,7 @@ DEF PROCselectionsort
   FOR i% = 1 TO N%
     lowsofar% = i%
     FOR j% = i% + 1 TO N%
-      IF FNlessthan(a%(j%), a%(lowsofar%)) THEN lowsofar% = j%
+      IF FNlessthan(a$(j%), a$(lowsofar%)) THEN lowsofar% = j%
     NEXT
     IF lowsofar% <> i% THEN PROCswap(i%, lowsofar%)
   NEXT
@@ -121,7 +135,7 @@ DEF PROCinsertionsort
   LOCAL i%, j%
   FOR i% = 2 TO N%
     j% = i%
-    WHILE (j% > 1) AND FNlessthan(a%(j%), a%(j% - 1))
+    WHILE (j% > 1) AND FNlessthan(a$(j%), a$(j% - 1))
       PROCswap(j% - 1, j%)
       DEC(j%)
     ENDWHILE
@@ -133,7 +147,7 @@ DEF PROCqsort(left%, right%)
   IF left% < right% THEN
     m% = left%
     FOR i% = left% + 1 TO right%
-      IF FNlessthan(a%(i%), a%(left%)) THEN
+      IF FNlessthan(a$(i%), a$(left%)) THEN
         INC(m%)
         PROCswap(m%, i%)
       ENDIF

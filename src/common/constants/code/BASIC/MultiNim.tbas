@@ -1,3 +1,145 @@
 REM MultiNim
+CONST PILES% = 5
+CONST MAXHEIGHT% = 8
+CONST MARGIN% = 20
+DIM pile%(PILES%)
+PROCsetup
+REPEAT
+  PROCfixpiles
+  REPEAT
+    PROCdomaths
+    PROCdrawpiles
+    REPEAT
+      CURSOR(2)
+      REPEAT
+        REPEAT
+        UNTIL ?LMOUSE > 0
+        PAUSE(200)
+        thiscolour% = PIXCOL(?CLICKX, ?CLICKY)
+      UNTIL (thiscolour% <> RGB(WHITE)) AND (thiscolour% <> RGB(BLACK))
+      CURSOR(11)
+      IF ?CLICKY >= 800 THEN
+        thiscoin% = MAXHEIGHT% + 1
+        showmaths% = NOT(showmaths%)
+        PROCdomaths
+        PROCdrawpiles
+      ELSE
+        thispile% = (?CLICKX - MARGIN% + radius%) DIV xgap% + 1
+        thiscoin% = (bottom% - radius% - ?CLICKY) DIV ygap% + 1
+      ENDIF
+    UNTIL (?CLICKY < 800)
+    pile%(thispile%) = thiscoin% - 1
+    PROCdomaths
+    IF totalcoins% = 0 THEN
+      BLANK(WHITE)
+      SETXY(330, 850)
+      COLOUR(BLUE)
+      PRINT("You Win!", 4, 60)
+      PAUSE(5000)
+    ELSE
+      PROCdrawpiles
+      PAUSE(1000)
+      PROCblackout(autopile%, autocoin%)
+      pile%(autopile%) = autocoin% - 1
+      PROCdomaths
+      IF (xorscore% = 0) AND NOT(showmaths%) THEN
+        COLOUR(PINK)
+        SETXY(400, 900)
+        PRINT("I'm going to win!", 4, 30)
+      ENDIF
+      PAUSE(2500)
+      IF totalcoins% = 0 THEN
+        BLANK(WHITE)
+        SETXY(330, 850)
+        COLOUR(RED)
+        PRINT("I Win!", 4, 60)
+        PAUSE(5000)
+      ENDIF
+    ENDIF
+  UNTIL totalcoins% = 0
+UNTIL 0 = 1
+END
 
-REM not yet available in Turtle BASIC
+DEF PROCsetup
+  xgap% = (1000 - 2 * MARGIN%) DIV PILES%
+  ygap% = (800 - MARGIN%) DIV MAXHEIGHT%
+  IF ygap% * MAXHEIGHT% > 800 THEN ygap% = 800 DIV MAXHEIGHT%
+  radius% = (ygap% - MARGIN%) DIV 2
+  left% = MARGIN% + radius% - xgap%
+  bottom% = 800 - radius% + ygap%
+  showmaths% = FALSE
+ENDPROC
+
+DEF PROCfixpiles
+  LOCAL p%
+  FOR p% = 1 TO PILES%
+    pile%(p%) = RND(MAXHEIGHT%)
+  NEXT
+ENDPROC
+
+DEF PROCdomaths
+  LOCAL p%
+  totalcoins% = 0
+  xorscore% = 0
+  FOR p% = 1 TO PILES%
+    totalcoins% = totalcoins% + pile%(p%)
+    xorscore% = xorscore% EOR pile%(p%)
+  NEXT
+ENDPROC
+
+DEF PROCdrawpiles
+  LOCAL p%, c%, autocount%
+  BLANK(WHITE)
+  autocount% = RND(totalcoins%)
+  FOR p% = 1 TO PILES%
+    c% = pile%(p%)
+    WHILE c% > 0
+      DEC(autocount%)
+      IF autocount% = 0 THEN
+        autopile% = p%
+        autocoin% = c%
+      ENDIF
+      SETXY(left% + xgap% * p%, bottom% - ygap% * c%)
+      COLOUR(RGB(p%))
+      BLOT(radius%)
+      IF xorscore% EOR pile%(p%) EOR (c% - 1) = 0 THEN
+        autopile% = p%
+        autocoin% = c%
+        autocount% = 0
+      ENDIF
+      IF showmaths% THEN
+        MOVEXY(radius% + MARGIN%, -radius% + 15)
+        COLOUR(BLACK)
+        PRINT(STR$(xorscore% EOR pile%(p%) EOR (c% - 1)), 4, 20)
+      ENDIF
+      DEC(c%)
+    ENDWHILE
+  NEXT
+  COLOUR(BLACK)
+  SETXY(MARGIN%, 900)
+  PRINT("Total Coins:  " + STR$(totalcoins%), 4, 30)
+  IF showmaths% THEN
+    COLOUR(BLACK)
+    SETXY(450, 900)
+    PRINT("XOR score:  " + STR$(xorscore%), 4, 30)
+    SETXY(850, 890)
+    COLOUR(MAROON)
+    BOX(140, 100, RED, TRUE)
+    PRINT(" HIDE", 4, 25)
+    SETXY(850, 940)
+    PRINT(" MATHS", 4, 25)
+  ELSE
+    COLOUR(MAROON)
+    SETXY(850, 890)
+    BOX(140, 100, RED, TRUE)
+    PRINT(" SHOW", 4, 25)
+    SETXY(850, 940)
+    PRINT(" MATHS", 4, 25)
+  ENDIF
+ENDPROC
+
+DEF PROCblackout(p%, c%)
+  SETXY(left% + xgap% * p%, bottom% - ygap% * c%)
+  COLOUR(BLACK)
+  BLOT(radius%)
+ENDPROC

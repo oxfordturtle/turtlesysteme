@@ -97,6 +97,7 @@ import Quine from './Pascal/Quine.tpas'
 import Syllogisms from './Pascal/Syllogisms.tpas'
 import TuringMachines from './Pascal/TuringMachines.tpas'
 import Sorting from './Pascal/Sorting.tpas'
+import SortingStrings from './Pascal/SortingStrings.tpas'
 import NimLearn from './Pascal/NimLearn.tpas'
 import MultiNim from './Pascal/MultiNim.tpas'
 import KnightsTour from './Pascal/KnightsTour.tpas'
@@ -215,6 +216,7 @@ export default {
   Syllogisms,
   TuringMachines,
   Sorting,
+  SortingStrings,
   NimLearn,
   MultiNim,
   KnightsTour,

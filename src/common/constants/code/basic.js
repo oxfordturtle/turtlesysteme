@@ -97,6 +97,7 @@ import Quine from './BASIC/Quine.tbas'
 import Syllogisms from './BASIC/Syllogisms.tbas'
 import TuringMachines from './BASIC/TuringMachines.tbas'
 import Sorting from './BASIC/Sorting.tbas'
+import SortingStrings from './BASIC/SortingStrings.tbas'
 import NimLearn from './BASIC/NimLearn.tbas'
 import MultiNim from './BASIC/MultiNim.tbas'
 import KnightsTour from './BASIC/KnightsTour.tbas'
@@ -215,6 +216,7 @@ export default {
   Syllogisms,
   TuringMachines,
   Sorting,
+  SortingStrings,
   NimLearn,
   MultiNim,
   KnightsTour,

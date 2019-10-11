@@ -97,6 +97,7 @@ import Quine from './Python/Quine.tpy'
 import Syllogisms from './Python/Syllogisms.tpy'
 import TuringMachines from './Python/TuringMachines.tpy'
 import Sorting from './Python/Sorting.tpy'
+import SortingStrings from './Python/SortingStrings.tpy'
 import NimLearn from './Python/NimLearn.tpy'
 import MultiNim from './Python/MultiNim.tpy'
 import KnightsTour from './Python/KnightsTour.tpy'
@@ -215,6 +216,7 @@ export default {
   Syllogisms,
   TuringMachines,
   Sorting,
+  SortingStrings,
   NimLearn,
   MultiNim,
   KnightsTour,
