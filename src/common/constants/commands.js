@@ -572,6 +572,17 @@ export default [
     description: 'Returns a random integer between <code>a</code> and <code>b</code>.'
   },
   {
+    names: { BASIC: 'RNDSEED', Pascal: 'randseed', Python: 'randseed' },
+    code: pc.seed,
+    parameters: [
+      { name: 'seed', type: 'integer', byref: false, length: 1 }
+    ],
+    returns: 'integer',
+    category: 5,
+    level: 1,
+    description: 'Initialises the random number generator with the given <code>seed</code>, and returns that seed. If <code>seed</code> is 0, the seed is set from the current system clock.'
+  },
+  {
     names: { BASIC: 'POWER', Pascal: 'power', Python: 'power' },
     code: pc.powr,
     parameters: [
@@ -906,6 +917,19 @@ export default [
     description: 'Returns the input <code>string</code> with the specified <code>substring</code> inserted at the given <code>index</code>.'
   },
   {
+    names: { BASIC: 'PAD$', Pascal: 'pad', Python: 'pad' },
+    code: pc.spad,
+    parameters: [
+      { name: 'string', type: 'string', byref: false, length: 1 },
+      { name: 'padding', type: 'string', byref: false, length: 1 },
+      { name: 'length', type: 'integer', byref: false, length: 1 }
+    ],
+    returns: 'string',
+    category: 7,
+    level: 2,
+    description: 'Returns the input <code>string</code> with the input <code>padding</code> added either before or after to make a string of minimum given <code>length</cope>. The <code>padding</code> is placed before if <code>length</code> is positive, after if it is negative.'
+  },
+  {
     names: { BASIC: 'REPLACE$', Pascal: 'replace', Python: 'replace' },
     code: pc.repl,
     parameters: [
@@ -1204,6 +1228,43 @@ export default [
     description: 'Halts the program.'
   },
   {
+    names: { BASIC: 'DUMP', Pascal: 'dump', Python: 'dump' },
+    code: pc.dump,
+    parameters: [],
+    category: 10,
+    level: 2,
+    description: '&ldquo;Dumps&rdquo; the current memory state into the display in the memory tab.'
+  },
+  {
+    names: { BASIC: 'HEAPRESET', Pascal: 'heapreset', Python: 'heapreset' },
+    code: pc.hrst,
+    parameters: [],
+    category: 10,
+    level: 2,
+    description: 'Resets the memory heap to the initial global value.'
+  },
+  {
+    names: { BASIC: 'PEEK', Pascal: 'peek', Python: 'peek' },
+    code: pc.peek,
+    parameters: [
+      { name: 'address', type: 'integer', byref: false, length: 1 }
+    ],
+    category: 10,
+    level: 2,
+    description: 'Peek at the value of the memory at the given <code>address</code>.'
+  },
+  {
+    names: { BASIC: 'POKE', Pascal: 'poke', Python: 'poke' },
+    code: pc.poke,
+    parameters: [
+      { name: 'address', type: 'integer', byref: false, length: 1 },
+      { name: 'value', type: 'integer', byref: false, length: 1 }
+    ],
+    category: 10,
+    level: 2,
+    description: 'Poke the <code>value</code> into the memory at the given <code>address</code>.'
+  },
+  {
     names: { BASIC: 'TRACE', Pascal: 'trace', Python: 'trace' },
     code: pc.trac,
     parameters: [
@@ -1222,21 +1283,5 @@ export default [
     category: 10,
     level: 2,
     description: 'Sets an <code>address</code> in memory for the trace facility to watch.'
-  },
-  {
-    names: { BASIC: 'DUMP', Pascal: 'dump', Python: 'dump' },
-    code: pc.dump,
-    parameters: [],
-    category: 10,
-    level: 2,
-    description: '&ldquo;Dumps&rdquo; the current memory state into the display in the memory tab.'
-  },
-  {
-    names: { BASIC: 'HEAPRESET', Pascal: 'heapreset', Python: 'heapreset' },
-    code: pc.hrst,
-    parameters: [],
-    category: 10,
-    level: 2,
-    description: 'Resets the memory heap to the initial global value.'
   }
 ]

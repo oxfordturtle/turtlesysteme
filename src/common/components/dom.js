@@ -66,11 +66,18 @@ export const setContent = (element, content) => {
   }
 }
 
-// create tabs (tab list on top, tab panes below)
+// create tabs (tab panes on top, tab list below)
 export const createTabs = optionsArray =>
   createElement('div', 'tse-tabs', [
     createElement('div', 'tse-tab-panes', optionsArray.map(tabPane)),
     createElement('nav', 'tse-tab-list', optionsArray.map(tab))
+  ])
+
+// create top tabs (tab list on top, tab panes below)
+export const createTopTabs = optionsArray =>
+  createElement('div', 'tse-tabs', [
+    createElement('nav', 'tse-tab-list', optionsArray.map(tab)),
+    createElement('div', 'tse-tab-panes', optionsArray.map(tabPane))
   ])
 
 // activate a particular tab

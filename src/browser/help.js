@@ -13,10 +13,8 @@ import structures from 'common/components/help/structures'
 import * as controls from 'common/components/controls'
 
 // setup the help page
-export default (tse) => {
-  tse.classList.add('tse-help')
-  dom.setContent(tse, [
-    controls.program,
+export default (tse, includeControls = true) => {
+  const content = [
     dom.createTabs([
       { label: 'Commands', active: true, content: [commands] },
       { label: 'Basics', active: false, content: [basics] },
@@ -25,5 +23,10 @@ export default (tse) => {
       { label: 'User Input', active: false, content: [input] },
       { label: 'Constants', active: false, content: [colours, fonts, cursors] }
     ])
-  ])
+  ]
+  if (includeControls) {
+    content.unshift(controls.program)
+  }
+  tse.classList.add('tse-help')
+  dom.setContent(tse, content)
 }

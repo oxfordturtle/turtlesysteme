@@ -24,7 +24,7 @@ export default [
   { code: 0x11, args: 0, str: 'ABS' },
   { code: 0x12, args: 0, str: 'SIGN' },
   { code: 0x13, args: 0, str: 'RAND' },
-  undefined, // 0x14
+  { code: 0x14, args: 0, str: 'SEED' },
   undefined, // 0x15
   undefined, // 0x16
   undefined, // 0x17
@@ -69,7 +69,7 @@ export default [
   { code: 0x3C, args: 0, str: 'POSS' },
   { code: 0x3D, args: 0, str: 'REPL' },
   { code: 0x3E, args: 0, str: 'SASC' },
-  undefined, // 0x3F
+  { code: 0x3F, args: 0, str: 'SPAD' },
   // 0x40s - comparison operators
   { code: 0x40, args: 0, str: 'EQAL' },
   { code: 0x41, args: 0, str: 'NOEQ' },
@@ -100,8 +100,8 @@ export default [
   undefined, // 0x59
   undefined, // 0x5A
   undefined, // 0x5B
-  undefined, // 0x5C
-  undefined, // 0x5D
+  { code: 0x5C, args: 0, str: 'PEEK' },
+  { code: 0x5D, args: 0, str: 'POKE' },
   undefined, // 0x5E
   undefined, // 0x5F
   // 0x60s - storing from stack

@@ -1,5 +1,6 @@
 @import '_constants';
 @import '_tse';
+@import '_tse-all';
 @import '_tse-system';
 @import '_tse-help';
 @import '_tse-overlay';
@@ -19,7 +20,7 @@
 @import '_tse-memory';
 
 .tse-system, .tse-help {
-  width: $system-width;
+  max-width: $system-width;
   height: $system-height;
   margin: 0 auto;
 }

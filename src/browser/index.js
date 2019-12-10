@@ -1,9 +1,10 @@
 /*
 The entry point for the browser version.
 */
+import all from './all'
+import about from './about'
 import system from './system'
 import help from './help'
-import about from './about'
 import examples from './examples'
 import { send } from 'common/system/state'
 import 'common/styles/browser.scss'
@@ -29,6 +30,10 @@ switch (tse.dataset.page) {
 
   case 'examples':
     examples(tse)
+    break
+
+  default:
+    all(tse)
     break
 }
 

@@ -74,6 +74,7 @@ export const run = (pcode, options) => {
   runtime.keyecho = true
   runtime.detect = null
   runtime.readline = null
+  runtime.randseed = null
   // setup the machine status
   status.running = true
   status.paused = false
@@ -432,6 +433,16 @@ const execute = (pcode, line, code, options) => {
           stack.push(Math.floor(Math.random() * Math.abs(a)))
           break
 
+        case pc.seed:
+          a = stack.pop()
+          if (a === 0) {
+            // TODO: ask Peter what his "randomize" procedure does
+            stack.push(runtime.randseed)
+          } else {
+            runtime.randseed = a
+          }
+          break
+
         case pc.plus:
           b = stack.pop()
           a = stack.pop()
@@ -711,6 +722,21 @@ const execute = (pcode, line, code, options) => {
           }
           break
 
+        case pc.spad:
+          d = stack.pop()
+          c = Math.abs(d)
+          b = getHeapString(stack.pop())
+          a = getHeapString(stack.pop())
+          while ((a.length + b.length) < d) {
+            if (d < 0) {
+              a = b + a
+            } else {
+              a = a + b
+            }
+          }
+          makeHeapString(a)
+          break
+
         // 0x4 - comparison operators (push -1 for true, 0 for false)
         case pc.eqal:
           b = stack.pop()
@@ -862,6 +888,17 @@ const execute = (pcode, line, code, options) => {
 
         case pc.ldmt:
           stack.push(memoryStack.length - 1)
+          break
+
+        case pc.peek:
+          a = stack.pop()
+          stack.push(memory[a])
+          break
+
+        case pc.poke:
+          b = stack.pop()
+          a = stack.pop()
+          memory[a] = b
           break
 
         // 0x6 - storing from stack
