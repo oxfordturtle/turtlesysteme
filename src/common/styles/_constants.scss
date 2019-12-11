@@ -3,6 +3,7 @@ $canvas-width: 502px;
 $canvas-coords-width: 30px;
 $system-width: 1024px;
 $system-height: 700px;
+$machine-component-width: $padding + $canvas-coords-width + $canvas-width + $padding;
 $black: #282828;
 $darkgray: lighten($black, 10%);
 $gray: darken(#ebebeb, 25%);

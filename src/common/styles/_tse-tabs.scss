@@ -1,10 +1,7 @@
 .tse-tabs {
   display: grid;
   grid-template-rows: 1fr auto;
-  min-height: 0;
   .tse-tab-panes {
-    min-height: 0;
-    min-width: 0;
     .tse-tab-pane {
       display: none;
       height: 100%;

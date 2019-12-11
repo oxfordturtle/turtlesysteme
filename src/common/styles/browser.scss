@@ -1,11 +1,11 @@
 @import '_constants';
 @import '_tse';
-@import '_tse-all';
+@import '_tse-browser';
+@import '_tse-overlay';
+@import '_tse-tabs';
 @import '_tse-system';
 @import '_tse-help';
-@import '_tse-overlay';
 @import '_tse-controls';
-@import '_tse-tabs';
 @import '_tse-file';
 @import '_tse-buttons';
 @import '_tse-code';
@@ -18,9 +18,3 @@
 @import '_tse-console';
 @import '_tse-output';
 @import '_tse-memory';
-
-.tse-system, .tse-help {
-  max-width: $system-width;
-  height: $system-height;
-  margin: 0 auto;
-}

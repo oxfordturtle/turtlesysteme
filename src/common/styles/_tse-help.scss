@@ -2,8 +2,6 @@
   display: grid;
   grid-template-rows: auto 1fr;
   grid-gap: $padding;
-  background: $darkgray;
-  border: $padding solid $darkgray;
   line-height: 1.4;
   .tse-controls {
     justify-content: flex-end;
@@ -83,6 +81,9 @@
   label {
     cursor: pointer;
     font-weight: bold;
+  }
+  input[type="checkbox"] {
+    margin: .5em;
   }
   select, div {
     margin-bottom: 1em;

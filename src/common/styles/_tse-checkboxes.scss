@@ -6,6 +6,7 @@
   background: $lightgray;
   padding: $padding;
   margin-bottom: $padding;
+  font-size: .875em;
   label {
     cursor: pointer;
     flex-basis: 50%;
@@ -13,6 +14,7 @@
     input {
       height: auto;
       padding: 0;
+      margin: 0;
       margin-right: .25em;
     }
   }

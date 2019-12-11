@@ -47,6 +47,13 @@ export const createOption = (label, value) => {
 export const createTextNode = (text) =>
   document.createTextNode(text)
 
+// create an img element
+export const createImage = (src) => {
+  const img = document.createElement('img')
+  img.src = src
+  return img
+}
+
 // create a document fragment
 export const createFragment = (content = null) => {
   const fragment = document.createDocumentFragment()

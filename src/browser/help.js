@@ -10,10 +10,9 @@ import fonts from 'common/components/help/fonts'
 import input from 'common/components/help/input'
 import operators from 'common/components/help/operators'
 import structures from 'common/components/help/structures'
-import * as controls from 'common/components/controls'
 
 // setup the help page
-export default (tse, includeControls = true) => {
+export default () => {
   const content = [
     dom.createTabs([
       { label: 'Commands', active: true, content: [commands] },
@@ -24,9 +23,7 @@ export default (tse, includeControls = true) => {
       { label: 'Constants', active: false, content: [colours, fonts, cursors] }
     ])
   ]
-  if (includeControls) {
-    content.unshift(controls.program)
-  }
-  tse.classList.add('tse-help')
-  dom.setContent(tse, content)
+  const helpDiv = dom.createElement('div', 'tse-browser-tab-pane', content)
+  helpDiv.classList.add('tse-help')
+  return helpDiv
 }

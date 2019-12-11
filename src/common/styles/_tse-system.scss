@@ -1,6 +1,6 @@
 .tse-system {
   display: grid;
-  grid-template-columns: 1fr ($padding + $canvas-coords-width + $canvas-width + $padding);
+  grid-template-columns: 1fr $machine-component-width;
   grid-template-rows: auto 1fr;
   grid-gap: $padding;
   background: $darkgray;

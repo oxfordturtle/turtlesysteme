@@ -1,0 +1,51 @@
+.tse-browser {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-gap: $padding;
+  background: $darkgray;
+  border: $padding solid $darkgray;
+  max-width: $padding + $machine-component-width + $padding;
+  height: $system-height + 34px;
+  margin: 0 auto;
+  @media (min-width: 1024px) {
+    max-width: $system-width;
+  }
+  .tse-browser-tab-list {
+    display: flex;
+    img {
+      height: 2em;
+    }
+    .tse-browser-tab {
+      flex: 1;
+      padding: .5em .75em;
+      cursor: pointer;
+      color: #fff;
+      background: lighten($green, 10%);
+      transition: background .3s;
+      &:hover, &.tse-active {
+        background: $green;
+      }
+    }
+  }
+  .tse-browser-tab-panes {
+    display: grid;
+    grid-template-columns: 1fr $machine-component-width;
+    .tse-browser-tab-pane {
+      display: none;
+      &.tse-active {
+        display: grid;
+        grid-columns: span 2;
+      }
+      &.tse-side-by-side {
+        grid-columns: auto;
+      }
+      &.tse-program, &.tse-machine {
+        grid-template-rows: auto 1fr;
+        grid-gap: $padding;
+      }
+      &.tse-help {
+        grid-template-rows: 1fr;
+      }
+    }
+  }
+}

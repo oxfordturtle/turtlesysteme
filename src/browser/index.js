@@ -1,41 +1,37 @@
 /*
 The entry point for the browser version.
 */
-import all from './all'
-import about from './about'
-import system from './system'
+import program from './program'
+import machine from './machine'
 import help from './help'
-import examples from './examples'
+import about from './about'
+import modal from './modal'
+import tabs from './tabs'
+// import examples from './examples'
+import * as dom from 'common/components/dom'
 import { send } from 'common/system/state'
 import 'common/styles/browser.scss'
 
 // grab the #tse element and add style classes
 const tse = document.getElementById('tse')
 tse.classList.add('tse')
-document.body.parentElement.classList.add('tse-browser')
+tse.classList.add('tse-browser')
 
 // initialise the app
-switch (tse.dataset.page) {
-  case 'system':
-    system(tse)
-    break
-
-  case 'help':
-    help(tse)
-    break
-
-  case 'about':
-    about(tse)
-    break
-
-  case 'examples':
-    examples(tse)
-    break
-
-  default:
-    all(tse)
-    break
-}
+const programDiv = program()
+const machineDiv = machine()
+const helpDiv = help()
+const aboutDiv = about()
+const modalDiv = modal()
+const tabsDiv = tabs(programDiv, machineDiv, helpDiv, aboutDiv)
+const tabPanesDiv = dom.createElement('div', 'tse-browser-tab-panes', [
+  programDiv,
+  machineDiv,
+  helpDiv,
+  aboutDiv
+])
+dom.setContent(tse, [tabsDiv, tabPanesDiv])
+document.body.appendChild(modalDiv)
 
 // maybe setup state variables based on the app's data properties
 if (tse.dataset.language) {
