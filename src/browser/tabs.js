@@ -60,6 +60,17 @@ export default (programDiv, machineDiv, helpDiv, aboutDiv) => {
   } else {
     systemTab.click()
   }
+  window.addEventListener('resize', (e) => {
+    if (window.innerWidth < 1024) {
+      if (systemTab.classList.contains('tse-active')) {
+        programTab.click()
+      }
+    } else {
+      if (programTab.classList.contains('tse-active') || machineTab.classList.contains('tse-active')) {
+        systemTab.click()
+      }
+    }
+  })
 
   // return the tabsDiv
   return tabsDiv

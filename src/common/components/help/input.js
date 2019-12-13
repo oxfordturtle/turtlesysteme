@@ -23,17 +23,19 @@ const basicText = `
   <p>The x- and y-coordinates of the mouse&rsquo;s current position can be found at any time by using the special global variables <code>${highlight('?MOUSEX', 'BASIC')}</code> and <code>${highlight('?MOUSEY', 'BASIC')}</code> – these do not require the mouse to be clicked.</p>
   <h4>Mouse Click Detection</h4>
   <p>When a mouse click is performed, the x- and y-coordinates of the click position are remembered by the variables <code>${highlight('?CLICKX', 'BASIC')}</code> and <code>${highlight('?CLICKY', 'BASIC')}</code>. However to identify the type of click, use the variable <code>${highlight('?CLICK', 'BASIC')}</code>, which is initially set to a value of -1, but after any click has taken place is set to a numerical value of 128 plus additions as follows:</p>
-  <table class="tse-help-table">
-    <tbody>
-      <tr><td>1</td><td>if the click was with the left mouse button</td></tr>
-      <tr><td>2</td><td>if the click was with the right mouse button</td></tr>
-      <tr><td>4</td><td>if the click was with the middle mouse button</td></tr>
-      <tr><td>8</td><td>if the <kbd>shift</kbd> key was held down while clicking</td></tr>
-      <tr><td>16</td><td>if the <kbd>alt</kbd> key was held down while clicking</td></tr>
-      <tr><td>32</td><td>if the <kbd>ctrl</kbd> key was held down while clicking</td></tr>
-      <tr><td>64</td><td>if it was a double-click</td></tr>
-    </tbody>
-  </table>
+  <div class="tse-help-table">
+    <table>
+      <tbody>
+        <tr><td>1</td><td>if the click was with the left mouse button</td></tr>
+        <tr><td>2</td><td>if the click was with the right mouse button</td></tr>
+        <tr><td>4</td><td>if the click was with the middle mouse button</td></tr>
+        <tr><td>8</td><td>if the <kbd>shift</kbd> key was held down while clicking</td></tr>
+        <tr><td>16</td><td>if the <kbd>alt</kbd> key was held down while clicking</td></tr>
+        <tr><td>32</td><td>if the <kbd>ctrl</kbd> key was held down while clicking</td></tr>
+        <tr><td>64</td><td>if it was a double-click</td></tr>
+      </tbody>
+    </table>
+  </div>
   <p>So if <code>${highlight('n% = ?CLICK', 'BASIC')}</code> makes <code>${highlight('n%', 'BASIC')}</code> equal to 137 (128+8+1), this indicates that a left-click is currently under way, with the <kbd>shift</kbd> key held down. When the click event is finished, the <code>${highlight('?CLICK', 'BASIC')}</code> value will become negative. Thus if <code>${highlight('?CLICK', 'BASIC')}</code> returns a value of -137, this indicates that the last click event – now finished – was <kbd>shift</kbd>+left; the coordinate position of that click can still be identified – until the next click takes place – as (<code>${highlight('?CLICKX', 'BASIC')}</code>, <code>${highlight('?CLICKY', 'BASIC')}</code>). On a left-click, the variable <code>${highlight('?LMOUSE', 'BASIC')}</code> records the relevant value (as calculated above); likewise <code>${highlight('?RMOUSE', 'BASIC')}</code> and <code>${highlight('?MMOUSE', 'BASIC')}</code> record any right-click or middle-click. Again, these are all made negative when the click is released, so an empty loop like:</p>
   <pre><code>${highlight('REPEAT\nUNTIL ?LMOUSE > 0', 'BASIC')}</code></pre>
   <p>waits for a left-click with the mouse. Afterwards, <code>${highlight('?CLICKX', 'BASIC')}</code> and <code>${highlight('?CLICKY', 'BASIC')}</code> indicate where that click event occurred, and <code>${highlight('?CLICK', 'BASIC')}</code> can be queried using the bitwise <code>${highlight('AND', 'BASIC')}</code> operator to discover which special keys were pressed (e.g. <code>${highlight('IF (ABS(?CLICK) AND 8) > 0', 'BASIC')}</code> will test whether <kbd>shift</kbd> was being held down).</p>
@@ -55,17 +57,19 @@ const pascalText = `
   <p>The x- and y-coordinates of the mouse&rsquo;s current position can be found at any time by using the special global variables <code>${highlight('?mousex', 'Pascal')}</code> and <code>${highlight('?mousey', 'Pascal')}</code> – these do not require the mouse to be clicked.</p>
   <h4>Mouse Click Detection</h4>
   <p>When a mouse click is performed, the x- and y-coordinates of the click position are remembered by the variables <code>${highlight('?clickx', 'Pascal')}</code> and <code>${highlight('?clicky', 'Pascal')}</code>. However to identify the type of click, use the variable <code>${highlight('?click', 'Pascal')}</code>, which is initially set to a value of -1, but after any click has taken place is set to a numerical value of 128 plus additions as follows:</p>
-  <table class="tse-help-table">
-    <tbody>
-      <tr><td>1</td><td>if the click was with the left mouse button</td></tr>
-      <tr><td>2</td><td>if the click was with the right mouse button</td></tr>
-      <tr><td>4</td><td>if the click was with the middle mouse button</td></tr>
-      <tr><td>8</td><td>if the shift key was held down while clicking</td></tr>
-      <tr><td>16</td><td>if the alt key was held down while clicking</td></tr>
-      <tr><td>32</td><td>if the ctrl key was held down while clicking</td></tr>
-      <tr><td>64</td><td>if it was a double-click</td></tr>
-    </tbody>
-  </table>
+  <div class="tse-help-table">
+    <table>
+      <tbody>
+        <tr><td>1</td><td>if the click was with the left mouse button</td></tr>
+        <tr><td>2</td><td>if the click was with the right mouse button</td></tr>
+        <tr><td>4</td><td>if the click was with the middle mouse button</td></tr>
+        <tr><td>8</td><td>if the shift key was held down while clicking</td></tr>
+        <tr><td>16</td><td>if the alt key was held down while clicking</td></tr>
+        <tr><td>32</td><td>if the ctrl key was held down while clicking</td></tr>
+        <tr><td>64</td><td>if it was a double-click</td></tr>
+      </tbody>
+    </table>
+  </div>
   <p>So if <code>${highlight('n := ?click', 'Pascal')}</code> makes <code>${highlight('n', 'Pascal')}</code> equal to 137 (128 + 8 + 1), this indicates that a left-click is currently under way, with the <kbd>shift</kbd> key held down. When the click event is finished, the <code>${highlight('?click', 'Pascal')}</code> value will become negative. Thus if <code>${highlight('?click', 'Pascal')}</code> returns a value of -137, this indicates that the last click event – now finished – was shift+left; the coordinate position of that click can still be identified – until the next click takes place – as (<code>${highlight('?clickx', 'Pascal')}</code>, <code>${highlight('?clicky', 'Pascal')}</code>). On a left-click, the variable <code>${highlight('?lmouse', 'Pascal')}</code> records the relevant value (as calculated above); likewise <code>${highlight('?rmouse', 'Pascal')}</code> and <code>${highlight('?mmouse', 'Pascal')}</code> record any right-click or middle-click. Again, these are all made negative when the click is released, so an empty loop like:</p>
   <pre><code>${highlight('repeat\nuntil ?lmouse > 0;', 'Pascal')}</code></pre>
   <p>waits for a left-click with the mouse. Afterwards, <code>${highlight('?clickx', 'Pascal')}</code> and <code>${highlight('?clicky', 'Pascal')}</code> indicate where that click event occurred, and <code>${highlight('?click', 'Pascal')}</code> can be queried using the bitwise <code>${highlight('and', 'Pascal')}</code> operator to discover which special keys were pressed (e.g. <code>${highlight('if (abs(?click) and 8) > 0', 'Pascal')}</code> will test whether <kbd>shift</kbd> was being held down).</p>
@@ -87,17 +91,19 @@ const pythonText = `
   <p>The x- and y-coordinates of the mouse&rsquo;s current position can be found at any time by using the special global variables <code>${highlight('?mousex', 'Python')}</code> and <code>${highlight('?mousey', 'Python')}</code> – these do not require the mouse to be clicked.</p>
   <h4>Mouse Click Detection</h4>
   <p>When a mouse click is performed, the x- and y-coordinates of the click position are remembered by the variables <code>${highlight('?clickx', 'Python')}</code> and <code>${highlight('?clicky', 'Python')}</code>. However to identify the type of click, use the variable <code>${highlight('?click', 'Python')}</code>, which is initially set to a value of -1, but after any click has taken place is set to a numerical value of 128 plus additions as follows:</p>
-  <table class="tse-help-table">
-    <tbody>
-      <tr><td>1</td><td>if the click was with the left mouse button</td></tr>
-      <tr><td>2</td><td>if the click was with the right mouse button</td></tr>
-      <tr><td>4</td><td>if the click was with the middle mouse button</td></tr>
-      <tr><td>8</td><td>if the shift key was held down while clicking</td></tr>
-      <tr><td>16</td><td>if the alt key was held down while clicking</td></tr>
-      <tr><td>32</td><td>if the ctrl key was held down while clicking</td></tr>
-      <tr><td>64</td><td>if it was a double-click</td></tr>
-    </tbody>
-  </table>
+  <div class="tse-help-table">
+    <table>
+      <tbody>
+        <tr><td>1</td><td>if the click was with the left mouse button</td></tr>
+        <tr><td>2</td><td>if the click was with the right mouse button</td></tr>
+        <tr><td>4</td><td>if the click was with the middle mouse button</td></tr>
+        <tr><td>8</td><td>if the shift key was held down while clicking</td></tr>
+        <tr><td>16</td><td>if the alt key was held down while clicking</td></tr>
+        <tr><td>32</td><td>if the ctrl key was held down while clicking</td></tr>
+        <tr><td>64</td><td>if it was a double-click</td></tr>
+      </tbody>
+    </table>
+  </div>
   <p>So if <code>${highlight('n = ?click', 'Python')}</code> makes <code>${highlight('n', 'Python')}</code> equal to 137 (128 + 8 + 1), this indicates that a left-click is currently under way, with the <kbd>shift</kbd> key held down. When the click event is finished, the <code>${highlight('?click', 'Python')}</code> variable will become negative. Thus if <code>${highlight('?click', 'Python')}</code> returns a value of -137, this indicates that the last click event – now finished – was shift+left; the coordinate position of that click can still be identified – until the next click takes place – as (<code>${highlight('?clickx', 'Python')}</code>, <code>${highlight('?clicky', 'Python')}</code>). On a left-click, the variable <code>${highlight('?lmouse', 'Python')}</code> records the relevant value (as calculated above); likewise <code>${highlight('?rmouse', 'Python')}</code> and <code>${highlight('?mmouse', 'Python')}</code> record any right-click or middle-click. Again, these are all made negative when the click is released, so an empty loop like:</p>
   <pre><code>${highlight('while not(?lmouse > 0):\n  pass  # this statement does nothing!', 'Python')}</code></pre>
   <p>waits for a left-click with the mouse. Afterwards, <code>${highlight('?clickx', 'Python')}</code> and <code>${highlight('?clicky', 'Python')}</code> indicate where that click event occurred, and <code>${highlight('?click', 'Python')}</code> can be queried using the bitwise <code>${highlight('and', 'Python')}</code> operator to discover which special keys were pressed (e.g. <code>${highlight('if (abs(?click) and 8) > 0', 'Python')}</code> will test whether <kbd>shift</kbd> was being held down).</p>

@@ -41,7 +41,7 @@
       "allowToChangeInstallationDirectory": true
     },
     "win": {
-      "target": "nsis",
+      "target": "appx",
       "icon": "assets/win/turtle.ico"
     },
     "mac": {
