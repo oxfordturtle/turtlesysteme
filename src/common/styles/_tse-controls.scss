@@ -28,11 +28,16 @@
     margin: 0;
     font-size: .75em;
     dd, dt {
-      margin: 0;
       padding: ($padding * 2.5) $padding;
       text-align: center;
     }
     dt {
+      display: none;
+      @media (min-width: $machine-component-width) {
+        display: block;
+      }
+    }
+    dd {
       margin-left: $padding;
     }
     .tse-turt,

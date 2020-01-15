@@ -26,17 +26,17 @@ showOptions.innerHTML = `
 drawCountMax.classList.add('tse-option')
 drawCountMax.innerHTML = `
   <label>Default number of simultaneous drawing commands:<input type="number" min="1" max="100" data-bind="draw-count-max"></label>
-  <p>Performing more than one drawing command at a time greatly increases drawing speed. Set to 1 to see every drawing change individually (slower). Pause and update/noupdate override this default.</p>`
+  <p>Performing more than one drawing command at a time greatly increases drawing speed. Set to 1 to see every drawing change individually (slower). The pause and update/noupdate commands override this default.</p>`
 
 codeCountMax.classList.add('tse-option')
 codeCountMax.innerHTML = `
   <label>Maximum number of commands before forced update:<input type="number" min="0" max="10000000" data-bind="code-count-max"></label>
-  <p>This number sets how many commands to allow before forcing the canvas to update. A higher number generally results in faster program execution, but some programs can cause the browser (or browser tab) to hang if they execute a large number of commands without ever updating the canvas.</p>`
+  <p>This number sets how many commands to allow before forcing the canvas to update. A higher number generally results in faster program execution, but some programs can cause the system to hang if they execute a large number of commands without ever updating the canvas.</p>`
 
 smallSize.classList.add('tse-option')
 smallSize.innerHTML = `
   <label>Resolution at which to scale up the canvas:<input type="number" min="0" max="100" data-bind="small-size"></label>
-  <p>When the program sets the resolution to this value or less (in either dimension), the machine will artificially double the resolution, and make everything twice as big. This helps very low resolution programs to display more clearly and accurately. Set to 0 to disable.</p>`
+  <p>When a program sets the canvas resolution to this value or less (in either dimension), the machine will artificially double the resolution, and make everything twice as big. This helps very low resolution images to display more clearly and accurately. Set to 0 to disable.</p>`
 
 stackSize.classList.add('tse-option')
 stackSize.innerHTML = `

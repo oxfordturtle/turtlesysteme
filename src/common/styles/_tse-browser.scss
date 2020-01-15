@@ -1,78 +1,51 @@
 .tse-browser {
-  display: grid;
-  grid-template-rows: auto 1fr;
-  grid-gap: $padding;
-  background: $darkgray;
-  border: $padding solid $darkgray;
   max-width: $padding + $machine-component-width + $padding;
-  height: $system-height + 34px;
   margin: 0 auto;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  display: grid;
+  grid-template-rows: auto $system-height;
   .tse-browser-tab-list {
     display: flex;
-    img {
-      height: 2em;
-    }
     .tse-browser-tab {
       flex: 1;
-      margin-left: $padding;
-      padding: .5em .75em;
+      display: block;
+      padding: .75em 1em .5em;
+      height: auto;
       cursor: pointer;
       color: #fff;
-      background: lighten($green, 10%);
-      transition: background .3s;
-      &:hover, &.tse-active {
-        background: $green;
-      }
-      &:nth-of-type(1) {
-        display: none;
+      background: $gray-transparent;
+      &:hover, &.active {
+        background: $darkgray-transparent;
       }
     }
   }
   .tse-browser-tab-panes {
-    display: grid;
-    grid-template-columns: 1fr $machine-component-width;
+    background: $darkgray-transparent;
+    padding: $padding;
     .tse-browser-tab-pane {
       display: none;
-      &.tse-active {
+      grid-template-rows: auto 1fr;
+      grid-gap: $padding;
+      height: 100%;
+      &.active {
         display: grid;
-        grid-column-end: span 2;
-      }
-      &.tse-side-by-side {
-        grid-column-end: auto;
-        &:first-child {
-          margin-right: $padding;
-        }
-      }
-      &.tse-program, &.tse-machine {
-        grid-template-rows: auto 1fr;
-        grid-gap: $padding;
-      }
-      &.tse-help {
-        grid-template-rows: 1fr;
       }
     }
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: $system-width) {
   .tse-browser {
     max-width: $system-width;
+    grid-template-rows: $system-height;
     .tse-browser-tab-list {
-      .tse-browser-tab {
-        &:nth-of-type(1) {
-          display: inline;
-        }
-        &:nth-of-type(2) {
-          display: none;
-        }
-        &:nth-of-type(3) {
-          display: none;
-        }
+      display: none;
+    }
+    .tse-browser-tab-panes {
+      display: grid;
+      grid-template-columns: auto $machine-component-width;
+      grid-gap: $padding;
+      .tse-browser-tab-pane {
+        display: grid !important;
       }
     }
   }

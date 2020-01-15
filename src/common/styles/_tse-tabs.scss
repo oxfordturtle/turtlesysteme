@@ -18,10 +18,12 @@
   }
   .tse-tab-list {
     display: flex;
+    overflow-x: auto;
     .tse-tab {
       cursor: pointer;
       color: #fff;
       padding: .5em .75em;
+      flex-shrink: 0;
       &:hover {
         background: $gray;
       }

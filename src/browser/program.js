@@ -16,7 +16,7 @@ export default (tse) => {
   const content = [
     controls.program,
     dom.createTabs([
-      { label: 'File', active: false, content: [file.newFile, file.openHelp] },
+      { label: 'File', active: false, content: [file.currentFile, file.newFile, file.openFile, file.openExample] },
       { label: 'Code', active: true, content: [code] },
       { label: 'Usage', active: false, content: [usage] },
       { label: 'Lexemes', active: false, content: [lexemes] },

@@ -29,6 +29,6 @@ element.innerHTML = `
       <span>999</span>
     </div>
     <div class="tse-canvas-wrapper">
-      <canvas></canvas>
+      <canvas width="1000" height="1000"></canvas>
     </div>
   </div>`

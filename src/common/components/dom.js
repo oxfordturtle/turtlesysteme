@@ -43,6 +43,16 @@ export const createOption = (label, value) => {
   return option
 }
 
+// create a select input
+export const createSelect = (options, multiple) => {
+  const select = document.createElement('select')
+  if (multiple) {
+    select.setAttribute('multiple', 'multiple')
+  }
+  setContent(select, options)
+  return select
+}
+
 // create a text node
 export const createTextNode = (text) =>
   document.createTextNode(text)

@@ -6,6 +6,8 @@ $system-height: 700px;
 $machine-component-width: $padding + $canvas-coords-width + $canvas-width + $padding;
 $black: #282828;
 $darkgray: lighten($black, 10%);
+$darkgray-transparent: rgba(66, 66, 66, .9);
+$gray-transparent: rgba(90, 90, 90, .7);
 $gray: darken(#ebebeb, 25%);
 $lightgray: lighten(#ebebeb, 3%);
 $green: #159d6b;

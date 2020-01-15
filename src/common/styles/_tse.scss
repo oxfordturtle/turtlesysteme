@@ -13,12 +13,27 @@
     min-height: 0;
     min-width: 0;
   }
-  a, button, input[type="text"], input[type="number"], select, th, td {
+  a, a:hover {
+    text-decoration: none;
+  }
+  a, button, input[type="text"], input[type="number"], th, td {
     height: 2em;
     padding: .5em;
   }
   select {
-    padding-top: .4em;
+    height: 2em;
+    padding: .25em .5em;
+    &[multiple] {
+      overflow: auto;
+      padding: 0;
+      option {
+        cursor: pointer;
+        padding: .25em .5em;
+      }
+    }
+  }
+  option {
+    padding: .25em .5em;
   }
   input[type="text"], input[type="number"], select {
     background: #fff;
