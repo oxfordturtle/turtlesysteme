@@ -18,7 +18,7 @@
     "compile-browser": "webpack --config webpack.browser.js --mode production"
   },
   "devDependencies": {
-    "electron": "^6.0.7",
+    "electron": "^7.2.4",
     "electron-builder": "^21.2.0",
     "electron-webpack": "^2.7.4",
     "node-sass": "^4.12.0",
